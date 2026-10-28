@@ -1,0 +1,10 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:05:04-04:00
+# command: npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+AI agent detected
+Successfully synthesized to /workspace/bank-it-orgs-security-refs/infra/orgs/cdk.out
+Supply a stack id (BankItLabOrgGovernance, BankItLabOrgCloudTrail, BankItLabSecurityServices) to display its template.
+84 feature flags are not configured. Run 'cdk flags --unstable=flags' to learn more.
+# finished: 2026-10-28T11:05:12-04:00
+# exit_code: 0

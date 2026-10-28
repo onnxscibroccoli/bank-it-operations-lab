@@ -1,0 +1,7 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:05:03-04:00
+# command: npx cdk --version
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+2.1146.1 (build 8c52d44)
+# finished: 2026-10-28T11:05:04-04:00
+# exit_code: 0

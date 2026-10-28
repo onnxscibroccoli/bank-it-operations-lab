@@ -1,0 +1,9 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:06:07-04:00
+# command: env PARLIAMENT=/workspace/venv-parliament/bin/parliament scripts/parliament.sh gated
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+ALLOWLISTED UNKNOWN_CONDITION_FOR_ACTION require-encryption.json: Unknown condition rds:StorageEncrypted for action rds:CreateDBInstance
+ALLOWLISTED UNKNOWN_CONDITION_FOR_ACTION deny-public-s3.json: Unknown condition s3:x-amz-object-ownership for action s3:PutBucketOwnershipControls
+unallowlisted_findings=0
+# finished: 2026-10-28T11:06:08-04:00
+# exit_code: 0

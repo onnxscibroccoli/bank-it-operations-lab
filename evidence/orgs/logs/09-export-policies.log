@@ -1,0 +1,13 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:05:12-04:00
+# command: npx ts-node scripts/export-policies.ts
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+wrote deny-root-user.json (172 chars minified)
+wrote deny-leave-organization.json (144 chars minified)
+wrote region-lock.json (618 chars minified)
+wrote protect-security-services.json (1891 chars minified)
+wrote deny-public-s3.json (729 chars minified)
+wrote require-encryption.json (1121 chars minified)
+wrote deny-all-suspended.json (225 chars minified)
+# finished: 2026-10-28T11:05:13-04:00
+# exit_code: 0

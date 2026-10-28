@@ -1,0 +1,17 @@
+{
+  "_comment": "Exact parliament 1.6.4 findings accepted as false positives (its bundled IAM database is stale). Any other finding fails the gated run. See docs/adr/ADR-0003.",
+  "allow": [
+    {
+      "issue": "UNKNOWN_CONDITION_FOR_ACTION",
+      "file": "require-encryption.json",
+      "detail": "Unknown condition rds:StorageEncrypted for action rds:CreateDBInstance",
+      "reason": "rds:StorageEncrypted is documented for rds:CreateDBInstance/CreateDBCluster (AWS Service Authorization Reference; AWS SCP identity guide)."
+    },
+    {
+      "issue": "UNKNOWN_CONDITION_FOR_ACTION",
+      "file": "deny-public-s3.json",
+      "detail": "Unknown condition s3:x-amz-object-ownership for action s3:PutBucketOwnershipControls",
+      "reason": "s3:x-amz-object-ownership is documented for s3:CreateBucket/PutBucketOwnershipControls (S3 user guide: enforcing Object Ownership)."
+    }
+  ]
+}

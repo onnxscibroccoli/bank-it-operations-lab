@@ -1,0 +1,633 @@
+{
+ "Description": "Reference: OU layout, SCPs, Security Hub delegated admin (static synthesis lab; not deployed)",
+ "Parameters": {
+  "OrgRootId": {
+   "Type": "String",
+   "AllowedPattern": "^r-[0-9a-z]{4,32}$",
+   "Description": "Organization root id (r-xxxx). Supplied at deploy time; never looked up."
+  },
+  "SecurityToolingAccountId": {
+   "Type": "String",
+   "AllowedPattern": "^\\d{12}$",
+   "Description": "12-digit account id of the Security Tooling (delegated admin) account."
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Resources": {
+  "OuSecurity": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "Security",
+    "ParentId": {
+     "Ref": "OrgRootId"
+    }
+   }
+  },
+  "OuInfrastructure": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "Infrastructure",
+    "ParentId": {
+     "Ref": "OrgRootId"
+    }
+   }
+  },
+  "OuWorkloads": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "Workloads",
+    "ParentId": {
+     "Ref": "OrgRootId"
+    }
+   }
+  },
+  "OuWorkloadsProd": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "Prod",
+    "ParentId": {
+     "Fn::GetAtt": [
+      "OuWorkloads",
+      "Id"
+     ]
+    }
+   }
+  },
+  "OuWorkloadsNonProd": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "NonProd",
+    "ParentId": {
+     "Fn::GetAtt": [
+      "OuWorkloads",
+      "Id"
+     ]
+    }
+   }
+  },
+  "OuSandbox": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "Sandbox",
+    "ParentId": {
+     "Ref": "OrgRootId"
+    }
+   }
+  },
+  "OuSuspended": {
+   "Type": "AWS::Organizations::OrganizationalUnit",
+   "Properties": {
+    "Name": "Suspended",
+    "ParentId": {
+     "Ref": "OrgRootId"
+    }
+   }
+  },
+  "ScpDenyRootUser": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "DenyRootUser",
+       "Effect": "Deny",
+       "Action": "*",
+       "Resource": "*",
+       "Condition": {
+        "ArnLike": {
+         "aws:PrincipalArn": "arn:aws:iam::*:root"
+        }
+       }
+      }
+     ]
+    },
+    "Description": "Deny all actions by member-account root users.",
+    "Name": "BankItLab-DenyRootUser",
+    "TargetIds": [
+     {
+      "Ref": "OrgRootId"
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "ScpDenyLeaveOrganization": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "DenyLeaveOrganization",
+       "Effect": "Deny",
+       "Action": "organizations:LeaveOrganization",
+       "Resource": "*"
+      }
+     ]
+    },
+    "Description": "Prevent member accounts from leaving the organization.",
+    "Name": "BankItLab-DenyLeaveOrganization",
+    "TargetIds": [
+     {
+      "Ref": "OrgRootId"
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "ScpRegionLock": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "DenyOutsideAllowedRegions",
+       "Effect": "Deny",
+       "NotAction": [
+        "account:*",
+        "acm:*",
+        "aws-portal:*",
+        "budgets:*",
+        "ce:*",
+        "cloudfront:*",
+        "cur:*",
+        "globalaccelerator:*",
+        "health:*",
+        "iam:*",
+        "kms:*",
+        "organizations:*",
+        "route53:*",
+        "route53domains:*",
+        "s3:GetAccountPublicAccessBlock",
+        "s3:ListAllMyBuckets",
+        "shield:*",
+        "sso:*",
+        "sts:*",
+        "support:*",
+        "trustedadvisor:*",
+        "waf:*",
+        "wafv2:*"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "StringNotEquals": {
+         "aws:RequestedRegion": [
+          "us-east-1",
+          "us-west-2"
+         ]
+        },
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    "Description": "Deny regional actions outside us-east-1, us-west-2 (global services and exempt roles excepted).",
+    "Name": "BankItLab-RegionLock",
+    "TargetIds": [
+     {
+      "Fn::GetAtt": [
+       "OuSecurity",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuInfrastructure",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuWorkloads",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuSandbox",
+       "Id"
+      ]
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "ScpProtectSecurityServices": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "ProtectCloudTrail",
+       "Effect": "Deny",
+       "Action": [
+        "cloudtrail:DeleteTrail",
+        "cloudtrail:StopLogging",
+        "cloudtrail:UpdateTrail",
+        "cloudtrail:PutEventSelectors",
+        "cloudtrail:PutInsightSelectors",
+        "cloudtrail:DeleteEventDataStore"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      },
+      {
+       "Sid": "ProtectGuardDuty",
+       "Effect": "Deny",
+       "Action": [
+        "guardduty:DeleteDetector",
+        "guardduty:UpdateDetector",
+        "guardduty:DisassociateFromAdministratorAccount",
+        "guardduty:DisassociateFromMasterAccount",
+        "guardduty:DisassociateMembers",
+        "guardduty:DeleteMembers",
+        "guardduty:StopMonitoringMembers",
+        "guardduty:DeletePublishingDestination",
+        "guardduty:UpdatePublishingDestination",
+        "guardduty:CreateFilter",
+        "guardduty:UpdateFilter",
+        "guardduty:CreateIPSet",
+        "guardduty:UpdateIPSet"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      },
+      {
+       "Sid": "ProtectSecurityHub",
+       "Effect": "Deny",
+       "Action": [
+        "securityhub:DisableSecurityHub",
+        "securityhub:DisassociateFromAdministratorAccount",
+        "securityhub:DisassociateFromMasterAccount",
+        "securityhub:DisassociateMembers",
+        "securityhub:DeleteMembers",
+        "securityhub:BatchDisableStandards",
+        "securityhub:UpdateStandardsControl",
+        "securityhub:DisableImportFindingsForProduct",
+        "securityhub:DeleteFindingAggregator"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      },
+      {
+       "Sid": "ProtectConfig",
+       "Effect": "Deny",
+       "Action": [
+        "config:DeleteConfigurationRecorder",
+        "config:StopConfigurationRecorder",
+        "config:DeleteDeliveryChannel",
+        "config:DeleteConfigurationAggregator"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    "Description": "Deny disabling or tampering with CloudTrail, GuardDuty, Security Hub and AWS Config.",
+    "Name": "BankItLab-ProtectSecurityServices",
+    "TargetIds": [
+     {
+      "Fn::GetAtt": [
+       "OuSecurity",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuInfrastructure",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuWorkloads",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuSandbox",
+       "Id"
+      ]
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "ScpDenyPublicS3": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "DenyBpaChanges",
+       "Effect": "Deny",
+       "Action": [
+        "s3:PutAccountPublicAccessBlock",
+        "s3:PutBucketPublicAccessBlock"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      },
+      {
+       "Sid": "DenyPublicAcls",
+       "Effect": "Deny",
+       "Action": [
+        "s3:CreateBucket",
+        "s3:PutBucketAcl",
+        "s3:PutObject",
+        "s3:PutObjectAcl"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "StringEquals": {
+         "s3:x-amz-acl": [
+          "public-read",
+          "public-read-write",
+          "authenticated-read"
+         ]
+        }
+       }
+      },
+      {
+       "Sid": "DenyDisableOwnershipEnforced",
+       "Effect": "Deny",
+       "Action": "s3:PutBucketOwnershipControls",
+       "Resource": "*",
+       "Condition": {
+        "StringNotEquals": {
+         "s3:x-amz-object-ownership": "BucketOwnerEnforced"
+        }
+       }
+      }
+     ]
+    },
+    "Description": "Deny weakening S3 Block Public Access and granting public ACLs.",
+    "Name": "BankItLab-DenyPublicS3",
+    "TargetIds": [
+     {
+      "Fn::GetAtt": [
+       "OuSecurity",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuInfrastructure",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuWorkloads",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuSandbox",
+       "Id"
+      ]
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "ScpRequireEncryption": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "DenyUnencryptedEbs",
+       "Effect": "Deny",
+       "Action": "ec2:CreateVolume",
+       "Resource": "*",
+       "Condition": {
+        "Bool": {
+         "ec2:Encrypted": "false"
+        }
+       }
+      },
+      {
+       "Sid": "DenyDisableEbsDefaultEncryption",
+       "Effect": "Deny",
+       "Action": "ec2:DisableEbsEncryptionByDefault",
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      },
+      {
+       "Sid": "DenyUnencryptedRds",
+       "Effect": "Deny",
+       "Action": [
+        "rds:CreateDBInstance",
+        "rds:CreateDBCluster"
+       ],
+       "Resource": "*",
+       "Condition": {
+        "Bool": {
+         "rds:StorageEncrypted": "false"
+        }
+       }
+      },
+      {
+       "Sid": "DenyUnencryptedEfs",
+       "Effect": "Deny",
+       "Action": "elasticfilesystem:CreateFileSystem",
+       "Resource": "*",
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:Encrypted": "false"
+        }
+       }
+      },
+      {
+       "Sid": "DenyS3WithoutTls",
+       "Effect": "Deny",
+       "Action": "s3:*",
+       "Resource": "*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       }
+      },
+      {
+       "Sid": "DenyUnsupportedS3Sse",
+       "Effect": "Deny",
+       "Action": "s3:PutObject",
+       "Resource": "*",
+       "Condition": {
+        "StringNotEquals": {
+         "s3:x-amz-server-side-encryption": [
+          "aws:kms",
+          "aws:kms:dsse",
+          "AES256"
+         ]
+        },
+        "Null": {
+         "s3:x-amz-server-side-encryption": "false"
+        }
+       }
+      }
+     ]
+    },
+    "Description": "Deny unencrypted EBS/RDS/EFS creation, non-TLS S3 access and unsupported S3 SSE values.",
+    "Name": "BankItLab-RequireEncryption",
+    "TargetIds": [
+     {
+      "Fn::GetAtt": [
+       "OuSecurity",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuInfrastructure",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuWorkloads",
+       "Id"
+      ]
+     },
+     {
+      "Fn::GetAtt": [
+       "OuSandbox",
+       "Id"
+      ]
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "ScpDenyAllSuspended": {
+   "Type": "AWS::Organizations::Policy",
+   "Properties": {
+    "Content": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Sid": "DenyAll",
+       "Effect": "Deny",
+       "Action": "*",
+       "Resource": "*",
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::*:role/OrgSecurityAdmin",
+          "arn:aws:iam::*:role/OrgBreakGlass"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    "Description": "Quarantine: deny everything in the Suspended OU except exempt roles.",
+    "Name": "BankItLab-DenyAllSuspended",
+    "TargetIds": [
+     {
+      "Fn::GetAtt": [
+       "OuSuspended",
+       "Id"
+      ]
+     }
+    ],
+    "Type": "SERVICE_CONTROL_POLICY"
+   }
+  },
+  "SecurityHubDelegatedAdmin": {
+   "Type": "AWS::SecurityHub::DelegatedAdmin",
+   "Properties": {
+    "AdminAccountId": {
+     "Ref": "SecurityToolingAccountId"
+    }
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

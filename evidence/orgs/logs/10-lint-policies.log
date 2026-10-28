@@ -1,0 +1,14 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:05:13-04:00
+# command: npx ts-node scripts/lint-policies.ts
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+deny-root-user: 172/5120 chars, 0 findings
+deny-leave-organization: 144/5120 chars, 0 findings
+region-lock: 618/5120 chars, 0 findings
+protect-security-services: 1891/5120 chars, 0 findings
+deny-public-s3: 729/5120 chars, 0 findings
+require-encryption: 1121/5120 chars, 0 findings
+deny-all-suspended: 225/5120 chars, 0 findings
+errors=0 warnings=0
+# finished: 2026-10-28T11:05:14-04:00
+# exit_code: 0
