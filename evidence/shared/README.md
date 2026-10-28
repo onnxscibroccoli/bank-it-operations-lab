@@ -19,4 +19,6 @@ Examples (from the repo root, on a checkout of the relevant branch):
     python3 evidence/shared/validate_evidence.py commands evidence/postgres/runs/<label>/COMMANDS.tsv --format postgres-10col
     python3 evidence/shared/validate_evidence.py postgres-negatives evidence/postgres/runs/<label>
 
-None of these checks are wired into CI yet. Adding them is left to the owners of each workflow.
+On `overnight/integration` these checks run in CI through `scripts/validate-all.sh` (`.github/workflows/offline-validation.yml`) and `.github/workflows/aws-cdk.yml` (`cfn-s3-selflog`).
+`postgres-negatives` reads COMMANDS.tsv by header name, so it understands both the Postgres harness v1 (10-column) and v2 (12-column) layouts. A run with zero negative steps is an error.
+For harness v2 runs, the authoritative verifier is `tests/integration/postgres/verify_evidence.py`. This check is an independent cross-check.

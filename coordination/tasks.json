@@ -1,69 +1,161 @@
 {
   "schema": "bank-it-operations-lab/coordination/tasks@1",
   "integration_branch": "overnight/integration",
-  "base": {"branch": "main", "sha": "7f50348", "verified": "main contains only README.md; nothing to break"},
-  "updated": "2026-10-28 (America/New_York)",
-  "rules": ["never merge into main from automation", "no deploys", "no AWS/Entra/Graph calls", "no credentials", "PRs are not closed by integration"],
-  "merge_order": [3, 5, 4, 2],
+  "base": {
+    "branch": "main",
+    "sha": "7f50348",
+    "verified": "main contains only README.md; nothing to break"
+  },
+  "updated": "2026-10-28 ~14:20 EDT (America/New_York)",
+  "rules": [
+    "never merge into main from automation",
+    "no deploys",
+    "no AWS/Entra/Graph calls",
+    "no credentials",
+    "PRs are not closed by integration"
+  ],
+  "merge_order": [
+    3,
+    5,
+    4,
+    2
+  ],
   "tasks": [
     {
-      "pr": 3, "branch": "review/pr1-pr2-evidence-audit", "head": "fb36341",
+      "pr": 3,
+      "branch": "review/pr1-pr2-evidence-audit",
+      "head": "fb36341",
       "title": "review: evidence audit of PR #1 and PR #2 + shared evidence validator",
       "status": "integrated",
-      "paths": ["evidence/shared/**", "reports/review-pr1-pr2.md"],
+      "paths": [
+        "evidence/shared/**",
+        "reports/review-pr1-pr2.md"
+      ],
       "why": "Dependency-free shared tooling (validate_evidence.py, manifest schema, Postgres negative expectations) used by the other components' CI. Wired into CI at integration.",
       "review": "No formal GitHub review recorded. This PR is itself the review of #1/#2."
     },
     {
-      "pr": 5, "branch": "aws-remediation-vpc-rds", "head": "099479e",
+      "pr": 5,
+      "branch": "aws-remediation-vpc-rds",
+      "head": "099479e",
       "title": "AWS remediation: private VPC + RDS, remove S3 self-logging, AwsSolutions + NIST 800-53 R5 nag",
       "status": "integrated",
-      "paths": ["infra/aws-cdk/**", "evidence/aws/aws-remediation-vpc-rds/**"],
+      "paths": [
+        "infra/aws-cdk/**",
+        "evidence/aws/aws-remediation-vpc-rds/**"
+      ],
       "why": "Newer implementation of infra/aws-cdk. It imports PR #1's app at e494bcf and fixes PR #3's blocking finding (AccessLogsBucket self-logging). Its templates pass evidence/shared cfn-s3-selflog.",
       "review": "No formal GitHub review recorded. Proposed security exceptions EX-01..EX-04 still need an owner's approval.",
-      "integration_changes": ["infra/aws-cdk/README.md: fixed the stale evidence/aws/README.md pointer and the CI note"]
+      "integration_changes": [
+        "infra/aws-cdk/README.md: fixed the stale evidence/aws/README.md pointer and the CI note"
+      ]
     },
     {
-      "pr": 1, "branch": "bank-aws-001", "head": "e494bcf",
+      "pr": 1,
+      "branch": "bank-aws-001",
+      "head": "e494bcf",
       "title": "BANK-AWS-001: credential-free secure storage stack + evidence",
       "status": "superseded",
       "superseded_by": "PR #5 for infra/aws-cdk/**. The CI workflow was adapted into .github/workflows/aws-cdk.yml.",
-      "not_carried": ["infra/aws-cdk/** (the PR #5 version is used)", "infra/aws-cdk/lib/evidence-validator.ts + scripts/validate-evidence.ts (PR #5 dropped it; evidence/shared/validate_evidence.py replaces it)", "evidence/aws/** top level (evidence for the self-logging template; it fails cfn-s3-selflog)", "reports/MORNING_REPORT.md (overnight run log for the superseded implementation)"],
+      "not_carried": [
+        "infra/aws-cdk/** (the PR #5 version is used)",
+        "infra/aws-cdk/lib/evidence-validator.ts + scripts/validate-evidence.ts (PR #5 dropped it; evidence/shared/validate_evidence.py replaces it)",
+        "evidence/aws/** top level (evidence for the self-logging template; it fails cfn-s3-selflog)",
+        "reports/MORNING_REPORT.md (overnight run log for the superseded implementation)"
+      ],
       "why": "14 of its infra/aws-cdk files duplicate PR #5. PR #3 rated it 'accept with changes' because of the self-logging bug, which only PR #5 fixes. Combining both implementations would duplicate the app.",
       "suggested_action": "Owner: close as superseded by #5 once #5 lands, or rebase onto overnight/integration to keep only the evidence history."
     },
     {
-      "pr": 4, "branch": "entra-ca-offline", "head": "d302c99",
+      "pr": 4,
+      "branch": "entra-ca-offline",
+      "head": "d302c99",
       "title": "entra: offline Conditional Access policy validation",
       "status": "integrated",
-      "paths": ["identity/entra/**", "tests/entra/**", "evidence/entra/**"],
+      "paths": [
+        "identity/entra/**",
+        "tests/entra/**",
+        "evidence/entra/**"
+      ],
       "why": "Disjoint paths and stdlib only. 25/25 unit tests, baseline exit 0, fixture drift check and evidence --verify all pass. Wired into offline-validation.yml.",
       "review": "No formal GitHub review recorded. Baseline policy choices in the PR body still need an owner's confirmation."
     },
     {
-      "pr": 2, "branch": "ci-evidence-postgres", "head": "e610015",
+      "pr": 2,
+      "branch": "ci-evidence-postgres",
+      "head": "e7399fb",
       "title": "ci: Postgres backup/restore exercise with offline tests and evidence",
       "status": "integrated",
-      "paths": [".github/workflows/postgres-restore-evidence.yml", "evidence/postgres/**", "tests/integration/**"],
-      "why": "PR #3 rated it 'accept with changes'. The required changes were applied at integration.",
-      "integration_changes": [
-        "run_restore_scenario.sh: each negative test is now one command, and its setup runs as separately checked steps (no more false PASS)",
-        "run_restore_scenario.sh: server major computed from server_version_num/10000, not cut -c1-2",
-        "workflow: removed the cdk-synth job (it duplicated aws-cdk.yml, set CDK_DEFAULT_ACCOUNT/REGION and ran unpinned npx --yes / npm install)",
-        "workflow: added persist-credentials: false, a postgres-negatives gate and a PR branch filter; paths scoped to its own workflow file",
-        "ci-service-40630856041-1/NOTE.md: corrected the inaccurate 'negatives behaved as expected' claim (that file is not hash-covered)",
-        "new evidence run integration-offline-20261028T180134Z: 39/39 PASS and 6/6 negatives failed for the intended reason"
+      "paths": [
+        ".github/workflows/postgres-restore-evidence.yml",
+        "evidence/postgres/**",
+        "tests/integration/**"
       ],
-      "open": ["PR body is still stale (says postgres:16 and that no cdk.json exists)", "no committed passing service-mode run"]
+      "why": "Harness v2 by the owner (2aac93c + e7399fb) fixes PR #3's review findings: declared reason regexes, separately checked setup, FAIL/ERROR/NOT_RUN classification, independent verifier, self-test, and a version-mismatch negative control. It replaces the interim integration hardening from f3a8f17.",
+      "integration_changes": [
+        "merge e76d8a4: conflicts in run_restore_scenario.sh, postgres-restore-evidence.yml and ci-service-40630856041-1/NOTE.md resolved to the owner's v2 version (theirs); interim fixes from f3a8f17 discarded",
+        "removed interim evidence run integration-offline-20261028T180134Z, which was produced by the discarded interim script",
+        "evidence/shared/validate_evidence.py postgres-negatives: reads columns by header so it handles the v2 12-column COMMANDS.tsv. It used to report a vacuous 'OK: 0 negative steps' on v2 runs, and now errors when no negatives are found. Tests: 15/15",
+        "scripts/validate-all.sh: uses the v2 verifier, the self-test, the mismatch control (must be rejected), the HISTORICAL exit 3 for v1 runs, and cross-checks with the shared validator"
+      ],
+      "open": [
+        "The workflow's cdk-synth job (now pinned, no CDK_DEFAULT_*) overlaps aws-cdk.yml. It is harmless, but the work is duplicated."
+      ],
+      "review": "No formal GitHub review recorded. The PR body was updated by the owner to describe v2. GitHub CI at e7399fb: all 5 jobs green."
     },
     {
-      "pr": 6, "branch": "orgs-security-refs", "head": "e5e7f46",
+      "pr": 6,
+      "branch": "orgs-security-refs",
+      "head": "e5e7f46",
       "title": "orgs: credential-free Organizations security reference modules + evidence (draft)",
       "status": "awaiting_changes",
       "why": "It repeats the defect PR #3 flagged in PR #1: infra/orgs/lib/org-cloudtrail-stack.ts:50 sets serverAccessLogsPrefix 'self-access-logs/' on TrailAccessLogsBucket with no destination, so the bucket logs to itself. evidence/shared cfn-s3-selflog reports ERROR TrailAccessLogsBucket30C0D746 on evidence/orgs/synth/BankItLabOrgCloudTrail.template.json. evidence/orgs/SHA256SUMS covers infra/orgs, so a fix has to regenerate the evidence. Otherwise tsc, 49/49 Jest, synth, SHA256SUMS and the synth drift check were clean when trial-merged. The PR is also an explicit draft with no review.",
-      "required_changes": ["Remove the self-logging the same way PR #5 did (terminal sink + documented S1 suppression or exception, plus a test asserting no LoggingConfiguration)", "Regenerate evidence/orgs and SHA256SUMS", "Optionally add an infra/orgs CI workflow modelled on aws-cdk.yml"],
+      "required_changes": [
+        "Remove the self-logging the same way PR #5 did (terminal sink + documented S1 suppression or exception, plus a test asserting no LoggingConfiguration)",
+        "Regenerate evidence/orgs and SHA256SUMS",
+        "Optionally add an infra/orgs CI workflow modelled on aws-cdk.yml"
+      ],
       "merge_conflicts": "none (disjoint paths: infra/orgs/**, evidence/orgs/**)"
     }
   ],
-  "validation": {"command": "scripts/validate-all.sh", "python_only": "scripts/validate-all.sh --python-only", "postgres_binaries": "set PG_BIN if initdb is not on PATH"}
+  "validation": {
+    "command": "scripts/validate-all.sh",
+    "python_only": "scripts/validate-all.sh --python-only",
+    "postgres_binaries": "set PG_BIN if initdb is not on PATH"
+  },
+  "acceptance_conditions_for_main": {
+    "evaluated_at_sha": "see reports/INTEGRATION.md (HEAD of overnight/integration at push time)",
+    "conditions": [
+      {
+        "id": "AC1",
+        "condition": "Independent human review approves the exact PR #7 head SHA (not an earlier one), and the reviewer is someone other than the author or this automation",
+        "status": "UNMET",
+        "detail": "No GitHub review exists on #1-#7. PR #3's report reviewed #1 @ e494bcf and #2 @ e6100154 only; both are superseded or changed since."
+      },
+      {
+        "id": "AC2",
+        "condition": "Security exceptions are recorded and approved by an owner",
+        "status": "PARTIAL",
+        "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md and enforced by tests (no other suppressions allowed). No approval is recorded yet."
+      },
+      {
+        "id": "AC3",
+        "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
+        "status": "MET_LOCALLY_PENDING_CI",
+        "detail": "validate-all PASS locally on the new HEAD. PR #7 CI was green at 876f7b7 (aws-cdk, offline-validation, Postgres service and offline). CI must be re-read for the new HEAD."
+      },
+      {
+        "id": "AC4",
+        "condition": "Docs match the code: READMEs, PR bodies, INTEGRATION.md and tasks.json",
+        "status": "PARTIAL",
+        "detail": "Fixed: infra/aws-cdk/README.md, evidence/shared/README.md, ci-service NOTE.md (owner v2), PR #2 body (owner updated). Open: PR #1 is still open and describes the superseded self-logging design. PR #4 baseline choices are unconfirmed. PR #6 is excluded."
+      },
+      {
+        "id": "AC5",
+        "condition": "No unresolved blocking findings in integrated code",
+        "status": "MET",
+        "detail": "cfn-s3-selflog is clean on all integrated templates. The PR #3 false-PASS finding is fixed by harness v2. PR #6, which still has a self-logging finding, is not integrated."
+      }
+    ]
+  }
 }
