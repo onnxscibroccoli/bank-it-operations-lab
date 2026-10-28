@@ -35,6 +35,11 @@ python3 identity/entra/ca_validator.py /tmp/entra/policies --quiet --md-out /tmp
   *Observed (E08):* `overall=FAIL exit=1`, BASE-003 FAIL. Report-only policies never satisfy BASE-002/003/004/006.
   *Recovery:* delete `/tmp/entra`.
 
+## Review finding (from #14, re-verified)
+- **CA007 has no baseline rule.** Copy `identity/entra` to `/tmp`, set `CA007-…json` `state` to `disabled`, then run `ca_validator.py /tmp/…/policies --quiet`.
+  *Observed (R08):* `overall=PASS exit=0`. Disabling the admin-portal location block goes undetected. Exercise: write (in notes) the BASE-008 rule you would add.
+- #14 lists other gaps: no coverage of session controls, guests, workload identities or named-location definitions. The evidence logs record only exit codes, not which rule failed.
+
 ## Answer notes
 - Exit code 2 (malformed) is different from 1 (baseline FAIL). A pipeline must never treat "could not parse" as "passed".
 - `OR` grant semantics can silently bypass MFA (`neg-mfa-or-bypass`). BASE-003 requires AND semantics.

@@ -1,6 +1,6 @@
 # 0002: Pin cdk-nag 2.38.2 with the Aspects API; exact toolchain pins
-- Status: Proposed (source PRs #1, #5 and #6 are open drafts)
-- Date: 2026-10-28
+- Status: **Proposed**. Source PRs #1, #5 and #6 are open drafts, none merged. The pins carried into #7 via #5.
+- Date: 2026-10-28 (status re-checked 2026-10-28 at 14:24 EDT; learning/execution R15)
 
 ## Context
 cdk-nag 3.x removed Aspect registration. Installing it broke typecheck, tests and synth (`bank-aws-001@e494bcf:evidence/aws/logs/CORRECTION-PASS-1.md`).

@@ -34,6 +34,17 @@ npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-
 - **The ADR-0003 defect, re-read.** `StringNotEqualsIfExists` on `s3:x-amz-server-side-encryption` would deny every PutObject that relies on default encryption.
   The behaviour test caught it, and `StringNotEquals` + `Null: false` fixed it. Reproducing it would mean editing `scps.ts` in a scratch tree, then `npm test`. **UNEXECUTED** (P-W6).
 
+## Review findings (from #14 and #7, re-verified here)
+- **B6-1: the org-trail access-log bucket logs to itself.** This is the same anti-pattern #5 removed from `infra/aws-cdk`.
+  `python3 $PR3/evidence/shared/validate_evidence.py cfn-s3-selflog evidence/orgs/synth/BankItLabOrgCloudTrail.template.json`
+  *Observed (R06):* `ERROR TrailAccessLogsBucket30C0D746: server access logs delivered to itself (prefix 'self-access-logs/')`, exit 1.
+  Source: `infra/orgs/lib/org-cloudtrail-stack.ts:50` (`serverAccessLogsPrefix: 'self-access-logs/'`). Run 1 of this guide (E10) reported the nag gate green but did not run this check. That is a lesson in itself.
+  This is why #7 did **not** integrate #6 (`reports/INTEGRATION.md`).
+- **B6-2: exempt-role bypass.** `EXEMPT_ROLE_ARNS` (`infra/orgs/lib/lab-context.ts:13`) uses `arn:aws:iam::*:role/OrgSecurityAdmin` and `OrgBreakGlass`, and `grep -n "iam:" infra/orgs/lib/scps.ts` shows only `iam:*` in the region-lock NotAction list (line 32) and the root-ARN condition (line 47) (R06).
+  So no SCP stops an admin in a member account from creating a role with an exempt name. Exercise: write the deny statement and an evaluator test for it (notes only).
+- **B6-3: Terraform versus CDK.** #14 reports that the plan asked for Terraform. The repo has no `.tf` file on any branch. Treat the Terraform objectives as **not met**.
+  Note that the Terraform provider has `aws_guardduty_organization_admin_account`, which addresses the ADR-0002 gap.
+
 ## Answer notes
 - SCPs never restrict the management account, so root-level guard rails protect member accounts only.
 - GuardDuty org admin and auto-enable have no CloudFormation resource, which is a documented gap (ADR-0002). Security Hub configuration policies are not modelled.
@@ -55,3 +66,4 @@ OU diagram → quota-driven attachment → run the evaluator script → the parl
 
 ## PENDING / UNEXECUTED
 - P-W6 (above). No CI workflow exists for `infra/orgs`. GuardDuty org enablement is not built. Access Analyzer was never run.
+- No fix for B6-1, B6-2 or B6-3 exists on any branch at `e5e7f46`. #6 is **not integrated** in #7.

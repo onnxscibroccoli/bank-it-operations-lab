@@ -1,56 +1,81 @@
-# Week 8: Incident review: a CI failure and false passes (resilience and incidents 2 of 3)
+# Week 8: Incident review: a CI failure, false passes, and the fix (resilience and incidents 2 of 3)
 
-**Branches:** `$PR2` (`ci-evidence-postgres@e610015`), `$PR3` (`review/pr1-pr2-evidence-audit@fb36341`).
-**Delivered files used:** `evidence/postgres/runs/ci-service-40630856041-1/{NOTE.md,COMMANDS.tsv,logs/}`, commit `e610015` message,
-`tests/integration/postgres/run_restore_scenario.sh` (lines 104-111 and 140-146), `reports/review-pr1-pr2.md` §2 and §5,
-`evidence/shared/{validate_evidence.py,negative-expectations.postgres.json}`.
+**Branches:** `$PR2` (`ci-evidence-postgres@e7399fb`), `$PR3` (`review/pr1-pr2-evidence-audit@fb36341`), `$PR7` (`overnight/integration@49122f2`),
+`$PR13` (`team-management@9dc8f1f`), `$PR9` (`vendor-mock@d6efb82`), `$PR22` (`incident-demo@3f13622`).
+**Delivered files used:** `evidence/postgres/runs/ci-service-40630856041-1/{NOTE.md,STATUS.json,COMMANDS.tsv,logs/}` and `evidence/postgres/runs/INDEX.md` (#2);
+`reports/review-pr1-pr2.md` §2 and `evidence/shared/{validate_evidence.py,negative-expectations.postgres.json}` (#3); `reports/INTEGRATION.md` item 4 and `evidence/shared/validate_evidence.py` (#7);
+`docs/management/{ticket-priority,stakeholder-updates,operational-review}.md` and `operations/team/escalation-matrix.md` (#13); `governance/vendor-risk/scenarios/core-banking-vendor-outage-SIMULATION.md` (#9).
 
 ## The incident (from delivered evidence)
-- **What happened.** Run 40630856041 failed. pg_dump 18.6 (ubuntu-latest runner) against a `postgres:16` service: pg_dump 18 emits `SET transaction_timeout = 0;`, which PG 16 rejects (`NOTE.md`).
-- **Fix.** `e610015`: service image changed to `postgres:18`, plus a `client_server_major_match` setup step.
-- **Second finding (PR #3).** In that failing run, N01, N04, N05 and N06 were recorded as PASS, but they failed for unrelated reasons (`transaction_timeout`, missing relation).
-  `NOTE.md:4` ("Negative tests behaved as expected") is therefore inaccurate.
+1. **Failure.** CI run 40630856041: pg_dump 18.6 against a `postgres:16` service. The `SET transaction_timeout` from pg_dump 18 is rejected by PG 16 (`NOTE.md`).
+2. **Masked failure.** In that run, harness v1 recorded N01, N04, N05 and N06 as PASS, but they failed for unrelated reasons (#3 §2).
+3. **First fix.** `e610015` changed the image to `postgres:18` and added a version check.
+4. **Root-cause fix.** Harness v2 (`2aac93c`, `e7399fb`) makes negatives fail for their declared reason, adds a mismatch control job and a self-test, and marks the v1 runs `HISTORICAL-KNOWN-INVALID`.
+5. **Second-order defect.** #3's shared checker silently reported `NEGATIVES OK: 0` on v2's 12-column COMMANDS.tsv. #7 (`05941a9`) fixed it to read columns by header name and to fail on zero negatives.
 
 ## Daily exercises
-**Day 1: Timeline.** Build it from `NOTE.md`, `git log origin/ci-evidence-postgres`, and PR #3 §2. Separate detection, diagnosis, fix and verification.
+**Day 1: Timeline.** Build it from `NOTE.md`, `git log origin/ci-evidence-postgres`, `runs/INDEX.md` (times are EDT), and #7 `reports/INTEGRATION.md`.
 
-**Day 2: Reproduce the false-pass detection.**
+**Day 2: Reproduce the detection.** `python3 $PR3/evidence/shared/validate_evidence.py postgres-negatives $PR2/evidence/postgres/runs/ci-service-40630856041-1`
+- *Observed (E13, re-checked R03):* 4 × `ERROR FALSE-PASS`.
+
+**Day 3: Reproduce the tool interface bug** (it teaches more than the original incident):
 ```bash
-cd $PR2 && python3 $PR3/evidence/shared/validate_evidence.py postgres-negatives evidence/postgres/runs/ci-service-40630856041-1; echo rc=$?
+python3 $PR3/evidence/shared/validate_evidence.py postgres-negatives $PR2/evidence/postgres/runs/ci-offline-40741329107-1   # PR #3 version
+python3 $PR7/evidence/shared/validate_evidence.py postgres-negatives $PR7/evidence/postgres/runs/ci-offline-40741329107-1   # PR #7 version
 ```
-- *Observed (E13):* 4 × `ERROR FALSE-PASS` (N01, N04, N05, N06) and `INVALID (4 errors, 0 warnings)`.
+- *Observed (R03):* the PR #3 version prints `NEGATIVES OK: 0 negative steps failed for the intended reason` (exit 0). That is a vacuous pass.
+  The PR #7 version prints `NEGATIVES OK: 6 negative steps failed for the intended reason`.
 
-**Day 3: Root cause in code.** Read lines 140-146 at `e610015`. N01, N05 and N06 chain setup with `&&` inside one `bash -c`, so any setup failure counts as "expected failure".
-Write (in your notes, not in the repo) a fix that runs setup as separate `setup` steps and asserts the error text.
+**Day 4: The self-test replay.** `selftest_harness.sh` Part B replays run 40630856041's preserved logs through the v2 expectations, and N01/N04/N05/N06 must come out `ERROR/version_mismatch`.
+*Observed (R02):* `[PASS] B.N05_was_false_pass expected=ERROR/version_mismatch actual=ERROR/version_mismatch` (and the same for the others). 26/26 assertions.
 
-**Day 4: Version-skew guard.** Read `client_server_major_match`. PR #3 §5 notes that `cut -c1-2` on `server_version_num` is wrong for servers below 10. Explain why.
+**Day 5: Run the process side.** Using the synthetic #13 material:
+- classify the incident with `docs/management/ticket-priority.md` (P1-P4)
+- pick the escalation path in `operations/team/escalation-matrix.md`
+- draft a stakeholder update in the style of `docs/management/stakeholder-updates.md`
 
-**Day 5: Write a post-incident review** using the template below and cite file paths only.
+For a vendor-caused variant, walk through #9's SIMULATION tabletop `core-banking-vendor-outage-SIMULATION.md`. Its content is linted by `check_governance.py` (R12).
+
+## Extension: a live (SIMULATION) incident with real MTTD/MTTR
+#22 runs a loopback-only stack built from pinned components: the vendor mock `88a3785`, observability `3e40e39`, and the Postgres seed and fingerprint `e7399fb`.
+It crashes the DB (`pg_ctl stop -m immediate`), detects the failure with #10's fail-closed probes, diagnoses, restarts with crash recovery, verifies fingerprints, and writes a timeline (`scenarios/incident/README.md`).
+```bash
+cd $PR22 && git fetch origin vendor-mock observability ci-evidence-postgres
+PG_BIN=$HOME/pg/env/bin scenarios/incident/run_incident_demo.sh
+scenarios/incident/selftest.sh evidence/incident/runs/<run_id>
+python3 scenarios/incident/lib/timeline.py --verify evidence/incident/runs/<run_id>
+```
+- *Observed (R18):* `status: PASS`, `steps_total: 19`, `mttd_s: 3.596`, `mttr_s: 8.52`, `time_to_diagnose_s: 0.203`, 4 polls with 1 UNHEALTHY. Selftest gives `0 failure(s)`, and `--verify` gives `VERIFY PASS`.
+  The committed run `local-20261028T181818Z` recorded 3.584 s and 8.593 s, so your numbers will differ slightly.
+- Failure injection on the evidence: edit `mttr_s` in a `/tmp` copy's `SUMMARY.json`. *Observed (R18):* `VERIFY FAIL: SUMMARY.json metrics do not match values re-derived from events.jsonl/monitor.tsv` plus a hash mismatch, exit 1.
+- Write the post-incident review below for **this** incident too, using `evidence/incident/INCIDENT-REPORT-SIMULATION.md` as the model answer.
+- Important: move or delete your local run directory afterwards. Never commit it to someone else's branch.
 
 ## Failure injection and recovery
-- Re-run the shared checker on the **passing** offline run (expected OK) and the **failing** CI run (expected 4 FALSE-PASS). Executed: E13.
-- In a scratch copy of the offline run (`cp -r evidence/postgres/runs/local-offline-20261028T041038Z /tmp/pgneg`), change `does not exist` to `is missing` in `logs/*N03*`, then re-run `postgres-negatives /tmp/pgneg`.
-  *Observed (E13):* `ERROR FALSE-PASS N03_restore_missing_database …` and `INVALID (1 errors, 0 warnings)`, exit 1. *Recovery:* delete the copy.
+- In a `/tmp` copy of a run, change one negative's log so it no longer matches. Then run the v2 verifier (week 7, R01: REJECTED) and the #3 tool on a v1 run (E13: N03 FALSE-PASS).
 
 ## Post-incident review template
-Summary · Impact (lab: CI red, misleading evidence) · Timeline · Root causes (version skew; test-design defect) · What went well (failure evidence preserved, `if: always()` upload) ·
-What went wrong (inaccurate NOTE.md; passing service run not committed) · Actions (PR #3 recommendations 3-6) · Evidence links.
+Summary · Impact · Timeline · Root causes (version skew; test design; checker interface) · What went well (failure evidence preserved; independent review) ·
+What went wrong (inaccurate NOTE.md at the time; a vacuous checker pass) · Actions (v2, mismatch control, header-based parsing, fail on zero) · Evidence links.
 
 ## Answer notes
-- Preserving the failing run's evidence is what made the false-pass finding possible.
-- "Exit code non-zero" is not the same as "failed for the intended reason".
+- A checker that can pass on zero inputs is a false-pass generator. "Fail on zero" is a general rule.
+- Preserving failing evidence byte-identically (with STATUS.json and NOTE.md beside it) let three later reviewers re-derive the story.
 
 ## Architecture tradeoffs
-- Floating runner images (`ubuntu-latest`) versus pinned images: floating ones bring surprise skew (Ubuntu 26.04 → pg_dump 18), and pinned ones bring update debt.
-- Independent reviewer branch (PR #3) versus self-review: PR #3 was read-only on the PR branches and found issues that the authors' own evidence hid.
+- Floating runner images (`ubuntu-latest`) versus pinned ones: v2 handles skew by detecting it (`S04`), not by preventing it.
+- One shared checker across bundles versus per-bundle verifiers: the shared one drifted from v2's format. Contract tests between tools are needed.
 
 ## Fifteen-minute walkthrough
-Failing run → NOTE.md claim → `postgres-negatives` output → code lines → fix and the remaining recommendations.
+The failure → the masked false passes → the v2 design → the vacuous checker → #7's fix → the process artifacts (#13).
 
 ## Interview questions
-1. How do you prevent "expected failure" tests from hiding real failures?
-2. What evidence would you keep from a failed pipeline, and for how long?
-3. How do you handle a teammate's inaccurate incident note?
+1. How do you stop "expected failure" tests from hiding real failures?
+2. How would you have caught the `NEGATIVES OK: 0` defect before it shipped?
+3. Walk through your P1 comms for this incident.
 
 ## PENDING / UNEXECUTED
-- The PR #3 recommendations are **not implemented** on PR #2 at `e610015`.
+- #7's checker fix is on #7 only. #3 at `fb36341` still has the vacuous-pass behaviour (R03).
+- The #13 and #9 process documents are synthetic or SIMULATION. No real ticket, escalation or vendor contact exists.
+- #22 is SIMULATION on loopback with lab-scale data. Its MTTD/MTTR say nothing about production. Escalation is recorded only, and nothing is sent. #22 has no CI.

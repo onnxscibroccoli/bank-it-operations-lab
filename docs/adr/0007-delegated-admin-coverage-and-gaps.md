@@ -1,6 +1,6 @@
 # 0007: Delegated-admin coverage; GuardDuty org enablement left as a gap
-- Status: Proposed (PR #6 open draft)
-- Date: 2026-10-28
+- Status: **Proposed.** #6 is an open draft, not integrated in #7.
+- Date: 2026-10-28 (status re-checked 2026-10-28 at 14:24 EDT; learning/execution R15)
 
 ## Decision (as implemented)
 - Security Hub: `AWS::SecurityHub::DelegatedAdmin` (management account), Hub, FSBP v1.0.0 + CIS v3.0.0, an `ALL_REGIONS` aggregator, and `CENTRAL` org configuration.

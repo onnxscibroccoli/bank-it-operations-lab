@@ -1,6 +1,6 @@
 # 0001: Credential-free, environment-agnostic synthesis; static evidence only
-- Status: Proposed (source PRs #1, #5 and #6 are open drafts)
-- Date: 2026-10-28
+- Status: **Proposed**. Source PRs #1, #5 and #6 are open drafts, none merged. #5 is integrated in #7 (open draft); #1 is superseded; #6 is not integrated.
+- Date: 2026-10-28 (status re-checked 2026-10-28 at 14:24 EDT; learning/execution R15)
 
 ## Context
 The lab must produce reviewable infrastructure evidence without AWS credentials, deployments or API calls.
@@ -16,4 +16,4 @@ The lab must produce reviewable infrastructure evidence without AWS credentials,
 - Reproducible anywhere. This guide re-synthesized byte-identical templates (learning/execution E01, E10).
 - No lookups or account literals. The `BootstrapVersion` parameter remains. Deployment is out of scope.
 - Known weakness: PR #1's `run-cmd.sh` unsets only 7 variables while its header claims all `AWS_*` (`review/pr1-pr2-evidence-audit@fb36341:reports/review-pr1-pr2.md` §2).
-- Conflict: `ci-evidence-postgres@e610015:.github/workflows/postgres-restore-evidence.yml` sets `CDK_DEFAULT_ACCOUNT=000000000000` in its cdk-synth job (PR #3 §5).
+- Conflict (historical): at `e610015`, #2's `postgres-restore-evidence.yml` set `CDK_DEFAULT_ACCOUNT=000000000000` in its cdk-synth job (PR #3 §5). This is resolved at `ci-evidence-postgres@e7399fb:.github/workflows/postgres-restore-evidence.yml`: its `cdk-synth` job has no `CDK_DEFAULT_*` (re-checked by grep).

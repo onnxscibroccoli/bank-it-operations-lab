@@ -1,6 +1,6 @@
 # 0008: Offline fail-closed Conditional Access validator
-- Status: Proposed (PR #4 open draft)
-- Date: 2026-10-28
+- Status: **Proposed.** #4 is an open draft, integrated in #7. #14 says approve with comments (CA007 gap).
+- Date: 2026-10-28 (status re-checked 2026-10-28 at 14:24 EDT; learning/execution R15)
 
 ## Decision (as implemented)
 - A stdlib-only validator, `entra-ca-offline@d302c99:identity/entra/ca_validator.py`, checks Graph-shaped policies (`identity/entra/policies/`) against `identity/entra/baseline.json`.
@@ -10,5 +10,6 @@
 - Evidence binds results to input hashes (`evidence/entra/generate_evidence.py --verify`).
 
 ## Consequences
+- **Gap:** CA007 (block admin portals from untrusted locations) has no baseline rule. Setting it to `disabled` still exits 0 (learning/execution R08; #14).
 - Proves nothing about a real tenant. The repo has no Graph client.
 - Fixture generation locates policies by displayName prefix, so renaming a policy breaks `make_fixtures.py` (learning/execution E09).

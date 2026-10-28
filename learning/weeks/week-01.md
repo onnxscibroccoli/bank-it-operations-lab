@@ -1,6 +1,6 @@
 # Week 1: CDK foundations and credential-free synthesis (AWS/IaC 1 of 3)
 
-**Branch:** `$PR1` = `bank-aws-001@e494bcf` (PR #1). **Prerequisites:** Node 20, npm, the `SETUP.md` worktrees. No AWS credentials.
+**Branch:** `$PR1` = `bank-aws-001@e494bcf` (PR #1). This is the original design, kept for teaching. #7 records it as **superseded by #5** (`overnight/integration@49122f2:reports/INTEGRATION.md`). Week 3 covers the remediated version. **Prerequisites:** Node 20, npm, the `SETUP.md` worktrees. No AWS credentials.
 
 **Delivered files used:** `infra/aws-cdk/bin/app.ts`, `lib/secure-storage-stack.ts`, `lib/lab-context.ts`, `cdk.json`,
 `package.json`/`package-lock.json`, `test/secure-storage-stack.test.ts`, `.github/workflows/bank-aws-001-cdk.yml`,

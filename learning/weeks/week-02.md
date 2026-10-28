@@ -36,6 +36,9 @@ python3 $PR3/evidence/shared/validate_evidence.py commands evidence/aws/logs/COM
    *Recovery:* delete `/tmp/tamper`. In a real bundle, regenerate the evidence through the logged wrapper. Never re-hash by hand.
 2. **Circular evidence** (reading only): PR #3 §1 explains why `jest-results.json` partly vouches for itself. Propose a fix.
 
+## Tool limits (from #14)
+`cfn-s3-selflog` detects direct self-logging only, not A→B→A loops. #5's `guards.ts#selfLoggingBuckets` does detect loops (week 3). Know which tool covers what before you call a template clean.
+
 ## Answer notes
 - SSE-S3 on the log bucket is forced by S3 server access logging (ADR-0002). PR #5 records this as exception EX-01 under the NIST pack.
 - A hash file proves integrity relative to itself, not provenance. Provenance needs a wrapper that writes the command row (PR #3 §2: `run-cmd.sh` does not).

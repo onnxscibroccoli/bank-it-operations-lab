@@ -1,6 +1,6 @@
 # 0010: Evidence bundles: SHA256SUMS, command logs with exit trailers, shared validator
-- Status: Proposed (all source PRs are open drafts)
-- Date: 2026-10-28
+- Status: **Proposed.** All source PRs are open drafts. #7 wires the shared checks into CI (`offline-validation.yml`).
+- Date: 2026-10-28 (status re-checked 2026-10-28 at 14:24 EDT; learning/execution R15)
 
 ## Decision (as implemented)
 - Each bundle has a `SHA256SUMS` that excludes itself: `bank-aws-001@e494bcf:evidence/aws/SHA256SUMS` (87 entries, including infra source),
@@ -13,4 +13,8 @@
 ## Consequences
 - Hashes prove integrity, not provenance. PR #1's `run-cmd.sh` does not write COMMANDS.tsv rows (PR #3 §2).
 - Path roots differ between bundles (bundle-relative vs repo-relative), which is a consistency gap.
-- The shared checks are not wired into any CI workflow (`evidence/shared/README.md`).
+- At `fb36341` the shared checks are not wired into CI, and `postgres-negatives` passes vacuously on v2's 12-column COMMANDS.tsv (`NEGATIVES OK: 0`; R03).
+  `overnight/integration@49122f2` (`05941a9`) reads the columns by header, fails on zero negatives, and runs everything via `scripts/validate-all.sh` and `.github/workflows/offline-validation.yml`.
+- The newer bundles follow the same pattern (`SUMMARY.json` input hashes, `--verify`): `observability@3e40e39:evidence/observability/generate_evidence.py`, `identity-governance@f48e7e3:evidence/identity-governance/generate_evidence.py`,
+  `patch-hardening@5605b78:evidence/host-operations/generate_evidence.py` and `vendor-mock@d6efb82:evidence/vendor/generate_evidence.py`. All four verified here (R09-R12). Also `m365-endpoint@1b3c240:evidence/m365/generate_evidence.py` (R19), `incident-demo@3f13622:scenarios/incident/lib/timeline.py` (`--verify`), which re-derives MTTD/MTTR and rejects an edited SUMMARY (R18),
+  and `backup-dr-aws@10da54f:evidence/backup/validate_backup_evidence.py`, which keeps status labels separate: NOT_EXECUTED and NOT_OBSERVED entries may carry no values (R17).

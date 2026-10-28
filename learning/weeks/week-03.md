@@ -33,6 +33,20 @@ for f in cdk.out/*NagReport.csv; do echo "$(basename $f) rows=$(tail -n +2 $f|gr
    "flipping PubliclyAccessible=true on the real DB is caught". It is covered by the 33/33 run.
 3. **Open an SG to 0.0.0.0/0** (in memory, `openSecurityGroupRules` test). Covered by 33/33.
 
+## Review findings to work through (from #14, re-verified here)
+- **B5-2: KMS key-admin escalation.** Run:
+```bash
+for t in $PR5/evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do python3 -c "import json,sys;t=json.load(open(sys.argv[1]))
+[print(k,s['Sid'],[a for a in s['Action'] if a in ('kms:Create*','kms:Put*')],'Condition' in s) for k,v in t['Resources'].items() if v['Type']=='AWS::KMS::Key' for s in v['Properties']['KeyPolicy']['Statement'] if s.get('Sid')=='KeyAdministrationByAccountRoot']" $t; done
+```
+  *Observed (R07):* all three CMKs (`LogsKeyA6AB43B2`, `DatabaseKey7576F140`, `DataKey17AFBB84`) each have `KeyAdministrationByAccountRoot` with `kms:Create*` and `kms:Put*`, and `Condition` is `False`.
+  `kms:Create*` covers `kms:CreateGrant` and `kms:Put*` covers `kms:PutKeyPolicy`, so an account principal allowed by IAM could grant itself use of the key.
+  `guards.ts#kmsWildcards` only matches `*` and `kms:*`, so it misses this. The PR's "least-privilege CMK" claim is **not proven** (#14 B5-2). There is no fix on any branch.
+- **B5-1: suppressions applied before approval.** All 5 are active while `SECURITY_EXCEPTIONS.md` says PROPOSED. #11 records decisions relayed from a security review
+  (`reports/final-report@54d6fbd:reports/USER_ACTIONS_REQUIRED.md`: EX-01 ACCEPTED, EX-02 ACCEPTED as a limitation, EX-03 OPEN, EX-04 CONDITIONALLY ACCEPTABLE), **not yet recorded in #5**.
+- **Scanner blind spots** (#14): the default-SG custom-resource Lambda, the SAR rotation nested stack, the Backup resources, the VPC endpoint, the flow log and the standalone SG egress rules appear in no NagReport row. "0 findings" does not cover them.
+- **Integration status:** #7 integrates #5 and drops #1's copy of `infra/aws-cdk` (`overnight/integration@49122f2:reports/INTEGRATION.md`). Its `validate-all.sh` re-ran tsc, Jest 33/33, synth, the 4-report nag gate, `cfn-s3-selflog` and synth drift: PASS (R05).
+
 ## Answer notes
 - Guards exist because cdk-nag alone does not catch self-logging. There is a test with that name in `negative-controls.test.ts`.
 - `PubliclyAccessible` omitted is treated as a violation, because the CloudFormation default depends on the subnet type (`guards.ts` comment).
@@ -48,7 +62,7 @@ Template resource counts (4 subnets, 4 SGs, 2 KMS keys, a DB instance, the Backu
 
 ## Interview questions
 1. Why does secret rotation need a VPC endpoint in this design?
-2. What is the risk of the CDK `Secret` adding account-root key-policy statements, and why is it acceptable here (`kms:ViaService`)?
+2. The `Secret` statements are scoped by `kms:ViaService`, but the key-admin statement is not (B5-2). How would you fix B5-2 without locking yourself out of the key?
 3. When is a scoped suppression better than code changes?
 4. What would you add before deploying (bootstrap, replica stack, Access Analyzer)?
 
