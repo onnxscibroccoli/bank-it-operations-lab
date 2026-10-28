@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T14:16:27-04:00",
-    "remaining": "9h43m",
+    "as_of": "2026-10-28T17:48:27-04:00",
+    "remaining": "6h11m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,13 +14,18 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T14:16:27-04:00",
+  "updated": "2026-10-28T17:48:27-04:00",
   "rules": [
-    "never merge into main from automation",
+    "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
+    "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
+    "Technical blockers are not relaxed by this policy: failing or missing checks, unapproved security exceptions, the PR #6 self-logging defect, docs mismatches, and the open review findings (PR #14 B5-1/B5-2, PR #27 C1-C5) all still block.",
+    "This integration agent does not merge anything into main itself, and makes no production changes.",
     "no deploys",
     "no AWS/Entra/Graph calls",
     "no credentials",
-    "PRs are not closed by integration"
+    "PRs are not closed by integration",
+    "no force pushes",
+    "Review identity strings alone are not authenticated approval. Bind reviewer evidence to the exact SHA through GitHub review or commit provenance (PR #27 C4)."
   ],
   "merge_order": [
     3,
@@ -138,21 +143,21 @@
     "conditions": [
       {
         "id": "AC1",
-        "condition": "Independent human review approves the exact PR #7 head SHA (not an earlier one), and the reviewer is someone other than the author or this automation",
+        "condition": "An independent review (human or an independent reviewer such as the external ChatGPT review) approves the EXACT candidate SHA, with reviewer evidence bound to that SHA through GitHub review or commit provenance. Self-review by the author or this integration agent does not count. (Reworded per PR #27 C6; previously 'independent human review'.)",
         "status": "UNMET",
-        "detail": "No GitHub review exists on #1-#7. PR #3's report reviewed #1 @ e494bcf and #2 @ e6100154 only; both are superseded or changed since."
+        "detail": "No approval exists for any PR #7 head. Partial evidence: PR #14 @ eb8d259 (review notes; independence asserted, same GitHub account) verifies PR #2's harness v2 at 2aac93c/e7399fb, and counts toward AC1 ONLY for PR #2's harness, not for PR #7's head. The same notes REQUEST CHANGES on integrated PR #5. PR #27 reviewed PR #26 @ 181bcdd (CHANGES REQUIRED), not PR #7."
       },
       {
         "id": "AC2",
         "condition": "Security exceptions are recorded and approved by an owner",
         "status": "PARTIAL",
-        "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md and enforced by tests (no other suppressions allowed). No approval is recorded yet."
+        "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md and enforced by tests, but none is approved. PR #14 B5-1: the suppressions are already applied while the register says PROPOSED."
       },
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "MET",
-        "detail": "Every GitHub Actions job on afb41278 passed (8/8, 0 failed, 0 skipped), and scripts/validate-all.sh passed 32/32 locally. Commits after afb41278 that change only coordination docs need their own CI run before AC3 can be claimed for that head.",
+        "status": "MET_FOR_PRIOR_HEAD_PENDING_CI",
+        "detail": "Met for afb41278 (runs 40743023477, 40743023651, 40743023533, 40743011205) and 49122f24 (runs 40743606730, 40743606483, 40743606409, 40743592407): all jobs success. This commit changes the shared validator (it is stricter now), so CI must be re-read for the new head.",
         "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
         "runs": {
           "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
@@ -190,10 +195,17 @@
       {
         "id": "AC5",
         "condition": "No unresolved blocking findings in integrated code",
-        "status": "MET",
-        "detail": "cfn-s3-selflog is clean on all integrated templates. The PR #3 false-PASS finding is fixed by harness v2. PR #6, which still has a self-logging finding, is not integrated."
+        "status": "UNMET",
+        "detail": "Open blocking review findings on integrated code: PR #14 B5-1 (suppressions before approval) and B5-2 (KMS key-admin statement allows grant/key-policy escalation) on PR #5. Fixed here: the shared postgres-negatives reported OK on all-NOT_RUN runs (found in PR #26's ACCEPTANCE.md). PR #6 (B6-1/B6-2) stays excluded."
+      },
+      {
+        "id": "AC6",
+        "condition": "Final human portfolio acceptance by Ian. This gate is separate from technical merge eligibility (PR #27 C6) and is not satisfied by any automated or model review.",
+        "status": "UNMET",
+        "detail": "Not requested yet. It applies after AC1-AC5 are met."
       }
-    ]
+    ],
+    "merge_policy": "Automated merge into main is allowed only when AC1-AC5 are all MET for the exact same SHA. AC6 (human portfolio acceptance) remains a separate final gate. This agent does not perform the merge."
   },
   "history": [
     {
@@ -211,6 +223,101 @@
     {
       "sha": "(this commit)",
       "note": "deadline, remaining window and branch-name note added; AC3 marked MET for afb41278"
+    },
+    {
+      "sha": "(this commit)",
+      "note": "PR #14/#26/#27 verified and recorded (not integrated); review-request packets added; shared postgres-negatives now rejects non-PASS negatives; policy wording updated per PR #27 C6 (no technical blocker relaxed); AC1 reworded, AC5 now UNMET, AC6 added"
+    }
+  ],
+  "policy_source": {
+    "pr": 27,
+    "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27",
+    "sha": "703f6a71840559e98f49b4c897ca5216d4018133",
+    "finding": "C6: coordination documents retain obsolete approval constraints",
+    "file": "reports/independent/chatgpt/acceptance-181bcdd-review.md",
+    "replaces": [
+      "never merge into main from automation",
+      "AC1 wording that required an independent HUMAN review"
+    ]
+  },
+  "related_prs": [
+    {
+      "pr": 14,
+      "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/14",
+      "branch": "review/pr3-pr6",
+      "head": "eb8d259588f2d1ba8a8787cf2c37044617cbcbdb",
+      "title": "review: independent review notes for PR #3-#6",
+      "status": "recorded_not_integrated",
+      "verified_facts": [
+        "head SHA matches the claim",
+        "changes 1 file: reports/review-pr3-pr6.md (522 lines; review notes, no code)",
+        "no GitHub reviews, comments or CI checks on PR #14",
+        "every PR in this repo, #14 included, is authored by the same GitHub account (onnxscibroccoli); the reviewer's independence is asserted in the file and cannot be shown from GitHub metadata",
+        "checkpoint 2 (eb8d259) verifies PR #2's harness v2 at 2aac93c/e7399fb and concludes 'priority B: remediated'. In the replay of run 40630856041, N01/N05/N06 \u2192 ERROR/version_mismatch and N04 \u2192 ERROR/environment_error; N02/N03 PASS",
+        "subject CI: 40741329107 (push @ 2aac93c, success); 40741536430 (push @ e7399fb, success); 40741546543 (pull_request @ e7399fb, success)",
+        "verdicts at exact SHAs: #3 fb36341 Approve; #4 d302c99 Approve with comments; #5 099479e REQUEST CHANGES (B5-1 suppressions applied before approval, B5-2 KMS key-admin escalation, B5-3 #1 conflict); #6 e5e7f46 REQUEST CHANGES (B6-1 self-logging, B6-2 exempt-role SCP bypass, B6-3 CDK vs Terraform)",
+        "the reviewer did not run the PostgreSQL scenario locally; this agent did (PG 16.15, 38/38, VERIFIED)"
+      ],
+      "discrepancies": [
+        "The claim says 'harness v2 independent verification on PR #14'. PR #14 is a review-notes PR. The verification is file content at eb8d259 about PR #2's code at 2aac93c/e7399fb, not a GitHub review, and PR #14 has no CI."
+      ],
+      "follow_ups_for_pr2": [
+        "regex ordering: env/version-error patterns evaluated after the declared reason",
+        "verify_evidence.py trusts the run's own EXPECTATIONS.tsv",
+        "cdk-synth green when there is no CDK app",
+        "optional control bypassing S04"
+      ],
+      "why_not_integrated": "Review notes only, with no review of PR #14 itself. Recorded per instruction ('if unsure, just record')."
+    },
+    {
+      "pr": 26,
+      "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "branch": "acceptance/vertical-slice",
+      "head": "181bcdd1420d699c37aa928b636b9332aca83e57",
+      "title": "acceptance/vertical-slice: first executable acceptance command + A/B/C integration (DRAFT, Worker D)",
+      "status": "changes_required_not_integrated",
+      "verified_facts": [
+        "head SHA matches the claim",
+        "based on overnight/integration @ 49122f2 (ancestor); adds 99 files (+13,240 lines, no deletions) on top of it; 710 files vs main",
+        "run 40749373581: workflow acceptance, push, head_sha 181bcdd\u2026, conclusion success, 3 jobs, all success (gate self-test, acceptance @ target SHA, defect control)",
+        "the '43 required checks' are internal checks of the acceptance job, not GitHub checks: artifact results.json overall=PASS required=43 pass=43 (45 rows: 43 required PASS + 2 non-required PASS)",
+        "planted defect detected: the defect artifact has injected_defect=entra-mfa-report-only, overall=FAIL, pass 35/43; required FAILs are ENTRA-01, ENTRA-02, ENTRA-03, ENTRA-04.1, ACC-B-02, ACC-C-01, ACC-C-02, ACC-C-03; the defect-control job asserted this and succeeded. In-run DEFECT-AWS/ENTRA/HASH controls PASS",
+        "other runs on 181bcdd: acceptance PR 40749387217 (3/3), aws-cdk 40749387209 (1/1), offline-validation 40749387223 (1/1), postgres-restore-evidence 40749387416 (5/5): all success",
+        "no GitHub reviews or comments on PR #26",
+        "external ChatGPT review in PR #27 @ 703f6a7 on exact SHA 181bcdd: CHANGES REQUIRED. C1 High: required-check inventory not verified. C2 High: required INFO yields PASS. C3 Medium: JSON/TSV verdicts can disagree. C4 High: contract approval is not the final gate. C5 Medium: action tags not SHAs, 30-day retention, tests PR head not the merged candidate"
+      ],
+      "discrepancies": [
+        "The claim says '43 required checks'. The run has 3 GitHub jobs; 43 is the internal required-check count.",
+        "PR #26 integrated acceptance-adapters @ c6aa238, but PR #25's head is now ce39504 (4 files, +287 lines not included).",
+        "The run passing does not mean acceptance: PR #27 found verifier gaps C1-C3 that would let an incomplete or inconsistent bundle pass."
+      ],
+      "why_not_integrated": "Not reviewed favourably: PR #27 says CHANGES REQUIRED, and it is stale against PR #25."
+    },
+    {
+      "pr": 27,
+      "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27",
+      "branch": "review/chatgpt-acceptance-181bcdd",
+      "head": "703f6a71840559e98f49b4c897ca5216d4018133",
+      "title": "review: independent acceptance gate findings at 181bcdd",
+      "status": "recorded_not_integrated",
+      "note": "External review of PR #26 @ 181bcdd: CHANGES REQUIRED (C1-C5). C6 is the source of the policy wording update. It has no GitHub review or CI of its own."
+    }
+  ],
+  "review_requests": [
+    {
+      "file": "coordination/review-requests/PR-14-postgres-harness-v2.md",
+      "pr": 14,
+      "sha": "eb8d259588f2d1ba8a8787cf2c37044617cbcbdb",
+      "state": "prepared_not_sent",
+      "verdict": null
+    },
+    {
+      "file": "coordination/review-requests/PR-26-acceptance-vertical-slice.md",
+      "pr": 26,
+      "sha": "181bcdd1420d699c37aa928b636b9332aca83e57",
+      "state": "prepared_not_sent",
+      "verdict": null,
+      "prior_external_review": "PR #27 (CHANGES REQUIRED, C1-C5); the request asks for re-review against those findings"
     }
   ]
 }

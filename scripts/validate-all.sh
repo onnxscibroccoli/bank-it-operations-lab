@@ -40,6 +40,7 @@ for r in ci-service-40741329107-1 ci-offline-40741329107-1 local-offline-v2-2026
   step "shared postgres-negatives $r" python3 "$V" postgres-negatives "evidence/postgres/runs/$r"
 done
 step "shared postgres-negatives flags v1 false PASSes" bash -c '! python3 '"$V"' postgres-negatives evidence/postgres/runs/ci-service-40630856041-1 >/dev/null'
+step "shared postgres-negatives rejects all-NOT_RUN mismatch control" bash -c '! python3 '"$V"' postgres-negatives evidence/postgres/runs/ci-mismatch-control-40741329107-1 >/dev/null'
 
 if [ "$PY_ONLY" -eq 0 ]; then
   # --- PR #5 infra/aws-cdk

@@ -103,6 +103,16 @@ class Negatives(unittest.TestCase):
         self.assertEqual(rc, 0, out)
         self.assertIn("1 negative", out)
 
+    def test_not_run_negatives_are_an_error(self):
+        d = Path(tempfile.mkdtemp())
+        hdr = "seq\tstep_id\tkind\texpected\texit_code\tresult\tclass\tstarted_utc\tduration_ms\tlog\treason_regex\tcommand\n"
+        row = "1\tN04_fk_enforced_after_restore\tnegative\tnonzero\t-\tNOT_RUN\tdependency_failed\tt\t0\tlogs/none.log\t23503\tx\n"
+        (d / "COMMANDS.tsv").write_text(hdr + row)
+        rc, out = run("postgres-negatives", str(d))
+        self.assertEqual(rc, 1, out)
+        self.assertIn("NOT_RUN", out)
+        self.assertNotIn("NEGATIVES OK", out)
+
     def test_zero_negatives_is_an_error(self):
         d = Path(tempfile.mkdtemp())
         (d / "COMMANDS.tsv").write_text("seq\tstep_id\tkind\tresult\tlog\n1\tS00\tsetup\tPASS\tlogs/x.log\n")

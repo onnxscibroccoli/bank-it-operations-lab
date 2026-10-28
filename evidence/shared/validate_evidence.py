@@ -163,13 +163,17 @@ def cmd_pg_neg(a: argparse.Namespace) -> int:
         if len(c) != len(hdr) or c[i_kind] != "negative":
             continue
         step, result, log = c[i_step], c[i_res], c[i_log]
+        if result != "PASS":
+            # A negative that did not PASS (FAIL / ERROR / NOT_RUN) is not evidence that the fault was detected.
+            r.err(f"{step}: negative step result is {result}, not PASS; fault detection not demonstrated")
+            continue
         if step not in exp:
             r.warn(f"{step}: no expectation defined")
             continue
         text = (run / log).read_text(errors="replace")
         body = "\n".join(l for l in text.splitlines() if not l.startswith("# "))
         checked += 1
-        if result == "PASS" and not re.search(exp[step], body, re.M):
+        if not re.search(exp[step], body, re.M):
             first = next((l for l in body.splitlines() if "error" in l.lower()), body.strip()[:120])
             r.err(f"FALSE-PASS {step}: non-zero exit but not for the intended reason; log says: {first.strip()}")
     if checked == 0:
