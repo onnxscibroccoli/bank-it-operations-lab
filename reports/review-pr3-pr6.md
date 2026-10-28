@@ -333,28 +333,190 @@ is labelled `mode: offline-synthetic` and `tenantStateClaimed: false`. No tenant
 
 ---
 
-## Checkpoint 1 (2026-10-28 14:15 EDT): files inspected, unconfirmed items, remaining steps
+## Checkpoint 2 (2026-10-28 14:30 EDT): files inspected, PostgreSQL false-PASS remediation, unconfirmed items, remaining steps
+
+Checkpoint 1 was committed as `981db0a`. This checkpoint replaces it: it updates the file list and the remaining steps, and replaces the priority-B subsection with the harness-v2 verification.
 
 ### Files inspected (PR source, excluding generated evidence/ and cdk.out)
 - #3: `reports/review-pr1-pr2.md`, `evidence/shared/**` (validator plus tests). The validator was run against #1 `e494bcf` and #2 `e610015`.
 - #4: `identity/entra/{ca_validator.py,baseline.json,README.md}`, `identity/entra/policies/CA001–CA007*.json`, `tests/entra/**` (fixtures INDEX, malformed-*, neg-*, tests).
 - #5: `infra/aws-cdk/{bin/app.ts,cdk.json,package.json}`, `lib/{guards,lab-context,least-privilege-key,network-database-stack,secure-storage-stack}.ts`, `test/{helpers,negative-controls.test,network-database-stack.test,secure-storage-stack.test}.ts`, `docs/adr/ADR-0001..0004`, plus synthesized templates and nag reports.
 - #6: `infra/orgs/lib/{org-cloudtrail-stack,org-governance-stack,ou-layout,policy-lint,scp-evaluator,scps,security-services-stack,lab-context}.ts`, `scripts/{export-policies,lint-policies}.ts`, `scripts/{nag-gate,parliament}.sh`, `parliament-allowlist.json`, `test/*.test.ts`, `docs/adr/ADR-0001..0003`.
+- #2 / #7 harness v2, reviewed at `2aac93c` and `e7399fb`:
+  - `tests/integration/postgres/{lib.sh,run_restore_scenario.sh,expectations.tsv,expectations.selftest.tsv,selftest_harness.sh,verify_evidence.py,verify_evidence.sh}`
+  - `.github/workflows/postgres-restore-evidence.yml`
+  - `evidence/postgres/runs/INDEX.md`
+  - `evidence/postgres/runs/{ci-service,ci-offline,ci-mismatch-control,ci-selftest}-40741329107-1/**` and their `*.ci-console/`
+  - `local-offline-v2-20261028T180208Z/**` and `local-selftest-v2-20261028T180208Z/**`
+  - `ci-service-40630856041-1/{NOTE.md,STATUS.json,COMMANDS.tsv,logs/23..28_N0*.log}`
+  - `local-offline-20261028T041038Z/{NOTE.md,STATUS.json,ENVIRONMENT.txt}`
+  - `evidence/postgres/README.md`, `tests/integration/README.md`
+  - the GitHub Actions artifacts of run 40741329107, downloaded and compared
 
-### PostgreSQL false-PASS remediation (priority B)
-- VERIFIED: PR #2 run `ci-service-40630856041-1` has 4 false-pass negatives (N01, N04, N05, N06), caused by `transaction_timeout` and the missing relation `lab.ledger_entries`. `NOTE.md:4` is inaccurate.
-- VERIFIED: the local-offline run of #2 fails all 6 negatives for the intended reason.
-- UNCONFIRMED: none of PRs #3–#6 remediates the CI false-passes. No fix commit on #2 was reviewed. Status: **open**.
+### PostgreSQL false-PASS remediation (priority B): harness v2 at `2aac93c` / `e7399fb`
+
+Both commits are on `ci-evidence-postgres` (PR #2's head is `e7399fb`) and are ancestors of PR #7. `git diff e7399fb origin/pr/7` is empty for `tests/integration/`,
+the postgres workflow and `evidence/postgres/` (all VERIFIED). `e7399fb` adds only `evidence/postgres/runs/**` on top of `2aac93c` (VERIFIED).
+
+**(a) Is the failure reason now asserted? Yes. VERIFIED by code reading, by running the self-test, and with my own probe.**
+- `expectations.tsv` declares 36 cases (38 in offline mode), each with a kind, an expected exit and a `reason_regex`. All six negatives have a specific reason:
+
+  | Negative | Declared reason (regex) |
+  |---|---|
+  | N01 | `could not read from input file\|unexpected end of file` |
+  | N02 | `does not appear to be a valid archive\|input file is too short` |
+  | N03 | `database "lab_db_does_not_exist" does not exist` |
+  | N04 | `23503: ... violates foreign key constraint "ledger_entries_account_id_fkey"`, using `VERBOSITY=verbose` |
+  | N05 | `ERROR: +(schema\|relation\|type\|function) "..." already exists` |
+  | N06 | a `-lab.ledger_entries\|1000\|<md5>` diff line |
+
+- `lib.sh` `run_case` decides a negative's result in this order:
+  - exit 0 → `FAIL/unexpected_success`
+  - no regex declared → `ERROR/no_reason_declared`
+  - regex matched in the command's **own output** (never the command line) → `PASS`
+  - output matches `transaction_timeout`-style version errors → `ERROR/version_mismatch`
+  - output matches `relation "…" does not exist` or other environment errors → `ERROR/environment_error`
+  - anything else → `FAIL/wrong_reason`
+- Structure that prevents the old failure mode:
+  - Every negative is one command, with separately checked `S_N0x` setup steps behind `--needs` dependencies. A setup failure gives `NOT_RUN`, never PASS.
+  - The version gate `S04_client_server_major_match` comes before everything else.
+  - `pg_restore --exit-on-error` and `psql ON_ERROR_STOP=1` are used, so a single error ends the command.
+  - Overall PASS requires exactly one PASS row per declared case. `NOT_RUN`, duplicate and undeclared rows all fail.
+- So `transaction_timeout` or a missing relation can no longer produce a PASS. **VERIFIED:** self-test Part B replays the real logs of the bad run 40630856041 through the production expectations. Results:
+  - N01, N05, N06 → `ERROR/version_mismatch`
+  - N04 → `ERROR/environment_error`
+  - N02, N03 → genuine PASS
+  - overall exit 1
+- `verify_evidence.py` independently re-derives each verdict from the logs. It checks:
+  - the exit code agrees with `expect`
+  - the regex is found in the output section
+  - exactly one row per case, and no undeclared rows
+  - `SUMMARY.json` says PASS with the right case count
+  - SHA256SUMS matches and covers every file
+  - it refuses `HISTORICAL` runs (exit 3)
+
+  Self-test Part C confirms it rejects a forged PASS (VERIFIED).
+- **Residual gap (VERIFIED with a probe, non-blocking):** the declared regex is checked *before* the environment/version-error regex. A negative whose output contains **both**
+  `unrecognized configuration parameter "transaction_timeout"` and `could not read from input file` is classified PASS. My probe, using `lib.sh` with a synthetic two-line output, returned `PASS/expected_fault_detected`.
+  - Self-test ST04 does not cover this. Its masquerade case deliberately mistypes the reason text ("disk ful").
+  - In practice the S04 gate and `--exit-on-error` mitigate it.
+  - Hardening: for negatives, check the env-error regexes first, or require them to be absent. Add a self-test case where both strings appear. Apply the same rule in `verify_evidence.py`.
+- **Second gap (non-blocking):** `verify_evidence.py` trusts the run directory's own `EXPECTATIONS.tsv`. It does not compare it with `tests/integration/postgres/expectations.tsv` or with `sha256_expectations.tsv` in `ENVIRONMENT.txt`, so a run with weakened regexes would still verify.
+  I did that comparison by hand: all four v2 scenario runs carry an `EXPECTATIONS.tsv` identical to the repo file filtered by mode (VERIFIED).
+
+**(b) Local runs.**
+- `selftest_harness.sh`: exit 0, **26/26 assertions** (VERIFIED, run locally at `e7399fb`). Covered: Part A (12 synthetic cases plus an undeclared one), Part B (replay), Part C (forged PASS).
+- `verify_evidence.py` on every committed run directory (VERIFIED):
+
+  | Run | Result |
+  |---|---|
+  | `ci-service-40741329107-1` | VERIFIED, 36 cases |
+  | `ci-offline-40741329107-1` | VERIFIED, 38 cases |
+  | `local-offline-v2-20261028T180208Z` | VERIFIED, 38 cases |
+  | `ci-mismatch-control-40741329107-1` | REJECTED, 35 problems (correct; see d) |
+  | `ci-service-40630856041-1` | HISTORICAL, exit 3 |
+  | `local-offline-20261028T041038Z` | HISTORICAL, exit 3 |
+
+  The `*selftest*` and `*.ci-console` directories are REJECTED because they are not scenario runs, which is expected.
+- The committed runs exclude `artifacts/`, so artifacts are "NOT CHECKED" locally. With the downloaded CI artifacts,
+  `verify_evidence.py --require-artifacts` gives **VERIFIED** for the service and offline runs, with `ARTIFACTS.sha256` OK (VERIFIED).
+- **Scenario: UNVERIFIED locally.** No PostgreSQL binaries are on the review box: no `psql`, `pg_dump` or `initdb`, and no `/usr/lib/postgresql`. I relied on the CI run plus the artifact comparison in (c).
+
+**(c) Hashes and provenance (VERIFIED).**
+- `sha256sum -c SHA256SUMS` passes for every committed run directory:
+
+  | Run | Entries |
+  |---|---|
+  | ci-service-40741329107-1 | 46 |
+  | ci-offline-40741329107-1 | 48 |
+  | ci-mismatch-control-40741329107-1 | 41 |
+  | ci-selftest-40741329107-1 | 48 |
+  | local-offline-v2 | 48 |
+  | local-selftest-v2 | 48 |
+  | ci-service-40630856041-1 | 36 |
+  | local-offline-20261028T041038Z | 39 |
+
+  Coverage is complete for the v2 runs. In the two historical runs, only the newly added `NOTE.md` and `STATUS.json` are uncovered, which is disclosed. The `*.ci-console/` directories have no SHA256SUMS.
+- `ENVIRONMENT.txt` of the three v2 CI scenario runs records:
+  - `git_sha = github_sha = 2aac93c22d9e…`
+  - `github_run_id=40741329107`, attempt 1
+  - `git_tree_dirty=no`
+  - pg_dump 18.6
+
+  The recorded `sha256_` values of `lib.sh`, `run_restore_scenario.sh`, `expectations.tsv`, `seed.sql` and `fingerprint.sql` all **equal the files at `2aac93c`**.
+  `local-offline-v2` records the same `git_sha` and hashes, with pg_dump 16.15 and empty `github_*` fields (sandbox run). The self-test directory has no ENVIRONMENT.txt.
+- `gh run view 40741329107`:
+  - workflow `postgres-restore-evidence`, branch `ci-evidence-postgres`
+  - head **`2aac93c`**, event push, conclusion success, 2026-10-28 14:02 EDT
+  - all 5 jobs succeeded, so the run's commit matches
+- I downloaded the run's 4 artifacts. Each committed `ci-*-40741329107-1/` is **byte-identical** to its artifact (`diff -rq`, excluding `artifacts/`), and every `*.ci-console` log is identical to the artifact's console log.
+
+**(d) The mismatch-control run.**
+- `version-mismatch-control` is a CI job that deliberately runs the scenario with runner pg_dump 18.6 against a `postgres:16` service. That is the exact condition behind run 40630856041. The job then asserts:
+  - the scenario exit code is non-zero
+  - `S04` is `ERROR/version_mismatch`
+  - **0 negative PASS rows**
+  - `SUMMARY.json` overall is FAIL
+  - `verify_evidence.py` **rejects** the run
+- Committed result (VERIFIED):
+  - S04 log: `client_major=18 server_major=16 MISMATCH`
+  - 2 PASS (S00, S03), 1 ERROR, 33 NOT_RUN
+  - all six negatives `NOT_RUN/dependency_failed`
+  - verifier REJECTED
+- **It is meaningful, with one limit.** It proves the gate fails closed under the real fault, and that CI goes red if the harness ever reports PASS there.
+  Because the gate stops every downstream step, it does *not* exercise the negative classifier on real mismatched output. That part is covered by self-test Part B, which uses the real 40630856041 logs.
+  It could be strengthened with a second control that bypasses S04 and asserts N01/N05/N06 come out as `ERROR/version_mismatch`. Note this would currently expose the ordering gap in (a) only if both strings appeared.
+
+**(e) Workflow false-pass paths (VERIFIED by reading `postgres-restore-evidence.yml` at `2aac93c`).**
+- No `continue-on-error`. The only `|| true` is in the `pg_ctl stop` cleanup trap.
+- Each `set +e` captures `${PIPESTATUS[0]}` through `tee` into a step output. A final `if: always()` gate runs `test rc = 0` for the scenario **and** the verifier (`--require-artifacts` in CI).
+  An empty rc (step never ran) fails the `test`.
+- The control job's assertions use the default `bash -e`, and a missing `SUMMARY.json` fails the step.
+- Permissions are `contents: read` and `persist-credentials: false`. The CDK job now uses `npm ci --ignore-scripts` and `npx --no-install`, with no `CDK_DEFAULT_*`, which addresses #3's earlier findings.
+- **One remaining misleading-green path:** when no `cdk.json` exists (true on `ci-evidence-postgres` alone), the `cdk-synth` job prints "skipped (not counted as a pass)" but still finishes **success**, a green check that tested nothing.
+  Make it `skipped`, using a job-level `if` or by exiting neutral, or label it in the PR body.
+
+**(f) NOTE.md and STATUS.json corrections for the old runs.**
+- `ci-service-40630856041-1`: the correction is **accurate** (VERIFIED).
+  - It appends below the original text rather than rewriting it.
+  - It correctly says the "Negative tests behaved as expected" sentence is wrong.
+  - Its table matches the logs (N01/N05/N06 `transaction_timeout`, N04 `relation "lab.ledger_entries" does not exist`, N02/N03 genuine).
+  - Its "v2 verdict on replay" column matches my local self-test exactly.
+  - STATUS.json's statement that P04–P06 and P09–P11 failed genuinely matches the old COMMANDS.tsv.
+  - `git diff e610015 e7399fb` for that directory adds only NOTE.md (+20) and STATUS.json, so "SUMMARY/COMMANDS/logs/SHA256SUMS byte-identical" holds, and SHA256SUMS still passes.
+  - The run time (04:10:48Z = 00:10 EDT) matches `gh run view`.
+- `local-offline-20261028T041038Z`: the correction is **accurate** (VERIFIED).
+  - It marks the run HISTORICAL without claiming it was wrong.
+  - It is consistent with #3's finding that all 6 negatives failed for the intended reason.
+  - It correctly notes `ENVIRONMENT.txt git_sha=7f50348` (base `main`).
+  - Minor: the "conda-forge PG 16" source of the binaries is a CLAIM. I did not verify it.
+
+**(g) Which PR is the fix meant to land in?**
+- The fix is authored on **PR #2** (`ci-evidence-postgres`, "ci: Postgres backup/restore exercise with offline tests and evidence"). Its head is `e7399fb`, it is a draft, and CI run 40741329107 ran on that branch. So #2 is the owning PR (VERIFIED).
+- **PR #7** (`overnight/integration`, draft) is an integration PR into `main`. It stacks #3, #5, #4 and #2@`e7399fb`, supersedes #1, and leaves #6 out pending changes.
+  - It carries the harness byte-for-byte; the diff against `e7399fb` is empty for the harness, workflow and evidence (VERIFIED).
+  - Its head moved during this review, from `0f57289` to `afb4127`. Its latest postgres CI run 40743023651 is green.
+  - I did not review the rest of #7's diff (UNVERIFIED).
+- Recommendation: land the fix through #2 (or through #7 only as the agreed integration vehicle), and do not cherry-pick it separately.
+- **Status of priority B: remediated.** Two non-blocking hardening items remain: the regex/env-error ordering, and the verifier's self-attested `EXPECTATIONS.tsv`. Plus the cosmetic cdk-synth green-on-skip.
 
 ### Unconfirmed items
 - Whether the encryption SCPs in #6 deny requests that omit the encryption key entirely (behaviour when the Bool key is absent).
 - The second parliament allowlist entry in #6, checked against the AWS service reference.
 - Live behaviour in AWS, Entra and Access Analyzer. Nothing was run live.
 - The Terraform requirement for #6, which comes from the owner's plan and is not in the repo.
+- The PostgreSQL scenario was not run locally (no PostgreSQL on the box). It relies on CI run 40741329107 and the artifact comparison.
+- The rest of PR #7's integration diff beyond the postgres harness.
 
 ### Remaining review steps
-1. Review the PostgreSQL false-PASS fix on #2 (or a new PR) once it exists, re-run N01–N06 in CI and confirm each fails for the intended reason.
+1. ~~Review the PostgreSQL false-PASS fix~~ Done (above). Follow-ups for #2:
+   - check env/version-error regexes before the declared reason for negatives, and add a self-test case where both strings appear
+   - make `verify_evidence.py` compare the run's EXPECTATIONS.tsv with the repo copy or with the `sha256_expectations.tsv` value
+   - make `cdk-synth` report skipped rather than success when there is no CDK app
+   - optionally, add a control that bypasses S04
 2. Confirm the absent-key behaviour of the encryption SCPs in #6 against AWS docs or the policy simulator.
-3. Re-review #5 after the owner signs off on EX-01..EX-04 and the KMS key-admin statement is fixed. Decide the #1/#5 merge order.
+3. Re-review #5 after the owner signs off on EX-01..EX-04 and the KMS key-admin statement is fixed. Decide the #1/#5 merge order. #7 resolves it by superseding #1.
 4. Re-review #6 after B6-1 and B6-2 are fixed and the CDK-for-Terraform deviation is documented in the PR.
 5. Extend #3's self-log checker to catch A→B→A loops. Add a CA007 baseline rule in #4.
+6. Review PR #7 at its exact head SHA, including INTEGRATION.md, the AC1–AC5 claims and `scripts/validate-all.sh`, before any merge to `main`.
+7. Optionally, run the PostgreSQL scenario on a box with PG 16/18 binaries to reproduce the CI result locally.
