@@ -87,3 +87,32 @@ The commit that adds this file changes HEAD. Its own acceptance run result is re
 | Shared `postgres-negatives` OK message overstates on an all-NOT_RUN run (see §2). The v2 verifier is authoritative. | FAIL (finding, non-blocking: not a required gate) |
 | The PR to `main` carries all of `overnight/integration` (PRs #2–#5 plus coordination files). Merging needs a human decision; this packet does not approve it. | UNKNOWN |
 | `REPORT-*` checks confirm reports exist; they do not certify their content | UNKNOWN |
+
+---
+
+## Addendum, 2026-10-28 ~18:05 EDT: independent review (PR #27) and repairs. Earlier sections are kept unchanged as the historical record.
+
+PR #27 (`reports/independent/chatgpt/acceptance-181bcdd-review.md`) reviewed `181bcdd` and found **CHANGES REQUIRED**. The C1–C3 probes
+reproduced false acceptances against the verifier as it stood at that commit. As a result:
+
+- **Superseded:** the R5 ("Reports/hashes validated") and R7 ("Nonzero on FAIL / required UNKNOWN") PASS verdicts in §4 above.
+  At `181bcdd` they held for `run.sh`'s own output, but not for an adversarial or hand-made output directory.
+- **Superseded:** any reading of "overall PASS" as acceptance. CI runs 40748705521 / 40749373581 are **execution** results only.
+
+Repairs (details and tests: `reports/ACCEPTANCE_INVARIANT_ASSURANCE.md` §4):
+
+| Finding | Status at `17cfaea` | Evidence |
+|---|---|---|
+| C1 required-check inventory | FIXED | `required-checks.v1.json`, `inventory_errors()`; 7 regression tests |
+| C2 required INFO | FIXED | single `gate()`; exhaustive selftest, 0 violations |
+| C3 JSON/TSV record consistency, expected SHA | FIXED | full-record checks; 7 regression tests |
+| C4 contract as the final gate; EXECUTION_PASS ≠ ACCEPTED | FIXED | `decide.py`; CI decision `REVIEW_PENDING` |
+| C5 pin action SHAs, 7-day retention, test against merged main | OPEN (follow-up) | none |
+| C6 obsolete merge restrictions in `coordination/tasks.json` | OPEN (coordinator follow-up) | none |
+
+Current decision for `17cfaea`: CI run [40775509497](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40775509497) gave
+`OVERALL=PASS required=44`, which is **EXECUTION_PASS**, and `decision: REVIEW_PENDING (contract=BLOCKED, reviews=0)`. The candidate is **not ACCEPTED**.
+The gap in §5 above ("not yet emitted as an A-contract document") is now closed. The missing independent `concur` remains an open gap.
+
+Invariant classification (assurance note): I1 **ENFORCED** (under stated preconditions); I2 **PARTIALLY ENFORCED**. The run and decision are bound to each SHA,
+but no persisted acceptance record exists and `main` has no branch protection.
