@@ -2,7 +2,7 @@
 
 - Repo: https://github.com/onnxscibroccoli/bank-it-operations-lab
 - Snapshot: 2026-10-28, about 14:10 EDT (UTC-4). `main` @ [`7f50348`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/7f50348bf1370381615eaed91c02607fe41de2f5) holds only `README.md`.
-- **Nothing is merged into `main`. Nothing is deployed. No AWS, Entra or Graph credentials were used.** Every PR (#1–#9) is an open draft. None has a GitHub review or a comment.
+- **Nothing is merged into `main`. Nothing is deployed. No AWS, Entra or Graph credentials were used.** Every PR (#1–#11) is an open draft. None has a GitHub review or a comment.
 - **Rule for this report:** a claim counts as verified only if it links to an Actions run, PR or commit, or if the reporting agent re-ran it on the box for this report (marked **[re-run]**). Anything else is marked **UNVERIFIED**. A claim that comes only from a PR body is marked **[PR body]**.
 - The evidence index, with SHA-256 hashes and run URLs, is in [`EVIDENCE_MANIFEST.md`](EVIDENCE_MANIFEST.md). Blockers are in [`USER_ACTIONS_REQUIRED.md`](USER_ACTIONS_REQUIRED.md).
 
@@ -31,6 +31,7 @@ None of the workstreams meets criterion 6. The repo README lists no tasks and th
 | 8 | Portfolio case studies | [#8](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/8) `portfolio-cases` @ [`6c25c05`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/6c25c05f3c1608bc2fd6427afb3bdbd4cada3571) | Docs only, no CI | The links and SHAs cited in the case studies were **not** re-checked | **UNVERIFIED** (draft docs, 6 files) |
 | 9 | Vendor mock (SIMULATION) and vendor-risk/RACI governance | [#9](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/9) `vendor-mock` @ [`c1ec227`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/c1ec227aa11bd547b5edb08a863f311e959eee5d) | **No CI** | **[re-run]** unittest 45/45 OK; `generate_evidence.py --verify` PASS; SHA256SUMS 12/12 | **GREEN locally, not in CI.** Labeled as a simulation; no real-vendor compatibility is claimed |
 | 10 | Backup/DR (AWS) | **No PR or remote branch.** There is a local box worktree `/workspace/bkp-dr-aws-worker` on branch `backup-dr-aws` with 0 commits and an untracked `backup/` directory | None | Not verifiable | **MISSING.** The work is uncommitted or unpushed. No results can be claimed |
+| 10 | Observability: host health collector, synthetic probes, fail-closed decision | [#10](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/10) `observability` (opened 14:08 EDT, while this report was being written) | Not checked | Not re-run | **UNVERIFIED.** Opened after the snapshot |
 | 11 | Final report (this PR) | `reports/final-report` | None | — | Draft |
 
 ## Verified results in detail
