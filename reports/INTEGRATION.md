@@ -1,5 +1,8 @@
 # Overnight integration: `overnight/integration`
 
+> **Deadline:** 2026-10-29T00:00:00-04:00 (midnight America/New_York). At commit time (2026-10-28 14:16 EDT), **9h43m** remained.
+> **Branch name:** `overnight/integration` is a historical name only. Keep using it and do not rename it.
+
 - Base: `main` @ `7f50348` (contains only `README.md`; verified it was not broken). Nothing was merged into `main`, no PR was closed, nothing was deployed, and no AWS, Entra or Graph calls were made.
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
@@ -71,7 +74,7 @@ These are evaluated at the PR #7 head pushed with this report. The machine-reada
 |---|---|---|---|
 | AC1 | An independent human review approves the **exact** PR #7 head SHA. The reviewer must not be the author or this automation. | **UNMET** | There are no GitHub reviews on #1–#7. #3 reviewed only #1 @ `e494bcf` and #2 @ `e6100154`, and both have since been superseded or changed. |
 | AC2 | Security exceptions are recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded in `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` and enforced by tests. No approval is recorded. |
-| AC3 | All checks pass on that SHA: PR #7 GitHub CI plus `scripts/validate-all.sh`. | **MET locally, CI pending for this head** | Local: PASS. Only GitHub Actions runs for this exact head SHA count. Runs on `876f7b7` and `0f57289` do not. |
+| AC3 | All checks pass on that SHA: PR #7 GitHub CI plus `scripts/validate-all.sh`. | **MET for `afb41278`** | All 8 jobs passed (0 failed, 0 skipped): [aws-cdk](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477), [postgres-restore-evidence](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023651) (5 jobs), [offline-validation PR](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023533), [offline-validation push](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743011205). `validate-all` passed 32/32 locally. A later docs-only head needs its own CI run before AC3 can be claimed for it. |
 | AC4 | The docs match the code. | **PARTIAL** | Repo docs and the PR #2 body are fixed or current. PR #1 is still open with the superseded design. The PR #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings remain in integrated code. | **MET** | `cfn-s3-selflog` is clean, and the false PASSes are fixed by v2. PR #6 is excluded. |
 

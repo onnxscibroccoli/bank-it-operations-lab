@@ -1,12 +1,20 @@
 {
   "schema": "bank-it-operations-lab/coordination/tasks@1",
   "integration_branch": "overnight/integration",
+  "branch_name_note": "The branch name 'overnight/integration' is historical only. Keep using it and do not rename it; it no longer implies an overnight window.",
+  "deadline": "2026-10-29T00:00:00-04:00",
+  "deadline_tz": "America/New_York (EDT, UTC-4)",
+  "remaining_window": {
+    "as_of": "2026-10-28T14:16:27-04:00",
+    "remaining": "9h43m",
+    "note": "computed at commit time"
+  },
   "base": {
     "branch": "main",
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28 ~14:15 EDT (America/New_York)",
+  "updated": "2026-10-28T14:16:27-04:00",
   "rules": [
     "never merge into main from automation",
     "no deploys",
@@ -143,8 +151,35 @@
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "MET_LOCALLY_PENDING_CI",
-        "detail": "validate-all PASS locally on this tree. GitHub Actions results must be read for this exact head SHA. Results from 876f7b7 and 0f57289 do not count."
+        "status": "MET",
+        "detail": "Every GitHub Actions job on afb41278 passed (8/8, 0 failed, 0 skipped), and scripts/validate-all.sh passed 32/32 locally. Commits after afb41278 that change only coordination docs need their own CI run before AC3 can be claimed for that head.",
+        "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
+        "runs": {
+          "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
+          "postgres-restore-evidence (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023651",
+          "offline-validation (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023533",
+          "offline-validation (push)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743011205"
+        },
+        "jobs": {
+          "aws-cdk": [
+            "synth-and-test: success"
+          ],
+          "postgres-restore-evidence": [
+            "harness self-test: success",
+            "restore exercise (postgres:18 service container): success",
+            "restore exercise (offline, unix-socket-only cluster): success",
+            "negative control pg_dump 18 vs postgres:16: success",
+            "CDK synth: success"
+          ],
+          "offline-validation": [
+            "validate (pull_request): success",
+            "validate (push): success"
+          ]
+        },
+        "not_triggered": [
+          "aws-cdk push (path filter not matched by that push)",
+          "postgres-restore-evidence push (overnight/integration is not in its push branches)"
+        ]
       },
       {
         "id": "AC4",
@@ -172,6 +207,10 @@
     {
       "sha": "(this commit)",
       "note": "#2 source e7399fbb538504f723d1fb83e32ce50604807b8e is confirmed an ancestor (git merge reported 'Already up to date'). The interim run integration-offline-20261028T180134Z was restored byte-for-byte from fb70afd and marked HISTORICAL-KNOWN-INVALID, so no earlier evidence record is deleted."
+    },
+    {
+      "sha": "(this commit)",
+      "note": "deadline, remaining window and branch-name note added; AC3 marked MET for afb41278"
     }
   ]
 }
