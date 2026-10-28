@@ -144,16 +144,25 @@ def cmd_commands(a: argparse.Namespace) -> int:
 
 
 def cmd_pg_neg(a: argparse.Namespace) -> int:
+    # Columns are located by header name so both harness v1 (10 columns) and harness v2 (12 columns:
+    # adds `class` and `reason_regex`) COMMANDS.tsv layouts are understood. A run with zero negative
+    # steps is an ERROR, never "OK": an unrecognised layout must not pass silently.
     r = Report()
     run = Path(a.run_dir)
     exp = json.loads(Path(a.expectations).read_text())["steps"]
-    rows = (run / "COMMANDS.tsv").read_text().splitlines()[1:]
+    lines = (run / "COMMANDS.tsv").read_text().splitlines()
+    hdr = lines[0].split("\t") if lines else []
+    try:
+        i_step, i_kind, i_res, i_log = (hdr.index(k) for k in ("step_id", "kind", "result", "log"))
+    except ValueError:
+        r.err(f"COMMANDS.tsv header lacks step_id/kind/result/log: {hdr}")
+        return r.finish("")
     checked = 0
-    for row in rows:
+    for row in lines[1:]:
         c = row.split("\t")
-        if len(c) != 10 or c[2] != "negative":
+        if len(c) != len(hdr) or c[i_kind] != "negative":
             continue
-        step, result, log = c[1], c[5], c[8]
+        step, result, log = c[i_step], c[i_res], c[i_log]
         if step not in exp:
             r.warn(f"{step}: no expectation defined")
             continue
@@ -163,6 +172,8 @@ def cmd_pg_neg(a: argparse.Namespace) -> int:
         if result == "PASS" and not re.search(exp[step], body, re.M):
             first = next((l for l in body.splitlines() if "error" in l.lower()), body.strip()[:120])
             r.err(f"FALSE-PASS {step}: non-zero exit but not for the intended reason; log says: {first.strip()}")
+    if checked == 0:
+        r.err("no negative steps found in COMMANDS.tsv (unrecognised layout or empty run)")
     return r.finish(f"NEGATIVES OK: {checked} negative steps failed for the intended reason")
 
 

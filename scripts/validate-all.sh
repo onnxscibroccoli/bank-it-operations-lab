@@ -25,13 +25,21 @@ for r in evidence/entra/runs/*/; do step "entra evidence verify $r" python3 evid
 # --- PR #5 AWS evidence bundle (static)
 step "aws evidence SHA256SUMS" bash -c 'cd evidence/aws/aws-remediation-vpc-rds && sha256sum -c SHA256SUMS --quiet'
 for t in evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do step "s3 self-logging $t" python3 "$V" cfn-s3-selflog "$t"; done
-# --- PR #2 Postgres evidence (committed runs)
-step "postgres evidence (offline run)" bash tests/integration/postgres/verify_evidence.sh evidence/postgres/runs/local-offline-20261028T041038Z
-for r in evidence/postgres/runs/integration-*/; do [ -d "$r" ] || continue
-  step "postgres evidence $r" bash tests/integration/postgres/verify_evidence.sh "${r%/}"
-  step "postgres negatives $r" python3 "$V" postgres-negatives "${r%/}"
+# --- PR #2 Postgres evidence (harness v2, committed runs; see evidence/postgres/runs/INDEX.md)
+PV=tests/integration/postgres/verify_evidence.py
+for r in ci-service-40741329107-1 ci-offline-40741329107-1 local-offline-v2-20261028T180208Z; do
+  step "postgres v2 verify $r" python3 "$PV" "evidence/postgres/runs/$r"
 done
-# ci-service-40630856041-1 is a PRESERVED FAILING run (pg client/server mismatch); it is expected to fail and is not gated.
+step "postgres mismatch control is REJECTED" bash -c '! python3 '"$PV"' evidence/postgres/runs/ci-mismatch-control-40741329107-1 >/dev/null'
+for r in ci-service-40630856041-1 local-offline-20261028T041038Z; do
+  step "postgres v1 run $r reported HISTORICAL (exit 3)" bash -c 'python3 '"$PV"' "evidence/postgres/runs/'"$r"'" >/dev/null; [ $? -eq 3 ]'
+done
+step "postgres harness self-test (no DB)" bash -c 'd=$(mktemp -d); EVIDENCE_DIR="$d" bash tests/integration/postgres/selftest_harness.sh >/dev/null; rc=$?; rm -rf "$d"; exit $rc'
+# cross-check: PR #3's shared validator must agree with PR #2's v2 verifier on the current runs
+for r in ci-service-40741329107-1 ci-offline-40741329107-1 local-offline-v2-20261028T180208Z; do
+  step "shared postgres-negatives $r" python3 "$V" postgres-negatives "evidence/postgres/runs/$r"
+done
+step "shared postgres-negatives flags v1 false PASSes" bash -c '! python3 '"$V"' postgres-negatives evidence/postgres/runs/ci-service-40630856041-1 >/dev/null'
 
 if [ "$PY_ONLY" -eq 0 ]; then
   # --- PR #5 infra/aws-cdk
@@ -45,9 +53,9 @@ if [ "$PY_ONLY" -eq 0 ]; then
   # --- PR #2 Postgres restore exercise (fresh, offline unix-socket cluster)
   if [ -n "${PG_BIN:-}" ] || command -v initdb >/dev/null 2>&1 || ls -d /usr/lib/postgresql/*/bin >/dev/null 2>&1; then
     TMP_EV="$(mktemp -d)"
-    step "postgres restore exercise (offline)" env RUN_LABEL=validate-all EVIDENCE_DIR="$TMP_EV" bash tests/integration/postgres/run_restore_scenario.sh offline
-    step "postgres fresh-run evidence" bash tests/integration/postgres/verify_evidence.sh "$TMP_EV"
-    step "postgres fresh-run negatives" python3 "$V" postgres-negatives "$TMP_EV"
+    step "postgres restore exercise v2 (offline)" env RUN_LABEL=validate-all EVIDENCE_DIR="$TMP_EV" bash tests/integration/postgres/run_restore_scenario.sh offline
+    step "postgres fresh-run v2 verifier" python3 "$PV" "$TMP_EV" --require-artifacts
+    step "postgres fresh-run shared negatives" python3 "$V" postgres-negatives "$TMP_EV"
     rm -rf "$TMP_EV"
   else
     echo "::: SKIP postgres restore exercise: no PostgreSQL binaries (set PG_BIN)"; FAILED+=("postgres exercise skipped (no binaries)")

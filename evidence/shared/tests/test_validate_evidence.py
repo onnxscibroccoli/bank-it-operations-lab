@@ -93,6 +93,22 @@ class Negatives(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertIn("FALSE-PASS", out)
 
+    def test_harness_v2_layout(self):
+        d = Path(tempfile.mkdtemp()); (d / "logs").mkdir()
+        (d / "logs/01_N04.log").write_text('# cmd: x\nERROR:  23503: insert violates foreign key constraint "f"\n')
+        hdr = "seq\tstep_id\tkind\texpected\texit_code\tresult\tclass\tstarted_utc\tduration_ms\tlog\treason_regex\tcommand\n"
+        row = "1\tN04_fk_enforced_after_restore\tnegative\tnonzero\t1\tPASS\texpected_fault_detected\tt\t1\tlogs/01_N04.log\t23503\tx\n"
+        (d / "COMMANDS.tsv").write_text(hdr + row)
+        rc, out = run("postgres-negatives", str(d))
+        self.assertEqual(rc, 0, out)
+        self.assertIn("1 negative", out)
+
+    def test_zero_negatives_is_an_error(self):
+        d = Path(tempfile.mkdtemp())
+        (d / "COMMANDS.tsv").write_text("seq\tstep_id\tkind\tresult\tlog\n1\tS00\tsetup\tPASS\tlogs/x.log\n")
+        rc, _ = run("postgres-negatives", str(d))
+        self.assertEqual(rc, 1)
+
 
 class CfnSelfLog(unittest.TestCase):
     def _tpl(self, resources):
