@@ -70,3 +70,19 @@ The artifacts of the 14:02–14:03 EDT runs (40741…) were not listed in this s
 | [40742561679](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742561679) | offline-validation | **success** |
 | [40742550289](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742550289) | offline-validation | **success** |
 | [40742561967](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742561967) | postgres-restore-evidence | **success** |
+
+### Refresh at integration head `afb41278` (2026-10-28 about 14:20 EDT)
+| Run | Workflow | Event | Conclusion |
+|---|---|---|---|
+| [40743023477](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477) | aws-cdk | pull_request | **success** |
+| [40743023533](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023533) | offline-validation | pull_request | **success** |
+| [40743011205](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743011205) | offline-validation | push | **success** |
+| [40743023651](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023651) | postgres-restore-evidence (5 jobs) | pull_request | **success** |
+
+| Branch @ commit | Bundle | Verify [re-run] |
+|---|---|---|
+| `overnight/integration` @ `afb4127` | `evidence/postgres/runs/integration-offline-20261028T180134Z/` (restored, HISTORICAL-KNOWN-INVALID) | covered by `validate-all.sh --python-only`: PASS |
+| `backup-dr-aws` @ `10da54f` | `evidence/backup/aws-backup-dr/SHA256SUMS` (repo-root relative) | 72/72 OK |
+| `patch-hardening` @ `5605b78` | `evidence/host-operations/runs/local-offline-20261028T181252Z/` | 102/102 OK, `--verify` PASS |
+| `identity-governance` @ `f48e7e3` | `evidence/identity-governance/runs/local-offline-20261028T181435Z/` | 49/49 OK, `--verify` OK |
+| `m365-endpoint` @ `86a555a` | none committed | — |
