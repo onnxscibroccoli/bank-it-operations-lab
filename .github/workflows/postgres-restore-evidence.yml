@@ -1,0 +1,184 @@
+name: postgres-restore-evidence
+
+on:
+  push:
+    branches: [main, ci-evidence-postgres]
+    paths:
+      - ".github/workflows/**"
+      - "evidence/postgres/**"
+      - "tests/integration/**"
+      - "**/cdk.json"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "evidence/postgres/**"
+      - "tests/integration/**"
+      - "**/cdk.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Belt and braces: no cloud credentials are ever used by this workflow.
+  AWS_ACCESS_KEY_ID: ""
+  AWS_SECRET_ACCESS_KEY: ""
+  AWS_SESSION_TOKEN: ""
+  AWS_EC2_METADATA_DISABLED: "true"
+
+jobs:
+  restore-exercise-service:
+    name: restore exercise (postgres service container)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18 # must match the runner's preinstalled client major (pg_dump 18 on ubuntu-latest)
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres # ephemeral CI-only container, not a secret
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      RUN_LABEL: ci-service-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run backup/restore scenario (exit code preserved)
+        id: scenario
+        run: |
+          set +e
+          bash tests/integration/postgres/run_restore_scenario.sh service
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "scenario exit code: $rc"
+      - name: Verify evidence hashes and results
+        id: verify
+        if: always()
+        run: |
+          set +e
+          bash tests/integration/postgres/verify_evidence.sh "evidence/postgres/runs/$RUN_LABEL"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Job summary
+        if: always()
+        run: |
+          f="evidence/postgres/runs/$RUN_LABEL/SUMMARY.md"
+          [ -f "$f" ] && cat "$f" >> "$GITHUB_STEP_SUMMARY" || echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload evidence (always, including failures)
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: postgres-evidence-service-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/postgres/runs/${{ env.RUN_LABEL }}/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Fail job if scenario or verification failed
+        if: always()
+        run: |
+          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }}"
+          [ "${{ steps.scenario.outputs.rc }}" = "0" ] && [ "${{ steps.verify.outputs.rc }}" = "0" ]
+
+  restore-exercise-offline:
+    name: restore exercise (offline, unix-socket-only cluster)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RUN_LABEL: ci-offline-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Show preinstalled PostgreSQL binaries
+        run: ls -d /usr/lib/postgresql/*/bin && ls /usr/lib/postgresql/*/bin | grep -E '^(initdb|pg_ctl|pg_dump|pg_restore|psql)$'
+      - name: Run backup/restore scenario offline (exit code preserved)
+        id: scenario
+        run: |
+          set +e
+          unset PGHOST PGPORT PGUSER PGPASSWORD
+          bash tests/integration/postgres/run_restore_scenario.sh offline
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "scenario exit code: $rc"
+      - name: Verify evidence hashes and results
+        id: verify
+        if: always()
+        run: |
+          set +e
+          bash tests/integration/postgres/verify_evidence.sh "evidence/postgres/runs/$RUN_LABEL"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Job summary
+        if: always()
+        run: |
+          f="evidence/postgres/runs/$RUN_LABEL/SUMMARY.md"
+          [ -f "$f" ] && cat "$f" >> "$GITHUB_STEP_SUMMARY" || echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload evidence (always, including failures)
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: postgres-evidence-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evidence/postgres/runs/${{ env.RUN_LABEL }}/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Fail job if scenario or verification failed
+        if: always()
+        run: |
+          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }}"
+          [ "${{ steps.scenario.outputs.rc }}" = "0" ] && [ "${{ steps.verify.outputs.rc }}" = "0" ]
+
+  cdk-synth:
+    name: CDK synth (only if CDK app present, no credentials)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CDK_DEFAULT_ACCOUNT: "000000000000"
+      CDK_DEFAULT_REGION: us-east-1
+    steps:
+      - uses: actions/checkout@v5
+      - name: Detect CDK apps
+        id: detect
+        run: |
+          apps=$(git ls-files '*cdk.json' | grep -v node_modules | xargs -r -n1 dirname | sort -u | tr '\n' ' ')
+          echo "apps=$apps" >> "$GITHUB_OUTPUT"
+          if [ -z "$apps" ]; then
+            echo "No cdk.json found in repository; CDK synth skipped." | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "CDK apps: $apps" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/setup-node@v5
+        if: steps.detect.outputs.apps != ''
+        with:
+          node-version: "20"
+      - name: cdk synth (no lookups, no credentials)
+        if: steps.detect.outputs.apps != ''
+        run: |
+          mkdir -p cdk-evidence
+          status=0
+          for app in ${{ steps.detect.outputs.apps }}; do
+            log="cdk-evidence/$(echo "$app" | tr '/' '_').log"
+            ( cd "$app" && { [ -f package-lock.json ] && npm ci || npm install; } && npx --yes aws-cdk synth --no-lookups --quiet ) > "$log" 2>&1
+            rc=$?
+            printf '%s\t%s\n' "$app" "$rc" >> cdk-evidence/COMMANDS.tsv
+            [ $rc -eq 0 ] || status=1
+          done
+          (cd cdk-evidence && sha256sum * > SHA256SUMS)
+          exit $status
+      - name: Upload CDK synth evidence
+        if: always() && steps.detect.outputs.apps != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: cdk-synth-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: cdk-evidence/
+          if-no-files-found: warn
