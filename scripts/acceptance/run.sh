@@ -217,6 +217,17 @@ for r in reports/INTEGRATION.md reports/ACCEPTANCE.md; do
   if [ -s "$r" ]; then record "REPORT-$(basename "$r" .md)" no PASS 0 "$r present and non-empty at target (content not certified)" -
   else unknown "REPORT-$(basename "$r" .md)" no "$r absent at target"; fi
 done
+# ---------------------------------------------------------------- 2f. source binding (invariant I2)
+# After every check: the worktree must still be exactly $SHA with no tracked or untracked changes, so the
+# verdicts above describe $SHA and nothing else. An --inject-defect run is dirty by construction -> FAIL.
+log=logs/SOURCE-BINDING.log
+{ echo "# check: SOURCE-BINDING - worktree still at target SHA and clean after all checks"
+  echo "HEAD=$(git rev-parse HEAD)"; echo "TREE=$(git rev-parse "$SHA^{tree}")"; echo "--- git status --porcelain=v1 --untracked-files=normal"
+  git status --porcelain=v1 --untracked-files=normal; } > "$OUT/$log" 2>&1
+if [ "$(git rev-parse HEAD)" = "$SHA" ] && [ -z "$(git status --porcelain=v1 --untracked-files=normal)" ]; then rc=0; else rc=1; fi
+echo "# exit_code: $rc" >> "$OUT/$log"
+if [ $rc -eq 0 ]; then record SOURCE-BINDING yes PASS 0 "verdicts bound to $SHA: HEAD unchanged, worktree clean" "$log"
+else record SOURCE-BINDING yes FAIL 1 "worktree no longer exactly $SHA (moved HEAD or dirty tree); verdicts cannot be bound to $SHA" "$log"; fi
 cd "$REPO"
 fi  # checkout ok
 
@@ -228,7 +239,7 @@ rows=list(csv.DictReader(open(res),delimiter="\t"))
 req=[r for r in rows if r["required"]=="yes"]
 fail=[r["check_id"] for r in req if r["verdict"]=="FAIL"]
 unk=[r["check_id"] for r in req if r["verdict"]=="UNKNOWN"]
-bad=[r for r in rows if r["verdict"] not in ("PASS","FAIL","UNKNOWN","INFO")]
+bad=[r for r in rows if r["verdict"] not in ("PASS","FAIL","UNKNOWN","INFO")]+[r for r in req if r["verdict"] not in ("PASS","FAIL","UNKNOWN")]
 overall="FAIL" if (fail or bad or not req) else ("UNKNOWN" if unk else "PASS")
 s={"target_sha":sha,"injected_defect":defect or None,"overall":overall,"required":len(req),
    "pass":sum(r["verdict"]=="PASS" for r in req),"fail":fail,"unknown":unk,
