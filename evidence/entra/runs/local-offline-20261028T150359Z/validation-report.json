@@ -1,0 +1,122 @@
+{
+  "tool": "entra-ca-offline-validator",
+  "toolVersion": "1.0.0",
+  "mode": "offline-synthetic",
+  "tenantStateClaimed": false,
+  "disclaimer": "OFFLINE / SYNTHETIC: results describe local JSON fixtures only. No Entra ID tenant, Microsoft Graph API or credential was used. This report makes NO claim about the configuration or state of any tenant.",
+  "input": {
+    "policies": "identity/entra/policies",
+    "baseline": "identity/entra/baseline.json",
+    "policyCount": 7,
+    "policyNames": [
+      "CA001-Block-Legacy-Authentication-All-Users",
+      "CA002-Require-MFA-All-Users",
+      "CA003-Require-Phishing-Resistant-MFA-Admin-Roles",
+      "CA004-Require-Compliant-Device-All-Users",
+      "CA005-Block-High-Sign-In-Risk-ReportOnly",
+      "CA006-High-User-Risk-Require-Password-Change-ReportOnly",
+      "CA007-Block-Admin-Portals-From-Untrusted-Locations"
+    ]
+  },
+  "overall": "PASS",
+  "exitCode": 0,
+  "rules": [
+    {
+      "id": "SCHEMA-001",
+      "category": "schema",
+      "title": "Every input file parses as JSON (no duplicate keys) and the policy set is non-empty",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "SCHEMA-002",
+      "category": "schema",
+      "title": "Each policy has the conditionalAccessPolicy shape: required keys present, no unknown keys, correct types",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "SCHEMA-003",
+      "category": "schema",
+      "title": "state is one of enabled | disabled | enabledForReportingButNotEnforced",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "SCHEMA-004",
+      "category": "schema",
+      "title": "conditions (users, applications, clientAppTypes, platforms, locations, risk levels) are well-formed with known values",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "SCHEMA-005",
+      "category": "schema",
+      "title": "grantControls well-formed: operator AND|OR, known builtInControls, block is exclusive, at least one control",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "SCHEMA-006",
+      "category": "schema",
+      "title": "Policy ids and displayNames are unique across the set",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-001",
+      "category": "baseline",
+      "title": "Break-glass accounts are excluded from every policy (and never explicitly included)",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-002",
+      "category": "baseline",
+      "title": "Legacy authentication (exchangeActiveSync + other) is blocked for All users on All apps by an enabled policy",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-003",
+      "category": "baseline",
+      "title": "An enabled policy requires MFA for All users on All apps (AND semantics, only break-glass excluded)",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-004",
+      "category": "baseline",
+      "title": "All privileged admin roles require phishing-resistant MFA via an enabled policy with no role exclusions",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-005",
+      "category": "baseline",
+      "title": "No policy blocks All users without exclusions",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-006",
+      "category": "baseline",
+      "title": "An enabled policy requires a compliant device for All users on All apps",
+      "status": "PASS",
+      "findings": []
+    },
+    {
+      "id": "BASE-007",
+      "category": "baseline",
+      "title": "Risk-based policies (sign-in / user risk) are report-only during staged rollout",
+      "status": "PASS",
+      "findings": []
+    }
+  ],
+  "provenance": {
+    "commitSha": "e8771c9aa09b3e1c60d87b04cd65a266b673eed8",
+    "runLabel": "local-offline-20261028T150359Z",
+    "generatedUtc": "2026-10-28T15:04:00Z",
+    "evidence": "SUMMARY.json"
+  }
+}

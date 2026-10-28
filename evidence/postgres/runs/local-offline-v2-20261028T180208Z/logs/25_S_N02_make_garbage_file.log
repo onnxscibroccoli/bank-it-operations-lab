@@ -1,0 +1,7 @@
+# step=S_N02_make_garbage_file kind=setup expect=zero started=2026-10-28T18:02:12Z
+# reason_regex: <none>
+# cmd: make_garbage
+# --- output ---
+05b6dd2a6c6acfe657d6bce6fea91aec00fa3edfac6576ff45b4e3c70ae6d7c9  /workspace/bank-it-operations-lab-ci/evidence/postgres/runs/local-offline-v2-20261028T180208Z/artifacts/garbage.dump
+# --- end output ---
+# exit_code=0 duration_ms=4

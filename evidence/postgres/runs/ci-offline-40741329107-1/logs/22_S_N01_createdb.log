@@ -1,0 +1,6 @@
+# step=S_N01_createdb kind=setup expect=zero started=2026-10-28T18:02:24Z
+# reason_regex: <none>
+# cmd: createdb lab_restore_trunc
+# --- output ---
+# --- end output ---
+# exit_code=0 duration_ms=412

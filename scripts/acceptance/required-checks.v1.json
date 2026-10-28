@@ -1,0 +1,227 @@
+{
+  "inventory": "bank-it-operations-lab/acceptance-required-checks",
+  "version": "1.0.0",
+  "reviewed_by": "worker-d (integrator); independent review of the inventory itself is PENDING",
+  "rules": "Every 'checks' id must appear exactly once with required=yes and a verdict in PASS/FAIL/UNKNOWN; a required check is satisfied only by PASS. 'groups' members must be contiguous 1..n with n >= min, each required=yes. 'advisory' ids may appear at most once with required=no; only advisory ids with allow_info may be INFO. Any other id is rejected. Changing this file changes its sha256, which is recorded in results.json and must match the copy at the tested commit.",
+  "checks": [
+    {
+      "id": "CHECKOUT",
+      "required": true,
+      "contract_id": "ACC-WD-CHECKOUT-001",
+      "title": "Exact target SHA checked out in a detached worktree",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-00",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-000",
+      "title": "No AWS credential variables in the environment",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-01",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-001",
+      "title": "npm ci (lockfile, --ignore-scripts)",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-02",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-002",
+      "title": "tsc --noEmit",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-03",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-003",
+      "title": "jest unit + negative-control tests",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-04",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-004",
+      "title": "credential-free cdk synth --no-lookups",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-05",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-005",
+      "title": "cdk-nag gate: 4 reports, non-empty, 0 Non-Compliant",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-06",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-006",
+      "title": "no S3 bucket logs to itself (fresh synth)",
+      "kind": "positive"
+    },
+    {
+      "id": "AWS-07",
+      "required": true,
+      "contract_id": "ACC-WD-AWS-007",
+      "title": "fresh synth == committed evidence templates",
+      "kind": "positive"
+    },
+    {
+      "id": "DEFECT-AWS",
+      "required": true,
+      "contract_id": "ACC-WD-DEFECT-AWS-001",
+      "title": "self-logging bucket rejected by cfn-s3-selflog",
+      "kind": "defect",
+      "expect_output": "delivered to itself"
+    },
+    {
+      "id": "PG-01",
+      "required": true,
+      "contract_id": "ACC-WD-PG-001",
+      "title": "offline pg_dump/pg_restore recovery exercise (harness v2)",
+      "kind": "positive"
+    },
+    {
+      "id": "PG-02",
+      "required": true,
+      "contract_id": "ACC-WD-PG-002",
+      "title": "independent verifier re-derives every verdict + artifact hashes",
+      "kind": "positive"
+    },
+    {
+      "id": "PG-03",
+      "required": true,
+      "contract_id": "ACC-WD-PG-003",
+      "title": "harness self-test",
+      "kind": "positive"
+    },
+    {
+      "id": "ENTRA-01",
+      "required": true,
+      "contract_id": "ACC-WD-ENTRA-001",
+      "title": "Entra CA validator unit tests",
+      "kind": "positive"
+    },
+    {
+      "id": "ENTRA-02",
+      "required": true,
+      "contract_id": "ACC-WD-ENTRA-002",
+      "title": "Entra CA validator on committed baseline",
+      "kind": "positive"
+    },
+    {
+      "id": "ENTRA-03",
+      "required": true,
+      "contract_id": "ACC-WD-ENTRA-003",
+      "title": "Entra fixtures regenerate with no drift",
+      "kind": "positive"
+    },
+    {
+      "id": "DEFECT-ENTRA",
+      "required": true,
+      "contract_id": "ACC-WD-DEFECT-ENTRA-001",
+      "title": "CA002 report-only rejected by ca_validator",
+      "kind": "defect",
+      "expect_output": "CA002-Require-MFA-All-Users: state=enabledForReportingButNotEnforced"
+    },
+    {
+      "id": "ACC-A-01",
+      "required": true,
+      "contract_id": "ACC-WD-A-001",
+      "title": "worker A contract unit tests",
+      "kind": "positive"
+    },
+    {
+      "id": "ACC-A-02",
+      "required": true,
+      "contract_id": "ACC-WD-A-002",
+      "title": "worker A fixtures no drift",
+      "kind": "positive"
+    },
+    {
+      "id": "ACC-B-01",
+      "required": true,
+      "contract_id": "ACC-WD-B-001",
+      "title": "worker B runner unit tests",
+      "kind": "positive"
+    },
+    {
+      "id": "ACC-B-02",
+      "required": true,
+      "contract_id": "ACC-WD-B-002",
+      "title": "worker B allowlisted checks.json run",
+      "kind": "positive"
+    },
+    {
+      "id": "ACC-C-01",
+      "required": true,
+      "contract_id": "ACC-WD-C-001",
+      "title": "worker C adapter unit tests",
+      "kind": "positive"
+    },
+    {
+      "id": "ACC-C-02",
+      "required": true,
+      "contract_id": "ACC-WD-C-002",
+      "title": "worker C adapters static-evidence",
+      "kind": "positive"
+    },
+    {
+      "id": "ACC-C-03",
+      "required": true,
+      "contract_id": "ACC-WD-C-003",
+      "title": "worker C adapters live-offline (exit 4 = NOT_EXECUTED)",
+      "kind": "live"
+    },
+    {
+      "id": "DEFECT-HASH",
+      "required": true,
+      "contract_id": "ACC-WD-DEFECT-HASH-001",
+      "title": "tampered AWS evidence byte breaks SHA256SUMS",
+      "kind": "defect",
+      "expect_output": "sha256 mismatch for"
+    },
+    {
+      "id": "SOURCE-BINDING",
+      "required": true,
+      "contract_id": "ACC-WD-BINDING-001",
+      "title": "worktree still exactly target SHA and clean after all checks",
+      "kind": "positive"
+    }
+  ],
+  "groups": [
+    {
+      "name": "HASH",
+      "pattern": "^HASH-([0-9]+)$",
+      "min": 17,
+      "required": true,
+      "contract_id": "ACC-WD-HASH-001",
+      "title": "every committed evidence/**/SHA256SUMS bundle verifies",
+      "kind": "positive"
+    },
+    {
+      "name": "ENTRA-04",
+      "pattern": "^ENTRA-04\\.([0-9]+)$",
+      "min": 1,
+      "required": true,
+      "contract_id": "ACC-WD-ENTRA-004",
+      "title": "committed Entra evidence runs re-verify",
+      "kind": "positive"
+    }
+  ],
+  "advisory": [
+    {
+      "id": "REPORT-INTEGRATION",
+      "allow_info": false
+    },
+    {
+      "id": "REPORT-ACCEPTANCE",
+      "allow_info": false
+    },
+    {
+      "id": "DEFECT-INJECTED",
+      "allow_info": true
+    }
+  ]
+}

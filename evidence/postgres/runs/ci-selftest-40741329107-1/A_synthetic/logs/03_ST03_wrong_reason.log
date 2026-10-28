@@ -1,0 +1,7 @@
+# step=ST03_wrong_reason kind=negative expect=nonzero started=2026-10-28T18:02:17Z
+# reason_regex: ^injected fault: disk full$
+# cmd: unrelated
+# --- output ---
+ERROR:  syntax error at or near "SELEC"
+# --- end output ---
+# exit_code=1 duration_ms=4

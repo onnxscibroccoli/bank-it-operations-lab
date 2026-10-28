@@ -1,0 +1,40 @@
+{
+  "id": "c0a00001-0000-4000-8000-000000000002",
+  "displayName": "CA002-Require-MFA-All-Users",
+  "state": "enabled",
+  "conditions": {
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "excludeUsers": [
+        "b9a5e000-0000-4000-8000-000000000001",
+        "b9a5e000-0000-4000-8000-000000000002"
+      ],
+      "includeGroups": [],
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeRoles": []
+    },
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": []
+    },
+    "clientAppTypes": [
+      "browser",
+      "mobileAppsAndDesktopClients"
+    ]
+  },
+  "grantControls": {
+    "operator": "AND",
+    "builtInControls": [
+      "mfa"
+    ],
+    "customAuthenticationFactors": [],
+    "termsOfUse": [],
+    "authenticationStrength": null
+  },
+  "sessionControls": null
+}

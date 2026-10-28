@@ -1,0 +1,27 @@
+name: offline-validation
+
+# Stdlib-only Python checks: shared evidence validator (PR #3), offline Entra CA validation (PR #4),
+# and cross-bundle evidence integrity. No network calls to any tenant or cloud; no secrets.
+on:
+  push:
+    branches: [main, overnight/integration]
+  pull_request:
+    branches: [main, overnight/integration]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline suite (no Node/Postgres parts)
+        run: bash scripts/validate-all.sh --python-only

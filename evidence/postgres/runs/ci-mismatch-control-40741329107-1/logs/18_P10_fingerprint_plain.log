@@ -1,0 +1,1 @@
+# step=P10_fingerprint_plain NOT RUN: dependency P09_psql_restore_plain is NOT_RUN

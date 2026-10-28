@@ -1,0 +1,96 @@
+{
+  "schema": "bank-it-operations-lab/acceptance-checks@1",
+  "description": "Checked-in, allowlisted acceptance checks. argv arrays only (no shell). Edit by PR; the runner refuses an uncommitted or modified copy unless --allow-uncommitted-checks is given, and records which in RUN.json.",
+  "checks": [
+    {
+      "id": "python-version",
+      "description": "Interpreter used for every python3 check",
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "timeout_s": 10
+    },
+    {
+      "id": "shared-validator-unit-tests",
+      "description": "evidence/shared unit tests (the validator this runner reuses)",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "evidence/shared/tests"
+      ],
+      "timeout_s": 120
+    },
+    {
+      "id": "acceptance-runner-unit-tests",
+      "description": "tools/acceptance unit tests (timeouts, pipefail, path confinement, allowlist, metadata)",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/acceptance/tests"
+      ],
+      "timeout_s": 180
+    },
+    {
+      "id": "entra-unit-tests",
+      "description": "Offline Entra CA validator unit tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/entra"
+      ],
+      "timeout_s": 120
+    },
+    {
+      "id": "entra-baseline-validates",
+      "description": "Baseline Conditional Access policies pass the offline validator",
+      "argv": [
+        "python3",
+        "identity/entra/ca_validator.py",
+        "--quiet"
+      ],
+      "timeout_s": 60
+    },
+    {
+      "id": "s3-no-self-logging",
+      "description": "Committed synth template has no S3 bucket logging to itself",
+      "argv": [
+        "python3",
+        "evidence/shared/validate_evidence.py",
+        "cfn-s3-selflog",
+        "evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json"
+      ],
+      "timeout_s": 60,
+      "artifacts": [
+        "evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json"
+      ]
+    },
+    {
+      "id": "aws-evidence-hashes-pipeline",
+      "description": "Pipeline (pipefail): every file in the AWS bundle SHA256SUMS verifies (sha256sum exit is honoured even though wc -l, the last stage, exits 0)",
+      "pipeline": [
+        [
+          "sha256sum",
+          "-c",
+          "--quiet",
+          "SHA256SUMS"
+        ],
+        [
+          "wc",
+          "-l"
+        ]
+      ],
+      "cwd": "evidence/aws/aws-remediation-vpc-rds",
+      "timeout_s": 60
+    }
+  ]
+}

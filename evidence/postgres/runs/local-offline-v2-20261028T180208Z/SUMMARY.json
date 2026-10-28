@@ -1,0 +1,15 @@
+{
+  "status": "CURRENT",
+  "harness": "tests/integration/postgres/lib.sh (reason-asserting, v2)",
+  "run_label": "local-offline-v2-20261028T180208Z",
+  "mode": "offline",
+  "overall": "PASS",
+  "expected_cases": 38,
+  "rows": 38,
+  "passed": 38,
+  "failed": 0,
+  "errors": 0,
+  "not_run": 0,
+  "negative_faults_detected": 6,
+  "finished_utc": "2026-10-28T18:02:12Z"
+}

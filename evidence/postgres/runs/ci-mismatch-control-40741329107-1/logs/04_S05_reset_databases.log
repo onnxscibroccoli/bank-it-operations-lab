@@ -1,0 +1,1 @@
+# step=S05_reset_databases NOT RUN: dependency S04_client_server_major_match is ERROR
