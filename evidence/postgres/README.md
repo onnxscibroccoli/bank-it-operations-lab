@@ -1,20 +1,22 @@
 # Postgres backup/restore evidence
 
-Each run of `tests/integration/postgres/run_restore_scenario.sh` writes one directory:
+See `runs/INDEX.md` for the status of every run. Runs marked `HISTORICAL-KNOWN-INVALID` (by `STATUS.json` and `NOTE.md`) were produced by
+harness v1 and must not be counted as passing. Their original files are left byte-identical so their hashes still verify.
+
+A harness-v2 run directory contains:
 
 ```
 evidence/postgres/runs/<RUN_LABEL>/
-  ENVIRONMENT.txt     tool versions, mode, git SHA, GitHub run id
-  COMMANDS.tsv        seq, step_id, kind, expected, exit_code, result, started_utc, duration_ms, log, command
-  SUMMARY.json/.md    totals and per-step table
-  logs/NN_<step>.log  full stdout/stderr of each command, with exit code footer
-  fingerprints/*.txt  per-table row count + md5 of ordered rows (source vs restored)
-  ARTIFACTS.sha256    SHA-256 of dumps/TOC/corrupted inputs (artifacts/ is gitignored; uploaded by CI)
-  SHA256SUMS          SHA-256 of every committed file in the run directory
+  ENVIRONMENT.txt     tool versions, mode, git SHA (+ dirty flag), sha256 of each harness file, GitHub run id
+  EXPECTATIONS.tsv    the declared cases for this mode (id, kind, expect, modes, fail_class, reason_regex)
+  COMMANDS.tsv        seq, step_id, kind, expected, exit_code, result, class, started_utc, duration_ms, log, reason_regex, command
+  SUMMARY.json/.md    status CURRENT, overall, expected_cases, passed/failed/errors/not_run
+  logs/NN_<step>.log  header, command, "# --- output ---" ... "# --- end output ---", exit code footer
+  fingerprints/*.txt  per-table row count + md5 of ordered rows
+  ARTIFACTS.sha256    SHA-256 of dumps and corrupted inputs (artifacts/ is gitignored; uploaded by CI)
+  SHA256SUMS          SHA-256 of every other file in the run directory
 ```
+Result values are PASS, FAIL, ERROR and NOT_RUN. Only PASS counts.
 
-CI runs (`.github/workflows/postgres-restore-evidence.yml`) upload the full directory, including
-`artifacts/`, as a workflow artifact named `postgres-evidence-<mode>-<run_id>-<attempt>`.
-Failures are preserved: evidence is uploaded with `if: always()` before the job is marked failed.
-
-Verify a run: `tests/integration/postgres/verify_evidence.sh evidence/postgres/runs/<RUN_LABEL>`
+Verify a run: `python3 tests/integration/postgres/verify_evidence.py evidence/postgres/runs/<RUN_LABEL> [--require-artifacts]`.
+It exits 0 = verified, 1 = rejected, 3 = historical.

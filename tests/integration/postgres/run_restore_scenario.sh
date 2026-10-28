@@ -1,67 +1,55 @@
 #!/usr/bin/env bash
-# Postgres backup/restore exercise with positive and negative tests.
+# Postgres backup/restore exercise (harness v2: every expected failure must fail for its declared reason).
 #
-# Usage: run_restore_scenario.sh [service|offline]
-#   service : use an existing server from PGHOST/PGPORT/PGUSER/PGPASSWORD (e.g. a CI service container)
-#   offline : start a throwaway local cluster (initdb) listening ONLY on a unix socket; no network, no cloud
+# Usage: run_restore_scenario.sh [offline|service]
+#   offline : throwaway initdb cluster listening ONLY on a unix socket (no TCP, no cloud)
+#   service : existing server from PGHOST/PGPORT/PGUSER/PGPASSWORD (CI service container)
 #
-# Every command's exit code is captured in $EVIDENCE_DIR/COMMANDS.tsv and its output in logs/.
-# Negative tests are expected to FAIL (non-zero exit); a negative test "passes" when the failure is observed.
-# Failures are never hidden: the script records everything, then exits 1 if any expectation was not met.
+# Cases and their expected outcome/reason live in expectations.tsv; see lib.sh for the classification rules.
+# Every negative test runs as ONE command after separately-checked setup steps, so a setup error can
+# never be mistaken for the injected fault. Exit 0 only if every declared case PASSed exactly once.
 set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$HERE/../../.." && pwd)"
 MODE="${1:-${PG_SCENARIO_MODE:-offline}}"
+case "$MODE" in offline|service) ;; *) echo "unknown mode: $MODE" >&2; exit 2 ;; esac
 RUN_LABEL="${RUN_LABEL:-local-${MODE}-$(date -u +%Y%m%dT%H%M%SZ)}"
 EVIDENCE_DIR="${EVIDENCE_DIR:-$REPO_ROOT/evidence/postgres/runs/$RUN_LABEL}"
-ARTIFACT_DIR="${ARTIFACT_DIR:-$EVIDENCE_DIR/artifacts}"
-LOG_DIR="$EVIDENCE_DIR/logs"
+ARTIFACT_DIR="$EVIDENCE_DIR/artifacts"
 FP_DIR="$EVIDENCE_DIR/fingerprints"
-TSV="$EVIDENCE_DIR/COMMANDS.tsv"
+mkdir -p "$ARTIFACT_DIR" "$FP_DIR"
 
-mkdir -p "$LOG_DIR" "$FP_DIR" "$ARTIFACT_DIR"
-printf 'seq\tstep_id\tkind\texpected\texit_code\tresult\tstarted_utc\tduration_ms\tlog\tcommand\n' > "$TSV"
-
-SEQ=0; PASS=0; FAIL=0
-now_ms() { date +%s%3N; }
-
-# run_step <step_id> <kind: setup|positive|negative> <expect: zero|nonzero> <command...>
-run_step() {
-  local id="$1" kind="$2" expect="$3"; shift 3
-  SEQ=$((SEQ + 1))
-  local log="logs/$(printf '%02d' "$SEQ")_${id}.log"
-  local cmd; cmd="$(printf '%q ' "$@")"
-  local started; started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  local t0; t0="$(now_ms)"
-  { echo "# step=$id kind=$kind expect=$expect started=$started"; echo "# cmd: $cmd"; } > "$EVIDENCE_DIR/$log"
-  "$@" >> "$EVIDENCE_DIR/$log" 2>&1
-  local rc=$?
-  local dur=$(( $(now_ms) - t0 ))
-  echo "# exit_code=$rc duration_ms=$dur" >> "$EVIDENCE_DIR/$log"
-  local result
-  if { [ "$expect" = zero ] && [ "$rc" -eq 0 ]; } || { [ "$expect" = nonzero ] && [ "$rc" -ne 0 ]; }; then
-    result=PASS; PASS=$((PASS + 1))
-  else
-    result=FAIL; FAIL=$((FAIL + 1))
-  fi
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$SEQ" "$id" "$kind" "$expect" "$rc" "$result" "$started" "$dur" "$log" "${cmd% }" >> "$TSV"
-  printf '[%s] %-28s %-8s expect=%-7s exit=%-3s %s\n' "$result" "$id" "$kind" "$expect" "$rc" "$log"
-  return 0
-}
+# shellcheck source=lib.sh
+. "$HERE/lib.sh"
+h_init "$EVIDENCE_DIR" "$HERE/expectations.tsv" "$MODE"
 
 # ---------- locate binaries ----------
 if [ -z "${PG_BIN:-}" ]; then
-  if command -v pg_config >/dev/null 2>&1 && [ -x "$(pg_config --bindir)/initdb" ]; then
-    PG_BIN="$(pg_config --bindir)"
-  else
-    PG_BIN="$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1)"
-    [ -n "$PG_BIN" ] || PG_BIN="$(dirname "$(command -v pg_dump)")"
-  fi
+  if command -v pg_config >/dev/null 2>&1 && [ -x "$(pg_config --bindir)/initdb" ]; then PG_BIN="$(pg_config --bindir)"
+  else PG_BIN="$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1)"; fi
 fi
-export PATH="$PG_BIN:$PATH"
+[ -n "${PG_BIN:-}" ] && export PATH="$PG_BIN:$PATH"
 
-# ---------- server setup ----------
+PSQL=(psql -X -v ON_ERROR_STOP=1 -v VERBOSITY=verbose -q)
+DUMP="$ARTIFACT_DIR/lab_source.dump"
+PLAIN="$ARTIFACT_DIR/lab_source.sql"
+TRUNC="$ARTIFACT_DIR/truncated.dump"
+GARBAGE="$ARTIFACT_DIR/garbage.dump"
+
+# ---------- step functions (each is one checked command) ----------
+required_tools() {
+  local t rc=0
+  for t in psql pg_dump pg_restore createdb dropdb pg_isready diff sha256sum awk; do
+    if command -v "$t" >/dev/null 2>&1; then echo "found $t: $(command -v "$t")"; else echo "missing $t: not found"; rc=127; fi
+  done
+  if [ "$MODE" = offline ]; then
+    for t in initdb pg_ctl; do
+      if command -v "$t" >/dev/null 2>&1; then echo "found $t: $(command -v "$t")"; else echo "missing $t: not found"; rc=127; fi
+    done
+  fi
+  return $rc
+}
 OFFLINE_DIR=""
 cleanup() {
   if [ -n "$OFFLINE_DIR" ] && [ -d "$OFFLINE_DIR" ]; then
@@ -70,108 +58,134 @@ cleanup() {
   fi
 }
 trap cleanup EXIT
-
-if [ "$MODE" = offline ]; then
-  OFFLINE_DIR="$(mktemp -d)"
-  mkdir -p "$OFFLINE_DIR/sock"
-  export PGHOST="$OFFLINE_DIR/sock" PGPORT=54329 PGUSER=postgres
-  unset PGPASSWORD
-  run_step offline_initdb setup zero initdb -D "$OFFLINE_DIR/data" -U postgres --auth=trust -E UTF8 --locale=C
-  run_step offline_start setup zero pg_ctl -D "$OFFLINE_DIR/data" -w -l "$OFFLINE_DIR/server.log" \
+offline_initdb() { initdb -D "$OFFLINE_DIR/data" -U postgres --auth=trust -E UTF8 --locale=C; }
+offline_start() {
+  pg_ctl -D "$OFFLINE_DIR/data" -w -l "$OFFLINE_DIR/server.log" \
     -o "-c listen_addresses='' -k $OFFLINE_DIR/sock -p 54329" start
-elif [ "$MODE" != service ]; then
-  echo "unknown mode: $MODE" >&2; exit 2
-fi
+}
+major_match() {
+  local client server_num server
+  client="$(pg_dump --version | sed -E 's/^[^0-9]*([0-9]+).*/\1/')" || return 1
+  server_num="$(psql -X -d postgres -Atc 'show server_version_num')" || return 1
+  server=$(( server_num / 10000 ))
+  echo "pg_dump: $(pg_dump --version)"
+  echo "server_version_num: $server_num"
+  if [ "$client" = "$server" ]; then echo "client_major=$client server_major=$server match"; return 0; fi
+  echo "client_major=$client server_major=$server MISMATCH (pg_dump output may use settings the server rejects)"; return 1
+}
+reset_databases() {
+  local db
+  for db in lab_source lab_restore_ok lab_restore_plain lab_restore_trunc lab_restore_dup lab_restore_tamper lab_db_does_not_exist; do
+    dropdb --if-exists "$db" || return 1
+  done
+}
+fingerprint() { "${PSQL[@]}" -d "$1" -At -f "$HERE/fingerprint.sql" > "$2" && cat "$2"; }
+fingerprint_sanity() {
+  local f="$FP_DIR/source.txt"
+  grep -Eq '^lab\.accounts\|50\|[0-9a-f]{32}$' "$f" &&
+  grep -Eq '^lab\.ledger_entries\|1000\|[0-9a-f]{32}$' "$f" &&
+  grep -Eq '^lab\.account_balances\|50\|[0-9a-f]{32}$' "$f" &&
+  [ "$(wc -l < "$f")" -eq 3 ] && echo "fingerprint ok: 3 tables"
+}
+toc_list() { pg_restore --list "$DUMP" | tee "$ARTIFACT_DIR/lab_source.toc"; }
+make_truncated() {
+  local size; size=$(stat -c %s "$DUMP") || return 1
+  [ "$size" -gt 1024 ] || { echo "dump too small: $size"; return 1; }
+  head -c $((size / 2)) "$DUMP" > "$TRUNC" || return 1
+  local tsize; tsize=$(stat -c %s "$TRUNC")
+  [ "$tsize" -gt 0 ] && [ "$tsize" -lt "$size" ] && echo "truncated $tsize of $size bytes"
+}
+make_garbage() { printf 'this is not a postgres archive\n' > "$GARBAGE" && sha256sum "$GARBAGE"; }
+assert_db_absent() {
+  local n; n="$(psql -X -d postgres -Atc "select count(*) from pg_database where datname='lab_db_does_not_exist'")" || return 1
+  [ "$n" = 0 ] && echo absent
+}
+n04_precondition() {
+  local entries orphan
+  entries="$(psql -X -d lab_restore_ok -Atc 'select count(*) from lab.ledger_entries')" || return 1
+  orphan="$(psql -X -d lab_restore_ok -Atc 'select count(*) = 0 from lab.accounts where account_id = 424242')" || return 1
+  [ "$orphan" = t ] && orphan=1 || orphan=0
+  echo "ledger_entries=$entries orphan_account_absent=$orphan"
+  [ "$entries" = 1000 ] && [ "$orphan" = 1 ]
+}
+restore() { pg_restore --exit-on-error --no-owner -d "$1" "$2"; }
 
-PSQL=(psql -X -v ON_ERROR_STOP=1 -q)
-
+# ---------- environment record ----------
 {
   echo "run_label=$RUN_LABEL"
   echo "mode=$MODE"
   echo "date_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "uname=$(uname -srm)"
-  echo "pg_bin=$PG_BIN"
-  echo "pg_dump=$(pg_dump --version)"
-  echo "pg_restore=$(pg_restore --version)"
-  echo "psql=$(psql --version)"
+  echo "pg_bin=${PG_BIN:-}"
+  echo "pg_dump=$(pg_dump --version 2>&1)"
   echo "git_sha=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo unknown)"
+  echo "git_tree_dirty=$(git -C "$REPO_ROOT" status --porcelain -- tests/integration 2>/dev/null | grep -q . && echo yes || echo no)"
+  for f in lib.sh run_restore_scenario.sh expectations.tsv seed.sql fingerprint.sql; do
+    echo "sha256_$f=$(sha256sum "$HERE/$f" | cut -c1-64)"
+  done
   echo "github_run_id=${GITHUB_RUN_ID:-}"
   echo "github_run_attempt=${GITHUB_RUN_ATTEMPT:-}"
-  echo "pghost_kind=$([ "$MODE" = offline ] && echo unix-socket-only || echo "${PGHOST:-default}")"
+  echo "github_sha=${GITHUB_SHA:-}"
 } > "$EVIDENCE_DIR/ENVIRONMENT.txt"
 
-run_step server_ready setup zero pg_isready -t 30
-run_step server_version setup zero "${PSQL[@]}" -d postgres -Atc "select version()"
-# pg_dump output from a newer client can contain settings an older server rejects
-# (e.g. PG17+ emits "SET transaction_timeout"), so require matching major versions.
-CLIENT_MAJOR="$(pg_dump --version | sed -E 's/.* ([0-9]+)(\.[0-9]+)?.*/\1/')"
-SERVER_MAJOR="$(psql -X -d postgres -Atc 'show server_version_num' 2>/dev/null | cut -c1-2)"
-echo "client_major=$CLIENT_MAJOR" >> "$EVIDENCE_DIR/ENVIRONMENT.txt"
-echo "server_major=$SERVER_MAJOR" >> "$EVIDENCE_DIR/ENVIRONMENT.txt"
-run_step client_server_major_match setup zero test "$CLIENT_MAJOR" = "$SERVER_MAJOR"
+# ---------- setup ----------
+run_case S00_required_tools required_tools
+if [ "$MODE" = offline ]; then
+  OFFLINE_DIR="$(mktemp -d)"; mkdir -p "$OFFLINE_DIR/sock"
+  export PGHOST="$OFFLINE_DIR/sock" PGPORT=54329 PGUSER=postgres; unset PGPASSWORD
+  run_case --needs S00_required_tools S01_offline_initdb offline_initdb
+  run_case --needs S01_offline_initdb S02_offline_start offline_start
+  BASE=S02_offline_start
+else
+  BASE=S00_required_tools
+fi
+run_case --needs $BASE S03_server_ready pg_isready -t 30
+run_case --needs S03_server_ready S04_client_server_major_match major_match
+G=S04_client_server_major_match   # gate: nothing below runs on a version mismatch
+run_case --needs $G S05_reset_databases reset_databases
+run_case --needs S05_reset_databases S06_create_source createdb lab_source
+run_case --needs S06_create_source S07_seed_source "${PSQL[@]}" -d lab_source -f "$HERE/seed.sql"
+run_case --needs S07_seed_source S08_fingerprint_source fingerprint lab_source "$FP_DIR/source.txt"
+run_case --needs S08_fingerprint_source S09_fingerprint_source_sanity fingerprint_sanity
+SRC=S09_fingerprint_source_sanity
 
-DUMP="$ARTIFACT_DIR/lab_source.dump"
-PLAIN="$ARTIFACT_DIR/lab_source.sql"
+# ---------- positive ----------
+run_case --needs $SRC P01_pg_dump_custom pg_dump -Fc --no-owner -d lab_source -f "$DUMP"
+run_case --needs P01_pg_dump_custom P02_pg_restore_list toc_list
+run_case --needs $SRC P03_createdb_target createdb lab_restore_ok
+run_case --needs P01_pg_dump_custom,P03_createdb_target P04_pg_restore restore lab_restore_ok "$DUMP"
+run_case --needs P04_pg_restore P05_fingerprint_restored fingerprint lab_restore_ok "$FP_DIR/restore_ok.txt"
+run_case --needs P05_fingerprint_restored P06_compare_restored diff -u "$FP_DIR/source.txt" "$FP_DIR/restore_ok.txt"
+run_case --needs $SRC P07_pg_dump_plain pg_dump -Fp --no-owner -d lab_source -f "$PLAIN"
+run_case --needs $SRC P08_createdb_plain createdb lab_restore_plain
+run_case --needs P07_pg_dump_plain,P08_createdb_plain P09_psql_restore_plain "${PSQL[@]}" -d lab_restore_plain -f "$PLAIN"
+run_case --needs P09_psql_restore_plain P10_fingerprint_plain fingerprint lab_restore_plain "$FP_DIR/restore_plain.txt"
+run_case --needs P10_fingerprint_plain P11_compare_plain diff -u "$FP_DIR/source.txt" "$FP_DIR/restore_plain.txt"
 
-for db in lab_source lab_restore_ok lab_restore_plain lab_restore_trunc lab_restore_dup lab_restore_tamper; do
-  run_step "reset_$db" setup zero dropdb --if-exists "$db"
-done
-run_step create_source setup zero createdb lab_source
-run_step seed_source setup zero "${PSQL[@]}" -d lab_source -f "$HERE/seed.sql"
-run_step fingerprint_source setup zero bash -c "\"\$@\" -d lab_source -At -f '$HERE/fingerprint.sql' > '$FP_DIR/source.txt'" _ "${PSQL[@]}"
+# ---------- negative: setup steps are checked separately; the fault step is one command ----------
+run_case --needs $SRC S_N01_createdb createdb lab_restore_trunc
+run_case --needs P01_pg_dump_custom S_N01_make_truncated_dump make_truncated
+run_case --needs S_N01_createdb,S_N01_make_truncated_dump N01_restore_truncated_dump restore lab_restore_trunc "$TRUNC"
 
-# ---------- positive tests ----------
-run_step P01_pg_dump_custom positive zero pg_dump -Fc --no-owner -d lab_source -f "$DUMP"
-run_step P02_pg_restore_list positive zero bash -c "pg_restore --list '$DUMP' > '$ARTIFACT_DIR/lab_source.toc'"
-run_step P03_createdb_target positive zero createdb lab_restore_ok
-run_step P04_pg_restore positive zero pg_restore --exit-on-error --no-owner -d lab_restore_ok "$DUMP"
-run_step P05_fingerprint_restored positive zero bash -c "\"\$@\" -d lab_restore_ok -At -f '$HERE/fingerprint.sql' > '$FP_DIR/restore_ok.txt'" _ "${PSQL[@]}"
-run_step P06_compare_restored positive zero diff -u "$FP_DIR/source.txt" "$FP_DIR/restore_ok.txt"
-run_step P07_pg_dump_plain positive zero pg_dump -Fp --no-owner -d lab_source -f "$PLAIN"
-run_step P08_createdb_plain positive zero createdb lab_restore_plain
-run_step P09_psql_restore_plain positive zero "${PSQL[@]}" -d lab_restore_plain -f "$PLAIN"
-run_step P10_fingerprint_plain positive zero bash -c "\"\$@\" -d lab_restore_plain -At -f '$HERE/fingerprint.sql' > '$FP_DIR/restore_plain.txt'" _ "${PSQL[@]}"
-run_step P11_compare_plain positive zero diff -u "$FP_DIR/source.txt" "$FP_DIR/restore_plain.txt"
+run_case --needs $G S_N02_make_garbage_file make_garbage
+run_case --needs S_N02_make_garbage_file N02_list_garbage_archive pg_restore --list "$GARBAGE"
 
-# ---------- negative tests (must fail) ----------
-SIZE=$(stat -c %s "$DUMP" 2>/dev/null || echo 0)
-head -c $((SIZE / 2)) "$DUMP" > "$ARTIFACT_DIR/truncated.dump" 2>/dev/null || true
-printf 'this is not a postgres archive\n' > "$ARTIFACT_DIR/garbage.dump"
-run_step N01_restore_truncated_dump negative nonzero bash -c "createdb lab_restore_trunc && pg_restore --exit-on-error --no-owner -d lab_restore_trunc '$ARTIFACT_DIR/truncated.dump'"
-run_step N02_list_garbage_archive negative nonzero pg_restore --list "$ARTIFACT_DIR/garbage.dump"
-run_step N03_restore_missing_database negative nonzero pg_restore --exit-on-error --no-owner -d lab_db_does_not_exist "$DUMP"
-run_step N04_fk_enforced_after_restore negative nonzero "${PSQL[@]}" -d lab_restore_ok -c \
+run_case --needs $G S_N03_assert_database_absent assert_db_absent
+run_case --needs S_N03_assert_database_absent,P01_pg_dump_custom N03_restore_missing_database restore lab_db_does_not_exist "$DUMP"
+
+run_case --needs P06_compare_restored S_N04_precondition n04_precondition
+run_case --needs S_N04_precondition N04_fk_enforced_after_restore "${PSQL[@]}" -d lab_restore_ok -c \
   "insert into lab.ledger_entries(entry_id, account_id, amount_cents, memo, posted_on) values (999999, 424242, 1, 'orphan', current_date)"
-run_step N05_restore_over_existing_objects negative nonzero bash -c "createdb lab_restore_dup && pg_restore --exit-on-error --no-owner -d lab_restore_dup '$DUMP' && pg_restore --exit-on-error --no-owner -d lab_restore_dup '$DUMP'"
-run_step N06_tamper_detected negative nonzero bash -c "createdb lab_restore_tamper && pg_restore --exit-on-error --no-owner -d lab_restore_tamper '$DUMP' && \"\$@\" -d lab_restore_tamper -c \"update lab.ledger_entries set amount_cents = amount_cents + 1 where entry_id = 500\" && \"\$@\" -d lab_restore_tamper -At -f '$HERE/fingerprint.sql' > '$FP_DIR/restore_tampered.txt' && diff -u '$FP_DIR/source.txt' '$FP_DIR/restore_tampered.txt'" _ "${PSQL[@]}"
 
-# ---------- summary + hashes ----------
-(cd "$ARTIFACT_DIR" && sha256sum -- * > "$EVIDENCE_DIR/ARTIFACTS.sha256")
-OVERALL=$([ "$FAIL" -eq 0 ] && echo PASS || echo FAIL)
-cat > "$EVIDENCE_DIR/SUMMARY.json" <<JSON
-{
-  "run_label": "$RUN_LABEL",
-  "mode": "$MODE",
-  "overall": "$OVERALL",
-  "steps": $SEQ,
-  "passed": $PASS,
-  "failed": $FAIL,
-  "finished_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "commands_tsv": "COMMANDS.tsv",
-  "hashes": "SHA256SUMS",
-  "artifact_hashes": "ARTIFACTS.sha256"
-}
-JSON
-{
-  echo "# Postgres restore exercise: $RUN_LABEL"
-  echo
-  echo "Mode: \`$MODE\`. Overall: **$OVERALL** ($PASS passed, $FAIL failed, $SEQ steps)."
-  echo
-  echo "| # | step | kind | expected | exit | result |"
-  echo "|---|------|------|----------|------|--------|"
-  tail -n +2 "$TSV" | awk -F'\t' '{printf "| %s | %s | %s | %s | %s | %s |\n", $1, $2, $3, $4, $5, $6}'
-} > "$EVIDENCE_DIR/SUMMARY.md"
-(cd "$EVIDENCE_DIR" && find . -type f ! -name SHA256SUMS ! -path './artifacts/*' -printf '%P\n' | LC_ALL=C sort | xargs -d '\n' sha256sum > SHA256SUMS)
+run_case --needs $SRC S_N05_createdb createdb lab_restore_dup
+run_case --needs S_N05_createdb,P01_pg_dump_custom S_N05_first_restore restore lab_restore_dup "$DUMP"
+run_case --needs S_N05_first_restore N05_restore_over_existing_objects restore lab_restore_dup "$DUMP"
 
-echo "evidence: $EVIDENCE_DIR  overall=$OVERALL passed=$PASS failed=$FAIL"
-[ "$FAIL" -eq 0 ]
+run_case --needs $SRC S_N06_createdb createdb lab_restore_tamper
+run_case --needs S_N06_createdb,P01_pg_dump_custom S_N06_restore restore lab_restore_tamper "$DUMP"
+run_case --needs S_N06_restore S_N06_tamper_row psql -X -v ON_ERROR_STOP=1 -d lab_restore_tamper -c \
+  "update lab.ledger_entries set amount_cents = amount_cents + 1 where entry_id = 500"
+run_case --needs S_N06_tamper_row S_N06_fingerprint_tampered fingerprint lab_restore_tamper "$FP_DIR/restore_tampered.txt"
+run_case --needs S_N06_fingerprint_tampered N06_tamper_detected diff -u "$FP_DIR/source.txt" "$FP_DIR/restore_tampered.txt"
+
+h_finalize "$RUN_LABEL" "$ARTIFACT_DIR"
