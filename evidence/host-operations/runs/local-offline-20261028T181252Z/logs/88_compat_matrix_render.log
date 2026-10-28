@@ -1,0 +1,46 @@
+$ python3 operations/hardening/tools/score_units.py --render-matrix
+--- stdout ---
+| Directive | min systemd | RHEL / CentOS 7 (219) | Amazon Linux 2 (219) | RHEL 8 (239) | Ubuntu 20.04 (245) | Debian 11 (247) | Ubuntu 22.04 (249) | RHEL 9 (252) | Debian 12 (252) | Amazon Linux 2023 (252) | Ubuntu 24.04 (255) | Debian 13 (257) | RHEL 10 (257) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `AmbientCapabilities=` | 229 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `CapabilityBoundingSet=` | < 187 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `DynamicUser=` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `IPAddressDeny=` | 235 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `KeyringMode=` | 235 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `LockPersonality=` | 235 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `MemoryDenyWriteExecute=` | 231 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `NoNewPrivileges=` | 187 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `PrivateDevices=` | 209 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `PrivateIPC=` | 248 | **no** | **no** | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes |
+| `PrivateNetwork=` | < 187 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `PrivateTmp=` | < 187 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `PrivateTmp=disconnected` | 260 | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** |
+| `PrivateUsers=` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProcSubset=` | 247 | **no** | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectClock=` | 245 | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectControlGroups=` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectControlGroups=private` | 257 | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | yes | yes |
+| `ProtectControlGroups=strict` | 257 | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | **no** | yes | yes |
+| `ProtectHome=` | 214 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectHome=tmpfs` | 238 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectHostname=` | 242 | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectKernelLogs=` | 244 | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectKernelModules=` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectKernelTunables=` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectProc=` | 247 | **no** | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectSystem=` | 214 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ProtectSystem=strict` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `ReadWritePaths=` | 231 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `RemoveIPC=` | 232 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `RestrictAddressFamilies=` | 211 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `RestrictNamespaces=` | 233 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `RestrictRealtime=` | 231 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `RestrictSUIDSGID=` | 242 | **no** | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `StateDirectory=` | 235 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `SystemCallArchitectures=` | 209 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `SystemCallErrorNumber=` | 209 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `SystemCallFilter=` | 187 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `SystemCallFilter=@system-service` | 239 | **no** | **no** | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| `UMask=` | < 187 | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:56Z duration_ms=23 ---

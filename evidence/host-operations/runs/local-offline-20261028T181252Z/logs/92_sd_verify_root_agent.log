@@ -1,0 +1,4 @@
+$ XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user verify <tmp>/config/systemd/user/bank-lab-root-agent.service (+ no drop-ins)
+--- stdout ---
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:57Z duration_ms=14 ---

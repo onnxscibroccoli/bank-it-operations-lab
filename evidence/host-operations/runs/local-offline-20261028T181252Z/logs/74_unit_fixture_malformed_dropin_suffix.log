@@ -1,0 +1,9 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-wrong-suffix.txt --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "overall": "MALFORMED",
+  "error": "drop-in dropin-wrong-suffix.txt must end in .conf"
+}
+--- stderr ---
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:12:56Z duration_ms=34 ---

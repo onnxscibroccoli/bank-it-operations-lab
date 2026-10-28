@@ -1,0 +1,9 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-malformed.conf --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "overall": "MALFORMED",
+  "error": "ProtectHome=sometimes is not one of ['0', '1', 'false', 'no', 'off', 'on', 'read-only', 'tmpfs', 'true', 'yes']"
+}
+--- stderr ---
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:12:56Z duration_ms=22 ---

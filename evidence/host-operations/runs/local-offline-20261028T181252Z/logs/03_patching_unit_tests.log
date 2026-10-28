@@ -1,0 +1,18 @@
+$ python3 -m unittest discover -s operations/patching/tests -v
+--- stdout ---
+--- stderr ---
+test_all_cli_inputs_are_json_with_placeholders_only (test_inspect_patch_manifest.CliInputs.test_all_cli_inputs_are_json_with_placeholders_only) ... ok
+test_example_passes (test_inspect_patch_manifest.ExampleManifest.test_example_passes) ... ok
+test_plan_order (test_inspect_patch_manifest.ExampleManifest.test_plan_order) ... ok
+test_every_neg_fixture_has_expected_rules (test_inspect_patch_manifest.FixtureDrift.test_every_neg_fixture_has_expected_rules) ... ok
+test_fixtures_match_generator (test_inspect_patch_manifest.FixtureDrift.test_fixtures_match_generator) ... ok
+test_exit_codes_via_cli (test_inspect_patch_manifest.Fixtures.test_exit_codes_via_cli) ... ok
+test_malformed_raise (test_inspect_patch_manifest.Fixtures.test_malformed_raise) ... ok
+test_negative_fixtures_fail_only_intended_rules (test_inspect_patch_manifest.Fixtures.test_negative_fixtures_fail_only_intended_rules) ... ok
+test_tool_never_invokes_aws (test_inspect_patch_manifest.NoSideEffects.test_tool_never_invokes_aws) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.042s
+
+OK
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:52Z duration_ms=1091 ---

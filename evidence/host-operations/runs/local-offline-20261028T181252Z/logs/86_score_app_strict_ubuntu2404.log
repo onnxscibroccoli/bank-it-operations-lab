@@ -1,0 +1,37 @@
+$ python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro ubuntu2404
+--- stdout ---
+bank-lab-app.service + 10-hardening-baseline.conf, 20-hardening-strict.conf, 30-net-bind-service.conf  (offline estimate; nothing applied)
+  ok  RunsAsNonRoot            w=10 service runs as a dedicated non-root user (User= or DynamicUser=yes)
+  ok  NoNewPrivileges          w=8  NoNewPrivileges=yes blocks setuid/file-capability escalation
+  ok  CapabilityBoundingSet    w=9  bounding set excludes dangerous capabilities
+  ok  AmbientCapabilities      w=5  no dangerous ambient capabilities granted
+  ok  ProtectSystem            w=7  ProtectSystem=strict (full=partial)
+  ok  ProtectHome              w=5  ProtectHome=yes (read-only=partial)
+  ok  PrivateTmp               w=5  PrivateTmp=yes
+  ok  PrivateDevices           w=5  PrivateDevices=yes
+  ok  ProtectKernelTunables    w=5  ProtectKernelTunables=yes
+  ok  ProtectKernelModules     w=5  ProtectKernelModules=yes
+  ok  ProtectKernelLogs        w=3  ProtectKernelLogs=yes
+  ok  ProtectControlGroups     w=4  ProtectControlGroups=yes
+  ok  ProtectClock             w=3  ProtectClock=yes
+  ok  ProtectHostname          w=2  ProtectHostname=yes
+  ok  ProtectProc              w=3  ProtectProc=invisible
+  ok  ProcSubset               w=2  ProcSubset=pid
+  ok  RestrictSUIDSGID         w=4  RestrictSUIDSGID=yes
+  ok  RestrictRealtime         w=2  RestrictRealtime=yes
+  ok  RestrictNamespaces       w=5  RestrictNamespaces=yes
+  ok  RestrictAddressFamilies  w=5  address families allow-listed, no AF_PACKET/AF_NETLINK
+  ok  LockPersonality          w=2  LockPersonality=yes
+  ok  MemoryDenyWriteExecute   w=4  MemoryDenyWriteExecute=yes
+  ok  SystemCallFilter         w=7  system calls allow-listed (e.g. @system-service)
+  ok  SystemCallArchitectures  w=3  SystemCallArchitectures=native
+  ok  RemoveIPC                w=1  RemoveIPC=yes
+  --  PrivateNetwork           w=4  PrivateNetwork=yes (only for services with no network needs)
+  --  PrivateUsers             w=3  PrivateUsers=yes
+  ok  IPAddressDeny            w=3  IPAddressDeny=any with explicit IPAddressAllow=
+  ok  UMask                    w=2  UMask=0027 or stricter
+target systemd 255: 0 unsupported directive(s)
+declared exposure 0.6, effective exposure 0.6 [GOOD], threshold 4.0
+overall: PASS
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:56Z duration_ms=25 ---
