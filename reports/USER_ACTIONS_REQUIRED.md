@@ -1,10 +1,55 @@
 # USER ACTIONS REQUIRED (Ian)
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 17:43 EDT): about 6 h 16 min.**
+> **Remaining window at commit time (2026-10-28 18:08 EDT): about 5 h 51 min.**
 > Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The acceptance vertical slice runs green in CI on a draft PR (#26). That is a working gate, not a merge. Nothing here claims completion that was not verified.
 
-Snapshot: 2026-10-28, about 17:43 EDT. The #7 integration head is `49122f2`, and the acceptance slice #26 is at `181bcdd` (CI green). Automation never merges into `main`, never closes PRs and never deploys. Everything below needs a human. See `FINAL_REPORT.md` §2 for the merge policy (gates G1–G9) and the status of each PR.
+Snapshot: 2026-10-28, about 18:08 EDT. The #7 integration head is `4f54a01`, and the acceptance slice #26 is at `eb42b23` (CI green, decision REVIEW_PENDING). This reports agent never merges, closes PRs or deploys. Since #7 @ `4f54a01` (C6), coordination policy allows *independently proven* automated merges. None has happened, and none is currently provable (UA-1, UA-2). Only the USER_ACTION_REQUIRED items need Ian; the AUTONOMOUS_FIX items belong to the lane owners. See `FINAL_REPORT.md` §2 for the merge policy (gates G1–G9) and the status of each PR.
+
+```
+USER ACTION REQUIRED: 6 — authenticated reviewer for exact-SHA approval; branch protection on main; EX-03/EX-04 sign-off; Entra baseline; #6 Terraform-vs-CDK; final portfolio acceptance
+```
+
+## User-action reporting format (implements PR #27, "User intervention without stopping the project")
+- **Top line, always present, even when the overall status is failing:** `USER ACTION REQUIRED: NONE`, or `USER ACTION REQUIRED: <number> — <short action>`.
+- **Classification at every checkpoint.** Every blocker gets exactly one class:
+  - **AUTONOMOUS_FIX:** test failures, conflicts, docs, agent review, code fixes.
+  - **USER_ACTION_REQUIRED:** only interactive login or MFA after a real failure, an admin setting outside available permissions or that needs approval, approval to spend money, or a material risk or scope decision.
+  - **OUT_OF_SCOPE:** for example live AWS or Entra validation, which is intentionally excluded. Credentials are never requested.
+- **Typed fields for each USER_ACTION_REQUIRED item.** These are the #27 list, in fixed order:
+  - `id`
+  - `action` (exact)
+  - `reason` (why it cannot be automated)
+  - `error` (observed, sanitized)
+  - `permission` (smallest permission needed)
+  - `link` (instructions)
+  - `blocks` (blocked tasks; only these are BLOCKED_USER)
+  - `continuing` (work that continues)
+  - `deadline` (whether it affects the midnight deadline)
+- **Machine-readable copy:** [`user-actions.json`](user-actions.json), schema `bank-it-operations-lab/user-actions@1`. Values are plain data and must never be interpolated as shell code.
+- **Not implemented here (outside this reports-only role):** #27 also asks for a fast Actions reporting job that writes this top line to `$GITHUB_STEP_SUMMARY`, emits a warning annotation, uploads the JSON as a small artifact, and repeats it in the final `always()` summary. That belongs to lane B (the integrator, `.github/workflows/**`). The JSON file is shaped so that job can consume it directly.
+- **Not proof of notification:** a report or summary does not mean Ian was notified. GitHub email or push delivery depends on his notification settings.
+- **Choices made where #27 is not precise:**
+  1. `<short action>` is a semicolon-separated list of every item's short label.
+  2. IDs are stable `UA-n`; resolved items stay listed with `status: RESOLVED` and a verification note.
+  3. The JSON is the canonical copy and the table below is generated from the same data in this commit.
+
+## USER_ACTION_REQUIRED items (as of 2026-10-28 18:08 EDT)
+| ID | Action | Reason it can't be automated | Observed error | Smallest permission | Link | Blocks | Continuing | Deadline impact |
+|---|---|---|---|---|---|---|---|---|
+| UA-1 | Decide how independent review is authenticated for exact-SHA approval | All 27 PRs are authored by the single account `onnxscibroccoli`, and GitHub does not let a PR author approve their own PR. An authenticated GitHub review therefore needs a second identity (a collaborator or bot account) or an explicit owner policy that names an alternative provenance (for example signed review commits on an audit branch). | No GitHub review exists on any PR. Reviewer names in agent notes are unauthenticated strings (PR #27, C4). | Repo admin: add a reviewer collaborator or GitHub App, or record the policy decision | https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/access | The G1 / AC1 gate for every merge to main | All implementation, CI, integration and agent review | YES: no merge can be gate-proven tonight without it |
+| UA-2 | Approve enabling a branch-protection rule or ruleset on main that requires the final acceptance gate | This is a repository-wide setting. The account has admin (verified through the API), but changing settings is outside this reports-only role and needs your explicit approval. #27 says to query first and never bypass. | GET branches/main/protection returns 404 "Branch not protected"; rulesets: [] (checked 18:08 EDT) | Repo admin (the account already has it) | https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/branches | #27 P0: wire the final decision into an actual merge gate | Lanes A–E | Partly: merges can still be serialized manually, but they are not enforced |
+| UA-3 | Give the final risk sign-off on EX-03 (wildcard scope) and EX-04 (Backup role), and have EX-01/EX-02 recorded as approved in #5 | This is a material risk decision outside delegated lab scope. The supporting verifications can be done autonomously; the sign-off cannot. | EX-03 is OPEN and EX-04 is CONDITIONAL in the register. #14 lists B5-1 (suppressions applied before approval). | Owner decision | https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5 | #5, #7, #26 (they carry #5) | The B5-2 KMS fix and the other lanes | YES for #5, #7 and #26 |
+| UA-4 | Confirm the #4 Entra baseline choices: risk policies report-only, device compliance for All users on All apps, the 12 privileged roles | This is a policy decision that belongs to the owner | Marked unconfirmed in #4 and in #7 AC4 | Owner decision | https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4 | #4 acceptance (C2 criterion) | Everything else | YES for #4 |
+| UA-5 | Decide on #6: accept CDK, or require Terraform as the original plan asked | Scope decision (#14 B6-3) | #6 delivers CDK. The Terraform items are MISSING and the deviation is undocumented. | Owner decision | https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6 | #6 only (it is already excluded from #7) | Everything else | YES for #6 |
+| UA-6 | Final human portfolio acceptance (AC6) at the deadline | #7 tasks.json makes portfolio acceptance a separate human gate; technical eligibility is not acceptance | n/a (this is a future step) | Owner decision | https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/11 | Declaring the portfolio accepted | All technical work | It is the final step before midnight |
+
+## Classification of the remaining A/B items below
+| Class | Items |
+|---|---|
+| USER_ACTION_REQUIRED | A1 final sign-off (→ UA-3), A3 (→ UA-4), A4 (→ UA-1), A6 B6-3 decision (→ UA-5), B4 (→ UA-2), the AC6 final acceptance (→ UA-6) |
+| AUTONOMOUS_FIX | A1 verifications, A2 (B5-2 KMS fix), A5 (close #1 after #7 lands; integrator), A6 B6-1/B6-2 fixes, A7 reviews (agent review possible; human acceptance stays UA-6), A8 (#21 exceptions file and CI), A9 (pins, CI, lifecycle), A10 post-merge verify, A12 (#26 gaps and #25 integration), A13 (#22 CI), C5, the #27 hardening items, module CI registration |
+| OUT_OF_SCOPE (per #27: no speculative AWS/Entra setup, no new spend) | B1 AWS sandbox, B2 Entra tenant, B3 rclone client_id |
 
 ## Merge policy (recorded)
 - A PR merges only when G1–G7 pass for its **exact head SHA**:
