@@ -1,3 +1,0 @@
-# step=P06_compare_restored kind=positive expect=zero started=2026-10-28T18:01:35Z
-# cmd: diff -u /workspace/bank-lab/evidence/postgres/runs/integration-offline-20261028T180134Z/fingerprints/source.txt /workspace/bank-lab/evidence/postgres/runs/integration-offline-20261028T180134Z/fingerprints/restore_ok.txt 
-# exit_code=0 duration_ms=3

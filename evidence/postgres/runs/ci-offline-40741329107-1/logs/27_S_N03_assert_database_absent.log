@@ -1,0 +1,7 @@
+# step=S_N03_assert_database_absent kind=setup expect=zero started=2026-10-28T18:02:24Z
+# reason_regex: ^absent$
+# cmd: assert_db_absent
+# --- output ---
+absent
+# --- end output ---
+# exit_code=0 duration_ms=9

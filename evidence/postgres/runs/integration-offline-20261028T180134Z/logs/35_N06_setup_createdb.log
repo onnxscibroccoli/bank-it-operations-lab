@@ -1,3 +1,0 @@
-# step=N06_setup_createdb kind=setup expect=zero started=2026-10-28T18:01:36Z
-# cmd: createdb lab_restore_tamper 
-# exit_code=0 duration_ms=47

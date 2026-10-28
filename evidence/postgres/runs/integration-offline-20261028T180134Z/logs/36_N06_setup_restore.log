@@ -1,3 +1,0 @@
-# step=N06_setup_restore kind=setup expect=zero started=2026-10-28T18:01:36Z
-# cmd: pg_restore --exit-on-error --no-owner -d lab_restore_tamper /workspace/bank-lab/evidence/postgres/runs/integration-offline-20261028T180134Z/artifacts/lab_source.dump 
-# exit_code=0 duration_ms=24
