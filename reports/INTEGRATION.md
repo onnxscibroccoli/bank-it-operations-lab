@@ -30,7 +30,9 @@ No PR has a formal GitHub review, and none of the open PRs has a review comment.
 2. `.github/workflows/offline-validation.yml`: runs `scripts/validate-all.sh --python-only`.
 3. PR #2 re-merge (`e76d8a4`, merging `e7399fb`):
    - My interim changes to `run_restore_scenario.sh`, `postgres-restore-evidence.yml` and `ci-service-40630856041-1/NOTE.md` (from `f3a8f17`) conflicted with the owner's v2. I resolved all three to the **owner's version**.
-   - The interim evidence run `integration-offline-20261028T180134Z` was removed, because the script that produced it no longer exists.
+   - The interim evidence run `integration-offline-20261028T180134Z` was removed in `e76d8a4`. It was then **restored byte-for-byte** from `fb70afd`, with a `STATUS.json` marking it HISTORICAL-KNOWN-INVALID and a row in `evidence/postgres/runs/INDEX.md`, so that no earlier evidence record is deleted.
+   - Every v1 failure record (`ci-service-40630856041-1`) is unchanged from `e610015`, apart from the owner's added NOTE.md text and STATUS.json.
+   - The #2 source commit `e7399fbb538504f723d1fb83e32ce50604807b8e` is an ancestor of HEAD. Re-merging it reports "Already up to date".
    - The v2 workflow has its own pinned `cdk-synth` job with no `CDK_DEFAULT_*`, so it overlaps `aws-cdk.yml`. That is harmless.
 4. Interface fix between #3 and #2 (`05941a9`): on v2's 12-column `COMMANDS.tsv`, `evidence/shared/validate_evidence.py postgres-negatives` silently reported `NEGATIVES OK: 0 negative steps`.
    - It now finds columns by header name, so it handles v1 and v2.
@@ -69,7 +71,7 @@ These are evaluated at the PR #7 head pushed with this report. The machine-reada
 |---|---|---|---|
 | AC1 | An independent human review approves the **exact** PR #7 head SHA. The reviewer must not be the author or this automation. | **UNMET** | There are no GitHub reviews on #1–#7. #3 reviewed only #1 @ `e494bcf` and #2 @ `e6100154`, and both have since been superseded or changed. |
 | AC2 | Security exceptions are recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded in `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` and enforced by tests. No approval is recorded. |
-| AC3 | All checks pass on that SHA: PR #7 GitHub CI plus `scripts/validate-all.sh`. | **MET locally, CI pending for the new HEAD** | Local: PASS. PR #7 CI was green at `876f7b7`. |
+| AC3 | All checks pass on that SHA: PR #7 GitHub CI plus `scripts/validate-all.sh`. | **MET locally, CI pending for this head** | Local: PASS. Only GitHub Actions runs for this exact head SHA count. Runs on `876f7b7` and `0f57289` do not. |
 | AC4 | The docs match the code. | **PARTIAL** | Repo docs and the PR #2 body are fixed or current. PR #1 is still open with the superseded design. The PR #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings remain in integrated code. | **MET** | `cfn-s3-selflog` is clean, and the false PASSes are fixed by v2. PR #6 is excluded. |
 

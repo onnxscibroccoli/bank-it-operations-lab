@@ -31,7 +31,7 @@ for r in ci-service-40741329107-1 ci-offline-40741329107-1 local-offline-v2-2026
   step "postgres v2 verify $r" python3 "$PV" "evidence/postgres/runs/$r"
 done
 step "postgres mismatch control is REJECTED" bash -c '! python3 '"$PV"' evidence/postgres/runs/ci-mismatch-control-40741329107-1 >/dev/null'
-for r in ci-service-40630856041-1 local-offline-20261028T041038Z; do
+for r in ci-service-40630856041-1 local-offline-20261028T041038Z integration-offline-20261028T180134Z; do
   step "postgres v1 run $r reported HISTORICAL (exit 3)" bash -c 'python3 '"$PV"' "evidence/postgres/runs/'"$r"'" >/dev/null; [ $? -eq 3 ]'
 done
 step "postgres harness self-test (no DB)" bash -c 'd=$(mktemp -d); EVIDENCE_DIR="$d" bash tests/integration/postgres/selftest_harness.sh >/dev/null; rc=$?; rm -rf "$d"; exit $rc'

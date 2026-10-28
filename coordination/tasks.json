@@ -6,7 +6,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28 ~14:20 EDT (America/New_York)",
+  "updated": "2026-10-28 ~14:15 EDT (America/New_York)",
   "rules": [
     "never merge into main from automation",
     "no deploys",
@@ -94,14 +94,16 @@
       "why": "Harness v2 by the owner (2aac93c + e7399fb) fixes PR #3's review findings: declared reason regexes, separately checked setup, FAIL/ERROR/NOT_RUN classification, independent verifier, self-test, and a version-mismatch negative control. It replaces the interim integration hardening from f3a8f17.",
       "integration_changes": [
         "merge e76d8a4: conflicts in run_restore_scenario.sh, postgres-restore-evidence.yml and ci-service-40630856041-1/NOTE.md resolved to the owner's v2 version (theirs); interim fixes from f3a8f17 discarded",
-        "removed interim evidence run integration-offline-20261028T180134Z, which was produced by the discarded interim script",
         "evidence/shared/validate_evidence.py postgres-negatives: reads columns by header so it handles the v2 12-column COMMANDS.tsv. It used to report a vacuous 'OK: 0 negative steps' on v2 runs, and now errors when no negatives are found. Tests: 15/15",
-        "scripts/validate-all.sh: uses the v2 verifier, the self-test, the mismatch control (must be rejected), the HISTORICAL exit 3 for v1 runs, and cross-checks with the shared validator"
+        "scripts/validate-all.sh: uses the v2 verifier, the self-test, the mismatch control (must be rejected), the HISTORICAL exit 3 for v1 runs, and cross-checks with the shared validator",
+        "interim run integration-offline-20261028T180134Z: removed in e76d8a4, restored unchanged from fb70afd with STATUS.json HISTORICAL-KNOWN-INVALID and an INDEX.md row; v2 verifier exits 3 (historical)"
       ],
       "open": [
         "The workflow's cdk-synth job (now pinned, no CDK_DEFAULT_*) overlaps aws-cdk.yml. It is harmless, but the work is duplicated."
       ],
-      "review": "No formal GitHub review recorded. The PR body was updated by the owner to describe v2. GitHub CI at e7399fb: all 5 jobs green."
+      "review": "No formal GitHub review recorded. The PR body was updated by the owner to describe v2. GitHub CI at e7399fb: all 5 jobs green.",
+      "source_commit": "e7399fbb538504f723d1fb83e32ce50604807b8e",
+      "evidence_preservation": "Every v1 failure record (ci-service-40630856041-1) and every v1 local run is byte-identical to e610015, apart from the owner-added NOTE.md and STATUS.json; evidence/postgres/** is identical to e7399fb apart from the restored interim run and its INDEX.md row."
     },
     {
       "pr": 6,
@@ -142,7 +144,7 @@
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
         "status": "MET_LOCALLY_PENDING_CI",
-        "detail": "validate-all PASS locally on the new HEAD. PR #7 CI was green at 876f7b7 (aws-cdk, offline-validation, Postgres service and offline). CI must be re-read for the new HEAD."
+        "detail": "validate-all PASS locally on this tree. GitHub Actions results must be read for this exact head SHA. Results from 876f7b7 and 0f57289 do not count."
       },
       {
         "id": "AC4",
@@ -157,5 +159,19 @@
         "detail": "cfn-s3-selflog is clean on all integrated templates. The PR #3 false-PASS finding is fixed by harness v2. PR #6, which still has a self-logging finding, is not integrated."
       }
     ]
-  }
+  },
+  "history": [
+    {
+      "sha": "876f7b7",
+      "note": "first integration: #3, #5, #4 and #2 @ e610015 with interim hardening"
+    },
+    {
+      "sha": "0f57289",
+      "note": "#2 re-merged at e7399fb (harness v2) in merge e76d8a4; shared validator interface fix 05941a9; acceptance conditions"
+    },
+    {
+      "sha": "(this commit)",
+      "note": "#2 source e7399fbb538504f723d1fb83e32ce50604807b8e is confirmed an ancestor (git merge reported 'Already up to date'). The interim run integration-offline-20261028T180134Z was restored byte-for-byte from fb70afd and marked HISTORICAL-KNOWN-INVALID, so no earlier evidence record is deleted."
+    }
+  ]
 }
