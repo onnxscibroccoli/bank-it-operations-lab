@@ -1,0 +1,11 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:06:17-04:00
+# command: bash scripts/nag-gate.sh
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+AwsSolutions--BankItLabOrgCloudTrail-NagReport.csv: rows=14 non_compliant=0 suppressed=0
+AwsSolutions--BankItLabOrgGovernance-NagReport.csv: rows=0 non_compliant=0 suppressed=0
+AwsSolutions--BankItLabSecurityServices-NagReport.csv: rows=0 non_compliant=0 suppressed=0
+NagSuppressions in source: 0
+total_non_compliant_or_suppressed=0
+# finished: 2026-10-28T11:06:17-04:00
+# exit_code: 0

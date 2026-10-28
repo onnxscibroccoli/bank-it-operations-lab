@@ -1,0 +1,15 @@
+01-no-credentials-check.log	0	bash ../../evidence/orgs/no-credentials-check.sh
+02-node-version.log	0	node -v
+03-npm-version.log	0	npm -v
+04-npm-ci.log	0	npm ci --no-audit --no-fund
+05-tsc-noemit.log	0	npx tsc --noEmit
+06-jest.log	0	npx jest --ci --json --outputFile=../../evidence/orgs/jest-results.json
+07-cdk-version.log	0	npx cdk --version
+08-cdk-synth.log	0	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+09-export-policies.log	0	npx ts-node scripts/export-policies.ts
+10-lint-policies.log	0	npx ts-node scripts/lint-policies.ts
+11-parliament-version.log	0	env PARLIAMENT=/workspace/venv-parliament/bin/parliament bash -c $PARLIAMENT --version
+12-parliament-raw.log	1	env PARLIAMENT=/workspace/venv-parliament/bin/parliament scripts/parliament.sh raw
+13-parliament-gated.log	0	env PARLIAMENT=/workspace/venv-parliament/bin/parliament scripts/parliament.sh gated
+14-cdk-nag-gate.log	0	bash scripts/nag-gate.sh
+15-grep-no-account-ids.log	0	bash -c ! grep -REn '\b[0-9]{12}\b' lib bin ../../evidence/orgs/synth ../../evidence/orgs/policies && echo 'no 12-digit account ids in source, templates or policies'

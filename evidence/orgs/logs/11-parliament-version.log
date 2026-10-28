@@ -1,0 +1,7 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:05:14-04:00
+# command: env PARLIAMENT=/workspace/venv-parliament/bin/parliament bash -c $PARLIAMENT --version
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+parliament 1.6.4
+# finished: 2026-10-28T11:05:15-04:00
+# exit_code: 0

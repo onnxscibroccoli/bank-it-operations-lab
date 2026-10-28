@@ -1,0 +1,6 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:04:52-04:00
+# command: npx tsc --noEmit
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+# finished: 2026-10-28T11:04:55-04:00
+# exit_code: 0

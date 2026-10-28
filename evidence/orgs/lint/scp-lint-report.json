@@ -1,0 +1,62 @@
+{
+  "policies": [
+    {
+      "id": "deny-root-user",
+      "name": "BankItLab-DenyRootUser",
+      "minifiedChars": 172,
+      "maxChars": 5120,
+      "statements": 1,
+      "findings": []
+    },
+    {
+      "id": "deny-leave-organization",
+      "name": "BankItLab-DenyLeaveOrganization",
+      "minifiedChars": 144,
+      "maxChars": 5120,
+      "statements": 1,
+      "findings": []
+    },
+    {
+      "id": "region-lock",
+      "name": "BankItLab-RegionLock",
+      "minifiedChars": 618,
+      "maxChars": 5120,
+      "statements": 1,
+      "findings": []
+    },
+    {
+      "id": "protect-security-services",
+      "name": "BankItLab-ProtectSecurityServices",
+      "minifiedChars": 1891,
+      "maxChars": 5120,
+      "statements": 4,
+      "findings": []
+    },
+    {
+      "id": "deny-public-s3",
+      "name": "BankItLab-DenyPublicS3",
+      "minifiedChars": 729,
+      "maxChars": 5120,
+      "statements": 3,
+      "findings": []
+    },
+    {
+      "id": "require-encryption",
+      "name": "BankItLab-RequireEncryption",
+      "minifiedChars": 1121,
+      "maxChars": 5120,
+      "statements": 6,
+      "findings": []
+    },
+    {
+      "id": "deny-all-suspended",
+      "name": "BankItLab-DenyAllSuspended",
+      "minifiedChars": 225,
+      "maxChars": 5120,
+      "statements": 1,
+      "findings": []
+    }
+  ],
+  "errors": 0,
+  "warnings": 0
+}

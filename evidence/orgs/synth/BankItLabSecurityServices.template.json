@@ -1,0 +1,144 @@
+{
+ "Description": "Reference: GuardDuty + Security Hub in delegated admin (static synthesis lab; not deployed)",
+ "Resources": {
+  "GuardDutyDetector": {
+   "Type": "AWS::GuardDuty::Detector",
+   "Properties": {
+    "Enable": true,
+    "Features": [
+     {
+      "Name": "S3_DATA_EVENTS",
+      "Status": "ENABLED"
+     },
+     {
+      "Name": "EKS_AUDIT_LOGS",
+      "Status": "ENABLED"
+     },
+     {
+      "Name": "EBS_MALWARE_PROTECTION",
+      "Status": "ENABLED"
+     },
+     {
+      "Name": "RDS_LOGIN_EVENTS",
+      "Status": "ENABLED"
+     },
+     {
+      "Name": "LAMBDA_NETWORK_LOGS",
+      "Status": "ENABLED"
+     }
+    ],
+    "FindingPublishingFrequency": "FIFTEEN_MINUTES"
+   }
+  },
+  "SecurityHub": {
+   "Type": "AWS::SecurityHub::Hub",
+   "Properties": {
+    "AutoEnableControls": true,
+    "ControlFindingGenerator": "SECURITY_CONTROL",
+    "EnableDefaultStandards": false
+   }
+  },
+  "StandardFoundationalBestPractices": {
+   "Type": "AWS::SecurityHub::Standard",
+   "Properties": {
+    "StandardsArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":securityhub:",
+       {
+        "Ref": "AWS::Region"
+       },
+       "::standards/aws-foundational-security-best-practices/v/1.0.0"
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "SecurityHub"
+   ]
+  },
+  "StandardCisFoundations300": {
+   "Type": "AWS::SecurityHub::Standard",
+   "Properties": {
+    "StandardsArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":securityhub:",
+       {
+        "Ref": "AWS::Region"
+       },
+       "::standards/cis-aws-foundations-benchmark/v/3.0.0"
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "SecurityHub"
+   ]
+  },
+  "FindingAggregator": {
+   "Type": "AWS::SecurityHub::FindingAggregator",
+   "Properties": {
+    "RegionLinkingMode": "ALL_REGIONS"
+   },
+   "DependsOn": [
+    "SecurityHub"
+   ]
+  },
+  "OrganizationConfiguration": {
+   "Type": "AWS::SecurityHub::OrganizationConfiguration",
+   "Properties": {
+    "AutoEnable": false,
+    "AutoEnableStandards": "NONE",
+    "ConfigurationType": "CENTRAL"
+   },
+   "DependsOn": [
+    "FindingAggregator"
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

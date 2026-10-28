@@ -1,0 +1,8 @@
+# cwd: infra/orgs
+# started: 2026-10-28T11:06:07-04:00
+# command: env PARLIAMENT=/workspace/venv-parliament/bin/parliament scripts/parliament.sh raw
+# env: AWS_* and CDK_DEFAULT_* unset; AWS config/credentials=/dev/null; AWS_EC2_METADATA_DISABLED=true
+{"issue": "UNKNOWN_CONDITION_FOR_ACTION", "title": "Unknown condition for action", "severity": "MEDIUM", "description": "The given condition is not documented to work with the given action", "detail": "Unknown condition rds:StorageEncrypted for action rds:CreateDBInstance", "location": {"line": 38, "column": 17, "filepath": "./require-encryption.json"}}
+{"issue": "UNKNOWN_CONDITION_FOR_ACTION", "title": "Unknown condition for action", "severity": "MEDIUM", "description": "The given condition is not documented to work with the given action", "detail": "Unknown condition s3:x-amz-object-ownership for action s3:PutBucketOwnershipControls", "location": {"line": 47, "column": 28, "filepath": "./deny-public-s3.json"}}
+# finished: 2026-10-28T11:06:07-04:00
+# exit_code: 1
