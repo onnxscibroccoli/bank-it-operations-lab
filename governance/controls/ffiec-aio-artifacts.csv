@@ -1,0 +1,98 @@
+row_id,role,path,commit,source_branch,pr,note
+AIO-01,implementation,infra/aws-cdk/lib/network-database-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,RDS PostgreSQL definition
+AIO-01,test,infra/aws-cdk/test/network-database-stack.test.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,'RDS PostgreSQL is private ... encrypted with the CMK' test
+AIO-01,evidence,evidence/aws/aws-remediation-vpc-rds/logs/08-pass3-jest.log,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,jest run log (exit 0 per COMMANDS.tsv)
+AIO-01,evidence,evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,synthesized template
+AIO-01,evidence,evidence/aws/aws-remediation-vpc-rds/cdk-nag/NIST.800.53.R5--BankItLabNetworkDatabase-NagReport.csv,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,cdk-nag NIST 800-53 R5 report
+AIO-02,implementation,.github/workflows/bank-aws-001-cdk.yml,e494bcfc3986c2d21a4cf92453857f69dbf69ce3,bank-aws-001,1,credential-free CI workflow
+AIO-02,evidence,evidence/aws/ci/RUNS.md,e494bcfc3986c2d21a4cf92453857f69dbf69ce3,bank-aws-001,1,run ids 40630567160 / 40630990406 / 40631120535
+AIO-02,evidence,evidence/aws/logs/37-gh-run-watch-ci-1.log,e494bcfc3986c2d21a4cf92453857f69dbf69ce3,bank-aws-001,1,captured gh run watch output for CI run 1
+AIO-02,evidence,evidence/aws/logs/54-gh-run-view-ci-3.log,e494bcfc3986c2d21a4cf92453857f69dbf69ce3,bank-aws-001,1,captured gh run view output for CI run 3
+AIO-02,documentation,evidence/aws/logs/REBASE-MAP.md,e494bcfc3986c2d21a4cf92453857f69dbf69ce3,bank-aws-001,1,git history rewrite record
+AIO-02,documentation,reports/review-pr1-pr2.md,fb3634115cb22b26e717afe2caec69661f56e874,review/pr1-pr2-evidence-audit,3,written review of PR #1 and PR #2
+AIO-02,documentation,docs/management/change-review.md,9dc8f1f587a69d85b05af0fc28d76f4ed5925d44,team-management,13,synthetic CAB-style change review process (not an institutional policy)
+AIO-03,implementation,infra/aws-cdk/lib/network-database-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,multiAz / deletionProtection / RETAIN
+AIO-03,implementation,infra/aws-cdk/lib/secure-storage-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,S3 versioning / RETAIN
+AIO-03,evidence,evidence/aws/aws-remediation-vpc-rds/logs/09-pass3-cdk-synth.log,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,final synth log (exit 0)
+AIO-03,documentation,evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,EX-02 (no cross-region replication) PROPOSED
+AIO-04,implementation,identity/entra/policies/CA001-Block-Legacy-Authentication-All-Users.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,synthetic CA policy
+AIO-04,implementation,identity/entra/policies/CA007-Block-Admin-Portals-From-Untrusted-Locations.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,synthetic CA policy
+AIO-04,implementation,identity/entra/ca_validator.py,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,fail-closed validator
+AIO-04,evidence,evidence/entra/runs/local-offline-20261028T150359Z/SUMMARY.md,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,offline run summary (PASS; tenant state claimed: false)
+AIO-04,evidence,evidence/entra/runs/local-offline-20261028T150359Z/logs/04_validate_baseline_policies.log,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,validator output for baseline policies
+AIO-05,implementation,infra/aws-cdk/lib/network-database-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,VPC / security groups / flow logs
+AIO-05,test,infra/aws-cdk/test/network-database-stack.test.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,VPC isolation and SG tests
+AIO-05,evidence,evidence/aws/aws-remediation-vpc-rds/logs/08-pass3-jest.log,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,jest run log
+AIO-05,evidence,evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,synthesized template
+AIO-06,documentation,infra/aws-cdk/docs/adr/ADR-0001-cdk-nag-2x-pin.md,e494bcfc3986c2d21a4cf92453857f69dbf69ce3,bank-aws-001,1,dependency pin decision
+AIO-06,implementation,infra/aws-cdk/package-lock.json,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,pinned npm dependency tree
+AIO-06,implementation,infra/orgs/package-lock.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,pinned npm dependency tree
+AIO-06,implementation,infra/orgs/parliament-allowlist.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,allowlisted tool findings with sources
+AIO-07,implementation,infra/orgs/lib/ou-layout.ts,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,OU layout
+AIO-07,implementation,infra/orgs/lib/scps.ts,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,SCP source
+AIO-07,evidence,evidence/orgs/policies/region-lock.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,exported SCP
+AIO-07,evidence,evidence/orgs/policies/deny-leave-organization.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,exported SCP
+AIO-07,evidence,evidence/orgs/logs/06-jest.log,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,jest 49/49 per evidence/orgs/README.md
+AIO-07,evidence,evidence/orgs/logs/08-cdk-synth.log,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,synth log
+AIO-08,implementation,identity/entra/policies/CA002-Require-MFA-All-Users.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,synthetic CA policy
+AIO-08,implementation,identity/entra/policies/CA003-Require-Phishing-Resistant-MFA-Admin-Roles.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,synthetic CA policy
+AIO-08,implementation,identity/entra/baseline.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,break-glass and privileged-role baseline
+AIO-08,implementation,infra/aws-cdk/lib/least-privilege-key.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,KMS key policy helper
+AIO-08,evidence,evidence/orgs/policies/deny-root-user.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,exported SCP
+AIO-08,evidence,evidence/entra/runs/local-offline-20261028T150359Z/logs/03_unit_tests.log,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,validator unit tests output
+AIO-08,evidence,evidence/entra/runs/local-offline-20261028T150359Z/validation-report.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,validator report
+AIO-08,evidence,evidence/orgs/logs/10-lint-policies.log,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,SCP lint output
+AIO-09,implementation,infra/aws-cdk/lib/guards.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,static template guards
+AIO-09,test,infra/aws-cdk/test/negative-controls.test.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,negative-control tests
+AIO-09,evidence,evidence/aws/aws-remediation-vpc-rds/cdk-nag/AwsSolutions--BankItLabNetworkDatabase-NagReport.csv,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,cdk-nag AwsSolutions report
+AIO-09,evidence,evidence/aws/aws-remediation-vpc-rds/logs/09-pass3-cdk-synth.log,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,synth with nag (exit 0)
+AIO-09,evidence,evidence/aws/aws-remediation-vpc-rds/SHA256SUMS,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,evidence bundle hashes
+AIO-09,documentation,evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,EX-01..EX-04 PROPOSED
+AIO-09,evidence,evidence/orgs/logs/14-cdk-nag-gate.log,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,cdk-nag gate output
+AIO-10,implementation,tests/integration/postgres/run_restore_scenario.sh,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,restore scenario harness (v2)
+AIO-10,implementation,tests/integration/postgres/verify_evidence.py,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,run verifier
+AIO-10,implementation,.github/workflows/postgres-restore-evidence.yml,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,CI workflow
+AIO-10,evidence,evidence/postgres/runs/INDEX.md,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,run index with CURRENT vs HISTORICAL status
+AIO-10,evidence,evidence/postgres/runs/ci-service-40741329107-1/SUMMARY.md,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,CI service-container run summary
+AIO-10,evidence,evidence/postgres/runs/ci-service-40741329107-1.ci-console/scenario-console.log,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,captured CI console output
+AIO-10,evidence,evidence/postgres/runs/ci-offline-40741329107-1/SUMMARY.md,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,CI offline-mode run summary
+AIO-10,documentation,evidence/postgres/runs/ci-service-40630856041-1/NOTE.md,e7399fbb538504f723d1fb83e32ce50604807b8e,ci-evidence-postgres,2,preserved earlier failing run (historical / known invalid)
+AIO-11,implementation,infra/aws-cdk/lib/network-database-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,AWS Backup plan + RDS backupRetention 14 days
+AIO-11,documentation,evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,EX-04 PROPOSED
+AIO-12,implementation,infra/aws-cdk/lib/network-database-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,flow logs + RDS log exports
+AIO-12,implementation,infra/aws-cdk/lib/secure-storage-stack.ts,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,S3 server access logging
+AIO-12,documentation,infra/aws-cdk/docs/adr/ADR-0004-no-self-logging-log-sink.md,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,log sink decision
+AIO-12,implementation,infra/orgs/lib/org-cloudtrail-stack.ts,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,organization CloudTrail
+AIO-12,evidence,evidence/orgs/synth/BankItLabOrgCloudTrail.template.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,synthesized template
+AIO-12,evidence,evidence/orgs/cdk-nag/AwsSolutions--BankItLabOrgCloudTrail-NagReport.csv,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,cdk-nag report
+AIO-12,evidence,evidence/aws/aws-remediation-vpc-rds/synth/BankItLabSecureStorage.template.json,099479e6d23968adb17762d88d84131998fca07c,aws-remediation-vpc-rds,5,synthesized template
+AIO-13,implementation,infra/orgs/lib/security-services-stack.ts,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,GuardDuty / Security Hub reference
+AIO-13,documentation,infra/orgs/docs/adr/ADR-0002-delegated-admin-coverage.md,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,coverage gaps
+AIO-13,evidence,evidence/orgs/synth/BankItLabSecurityServices.template.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,synthesized template
+AIO-13,evidence,evidence/orgs/logs/06-jest.log,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,jest output
+AIO-14,implementation,infra/orgs/lib/scps.ts,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,SCP source
+AIO-14,implementation,infra/orgs/lib/scp-evaluator.ts,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,offline SCP evaluator (not AWS's engine)
+AIO-14,evidence,evidence/orgs/policies/protect-security-services.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,exported SCP
+AIO-14,evidence,evidence/orgs/policies/require-encryption.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,exported SCP
+AIO-14,evidence,evidence/orgs/policies/deny-public-s3.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,exported SCP
+AIO-14,evidence,evidence/orgs/lint/scp-lint-report.json,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,in-repo lint report
+AIO-14,evidence,evidence/orgs/logs/13-parliament-gated.log,e5e7f4604597c7e6e35e69bf0607fe0535d4cdab,orgs-security-refs,6,parliament gated output
+AIO-14,implementation,identity/entra/policies/CA007-Block-Admin-Portals-From-Untrusted-Locations.json,d302c99d95116c39d7aa65937614bccb830f2d6e,entra-ca-offline,4,synthetic CA policy
+AIO-15,implementation,governance/vendor-risk/check_governance.py,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,governance lint
+AIO-15,documentation,governance/vendor-risk/raci-matrix-template.md,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,RACI template
+AIO-15,documentation,governance/vendor-risk/examples/acme-core-ledger-SIMULATION-assessment.md,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,fictional vendor assessment
+AIO-15,documentation,governance/vendor-risk/scenarios/core-banking-vendor-outage-SIMULATION.md,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,written tabletop scenario
+AIO-15,test,governance/vendor-risk/tests/test_check_governance.py,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,lint unit tests
+AIO-15,evidence,evidence/vendor/runs/local-offline-20261028T180914Z/SUMMARY.md,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,offline run summary (PASS)
+AIO-15,evidence,evidence/vendor/runs/local-offline-20261028T180914Z/logs/06_governance_lint.log,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,lint output
+AIO-15,evidence,evidence/vendor/runs/local-offline-20261028T180914Z/logs/09_neg_governance_lint_two_accountable.log,88a37856da05468ecce86b4c5d1e1ac0b8530bc5,vendor-mock,9,negative case output
+AIO-16,documentation,docs/management/ticket-priority.md,9dc8f1f587a69d85b05af0fc28d76f4ed5925d44,team-management,13,synthetic priority definitions and triage exercise
+AIO-16,documentation,operations/team/escalation-matrix.md,9dc8f1f587a69d85b05af0fc28d76f4ed5925d44,team-management,13,synthetic escalation matrix
+AIO-16,documentation,operations/team/on-call.md,9dc8f1f587a69d85b05af0fc28d76f4ed5925d44,team-management,13,synthetic on-call model
+AIO-16,documentation,docs/management/DISCLAIMER.md,9dc8f1f587a69d85b05af0fc28d76f4ed5925d44,team-management,13,synthetic-data disclaimer
+AIO-17,implementation,observability/healthcheck/decision.py,3e40e39d73da3f0d20bced68651a54ee6c63846c,observability,10,fail-closed decision
+AIO-17,implementation,observability/healthcheck/collector.py,3e40e39d73da3f0d20bced68651a54ee6c63846c,observability,10,host collector
+AIO-17,test,observability/tests/test_decision.py,3e40e39d73da3f0d20bced68651a54ee6c63846c,observability,10,decision tests
+AIO-17,evidence,evidence/observability/runs/local-offline-20261028T180832Z/SUMMARY.md,3e40e39d73da3f0d20bced68651a54ee6c63846c,observability,10,offline run summary (PASS)
+AIO-17,evidence,evidence/observability/runs/local-offline-20261028T180832Z/logs/02_unit_tests.log,3e40e39d73da3f0d20bced68651a54ee6c63846c,observability,10,unit test output
+AIO-17,evidence,evidence/observability/runs/local-offline-20261028T180832Z/logs/12_fixture_stale.log,3e40e39d73da3f0d20bced68651a54ee6c63846c,observability,10,stale-fixture evaluation output
