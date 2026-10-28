@@ -154,7 +154,7 @@ def render_md(s, report):
     L += ["", "## Baseline validation (identity/entra/policies)", "",
           "| Rule | Category | Result | Title |", "|---|---|---|---|"]
     for r in report["rules"]:
-        L.append("| %s | %s | %s | %s |" % (r["id"], r["category"], r["status"], r["title"]))
+        L.append("| %s | %s | %s | %s |" % (r["id"], r["category"], r["status"], r["title"].replace("|", "\\|")))
     L += ["", "## Input hashes (SHA-256)", "", "| Kind | Path | SHA-256 |", "|---|---|---|"]
     for h in s["inputHashes"]:
         L.append("| %s | `%s` | `%s` |" % (h["kind"], h["path"], h["sha256"]))
@@ -179,13 +179,13 @@ def generate(label):
         ("fixtures_drift_check", "test", [PY, "tests/entra/make_fixtures.py", "--check"], 0),
         ("unit_tests", "test", [PY, "-m", "unittest", "discover", "-s", "tests/entra", "-v"], 0),
         ("validate_baseline_policies", "validator",
-         [PY, v, "identity/entra/policies", "--json-out", os.path.join(rel_run, "validation-report.json"),
+         [PY, v, "identity/entra/policies", "--baseline", "identity/entra/baseline.json", "--json-out", os.path.join(rel_run, "validation-report.json"),
           "--quiet"], 0),
     ]
     fx = os.path.join("tests", "entra", "fixtures")
     for name in sorted(f for f in os.listdir(os.path.join(ROOT, fx)) if f.endswith(".json") and f != "INDEX.json"):
         steps.append(("fixture_" + name[:-5].replace("-", "_"), "validator-fixture",
-                      [PY, v, os.path.join(fx, name), "--quiet"], expected_for_fixture(name)))
+                      [PY, v, os.path.join(fx, name), "--baseline", "identity/entra/baseline.json", "--quiet"], expected_for_fixture(name)))
     cmds = [run_step(run_dir, i, sid, kind, argv, exp) for i, (sid, kind, argv, exp) in enumerate(steps, 1)]
     with open(os.path.join(run_dir, "validation-report.json"), encoding="utf-8") as fh:
         report = json.load(fh)

@@ -682,7 +682,7 @@ def render_markdown(report: Dict[str, Any], extra_header: Optional[Dict[str, str
               "- **Overall:** **%s** (exit code %d)" % (report["overall"], report["exitCode"]), "",
               "| Rule | Category | Result | Title |", "|---|---|---|---|"]
     for r in report["rules"]:
-        lines.append("| %s | %s | %s | %s |" % (r["id"], r["category"], r["status"], r["title"]))
+        lines.append("| %s | %s | %s | %s |" % (r["id"], r["category"], r["status"], r["title"].replace("|", "\\|")))
     fails = [r for r in report["rules"] if r["findings"]]
     if fails:
         lines += ["", "## Findings", ""]
