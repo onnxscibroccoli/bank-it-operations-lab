@@ -1,0 +1,153 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Acme Core Ledger SIMULATION API",
+    "version": "0.1.0-simulation",
+    "description": "SIMULATION. Fictional banking-vendor API contract for an offline lab. 'Acme Core Ledger SIMULATION' is not a real vendor or product. This contract is NOT derived from, and makes no claim of compatibility with, any real vendor API (including Banno / Jack Henry or any other core, digital-banking or fintech product). No authoritative compatibility evidence exists.",
+    "x-simulation": true
+  },
+  "servers": [{"url": "https://acme-core-ledger.simulation.invalid", "description": "SIMULATION - .invalid TLD, never resolvable"}],
+  "components": {
+    "securitySchemes": {
+      "clientCredentials": {
+        "type": "oauth2",
+        "flows": {"clientCredentials": {"tokenUrl": "/oauth/token", "scopes": {"accounts:read": "SIMULATION read accounts", "transactions:read": "SIMULATION read transactions"}}}
+      }
+    },
+    "headers": {
+      "X-Simulation": {"schema": {"type": "string", "enum": ["SIMULATION"]}, "required": true},
+      "Retry-After": {"schema": {"type": "integer", "minimum": 0, "maximum": 3600}, "description": "Delay-seconds form only in this SIMULATION contract"}
+    },
+    "schemas": {
+      "Token": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["simulation", "access_token", "token_type", "expires_in", "scope"],
+        "properties": {
+          "simulation": {"type": "string", "enum": ["SIMULATION"]},
+          "access_token": {"type": "string", "pattern": "^SIMULATION-tok-[A-Za-z0-9]{8,64}$"},
+          "token_type": {"type": "string", "enum": ["Bearer"]},
+          "expires_in": {"type": "integer", "minimum": 1, "maximum": 3600},
+          "scope": {"type": "string"}
+        }
+      },
+      "Money": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["amount_minor", "currency"],
+        "properties": {
+          "amount_minor": {"type": "integer"},
+          "currency": {"type": "string", "pattern": "^[A-Z]{3}$"}
+        }
+      },
+      "Account": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["simulation", "account_id", "account_type", "status", "masked_number", "available_balance", "ledger_balance", "as_of"],
+        "properties": {
+          "simulation": {"type": "string", "enum": ["SIMULATION"]},
+          "account_id": {"type": "string", "pattern": "^SIM-ACCT-[0-9]{6}$"},
+          "account_type": {"type": "string", "enum": ["CHECKING", "SAVINGS", "LOAN"]},
+          "status": {"type": "string", "enum": ["OPEN", "FROZEN", "CLOSED"]},
+          "masked_number": {"type": "string", "pattern": "^\\*{4}[0-9]{4}$"},
+          "available_balance": {"$ref": "#/components/schemas/Money"},
+          "ledger_balance": {"$ref": "#/components/schemas/Money"},
+          "as_of": {"type": "string", "format": "date-time"}
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["transaction_id", "posted_at", "amount", "direction", "description"],
+        "properties": {
+          "transaction_id": {"type": "string", "pattern": "^SIM-TXN-[0-9]{8}$"},
+          "posted_at": {"type": "string", "format": "date-time"},
+          "amount": {"$ref": "#/components/schemas/Money"},
+          "direction": {"type": "string", "enum": ["DEBIT", "CREDIT"]},
+          "description": {"type": "string", "pattern": "^SIMULATION ", "maxLength": 80}
+        }
+      },
+      "TransactionPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["simulation", "account_id", "transactions", "next_cursor"],
+        "properties": {
+          "simulation": {"type": "string", "enum": ["SIMULATION"]},
+          "account_id": {"type": "string", "pattern": "^SIM-ACCT-[0-9]{6}$"},
+          "transactions": {"type": "array", "maxItems": 100, "items": {"$ref": "#/components/schemas/Transaction"}},
+          "next_cursor": {"type": ["string", "null"]}
+        }
+      },
+      "Health": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["simulation", "status"],
+        "properties": {
+          "simulation": {"type": "string", "enum": ["SIMULATION"]},
+          "status": {"type": "string", "enum": ["OK", "DEGRADED"]}
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["simulation", "error", "message", "request_id"],
+        "properties": {
+          "simulation": {"type": "string", "enum": ["SIMULATION"]},
+          "error": {"type": "string", "enum": ["invalid_client", "invalid_token", "insufficient_scope", "not_found", "rate_limited", "bad_request", "unavailable"]},
+          "message": {"type": "string", "pattern": "^SIMULATION"},
+          "request_id": {"type": "string", "pattern": "^SIM-REQ-[0-9a-f]{12}$"}
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "security": [],
+        "responses": {
+          "200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Health"}}}}
+        }
+      }
+    },
+    "/oauth/token": {
+      "post": {
+        "operationId": "createToken",
+        "security": [],
+        "responses": {
+          "200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Token"}}}},
+          "401": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "429": {"headers": {"Retry-After": {"$ref": "#/components/headers/Retry-After"}}, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+        }
+      }
+    },
+    "/v1/accounts/{account_id}": {
+      "get": {
+        "operationId": "getAccount",
+        "security": [{"clientCredentials": ["accounts:read"]}],
+        "responses": {
+          "200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Account"}}}},
+          "401": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "403": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "404": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "429": {"headers": {"Retry-After": {"$ref": "#/components/headers/Retry-After"}}, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "503": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+        }
+      }
+    },
+    "/v1/accounts/{account_id}/transactions": {
+      "get": {
+        "operationId": "listTransactions",
+        "security": [{"clientCredentials": ["transactions:read"]}],
+        "responses": {
+          "200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/TransactionPage"}}}},
+          "401": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "403": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "404": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "429": {"headers": {"Retry-After": {"$ref": "#/components/headers/Retry-After"}}, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "503": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+        }
+      }
+    }
+  }
+}

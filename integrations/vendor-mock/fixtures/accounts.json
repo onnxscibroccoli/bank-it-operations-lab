@@ -1,0 +1,25 @@
+{
+  "_simulation_notice": "SIMULATION - fictional data for Acme Core Ledger SIMULATION. No real customers, accounts or balances. Contains no PII.",
+  "accounts": [
+    {
+      "simulation": "SIMULATION",
+      "account_id": "SIM-ACCT-000101",
+      "account_type": "CHECKING",
+      "status": "OPEN",
+      "masked_number": "****0101",
+      "available_balance": {"amount_minor": 125000, "currency": "USD"},
+      "ledger_balance": {"amount_minor": 130000, "currency": "USD"},
+      "as_of": "2026-10-28T12:00:00Z"
+    },
+    {
+      "simulation": "SIMULATION",
+      "account_id": "SIM-ACCT-000202",
+      "account_type": "SAVINGS",
+      "status": "FROZEN",
+      "masked_number": "****0202",
+      "available_balance": {"amount_minor": 0, "currency": "USD"},
+      "ledger_balance": {"amount_minor": 987654, "currency": "USD"},
+      "as_of": "2026-10-28T12:00:00Z"
+    }
+  ]
+}

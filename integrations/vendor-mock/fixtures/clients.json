@@ -1,0 +1,7 @@
+{
+  "_simulation_notice": "SIMULATION - fictional client credentials for the in-process mock only. Not secrets; never valid anywhere.",
+  "clients": {
+    "SIMULATION-client-lab": {"secret": "SIMULATION-secret-not-real", "scopes": ["accounts:read", "transactions:read"]},
+    "SIMULATION-client-noscope": {"secret": "SIMULATION-secret-not-real", "scopes": []}
+  }
+}
