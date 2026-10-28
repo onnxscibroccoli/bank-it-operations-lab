@@ -1,2 +1,0 @@
-{"bytes":1204,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"46723aefc15647e756e673145dd357768128091b9fa85de19820e5582c30e319","source":"observability/fixtures/host-metric-missing.json","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"health.decision","exit_code":1,"failed_checks":["host:metrics_present","host:collection_errors"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}

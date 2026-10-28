@@ -1,2 +1,0 @@
-{"bytes":1152,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"37182ca626871279674a99e238e4ad74f36dba374e7c040b9c0973b30c85582f","source":"observability/fixtures/stale.json","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"health.decision","exit_code":1,"failed_checks":["freshness:payload","freshness:host","freshness:probe:app-http","freshness:probe:db-tcp","freshness:probe:resolver-dns"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}

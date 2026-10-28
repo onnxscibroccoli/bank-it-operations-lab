@@ -1,3 +1,0 @@
-{"bytes":1150,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"a24f2362423c48d9c346271581fd9d11c8ce9144316fb1630c5aa4b1c5433f6b","source":"observability/fixtures/malformed-nan.json","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"payload.malformed","level":"ERROR","reason":"non-finite number NaN not allowed","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"health.decision","exit_code":2,"failed_checks":["payload:valid"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}

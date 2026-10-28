@@ -1,3 +1,0 @@
-$ python3 observability/run_healthcheck.py evaluate observability/fixtures/host-metric-missing.json --now 2026-10-28T12:01:00Z --out evidence/observability/runs/local-offline-20261028T180811Z/results/host-metric-missing.result.json --log-file evidence/observability/runs/local-offline-20261028T180811Z/results/host-metric-missing.log.jsonl
-
-[exit_code=1 expected=1]

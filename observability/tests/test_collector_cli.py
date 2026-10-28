@@ -134,10 +134,10 @@ class CliEdgeTests(unittest.TestCase):
     def test_policy_file(self):
         with tempfile.TemporaryDirectory() as d:
             p = os.path.join(d, "policy.json")
-            json.dump({"min_disk_free_ratio": 0.01}, open(p, "w"))
+            _dump({"min_disk_free_ratio": 0.01}, p)
             code, _, _, _ = run_cli(["evaluate", os.path.join(FIXTURES, "unhealthy.json"), "--policy", p])
             self.assertEqual(code, 1)  # probe still failing
-            json.dump({"nope": 1}, open(p, "w"))
+            _dump({"nope": 1}, p)
             code, result, _, _ = run_cli(["evaluate", os.path.join(FIXTURES, "healthy.json"), "--policy", p])
             self.assertEqual((code, result["overall"]), (2, "UNHEALTHY"))
 

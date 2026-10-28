@@ -1,3 +1,0 @@
-{"bytes":1193,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"d7d4b063348c07f81d55bfc29bd94ff2510a05c71de284691da8e2e318113bc0","source":"observability/fixtures/malformed-duplicate-key.json","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"payload.malformed","level":"ERROR","reason":"duplicate key 'collected_at'","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"health.decision","exit_code":2,"failed_checks":["payload:valid"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}

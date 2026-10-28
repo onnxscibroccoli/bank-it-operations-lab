@@ -1,3 +1,0 @@
-{"bytes":575,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"9ef6956b9b2989afb833989d5ddbc281c14631358a20a3bb6192898ab04283a6","source":"observability/fixtures/malformed-truncated.json","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"payload.malformed","level":"ERROR","reason":"invalid JSON: Unterminated string starting at: line 26 column 7 (char 571)","ts":"2026-10-28T12:01:00Z"}
-{"component":"healthcheck","event":"health.decision","exit_code":2,"failed_checks":["payload:valid"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}
