@@ -8,6 +8,11 @@
 > digital-banking or fintech platform. **No authoritative compatibility evidence exists.** Passing
 > these tests says nothing about integrating with a real vendor; that would require the vendor's own
 > published contract, a sandbox, and a signed agreement.
+>
+> Real vendors are named only in this README's disclaimer and in the governance context section
+> (`governance/vendor-risk/scenarios/core-banking-vendor-outage-SIMULATION.md` §0). The lint
+> `governance/vendor-risk/check_governance.py` fails if Jack Henry or Banno appears in this
+> directory's contract, code, fixtures or tests.
 
 ## Layout
 

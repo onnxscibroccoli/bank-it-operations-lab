@@ -30,10 +30,11 @@ Steps:
 - Governance lint unit tests (`-v`).
 - Governance lint, which includes the escalation scenario.
 
-Five **negative** steps must exit 1:
+Six **negative** steps must exit 1:
 - lint of the blank RACI template
 - lint of a RACI with two Accountables
 - lint of the scenario after a vendor SLA claim is injected ("within 4 hours", "99.9% uptime")
+- lint of the scenario after Jack Henry is named in an inject, outside the §0 *Real vendor vs fictional system* section
 - a mutated validator that ignores extra fields
 - a mutated client that ignores the Retry-After cap
 
@@ -56,6 +57,7 @@ Escalation evidence checklist for the tabletop: `escalation-evidence-checklist-S
 | Offline / synthetic-only | sockets blocked for the whole test run; all fixtures and documents labelled SIMULATION | `Offline.test_sockets_are_blocked`, `simulation_label_scan` |
 | RACI accountability | exactly one Accountable per activity; lint fails on blank template / duplicate A | `governance_lint`, `neg_governance_lint_*` |
 | E4–E7 Escalation / BCP tabletop readiness | The scenario has impact assessment, evidence collection, escalation, a bank-set update cadence, restoration criteria and post-incident review. No vendor SLA numbers, contacts or URLs; contract-dependent items are placeholders | `governance_lint`, `governance_unit_tests`, `neg_scenario_lint_vendor_sla_commitment` |
+| Real vendor vs fictional system | Jack Henry/Banno confined to scenario §0, which states the distinction; never named in the vendor-mock contract, code, fixtures or tests. The assessment example contains no invented vendor numbers | `governance_unit_tests` (`MockNaming`, `AssessmentVendorNumbers`, context-section tests), `governance_lint`, `neg_scenario_lint_real_vendor_outside_context` |
 | C1, C6, E1–E7, X1–X6 | **Not evidenced by tests** — documentary/contractual controls; see findings F1–F5 in the SIMULATION assessment | `governance/vendor-risk/examples/` |
 
 ## CI

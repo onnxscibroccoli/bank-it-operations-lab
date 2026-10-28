@@ -50,6 +50,9 @@ def steps(tmp: Path):
     bad_scen.write_text(scen.read_text(encoding="utf-8")
                         + "\n- The vendor will restore service within 4 hours (99.9% uptime SLA).\n",
                         encoding="utf-8")
+    jh_scen = tmp / "scenario-real-vendor-outside-context-SIMULATION.md"
+    jh_scen.write_text(scen.read_text(encoding="utf-8").replace(
+        "The fictional vendor status page", "The Jack Henry status page", 1), encoding="utf-8")
     mut = tmp / "vendor-mock-mutant"
     shutil.copytree(MOCK, mut, ignore=shutil.ignore_patterns("__pycache__"))
     c = mut / "vendor_mock" / "contract.py"
@@ -67,7 +70,11 @@ def steps(tmp: Path):
          [PY, "-m", "unittest", "discover", "-s", "governance/vendor-risk/tests", "-v"], REPO),
         ("governance_lint", "check", 0, [PY, str(GOV / "check_governance.py")], REPO),
         ("neg_scenario_lint_vendor_sla_commitment", "negative", 1,
-         [PY, str(GOV / "check_governance.py"), "--scenario", str(bad_scen)], REPO),
+         [PY, str(GOV / "check_governance.py"), "--scenario", str(bad_scen),
+          "--link-base", str(GOV / "scenarios")], REPO),
+        ("neg_scenario_lint_real_vendor_outside_context", "negative", 1,
+         [PY, str(GOV / "check_governance.py"), "--scenario", str(jh_scen),
+          "--link-base", str(GOV / "scenarios")], REPO),
         ("neg_governance_lint_blank_raci_template", "negative", 1,
          [PY, str(GOV / "check_governance.py"), "--raci", str(GOV / "raci-matrix-template.md")], REPO),
         ("neg_governance_lint_two_accountable", "negative", 1,

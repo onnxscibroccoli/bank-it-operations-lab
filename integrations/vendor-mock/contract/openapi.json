@@ -3,7 +3,7 @@
   "info": {
     "title": "Acme Core Ledger SIMULATION API",
     "version": "0.1.0-simulation",
-    "description": "SIMULATION. Fictional banking-vendor API contract for an offline lab. 'Acme Core Ledger SIMULATION' is not a real vendor or product. This contract is NOT derived from, and makes no claim of compatibility with, any real vendor API (including Banno / Jack Henry or any other core, digital-banking or fintech product). No authoritative compatibility evidence exists.",
+    "description": "SIMULATION. Fictional banking-vendor API contract for an offline lab. 'Acme Core Ledger SIMULATION' is not a real vendor or product. This contract is NOT derived from, and makes no claim of compatibility with, any real vendor API or product (core, digital-banking, fintech or otherwise). No authoritative compatibility evidence exists.",
     "x-simulation": true
   },
   "servers": [{"url": "https://acme-core-ledger.simulation.invalid", "description": "SIMULATION - .invalid TLD, never resolvable"}],

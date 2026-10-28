@@ -1,5 +1,6 @@
 """SIMULATION - offline tests for governance/vendor-risk/check_governance.py."""
 import importlib.util
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -19,7 +20,7 @@ class ScenarioLint(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "scenario-SIMULATION.md"
             p.write_text(text, encoding="utf-8")
-            return cg.scenario_findings(p)
+            return cg.scenario_findings(p, link_base=SCENARIO.parent)
 
     def assertFlags(self, text, needle):
         f = self.lint(text)
@@ -43,11 +44,11 @@ class ScenarioLint(unittest.TestCase):
         self.assertFlags(BASE.replace(cg.CONTRACT_PLACEHOLDER, "[TBD]"), "confirm from contract")
 
     def test_jack_henry_outside_job_description_statement(self):
-        self.assertFlags(BASE + "\nJack Henry restores the core quickly.\n", "outside the job-description")
+        self.assertFlags(BASE + "\nJack Henry restores the core quickly.\n", "outside the 'Real vendor vs fictional system'")
 
     def test_jack_henry_statement_required(self):
-        txt = "\n".join(ln for ln in BASE.splitlines() if "Jack Henry" not in ln)
-        self.assertFlags(txt, "job-description vendor")
+        txt = BASE.replace("Jack Henry", "A vendor")
+        self.assertFlags(txt, "does not name the real vendor")
 
     def test_vendor_sla_like_commitments_flagged(self):
         for line in ["The vendor will restore service within 4 hours.",
@@ -71,11 +72,77 @@ class ScenarioLint(unittest.TestCase):
         self.assertFlags(BASE + "\nEmail incident@example.com\n", "e-mail address")
         self.assertFlags(BASE + "\nSee https://status.example.invalid\n", "URL")
 
-    def test_detector_catches_fictional_vendor_numbers_in_assessment_example(self):
-        # The Acme assessment example intentionally contains fictional vendor numbers; the
-        # scenario rule must flag them if such text were pasted into a scenario.
-        ex = (HERE / "examples" / "acme-core-ledger-SIMULATION-assessment.md").read_text(encoding="utf-8")
-        self.assertTrue(any("SLA-like" in f for f in self.lint(ex)))
+    def test_banno_outside_context_section_flagged(self):
+        self.assertFlags(BASE + "\nThe Banno app shows stale balances.\n", "outside the 'Real vendor vs fictional system'")
+
+    def test_real_vendor_in_injects_flagged(self):
+        txt = BASE.replace("The fictional vendor status page", "The Jack Henry status page", 1)
+        self.assertNotEqual(txt, BASE)
+        self.assertFlags(txt, "outside the 'Real vendor vs fictional system'")
+
+    def test_context_section_statements_required(self):
+        for remove, needle in [("does **not** reflect", "does not reflect"),
+                               ("integrations/vendor-mock", "integrations/vendor-mock"),
+                               ("job posting", "job posting")]:
+            with self.subTest(needle):
+                txt = BASE.replace(remove, "XXX")
+                if needle == "job posting":
+                    txt = txt.replace("job description", "XXX")
+                self.assertFlags(txt, f"missing statement containing {needle!r}")
+
+    def test_broken_relative_link_flagged(self):
+        self.assertFlags(BASE + "\nSee [x](../does-not-exist.md).\n", "broken relative link")
+
+    def test_unknown_mock_scenario_flagged(self):
+        self.assertFlags(BASE + "\nAnalogue: `malformed_does_not_exist`.\n", "unknown vendor-mock scenario")
+
+    def test_no_mock_analogue_flagged(self):
+        txt = cg.MOCK_SCENARIO_RX.sub("`x`", BASE)
+        self.assertFlags(txt, "no vendor-mock failure scenarios cited")
+
+    def test_mock_scenarios_parsed(self):
+        self.assertIn("malformed_extra_field", cg.mock_scenarios())
+        self.assertGreaterEqual(len(cg.mock_scenarios()), 20)
+
+
+class AssessmentVendorNumbers(unittest.TestCase):
+    EX = HERE / "examples" / "acme-core-ledger-SIMULATION-assessment.md"
+
+    def test_assessment_example_has_no_vendor_numbers(self):
+        self.assertEqual(cg.vendor_number_findings(self.EX, strict=True), [])
+        self.assertIn(cg.CONTRACT_PLACEHOLDER, self.EX.read_text(encoding="utf-8"))
+
+    def test_injected_vendor_sla_in_assessment_flagged(self):
+        for line in ["| C7 | `[x]` 99.9 % monthly uptime SLA; status page | — |",
+                     "| B1 | Vendor RTO 4 h / RPO 15 min |",
+                     "| E2 | Vendor gives 90 days for API deprecation |",
+                     "| X2 | Vendor deletion certificate within 60 days |",
+                     "| C1 | SOC 2-style report for a 12-month period |"]:
+            with self.subTest(line):
+                with tempfile.TemporaryDirectory() as d:
+                    p = Path(d) / "a.md"
+                    p.write_text(self.EX.read_text(encoding="utf-8") + "\n" + line + "\n")
+                    self.assertTrue(cg.vendor_number_findings(p, strict=True))
+
+
+class MockNaming(unittest.TestCase):
+    def test_committed_mock_never_names_real_vendor(self):
+        self.assertEqual(cg.mock_naming_findings(), [])
+
+    def test_real_vendor_in_mock_flagged(self):
+        for rel, text in [("fixtures/accounts.json", '"_note": "Jack Henry account"'),
+                          ("vendor_mock/client.py", "# compatible with BANNO"),
+                          ("contract/openapi.json", "jackhenry")]:
+            with self.subTest(rel):
+                with tempfile.TemporaryDirectory() as d:
+                    root = Path(d) / "vendor-mock"
+                    shutil.copytree(cg.MOCK_ROOT, root, ignore=shutil.ignore_patterns("__pycache__"))
+                    f = root / rel
+                    f.write_text(f.read_text(encoding="utf-8") + "\n" + text + "\n", encoding="utf-8")
+                    self.assertTrue(any(rel in x for x in cg.mock_naming_findings(root)))
+
+    def test_mock_readme_disclaimer_is_allowed(self):
+        self.assertRegex((cg.MOCK_ROOT / "README.md").read_text(encoding="utf-8"), "Jack Henry")
 
 
 class RaciLint(unittest.TestCase):
