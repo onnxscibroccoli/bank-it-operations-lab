@@ -1,0 +1,33 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-27T23:14:06-04:00
+# command: npx jest --ci --verbose
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+FAIL test/secure-storage-stack.test.ts
+  ● Test suite failed to run
+
+    «MustBeObjectownershipAccesscontrol» objectOwnership must be set to "ObjectWriter" when accessControl is "LogDeliveryWrite"
+        ...new Bucket2 in aws-cdk-lib...
+
+      24 |
+      25 |     // Server access log target. S3 server access logging only supports SSE-S3 on the target bucket.
+    > 26 |     this.accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket', {
+         |                             ^
+      27 |       encryption: s3.BucketEncryption.S3_MANAGED,
+      28 |       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      29 |       enforceSSL: true,
+
+      at new SecureStorageStack (lib/secure-storage-stack.ts:26:29)
+      at build (test/secure-storage-stack.test.ts:8:17)
+          ...jest-runtime, jest-circus, jest-runner...
+      Relates to construct:
+          <.> (aws-cdk-lib.App)
+           └─ TestStack (aws-cdk-lib.Stack)
+               └─ AccessLogsBucket (aws-cdk-lib.aws_s3.Bucket)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.372 s
+Ran all test suites.
+# finished: 2026-10-27T23:14:14-04:00
+# exit_code: 1

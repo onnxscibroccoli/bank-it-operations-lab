@@ -1,0 +1,24 @@
+01-node-version.log	0	node -v
+02-npm-version.log	0	npm -v
+03-npm-install.log	0	npm install --no-audit --no-fund --save-exact
+04-npm-ci.log	0	npm ci --no-audit --no-fund
+05-tsc-pass1.log	2	npx tsc --noEmit
+06-jest-pass1.log	1	npx jest --ci
+07-cdk-version.log	0	npx cdk --version
+08-cdk-synth-pass1.log	1	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+09-npm-install-cdk-nag-v2.log	0	npm install --no-audit --no-fund --save-exact cdk-nag@2.38.2
+10-npm-ci-pass2.log	0	npm ci --no-audit --no-fund
+11-tsc-pass2.log	0	npx tsc --noEmit
+12-jest-pass2.log	1	npx jest --ci --verbose
+13-cdk-synth-pass2.log	1	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+14-tsc-pass3.log	0	npx tsc --noEmit
+15-jest-pass3.log	1	npx jest --ci --verbose
+16-cdk-synth-pass3.log	0	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+17-tsc-final.log	0	npx tsc --noEmit
+18-jest-final.log	0	npx jest --ci --verbose
+19-cdk-synth-final.log	0	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+20-cdk-nag-noncompliant-count.log	0	bash -c ! grep -q "Non-Compliant" cdk.out/AwsSolutions-*-NagReport.csv && echo "Non-Compliant rows: 0"
+21-no-credentials-check.log	0	bash -c env | grep -E "^(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|CDK_DEFAULT_ACCOUNT)=" && exit 1 || echo "no AWS credential env vars present"; grep -q "aws://unknown-account/unknown-region" cdk.out/manifest.json && echo "manifest env: aws://unknown-account/unknown-region"
+22-no-suppressions-check.log	1	bash -c ! grep -rn "NagSuppressions\|acknowledge(" bin lib test && ! grep -q cdk_nag cdk.out/BankItLabSecureStorage.template.json && echo "no suppressions"
+22b-no-suppressions-check.log	0	bash -c ! grep -rnE "NagSuppressions\.|Validations\.of\(.*\)\.acknowledge|import .*NagSuppressions" bin lib test && ! grep -q cdk_nag cdk.out/BankItLabSecureStorage.template.json && echo "no suppressions in code or template metadata"
+23-jest-json.log	0	npx jest --ci --json --outputFile=../../evidence/aws/jest-results.json

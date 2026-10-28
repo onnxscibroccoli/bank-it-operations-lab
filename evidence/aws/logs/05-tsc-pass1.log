@@ -1,0 +1,12 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-27T23:13:17-04:00
+# command: npx tsc --noEmit
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+bin/app.ts(11,21): error TS2345: Argument of type 'AwsSolutionsChecks' is not assignable to parameter of type 'IAspect'.
+  Property 'visit' is missing in type 'AwsSolutionsChecks' but required in type 'IAspect'.
+bin/app.ts(11,46): error TS2353: Object literal may only specify known properties, and 'verbose' does not exist in type 'IConstruct'.
+test/secure-storage-stack.test.ts(9,25): error TS2345: Argument of type 'AwsSolutionsChecks' is not assignable to parameter of type 'IAspect'.
+  Property 'visit' is missing in type 'AwsSolutionsChecks' but required in type 'IAspect'.
+test/secure-storage-stack.test.ts(9,50): error TS2353: Object literal may only specify known properties, and 'verbose' does not exist in type 'IConstruct'.
+# finished: 2026-10-27T23:13:20-04:00
+# exit_code: 2

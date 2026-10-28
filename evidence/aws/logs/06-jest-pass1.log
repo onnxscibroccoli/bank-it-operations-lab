@@ -1,0 +1,29 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-27T23:13:20-04:00
+# command: npx jest --ci
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+FAIL test/secure-storage-stack.test.ts
+  ● Test suite failed to run
+
+    [96mtest/secure-storage-stack.test.ts[0m:[93m9[0m:[93m25[0m - [91merror[0m[90m TS2345: [0mArgument of type 'AwsSolutionsChecks' is not assignable to parameter of type 'IAspect'.
+      Property 'visit' is missing in type 'AwsSolutionsChecks' but required in type 'IAspect'.
+
+    [7m9[0m   Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true, reports: false }));
+    [7m [0m [91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+      [96mnode_modules/aws-cdk-lib/core/lib/aspect.d.ts[0m:[93m9[0m:[93m5[0m
+        [7m9[0m     visit(node: IConstruct): void;
+        [7m [0m [96m    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+        'visit' is declared here.
+    [96mtest/secure-storage-stack.test.ts[0m:[93m9[0m:[93m50[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'verbose' does not exist in type 'IConstruct'.
+
+    [7m9[0m   Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true, reports: false }));
+    [7m [0m [91m                                                 ~~~~~~~[0m
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.738 s
+Ran all test suites.
+# finished: 2026-10-27T23:13:29-04:00
+# exit_code: 1

@@ -1,0 +1,29 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-27T23:14:53-04:00
+# command: npx jest --ci --verbose
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+FAIL test/secure-storage-stack.test.ts (8.871 s)
+  ● SecureStorageStack › is environment-agnostic (no account/region)
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /AWS::AccountId/
+    Received string:  "${Token[AWS.AccountId.2]}"
+
+      24 | describe('SecureStorageStack', () => {
+      25 |   test('is environment-agnostic (no account/region)', () => {
+    > 26 |     expect(Stack.of(stack).account).toMatch(/AWS::AccountId/);
+         |                                     ^
+      27 |     expect(Stack.of(stack).region).toMatch(/AWS::Region/);
+      28 |   });
+      29 |
+
+      at Object.<anonymous> (test/secure-storage-stack.test.ts:26:37)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 11 passed, 12 total
+Snapshots:   0 total
+Time:        9.057 s
+Ran all test suites.
+# finished: 2026-10-27T23:15:03-04:00
+# exit_code: 1

@@ -1,0 +1,12 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-27T23:16:05-04:00
+# command: npx jest --ci --json --outputFile=../../evidence/aws/jest-results.json
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        8.829 s, estimated 10 s
+Ran all test suites.
+Test results written to: ../../evidence/aws/jest-results.json
+# finished: 2026-10-27T23:16:15-04:00
+# exit_code: 0

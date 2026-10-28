@@ -1,0 +1,97 @@
+{
+  "source": "cdk.out/AwsSolutions--BankItLabSecureStorage-NagReport.csv (converted)",
+  "total": 11,
+  "compliant": 11,
+  "non_compliant": 0,
+  "suppressed": 0,
+  "rows": [
+    {
+      "Rule ID": "AwsSolutions-KMS5",
+      "Resource ID": "BankItLabSecureStorage/DataKey/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The KMS Symmetric key does not have automatic key rotation enabled."
+    },
+    {
+      "Rule ID": "AwsSolutions-S1",
+      "Resource ID": "BankItLabSecureStorage/AccessLogsBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket has server access logs disabled."
+    },
+    {
+      "Rule ID": "AwsSolutions-S2",
+      "Resource ID": "BankItLabSecureStorage/AccessLogsBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket does not have public access restricted and blocked."
+    },
+    {
+      "Rule ID": "AwsSolutions-S5",
+      "Resource ID": "BankItLabSecureStorage/AccessLogsBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 static website bucket either has an open world bucket policy or does not use a CloudFront Origin Access Identity (OAI) in the bucket policy for limited getObject and/or putObject permissions."
+    },
+    {
+      "Rule ID": "AwsSolutions-S10",
+      "Resource ID": "BankItLabSecureStorage/AccessLogsBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket or bucket policy does not require requests to use SSL."
+    },
+    {
+      "Rule ID": "AwsSolutions-S10",
+      "Resource ID": "BankItLabSecureStorage/AccessLogsBucket/Policy/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket or bucket policy does not require requests to use SSL."
+    },
+    {
+      "Rule ID": "AwsSolutions-S1",
+      "Resource ID": "BankItLabSecureStorage/DataBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket has server access logs disabled."
+    },
+    {
+      "Rule ID": "AwsSolutions-S2",
+      "Resource ID": "BankItLabSecureStorage/DataBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket does not have public access restricted and blocked."
+    },
+    {
+      "Rule ID": "AwsSolutions-S5",
+      "Resource ID": "BankItLabSecureStorage/DataBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 static website bucket either has an open world bucket policy or does not use a CloudFront Origin Access Identity (OAI) in the bucket policy for limited getObject and/or putObject permissions."
+    },
+    {
+      "Rule ID": "AwsSolutions-S10",
+      "Resource ID": "BankItLabSecureStorage/DataBucket/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket or bucket policy does not require requests to use SSL."
+    },
+    {
+      "Rule ID": "AwsSolutions-S10",
+      "Resource ID": "BankItLabSecureStorage/DataBucket/Policy/Resource",
+      "Compliance": "Compliant",
+      "Exception Reason": "N/A",
+      "Rule Level": "Error",
+      "Rule Info": "The S3 Bucket or bucket policy does not require requests to use SSL."
+    }
+  ]
+}
