@@ -1,6 +1,6 @@
 # EVIDENCE MANIFEST
 
-Snapshot: 2026-10-28 about 14:10 EDT. The "verify" column shows the result of `sha256sum -c` re-run on the box for this report. The "hash of SHA256SUMS" column holds the first 16 hex characters of the SHA-256 of the SHA256SUMS file at the listed commit.
+Snapshot: 2026-10-28, about 14:25 EDT (updated). The "verify" column shows the result of `sha256sum -c` re-run on the box for this report. The "hash of SHA256SUMS" column holds the first 16 hex characters of the SHA-256 of the SHA256SUMS file at the listed commit.
 
 ## Committed evidence bundles
 | Branch @ commit | Bundle (SHA256SUMS) | Entries | Hash of SHA256SUMS | Verify |
@@ -18,7 +18,9 @@ Snapshot: 2026-10-28 about 14:10 EDT. The "verify" column shows the result of `s
 | `aws-remediation-vpc-rds` @ `099479e` | `evidence/aws/aws-remediation-vpc-rds/` | 32 | `e9b3cb1f3f22390c` | OK |
 | `orgs-security-refs` @ `e5e7f46` | `evidence/orgs/SHA256SUMS` (paths relative to repo root) | 66 | `3dac5c317e577b06` | OK |
 | `vendor-mock` @ `c1ec227` | `evidence/vendor/runs/local-offline-20261028T180454Z/` | 12 | `43b2e8cc84b21e0d` | OK, and `--verify` PASS |
-| `overnight/integration` @ `876f7b7` | `evidence/postgres/runs/integration-offline-20261028T180134Z/` | 48 | `3faf0997635c4ab6` | OK |
+| `vendor-mock` @ `88a3785` | `evidence/vendor/runs/local-offline-20261028T180914Z/` | 14 | (not recorded) | OK, and `--verify` PASS |
+| `observability` @ `3e40e39` | `evidence/observability/runs/local-offline-20261028T180832Z/` (validates `2613ea2`) | 44 | (not recorded) | OK, and `--verify` PASS |
+| `overnight/integration` @ `876f7b7` | `evidence/postgres/runs/integration-offline-20261028T180134Z/` | 48 | `3faf0997635c4ab6` | OK. **Removed** in `e76d8a4` and absent at `0f57289` (the harness v2 re-merge) |
 
 ## GitHub Actions artifacts (digest from the Actions API; none expired as of the snapshot)
 | Run | Artifact | Size (B) | Digest |
@@ -59,3 +61,12 @@ The artifacts of the 14:02–14:03 EDT runs (40741…) were not listed in this s
 | [40630876341](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40630876341) | postgres-restore-evidence | `ci-evidence-postgres` | `daf8d82` | pull_request | **failure** | 2026-10-28T04:11:00Z |
 | [40630856041](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40630856041) | postgres-restore-evidence | `ci-evidence-postgres` | `daf8d82` | push | **failure** | 2026-10-28T04:10:48Z |
 | [40630567160](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40630567160) | bank-aws-001-cdk | `bank-aws-001` | `88684d1` | pull_request | **success** | 2026-10-28T04:07:51Z |
+
+### Runs added since the first snapshot (#7 `overnight/integration` @ `0f57289`, 2026-10-28 about 14:10 EDT)
+| Run | Workflow | Conclusion |
+|---|---|---|
+| [40742562106](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742562106) | aws-cdk | **success** |
+| [40742550274](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742550274) | aws-cdk | **success** |
+| [40742561679](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742561679) | offline-validation | **success** |
+| [40742550289](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742550289) | offline-validation | **success** |
+| [40742561967](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40742561967) | postgres-restore-evidence | **success** |
