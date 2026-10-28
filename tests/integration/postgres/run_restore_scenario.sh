@@ -102,6 +102,13 @@ PSQL=(psql -X -v ON_ERROR_STOP=1 -q)
 
 run_step server_ready setup zero pg_isready -t 30
 run_step server_version setup zero "${PSQL[@]}" -d postgres -Atc "select version()"
+# pg_dump output from a newer client can contain settings an older server rejects
+# (e.g. PG17+ emits "SET transaction_timeout"), so require matching major versions.
+CLIENT_MAJOR="$(pg_dump --version | sed -E 's/.* ([0-9]+)(\.[0-9]+)?.*/\1/')"
+SERVER_MAJOR="$(psql -X -d postgres -Atc 'show server_version_num' 2>/dev/null | cut -c1-2)"
+echo "client_major=$CLIENT_MAJOR" >> "$EVIDENCE_DIR/ENVIRONMENT.txt"
+echo "server_major=$SERVER_MAJOR" >> "$EVIDENCE_DIR/ENVIRONMENT.txt"
+run_step client_server_major_match setup zero test "$CLIENT_MAJOR" = "$SERVER_MAJOR"
 
 DUMP="$ARTIFACT_DIR/lab_source.dump"
 PLAIN="$ARTIFACT_DIR/lab_source.sql"

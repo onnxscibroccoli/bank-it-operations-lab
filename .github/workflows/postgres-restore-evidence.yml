@@ -37,7 +37,7 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18 # must match the runner's preinstalled client major (pg_dump 18 on ubuntu-latest)
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres # ephemeral CI-only container, not a secret
@@ -56,7 +56,7 @@ jobs:
       PGPASSWORD: postgres
       RUN_LABEL: ci-service-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run backup/restore scenario (exit code preserved)
         id: scenario
         run: |
@@ -80,7 +80,7 @@ jobs:
           [ -f "$f" ] && cat "$f" >> "$GITHUB_STEP_SUMMARY" || echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload evidence (always, including failures)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: postgres-evidence-service-${{ github.run_id }}-${{ github.run_attempt }}
           path: evidence/postgres/runs/${{ env.RUN_LABEL }}/
@@ -99,7 +99,7 @@ jobs:
     env:
       RUN_LABEL: ci-offline-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Show preinstalled PostgreSQL binaries
         run: ls -d /usr/lib/postgresql/*/bin && ls /usr/lib/postgresql/*/bin | grep -E '^(initdb|pg_ctl|pg_dump|pg_restore|psql)$'
       - name: Run backup/restore scenario offline (exit code preserved)
@@ -126,7 +126,7 @@ jobs:
           [ -f "$f" ] && cat "$f" >> "$GITHUB_STEP_SUMMARY" || echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload evidence (always, including failures)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: postgres-evidence-offline-${{ github.run_id }}-${{ github.run_attempt }}
           path: evidence/postgres/runs/${{ env.RUN_LABEL }}/
@@ -146,7 +146,7 @@ jobs:
       CDK_DEFAULT_ACCOUNT: "000000000000"
       CDK_DEFAULT_REGION: us-east-1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Detect CDK apps
         id: detect
         run: |
@@ -157,7 +157,7 @@ jobs:
           else
             echo "CDK apps: $apps" | tee -a "$GITHUB_STEP_SUMMARY"
           fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         if: steps.detect.outputs.apps != ''
         with:
           node-version: "20"
@@ -177,7 +177,7 @@ jobs:
           exit $status
       - name: Upload CDK synth evidence
         if: always() && steps.detect.outputs.apps != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cdk-synth-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: cdk-evidence/
