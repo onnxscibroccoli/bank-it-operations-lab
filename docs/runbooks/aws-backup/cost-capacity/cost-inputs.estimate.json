@@ -1,0 +1,47 @@
+{
+  "$comment": "ESTIMATE inputs for cost_model.py. Every size/rate is a PLACEHOLDER planning assumption, not a measurement. Every unit price is null until an operator copies it from the cited AWS public pricing page for the region and date; no prices are invented here.",
+  "label": "ESTIMATE",
+  "schema_version": "1.0.0",
+  "retention": {
+    "source": "backup/aws/config/backup-policy.json",
+    "daily_retention_days": 35,
+    "monthly_retention_days": 365,
+    "monthly_cold_after_days": 90,
+    "cold_min_days": 90,
+    "days_per_month": 30.4
+  },
+  "resources": [
+    { "name": "rds-postgres", "type": "RDS", "label": "ESTIMATE", "placeholder": true, "source_size_gb": 100, "daily_change_fraction": 0.05, "monthly_unique_fraction": 1.0, "cold_capable": false, "pitr_log_gb_per_day": 2 },
+    { "name": "efs-shared", "type": "EFS", "label": "ESTIMATE", "placeholder": true, "source_size_gb": 50, "daily_change_fraction": 0.02, "monthly_unique_fraction": 1.0, "cold_capable": true, "pitr_log_gb_per_day": 0 }
+  ],
+  "activity": {
+    "label": "ESTIMATE",
+    "placeholder": true,
+    "restore_drills_per_month": 1,
+    "restore_drill_fraction_of_source": 1.0,
+    "cold_restores_per_month_gb": 0,
+    "restore_test_instance_hours_per_month": 24,
+    "kms_requests_per_month": 20000,
+    "vault_cmk_count": 2
+  },
+  "prices": {
+    "$comment": "Fill from the reference pages for us-east-1 (primary) and us-west-2 (DR). Leave null if unverified; the model then reports quantity only.",
+    "label": "TO_VERIFY",
+    "currency": "USD",
+    "warm_gb_month_by_type": { "RDS": null, "EFS": null },
+    "cold_gb_month_by_type": { "EFS": null },
+    "cross_region_transfer_per_gb": null,
+    "restore_warm_per_gb_by_type": { "RDS": null, "EFS": null },
+    "restore_cold_per_gb_by_type": { "EFS": null },
+    "restore_test_instance_hour": null,
+    "kms_key_month": null,
+    "kms_per_10k_requests": null,
+    "references": [
+      "https://aws.amazon.com/backup/pricing/",
+      "https://aws.amazon.com/kms/pricing/",
+      "https://aws.amazon.com/ec2/pricing/on-demand/#Data_Transfer",
+      "https://aws.amazon.com/rds/postgresql/pricing/",
+      "https://calculator.aws/"
+    ]
+  }
+}

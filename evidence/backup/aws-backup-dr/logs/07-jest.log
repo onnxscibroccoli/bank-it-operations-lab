@@ -1,0 +1,7 @@
+
+Test Suites: 3 passed, 3 total
+Tests:       46 passed, 46 total
+Snapshots:   0 total
+Time:        7.194 s, estimated 11 s
+Ran all test suites.
+Test results written to: ../../evidence/backup/aws-backup-dr/jest-results.json

@@ -1,0 +1,24 @@
+started_utc	exit_code	duration_s	log	cwd	command
+2026-10-28T18:15:22Z	0	1	logs/01-env-versions.log	backup/aws	bash -c node -v; npm -v; python3 --version; npx cdk --version; git -C ../.. rev-parse HEAD
+2026-10-28T18:15:23Z	0	0	logs/02-no-aws-credentials.log	backup/aws	bash -c env | grep -E "^AWS_(ACCESS_KEY_ID|SECRET_ACCESS_KEY|SESSION_TOKEN|PROFILE)=" && exit 1 || echo "no AWS credential env vars; AWS_CONFIG_FILE=$AWS_CONFIG_FILE AWS_SHARED_CREDENTIALS_FILE=$AWS_SHARED_CREDENTIALS_FILE"
+2026-10-28T18:15:23Z	0	4	logs/03-npm-ci.log	backup/aws	npm ci --no-audit --no-fund
+2026-10-28T18:15:27Z	0	0	logs/04-json-lint.log	backup/aws	bash -c cd ../.. && for f in $(git ls-files -co --exclude-standard "backup/aws/*.json" "backup/aws/config/*.json" "evidence/backup/*.json" "docs/runbooks/aws-backup/*.json" | grep -v package-lock); do python3 -m json.tool "$f" >/dev/null && echo "OK $f" || { echo "FAIL $f"; exit 1; }; done
+2026-10-28T18:15:27Z	0	1	logs/05-validate-config.log	backup/aws	npx ts-node scripts/validate-config.ts
+2026-10-28T18:15:28Z	0	4	logs/06-tsc-noemit.log	backup/aws	npx tsc --noEmit
+2026-10-28T18:15:32Z	0	8	logs/07-jest.log	backup/aws	npx jest --ci --json --outputFile=../../evidence/backup/aws-backup-dr/jest-results.json
+2026-10-28T18:15:40Z	0	8	logs/08-cdk-synth.log	backup/aws	npx cdk synth --no-lookups --no-version-reporting --path-metadata false --quiet
+2026-10-28T18:15:48Z	0	0	logs/09-cdk-nag-gate.log	backup/aws	bash -c python3 - <<"PY"
+import json,glob,csv
+bad=0
+for f in sorted(glob.glob("cdk.out/*NagReport.csv")):
+    rows=list(csv.DictReader(open(f)))
+    nc=[r for r in rows if r["Compliance"]=="Non-Compliant"]
+    sup=[r for r in rows if r["Compliance"]=="Suppressed"]
+    print(f, "rows",len(rows),"non_compliant",len(nc),"suppressed",len(sup))
+    bad+=len(nc)
+print("TOTAL_NON_COMPLIANT",bad); raise SystemExit(1 if bad else 0)
+PY
+2026-10-28T18:15:48Z	0	0	logs/10-cost-model-tests.log	backup/aws	python3 -m unittest discover -s ../../docs/runbooks/aws-backup/cost-capacity -p test_*.py -v
+2026-10-28T18:15:48Z	0	0	logs/11-cost-model-estimate.log	backup/aws	bash -c python3 ../../docs/runbooks/aws-backup/cost-capacity/cost_model.py > ../../evidence/backup/cost-capacity/estimate-output.json && echo written
+2026-10-28T18:15:48Z	0	0	logs/12-evidence-validator-tests.log	backup/aws	python3 -m unittest discover -s ../../evidence/backup/tests -v
+2026-10-28T18:15:48Z	0	0	logs/13-grep-no-account-ids.log	backup/aws	bash -c cd ../.. && ! git ls-files -co --exclude-standard backup/aws docs/runbooks/aws-backup evidence/backup | grep -v -e package-lock -e "^backup/aws/node_modules" | xargs grep -nE "\b[0-9]{12}\b" | grep -v "111111111111"

@@ -1,0 +1,13 @@
+test_capacity_value_without_observation_is_rejected (test_validate_backup_evidence.Validator.test_capacity_value_without_observation_is_rejected) ... ok
+test_estimate_cost_without_price_is_rejected (test_validate_backup_evidence.Validator.test_estimate_cost_without_price_is_rejected) ... ok
+test_invented_billing_amount_is_rejected (test_validate_backup_evidence.Validator.test_invented_billing_amount_is_rejected) ... ok
+test_invented_rto_is_rejected (test_validate_backup_evidence.Validator.test_invented_rto_is_rejected) ... ok
+test_observed_status_flip_is_rejected (test_validate_backup_evidence.Validator.test_observed_status_flip_is_rejected) ... ok
+test_recovery_item_executed_is_rejected (test_validate_backup_evidence.Validator.test_recovery_item_executed_is_rejected) ... ok
+test_repo_evidence_passes (test_validate_backup_evidence.Validator.test_repo_evidence_passes) ... ok
+test_unlabelled_hypothesis_is_rejected (test_validate_backup_evidence.Validator.test_unlabelled_hypothesis_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.022s
+
+OK
