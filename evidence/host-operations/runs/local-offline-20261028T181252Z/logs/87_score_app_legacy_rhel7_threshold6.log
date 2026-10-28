@@ -1,0 +1,37 @@
+$ python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/05-hardening-legacy-219.conf --distro rhel7 --threshold 6.0
+--- stdout ---
+bank-lab-app.service + 05-hardening-legacy-219.conf  (offline estimate; nothing applied)
+  ok  RunsAsNonRoot            w=10 service runs as a dedicated non-root user (User= or DynamicUser=yes)
+  ok  NoNewPrivileges          w=8  NoNewPrivileges=yes blocks setuid/file-capability escalation
+  ~   CapabilityBoundingSet    w=9  bounding set excludes dangerous capabilities
+  ok  AmbientCapabilities      w=5  no dangerous ambient capabilities granted
+  ~   ProtectSystem            w=7  ProtectSystem=strict (full=partial)
+  ~   ProtectHome              w=5  ProtectHome=yes (read-only=partial)
+  ok  PrivateTmp               w=5  PrivateTmp=yes
+  ok  PrivateDevices           w=5  PrivateDevices=yes
+  --  ProtectKernelTunables    w=5  ProtectKernelTunables=yes
+  --  ProtectKernelModules     w=5  ProtectKernelModules=yes
+  --  ProtectKernelLogs        w=3  ProtectKernelLogs=yes
+  --  ProtectControlGroups     w=4  ProtectControlGroups=yes
+  --  ProtectClock             w=3  ProtectClock=yes
+  --  ProtectHostname          w=2  ProtectHostname=yes
+  --  ProtectProc              w=3  ProtectProc=invisible
+  --  ProcSubset               w=2  ProcSubset=pid
+  --  RestrictSUIDSGID         w=4  RestrictSUIDSGID=yes
+  --  RestrictRealtime         w=2  RestrictRealtime=yes
+  --  RestrictNamespaces       w=5  RestrictNamespaces=yes
+  ok  RestrictAddressFamilies  w=5  address families allow-listed, no AF_PACKET/AF_NETLINK
+  --  LockPersonality          w=2  LockPersonality=yes
+  --  MemoryDenyWriteExecute   w=4  MemoryDenyWriteExecute=yes
+  --  SystemCallFilter         w=7  system calls allow-listed (e.g. @system-service)
+  ok  SystemCallArchitectures  w=3  SystemCallArchitectures=native
+  --  RemoveIPC                w=1  RemoveIPC=yes
+  --  PrivateNetwork           w=4  PrivateNetwork=yes (only for services with no network needs)
+  --  PrivateUsers             w=3  PrivateUsers=yes
+  --  IPAddressDeny            w=3  IPAddressDeny=any with explicit IPAddressAllow=
+  ok  UMask                    w=2  UMask=0027 or stricter
+target systemd 219: 0 unsupported directive(s)
+declared exposure 5.7, effective exposure 5.7 [MEDIUM], threshold 6.0
+overall: PASS
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:56Z duration_ms=23 ---

@@ -1,0 +1,285 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py neg-root-full-caps.service --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "mode": "offline-read-only",
+  "hostModified": false,
+  "unit": "neg-root-full-caps.service",
+  "dropins": [],
+  "targetSystemd": null,
+  "threshold": 4.0,
+  "declaredExposure": 8.0,
+  "effectiveExposure": 8.0,
+  "rating": "EXPOSED",
+  "unsupported": [],
+  "regressions": [],
+  "checks": [
+    {
+      "id": "RunsAsNonRoot",
+      "directive": "User",
+      "weight": 10,
+      "description": "service runs as a dedicated non-root user (User= or DynamicUser=yes)",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "NoNewPrivileges",
+      "directive": "NoNewPrivileges",
+      "weight": 8,
+      "description": "NoNewPrivileges=yes blocks setuid/file-capability escalation",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "neg-root-full-caps.service:6"
+    },
+    {
+      "id": "CapabilityBoundingSet",
+      "directive": "CapabilityBoundingSet",
+      "weight": 9,
+      "description": "bounding set excludes dangerous capabilities",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "AmbientCapabilities",
+      "directive": "AmbientCapabilities",
+      "weight": 5,
+      "description": "no dangerous ambient capabilities granted",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectSystem",
+      "directive": "ProtectSystem",
+      "weight": 7,
+      "description": "ProtectSystem=strict (full=partial)",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "neg-root-full-caps.service:7"
+    },
+    {
+      "id": "ProtectHome",
+      "directive": "ProtectHome",
+      "weight": 5,
+      "description": "ProtectHome=yes (read-only=partial)",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "PrivateTmp",
+      "directive": "PrivateTmp",
+      "weight": 5,
+      "description": "PrivateTmp=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "neg-root-full-caps.service:8"
+    },
+    {
+      "id": "PrivateDevices",
+      "directive": "PrivateDevices",
+      "weight": 5,
+      "description": "PrivateDevices=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectKernelTunables",
+      "directive": "ProtectKernelTunables",
+      "weight": 5,
+      "description": "ProtectKernelTunables=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectKernelModules",
+      "directive": "ProtectKernelModules",
+      "weight": 5,
+      "description": "ProtectKernelModules=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectKernelLogs",
+      "directive": "ProtectKernelLogs",
+      "weight": 3,
+      "description": "ProtectKernelLogs=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectControlGroups",
+      "directive": "ProtectControlGroups",
+      "weight": 4,
+      "description": "ProtectControlGroups=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectClock",
+      "directive": "ProtectClock",
+      "weight": 3,
+      "description": "ProtectClock=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectHostname",
+      "directive": "ProtectHostname",
+      "weight": 2,
+      "description": "ProtectHostname=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectProc",
+      "directive": "ProtectProc",
+      "weight": 3,
+      "description": "ProtectProc=invisible",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "ProcSubset",
+      "directive": "ProcSubset",
+      "weight": 2,
+      "description": "ProcSubset=pid",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "RestrictSUIDSGID",
+      "directive": "RestrictSUIDSGID",
+      "weight": 4,
+      "description": "RestrictSUIDSGID=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "RestrictRealtime",
+      "directive": "RestrictRealtime",
+      "weight": 2,
+      "description": "RestrictRealtime=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "RestrictNamespaces",
+      "directive": "RestrictNamespaces",
+      "weight": 5,
+      "description": "RestrictNamespaces=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "RestrictAddressFamilies",
+      "directive": "RestrictAddressFamilies",
+      "weight": 5,
+      "description": "address families allow-listed, no AF_PACKET/AF_NETLINK",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "LockPersonality",
+      "directive": "LockPersonality",
+      "weight": 2,
+      "description": "LockPersonality=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "MemoryDenyWriteExecute",
+      "directive": "MemoryDenyWriteExecute",
+      "weight": 4,
+      "description": "MemoryDenyWriteExecute=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "SystemCallFilter",
+      "directive": "SystemCallFilter",
+      "weight": 7,
+      "description": "system calls allow-listed (e.g. @system-service)",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "SystemCallArchitectures",
+      "directive": "SystemCallArchitectures",
+      "weight": 3,
+      "description": "SystemCallArchitectures=native",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "RemoveIPC",
+      "directive": "RemoveIPC",
+      "weight": 1,
+      "description": "RemoveIPC=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "PrivateNetwork",
+      "directive": "PrivateNetwork",
+      "weight": 4,
+      "description": "PrivateNetwork=yes (only for services with no network needs)",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "PrivateUsers",
+      "directive": "PrivateUsers",
+      "weight": 3,
+      "description": "PrivateUsers=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "IPAddressDeny",
+      "directive": "IPAddressDeny",
+      "weight": 3,
+      "description": "IPAddressDeny=any with explicit IPAddressAllow=",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "UMask",
+      "directive": "UMask",
+      "weight": 2,
+      "description": "UMask=0027 or stricter",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    }
+  ],
+  "findings": [
+    "effective exposure 8.0 exceeds threshold 4.0"
+  ],
+  "overall": "FAIL"
+}
+--- stderr ---
+--- exit_code=1 expected=1 started_utc=2026-10-28T18:12:55Z duration_ms=21 ---

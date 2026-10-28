@@ -1,0 +1,23 @@
+$ bash operations/patching/tools/print-cli-commands.sh
+--- stdout ---
+# DRY RUN - commands for review only; nothing below has been executed.
+# region: <REGION>
+aws ssm create-patch-baseline --region <REGION> --cli-input-json file://ssm/cli/create-patch-baseline.al2023.json
+aws ssm create-patch-baseline --region <REGION> --cli-input-json file://ssm/cli/create-patch-baseline.rhel.json
+aws ssm register-patch-baseline-for-patch-group --region <REGION> --cli-input-json file://ssm/cli/register-patch-group.canary-rhel.json
+aws ssm register-patch-baseline-for-patch-group --region <REGION> --cli-input-json file://ssm/cli/register-patch-group.canary.json
+aws ssm register-patch-baseline-for-patch-group --region <REGION> --cli-input-json file://ssm/cli/register-patch-group.wave1-rhel.json
+aws ssm register-patch-baseline-for-patch-group --region <REGION> --cli-input-json file://ssm/cli/register-patch-group.wave1.json
+aws ssm register-patch-baseline-for-patch-group --region <REGION> --cli-input-json file://ssm/cli/register-patch-group.wave2-rhel.json
+aws ssm register-patch-baseline-for-patch-group --region <REGION> --cli-input-json file://ssm/cli/register-patch-group.wave2.json
+aws ssm create-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/create-maintenance-window.canary.json
+aws ssm register-target-with-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/register-target.canary.json
+aws ssm register-task-with-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/register-task.canary.json
+aws ssm create-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/create-maintenance-window.wave1.json
+aws ssm register-target-with-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/register-target.wave1.json
+aws ssm register-task-with-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/register-task.wave1.json
+aws ssm create-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/create-maintenance-window.wave2.json
+aws ssm register-target-with-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/register-target.wave2.json
+aws ssm register-task-with-maintenance-window --region <REGION> --cli-input-json file://ssm/cli/register-task.wave2.json
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:54Z duration_ms=3 ---

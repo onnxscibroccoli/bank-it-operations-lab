@@ -1,0 +1,356 @@
+$ python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-task-rate-mismatch.json --json
+--- stdout ---
+{
+  "tool": "inspect_patch_manifest",
+  "mode": "dry-run",
+  "awsCallsMade": false,
+  "manifest": "operations/patching/tests/fixtures/neg-task-rate-mismatch.json",
+  "manifestId": "bank-lab-2026-11-monthly",
+  "exampleData": true,
+  "overall": "FAIL",
+  "rules": [
+    {
+      "rule": "PM-RING-ORDER",
+      "result": "PASS",
+      "detail": "ring orders [1, 2, 3] must be 1..N and names unique"
+    },
+    {
+      "rule": "PM-CANARY-SIZE",
+      "result": "PASS",
+      "detail": "first ring 'canary' maxConcurrency=1 (must be an absolute count <= 1)"
+    },
+    {
+      "rule": "PM-CANARY-ERRORS",
+      "result": "PASS",
+      "detail": "first ring 'canary' maxErrors=0 (must be 0: any canary failure stops the ring)"
+    },
+    {
+      "rule": "PM-CANARY-NOGATE",
+      "result": "PASS",
+      "detail": "first ring 'canary' must not depend on a gate"
+    },
+    {
+      "rule": "PM-OPERATION",
+      "result": "PASS",
+      "detail": "ring canary operation=Install"
+    },
+    {
+      "rule": "PM-REBOOT",
+      "result": "PASS",
+      "detail": "ring canary rebootOption=RebootIfNeeded"
+    },
+    {
+      "rule": "PM-PATCHGROUP-KNOWN",
+      "result": "PASS",
+      "detail": "ring canary patch groups not registered to any baseline: none"
+    },
+    {
+      "rule": "PM-PATCHGROUP-UNIQUE",
+      "result": "PASS",
+      "detail": "ring canary reuses patch groups already in another ring: none"
+    },
+    {
+      "rule": "PM-PRESNAPSHOT",
+      "result": "PASS",
+      "detail": "ring canary installs; preSnapshot must be true"
+    },
+    {
+      "rule": "PM-SOAK",
+      "result": "PASS",
+      "detail": "ring canary soakHours=48"
+    },
+    {
+      "rule": "PM-OPERATION",
+      "result": "PASS",
+      "detail": "ring wave1 operation=Install"
+    },
+    {
+      "rule": "PM-REBOOT",
+      "result": "PASS",
+      "detail": "ring wave1 rebootOption=RebootIfNeeded"
+    },
+    {
+      "rule": "PM-PATCHGROUP-KNOWN",
+      "result": "PASS",
+      "detail": "ring wave1 patch groups not registered to any baseline: none"
+    },
+    {
+      "rule": "PM-PATCHGROUP-UNIQUE",
+      "result": "PASS",
+      "detail": "ring wave1 reuses patch groups already in another ring: none"
+    },
+    {
+      "rule": "PM-PRESNAPSHOT",
+      "result": "PASS",
+      "detail": "ring wave1 installs; preSnapshot must be true"
+    },
+    {
+      "rule": "PM-SOAK",
+      "result": "PASS",
+      "detail": "ring wave1 soakHours=48"
+    },
+    {
+      "rule": "PM-GATE-PRESENT",
+      "result": "PASS",
+      "detail": "ring wave1 gated"
+    },
+    {
+      "rule": "PM-GATE-ORDER",
+      "result": "PASS",
+      "detail": "ring wave1 gate requires 'canary'; previous ring is 'canary'"
+    },
+    {
+      "rule": "PM-GATE-APPROVERS",
+      "result": "PASS",
+      "detail": "ring wave1 approvers=['service-owner', 'change-advisory-board']"
+    },
+    {
+      "rule": "PM-GATE-SOAK",
+      "result": "PASS",
+      "detail": "ring wave1 minSoakHours=48 (>= 24)"
+    },
+    {
+      "rule": "PM-GATE-EVIDENCE",
+      "result": "PASS",
+      "detail": "ring wave1 gate evidence must include compliance-summary"
+    },
+    {
+      "rule": "PM-OPERATION",
+      "result": "PASS",
+      "detail": "ring wave2 operation=Install"
+    },
+    {
+      "rule": "PM-REBOOT",
+      "result": "PASS",
+      "detail": "ring wave2 rebootOption=RebootIfNeeded"
+    },
+    {
+      "rule": "PM-PATCHGROUP-KNOWN",
+      "result": "PASS",
+      "detail": "ring wave2 patch groups not registered to any baseline: none"
+    },
+    {
+      "rule": "PM-PATCHGROUP-UNIQUE",
+      "result": "PASS",
+      "detail": "ring wave2 reuses patch groups already in another ring: none"
+    },
+    {
+      "rule": "PM-PRESNAPSHOT",
+      "result": "PASS",
+      "detail": "ring wave2 installs; preSnapshot must be true"
+    },
+    {
+      "rule": "PM-SOAK",
+      "result": "PASS",
+      "detail": "ring wave2 soakHours=24"
+    },
+    {
+      "rule": "PM-GATE-PRESENT",
+      "result": "PASS",
+      "detail": "ring wave2 gated"
+    },
+    {
+      "rule": "PM-GATE-ORDER",
+      "result": "PASS",
+      "detail": "ring wave2 gate requires 'wave1'; previous ring is 'wave1'"
+    },
+    {
+      "rule": "PM-GATE-APPROVERS",
+      "result": "PASS",
+      "detail": "ring wave2 approvers=['change-advisory-board']"
+    },
+    {
+      "rule": "PM-GATE-SOAK",
+      "result": "PASS",
+      "detail": "ring wave2 minSoakHours=48 (>= 24)"
+    },
+    {
+      "rule": "PM-GATE-EVIDENCE",
+      "result": "PASS",
+      "detail": "ring wave2 gate evidence must include compliance-summary"
+    },
+    {
+      "rule": "PM-BASELINE-OS",
+      "result": "PASS",
+      "detail": "baseline al2023-security manifest OS AMAZON_LINUX_2023 vs file OS AMAZON_LINUX_2023"
+    },
+    {
+      "rule": "PM-BASELINE-REJECT-BLOCK",
+      "result": "PASS",
+      "detail": "baseline al2023-security RejectedPatchesAction=BLOCK"
+    },
+    {
+      "rule": "PM-BASELINE-DELAY",
+      "result": "PASS",
+      "detail": "baseline al2023-security: every approval rule needs ApproveAfterDays/ApproveUntilDate (2 rules)"
+    },
+    {
+      "rule": "PM-BASELINE-OS",
+      "result": "PASS",
+      "detail": "baseline rhel-security manifest OS REDHAT_ENTERPRISE_LINUX vs file OS REDHAT_ENTERPRISE_LINUX"
+    },
+    {
+      "rule": "PM-BASELINE-REJECT-BLOCK",
+      "result": "PASS",
+      "detail": "baseline rhel-security RejectedPatchesAction=BLOCK"
+    },
+    {
+      "rule": "PM-BASELINE-DELAY",
+      "result": "PASS",
+      "detail": "baseline rhel-security: every approval rule needs ApproveAfterDays/ApproveUntilDate (2 rules)"
+    },
+    {
+      "rule": "PM-TASK-DOCUMENT",
+      "result": "PASS",
+      "detail": "ring canary task AWS-RunPatchBaseline/RUN_COMMAND"
+    },
+    {
+      "rule": "PM-TASK-RATES",
+      "result": "PASS",
+      "detail": "ring canary task MaxConcurrency/MaxErrors 1/0 vs manifest 1/0"
+    },
+    {
+      "rule": "PM-TASK-OPERATION",
+      "result": "PASS",
+      "detail": "ring canary task Operation=Install vs manifest Install"
+    },
+    {
+      "rule": "PM-TASK-REBOOT",
+      "result": "PASS",
+      "detail": "ring canary task RebootOption=RebootIfNeeded"
+    },
+    {
+      "rule": "PM-TASK-DOCUMENT",
+      "result": "PASS",
+      "detail": "ring wave1 task AWS-RunPatchBaseline/RUN_COMMAND"
+    },
+    {
+      "rule": "PM-TASK-RATES",
+      "result": "FAIL",
+      "detail": "ring wave1 task MaxConcurrency/MaxErrors 10%/5% vs manifest 50%/5%"
+    },
+    {
+      "rule": "PM-TASK-GATED-SCAN",
+      "result": "PASS",
+      "detail": "gated ring wave1 ships its task as Operation=Scan (must be Scan until the gate is approved)"
+    },
+    {
+      "rule": "PM-TASK-REBOOT",
+      "result": "PASS",
+      "detail": "ring wave1 task RebootOption=RebootIfNeeded"
+    },
+    {
+      "rule": "PM-TASK-DOCUMENT",
+      "result": "PASS",
+      "detail": "ring wave2 task AWS-RunPatchBaseline/RUN_COMMAND"
+    },
+    {
+      "rule": "PM-TASK-RATES",
+      "result": "PASS",
+      "detail": "ring wave2 task MaxConcurrency/MaxErrors 25%/5% vs manifest 25%/5%"
+    },
+    {
+      "rule": "PM-TASK-GATED-SCAN",
+      "result": "PASS",
+      "detail": "gated ring wave2 ships its task as Operation=Scan (must be Scan until the gate is approved)"
+    },
+    {
+      "rule": "PM-TASK-REBOOT",
+      "result": "PASS",
+      "detail": "ring wave2 task RebootOption=RebootIfNeeded"
+    },
+    {
+      "rule": "PM-ROLLBACK-PROCEDURE",
+      "result": "PASS",
+      "detail": "rollback procedure ../../procedures/ROLLBACK.md exists"
+    },
+    {
+      "rule": "PM-ROLLBACK-STRATEGY",
+      "result": "PASS",
+      "detail": "rollback strategies ['package-downgrade', 'snapshot-restore'] (unknown: none)"
+    },
+    {
+      "rule": "PM-ROLLBACK-TIME",
+      "result": "PASS",
+      "detail": "maxRollbackMinutes=60"
+    },
+    {
+      "rule": "PM-ESCALATION-PROCEDURE",
+      "result": "PASS",
+      "detail": "escalation procedure ../../procedures/ESCALATION.md exists"
+    },
+    {
+      "rule": "PM-ESCALATION-CONTACTS",
+      "result": "PASS",
+      "detail": "2 escalation contacts"
+    },
+    {
+      "rule": "PM-NO-REAL-IDS",
+      "result": "PASS",
+      "detail": "account/resource ids found: none"
+    }
+  ],
+  "plan": [
+    {
+      "order": 1,
+      "ring": "canary",
+      "patchGroups": [
+        "canary",
+        "canary-rhel"
+      ],
+      "operation": "Install",
+      "maxConcurrency": "1",
+      "maxErrors": "0",
+      "soakHours": 48,
+      "gate": null
+    },
+    {
+      "order": 2,
+      "ring": "wave1",
+      "patchGroups": [
+        "wave1",
+        "wave1-rhel"
+      ],
+      "operation": "Install",
+      "maxConcurrency": "50%",
+      "maxErrors": "5%",
+      "soakHours": 48,
+      "gate": {
+        "requires": "canary",
+        "minSoakHours": 48,
+        "approvers": [
+          "service-owner",
+          "change-advisory-board"
+        ],
+        "evidence": [
+          "compliance-summary",
+          "canary-signoff"
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "ring": "wave2",
+      "patchGroups": [
+        "wave2",
+        "wave2-rhel"
+      ],
+      "operation": "Install",
+      "maxConcurrency": "25%",
+      "maxErrors": "5%",
+      "soakHours": 24,
+      "gate": {
+        "requires": "wave1",
+        "minSoakHours": 48,
+        "approvers": [
+          "change-advisory-board"
+        ],
+        "evidence": [
+          "compliance-summary"
+        ]
+      }
+    }
+  ]
+}
+--- stderr ---
+--- exit_code=1 expected=1 started_utc=2026-10-28T18:12:55Z duration_ms=23 ---

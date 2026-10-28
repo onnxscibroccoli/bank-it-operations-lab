@@ -1,0 +1,245 @@
+---
+# EXAMPLE ONLY -- bank-it-operations-lab reference template.
+# Defines SSM Patch Manager baselines, patch groups and ring-based maintenance
+# windows (canary -> wave1 -> wave2). Not deployed by this repository; nothing
+# here has been applied to any account. Validated offline with `cfn-lint` only.
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  bank-it-operations-lab EXAMPLE: SSM patch baselines, patch groups and
+  ring-based maintenance windows. Waves default to Scan until the previous
+  ring is approved (see operations/patching/procedures/APPROVAL.md).
+
+Parameters:
+  ApproveAfterDaysCritical:
+    Type: Number
+    Default: 3
+    MinValue: 0
+    MaxValue: 360
+    Description: Auto-approval delay for Critical/Important security patches.
+  ApproveAfterDaysOther:
+    Type: Number
+    Default: 14
+    MinValue: 0
+    MaxValue: 360
+    Description: Auto-approval delay for remaining security and bugfix patches.
+  Wave1Operation:
+    Type: String
+    Default: Scan
+    AllowedValues: [Scan, Install]
+    Description: >-
+      Scan until canary evidence is approved; change to Install only via an
+      approved change record (APPROVAL.md).
+  Wave2Operation:
+    Type: String
+    Default: Scan
+    AllowedValues: [Scan, Install]
+    Description: Scan until wave1 evidence is approved.
+  ScheduleTimezone:
+    Type: String
+    Default: America/New_York
+    Description: IANA time zone for maintenance window schedules.
+
+Resources:
+  BaselineAmazonLinux2023:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: bank-lab-al2023-security
+      Description: EXAMPLE AL2023 baseline - security + bugfix, delayed approval.
+      OperatingSystem: AMAZON_LINUX_2023
+      ApprovedPatchesComplianceLevel: HIGH
+      RejectedPatchesAction: BLOCK
+      RejectedPatches: []
+      PatchGroups: [canary, wave1, wave2]
+      ApprovalRules:
+        PatchRules:
+          - ApproveAfterDays: !Ref ApproveAfterDaysCritical
+            ComplianceLevel: CRITICAL
+            EnableNonSecurity: false
+            PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values: [Security]
+                - Key: SEVERITY
+                  Values: [Critical, Important]
+          - ApproveAfterDays: !Ref ApproveAfterDaysOther
+            ComplianceLevel: MEDIUM
+            EnableNonSecurity: false
+            PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values: [Security, Bugfix]
+                - Key: SEVERITY
+                  Values: [Medium, Low]
+
+  BaselineRhel:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: bank-lab-rhel-security
+      Description: EXAMPLE RHEL baseline - security + bugfix, delayed approval.
+      OperatingSystem: REDHAT_ENTERPRISE_LINUX
+      ApprovedPatchesComplianceLevel: HIGH
+      RejectedPatchesAction: BLOCK
+      RejectedPatches: []
+      PatchGroups: [canary-rhel, wave1-rhel, wave2-rhel]
+      ApprovalRules:
+        PatchRules:
+          - ApproveAfterDays: !Ref ApproveAfterDaysCritical
+            ComplianceLevel: CRITICAL
+            PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values: [Security]
+                - Key: SEVERITY
+                  Values: [Critical, Important]
+          - ApproveAfterDays: !Ref ApproveAfterDaysOther
+            ComplianceLevel: MEDIUM
+            PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values: [Security, Bugfix]
+
+  # ---------------- canary ring ----------------
+  WindowCanary:
+    Type: AWS::SSM::MaintenanceWindow
+    Properties:
+      Name: bank-lab-patch-canary
+      Description: EXAMPLE canary ring - Tuesday 02:00, Install, one host at a time.
+      Schedule: cron(0 2 ? * TUE *)
+      ScheduleTimezone: !Ref ScheduleTimezone
+      Duration: 3
+      Cutoff: 1
+      AllowUnassociatedTargets: false
+
+  WindowCanaryTargets:
+    Type: AWS::SSM::MaintenanceWindowTarget
+    Properties:
+      WindowId: !Ref WindowCanary
+      Name: canary-hosts
+      ResourceType: INSTANCE
+      Targets:
+        - Key: tag:PatchGroup
+          Values: [canary, canary-rhel]
+
+  WindowCanaryTask:
+    Type: AWS::SSM::MaintenanceWindowTask
+    Properties:
+      WindowId: !Ref WindowCanary
+      Name: canary-run-patch-baseline
+      TaskType: RUN_COMMAND
+      TaskArn: AWS-RunPatchBaseline
+      Priority: 1
+      MaxConcurrency: "1"
+      MaxErrors: "0"
+      CutoffBehavior: CANCEL_TASK
+      Targets:
+        - Key: WindowTargetIds
+          Values: [!Ref WindowCanaryTargets]
+      TaskInvocationParameters:
+        MaintenanceWindowRunCommandParameters:
+          TimeoutSeconds: 3600
+          CloudWatchOutputConfig:
+            CloudWatchOutputEnabled: true
+            CloudWatchLogGroupName: /bank-lab/patching/canary
+          Parameters:
+            Operation: [Install]
+            RebootOption: [RebootIfNeeded]
+
+  # ---------------- wave1 ring ----------------
+  WindowWave1:
+    Type: AWS::SSM::MaintenanceWindow
+    Properties:
+      Name: bank-lab-patch-wave1
+      Description: EXAMPLE wave1 - Thursday 02:00, Scan until canary approved.
+      Schedule: cron(0 2 ? * THU *)
+      ScheduleTimezone: !Ref ScheduleTimezone
+      Duration: 4
+      Cutoff: 1
+      AllowUnassociatedTargets: false
+
+  WindowWave1Targets:
+    Type: AWS::SSM::MaintenanceWindowTarget
+    Properties:
+      WindowId: !Ref WindowWave1
+      Name: wave1-hosts
+      ResourceType: INSTANCE
+      Targets:
+        - Key: tag:PatchGroup
+          Values: [wave1, wave1-rhel]
+
+  WindowWave1Task:
+    Type: AWS::SSM::MaintenanceWindowTask
+    Properties:
+      WindowId: !Ref WindowWave1
+      Name: wave1-run-patch-baseline
+      TaskType: RUN_COMMAND
+      TaskArn: AWS-RunPatchBaseline
+      Priority: 1
+      MaxConcurrency: "10%"
+      MaxErrors: "5%"
+      CutoffBehavior: CANCEL_TASK
+      Targets:
+        - Key: WindowTargetIds
+          Values: [!Ref WindowWave1Targets]
+      TaskInvocationParameters:
+        MaintenanceWindowRunCommandParameters:
+          TimeoutSeconds: 3600
+          CloudWatchOutputConfig:
+            CloudWatchOutputEnabled: true
+            CloudWatchLogGroupName: /bank-lab/patching/wave1
+          Parameters:
+            Operation: [!Ref Wave1Operation]
+            RebootOption: [RebootIfNeeded]
+
+  # ---------------- wave2 ring ----------------
+  WindowWave2:
+    Type: AWS::SSM::MaintenanceWindow
+    Properties:
+      Name: bank-lab-patch-wave2
+      Description: EXAMPLE wave2 - third Tuesday 02:00, Scan until wave1 approved.
+      Schedule: cron(0 2 ? * TUE#3 *)
+      ScheduleTimezone: !Ref ScheduleTimezone
+      Duration: 4
+      Cutoff: 1
+      AllowUnassociatedTargets: false
+
+  WindowWave2Targets:
+    Type: AWS::SSM::MaintenanceWindowTarget
+    Properties:
+      WindowId: !Ref WindowWave2
+      Name: wave2-hosts
+      ResourceType: INSTANCE
+      Targets:
+        - Key: tag:PatchGroup
+          Values: [wave2, wave2-rhel]
+
+  WindowWave2Task:
+    Type: AWS::SSM::MaintenanceWindowTask
+    Properties:
+      WindowId: !Ref WindowWave2
+      Name: wave2-run-patch-baseline
+      TaskType: RUN_COMMAND
+      TaskArn: AWS-RunPatchBaseline
+      Priority: 1
+      MaxConcurrency: "25%"
+      MaxErrors: "5%"
+      CutoffBehavior: CANCEL_TASK
+      Targets:
+        - Key: WindowTargetIds
+          Values: [!Ref WindowWave2Targets]
+      TaskInvocationParameters:
+        MaintenanceWindowRunCommandParameters:
+          TimeoutSeconds: 3600
+          CloudWatchOutputConfig:
+            CloudWatchOutputEnabled: true
+            CloudWatchLogGroupName: /bank-lab/patching/wave2
+          Parameters:
+            Operation: [!Ref Wave2Operation]
+            RebootOption: [RebootIfNeeded]
+
+Outputs:
+  CanaryWindowId:
+    Value: !Ref WindowCanary
+  Wave1WindowId:
+    Value: !Ref WindowWave1
+  Wave2WindowId:
+    Value: !Ref WindowWave2

@@ -1,0 +1,12 @@
+# EXAMPLE of a typical vendor agent unit as shipped: runs as root with no sandboxing.
+# Used to show what the inspector reports for an unreviewed unit. Never installed.
+[Unit]
+Description=bank-lab example root agent (EXAMPLE, unhardened, not installed)
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sleep infinity
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
