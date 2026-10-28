@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "document": {
+    "id": "acceptance-fixture",
+    "title": "SYNTHETIC acceptance fixture",
+    "repository": "onnxscibroccoli/bank-it-operations-lab",
+    "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+    "recorded_by": "worker-a (recorder)",
+    "synthetic": true
+  },
+  "requirements": []
+}
