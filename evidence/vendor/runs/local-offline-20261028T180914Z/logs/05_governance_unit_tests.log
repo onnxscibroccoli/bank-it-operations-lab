@@ -1,0 +1,31 @@
+# SIMULATION evidence log
+# step: governance_unit_tests (test)
+# cwd: $REPO
+# command: /usr/bin/python3 -m unittest discover -s governance/vendor-risk/tests -v
+# started_utc: 2026-10-28T18:09:14.637797+00:00
+
+--- stdout ---
+SIMULATION governance lint: PASS (0 findings)
+
+--- stderr ---
+test_blank_template_fails (test_check_governance.RaciLint.test_blank_template_fails) ... ok
+test_example_raci_passes (test_check_governance.RaciLint.test_example_raci_passes) ... ok
+test_two_accountables_fail (test_check_governance.RaciLint.test_two_accountables_fail) ... ok
+test_committed_scenario_passes (test_check_governance.ScenarioLint.test_committed_scenario_passes) ... ok
+test_contacts_and_urls_flagged (test_check_governance.ScenarioLint.test_contacts_and_urls_flagged) ... ok
+test_detector_catches_fictional_vendor_numbers_in_assessment_example (test_check_governance.ScenarioLint.test_detector_catches_fictional_vendor_numbers_in_assessment_example) ... ok
+test_each_required_section_enforced (test_check_governance.ScenarioLint.test_each_required_section_enforced) ... ok
+test_jack_henry_outside_job_description_statement (test_check_governance.ScenarioLint.test_jack_henry_outside_job_description_statement) ... ok
+test_jack_henry_statement_required (test_check_governance.ScenarioLint.test_jack_henry_statement_required) ... ok
+test_missing_contract_placeholder (test_check_governance.ScenarioLint.test_missing_contract_placeholder) ... ok
+test_missing_simulation_label (test_check_governance.ScenarioLint.test_missing_simulation_label) ... ok
+test_placeholders_and_internal_numbers_not_flagged (test_check_governance.ScenarioLint.test_placeholders_and_internal_numbers_not_flagged) ... ok
+test_vendor_sla_like_commitments_flagged (test_check_governance.ScenarioLint.test_vendor_sla_like_commitments_flagged) ... ok
+test_whole_lint_passes (test_check_governance.ScenarioLint.test_whole_lint_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.064s
+
+OK
+
+--- exit_code: 0 (expected 0) -> PASS ---
