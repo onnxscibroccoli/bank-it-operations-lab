@@ -1,0 +1,8 @@
+# step=N05_restore_over_existing_objects kind=negative expect=nonzero started=2026-10-28T18:02:13Z
+# reason_regex: ERROR: +(schema|relation|type|function) "[^"]+" already exists
+# cmd: replay /workspace/bank-it-operations-lab-ci/evidence/postgres/runs/ci-service-40630856041-1/logs/27_N05_restore_over_existing_objects.log 1
+# --- output ---
+pg_restore: error: could not execute query: ERROR:  unrecognized configuration parameter "transaction_timeout"
+Command was: SET transaction_timeout = 0;
+# --- end output ---
+# exit_code=1 duration_ms=3

@@ -1,0 +1,6 @@
+# step=S_N05_first_restore kind=setup expect=zero started=2026-10-28T18:02:32Z
+# reason_regex: <none>
+# cmd: restore lab_restore_dup /home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-service-40741329107-1/artifacts/lab_source.dump
+# --- output ---
+# --- end output ---
+# exit_code=0 duration_ms=33

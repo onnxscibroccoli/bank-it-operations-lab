@@ -1,0 +1,9 @@
+{
+  "status": "HISTORICAL-KNOWN-INVALID",
+  "harness": "interim integration hardening of v1 (overnight/integration f3a8f17; superseded by owner harness v2 at e7399fb)",
+  "reason": "Produced by an interim script that existed only on overnight/integration at f3a8f17 and was replaced by harness v2 in merge e76d8a4. The negative steps did fail for the intended reasons (evidence/shared postgres-negatives: 6/6), but the run does not meet the v2 evidence rules (no EXPECTATIONS.tsv or classification). Do not count it as a current pass.",
+  "false_pass_steps": [],
+  "files_not_modified": ["SUMMARY.json", "SUMMARY.md", "COMMANDS.tsv", "ENVIRONMENT.txt", "ARTIFACTS.sha256", "logs/*", "fingerprints/*", "SHA256SUMS"],
+  "history": "Committed in fb70afd. Removed from the tree in e76d8a4, then restored byte-for-byte from fb70afd so that no earlier evidence record is deleted.",
+  "marked_utc": "2026-10-28"
+}

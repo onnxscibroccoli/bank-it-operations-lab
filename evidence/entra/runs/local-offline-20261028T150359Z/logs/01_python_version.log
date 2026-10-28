@@ -1,0 +1,5 @@
+$ python3 --version
+--- stdout ---
+Python 3.13.5
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T15:03:59Z duration_ms=1 ---

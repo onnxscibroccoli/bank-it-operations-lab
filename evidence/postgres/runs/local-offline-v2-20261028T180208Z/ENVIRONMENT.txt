@@ -1,0 +1,16 @@
+run_label=local-offline-v2-20261028T180208Z
+mode=offline
+date_utc=2026-10-28T18:02:08Z
+uname=Linux 6.12.94+ x86_64
+pg_bin=/tmp/pgenv/bin
+pg_dump=pg_dump (PostgreSQL) 16.15
+git_sha=2aac93c22d9e5682c42ed08ec79167d93709e1ff
+git_tree_dirty=no
+sha256_lib.sh=04840e2959eeeff0af80b0e6aba640eb94c3a46aa102e206176c376d28ed072d
+sha256_run_restore_scenario.sh=ad469bab5b6285232223d67389a233cb257c46d3dd9da0b8fa7ef9a379ad7c83
+sha256_expectations.tsv=70ec335442a1c71a672eb6d756740d6c3b6ab47d2a8ce74ac163e96d276bef4d
+sha256_seed.sql=0b0b359ceed9abad5dafb0fb86596d8d84f901961891706cf448068b01cf82e1
+sha256_fingerprint.sql=1fa600634aafaef5dbd964dab827aecc0d0a6b9d184fae0f7e97a7ddeb069dac
+github_run_id=
+github_run_attempt=
+github_sha=
