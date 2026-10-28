@@ -1,0 +1,26 @@
+# SIMULATION evidence log
+# step: neg_governance_lint_blank_raci_template (negative)
+# cwd: $REPO
+# command: /usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --raci $REPO/governance/vendor-risk/raci-matrix-template.md
+# started_utc: 2026-10-28T18:04:54.870840+00:00
+
+--- stdout ---
+FINDING: raci-matrix-template.md:10: activity 1 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:11: activity 2 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:12: activity 3 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:13: activity 4 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:14: activity 5 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:15: activity 6 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:16: activity 7 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:17: activity 8 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:18: activity 9 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:19: activity 10 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:20: activity 11 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:21: activity 12 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:22: activity 13 has 0 Accountable (need exactly 1)
+FINDING: raci-matrix-template.md:23: activity 14 has 0 Accountable (need exactly 1)
+SIMULATION governance lint: FAIL (14 findings)
+
+--- stderr ---
+
+--- exit_code: 1 (expected 1) -> PASS ---

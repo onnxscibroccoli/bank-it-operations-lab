@@ -1,0 +1,12 @@
+# SIMULATION evidence log
+# step: governance_lint (check)
+# cwd: $REPO
+# command: /usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py
+# started_utc: 2026-10-28T18:04:54.848488+00:00
+
+--- stdout ---
+SIMULATION governance lint: PASS (0 findings)
+
+--- stderr ---
+
+--- exit_code: 0 (expected 0) -> PASS ---

@@ -1,0 +1,13 @@
+# SIMULATION evidence log
+# step: neg_governance_lint_two_accountable (negative)
+# cwd: $REPO
+# command: /usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --raci $TMP/raci-two-accountable-SIMULATION.md
+# started_utc: 2026-10-28T18:04:54.892459+00:00
+
+--- stdout ---
+FINDING: raci-two-accountable-SIMULATION.md:8: activity 1 has 2 Accountable (need exactly 1)
+SIMULATION governance lint: FAIL (1 findings)
+
+--- stderr ---
+
+--- exit_code: 1 (expected 1) -> PASS ---
