@@ -1,0 +1,72 @@
+name: bank-aws-001-cdk
+
+# Credential-free CI for BANK-AWS-001: typecheck, unit tests, cdk synth (no lookups) and cdk-nag.
+# No AWS secrets are referenced and nothing is deployed.
+on:
+  push:
+    branches: [main]
+    paths: ['infra/aws-cdk/**', 'evidence/aws/**', '.github/workflows/bank-aws-001-cdk.yml']
+  pull_request:
+    branches: [main]
+    paths: ['infra/aws-cdk/**', 'evidence/aws/**', '.github/workflows/bank-aws-001-cdk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bank-aws-001-cdk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  synth-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AWS_EC2_METADATA_DISABLED: 'true'
+      AWS_CONFIG_FILE: /dev/null
+      AWS_SHARED_CREDENTIALS_FILE: /dev/null
+      CDK_DISABLE_CLI_TELEMETRY: 'true'
+    defaults:
+      run:
+        working-directory: infra/aws-cdk
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: infra/aws-cdk/package-lock.json
+      - name: Assert no AWS credentials in environment
+        run: |
+          if env | grep -E '^(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|AWS_PROFILE)='; then
+            echo "AWS credentials present; refusing to continue" >&2; exit 1
+          fi
+      - run: node -v && npm -v
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Unit tests
+        run: npm test
+      - name: Credential-free synth
+        run: npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+      - name: cdk-nag gate (0 non-compliant)
+        run: |
+          f=$(ls cdk.out/*BankItLabSecureStorage-NagReport.csv | head -1)
+          echo "report: $f"; cat "$f"
+          rows=$(tail -n +2 "$f" | grep -c . || true)
+          n=$(grep -c '"Non-Compliant"' "$f" || true)
+          echo "rows=$rows"; test "$rows" -gt 0
+          echo "non-compliant=$n"; test "$n" -eq 0
+      - name: Evidence integrity (SHA256SUMS)
+        working-directory: .
+        run: sha256sum -c evidence/aws/SHA256SUMS --quiet
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cdk-out
+          path: infra/aws-cdk/cdk.out/
+          if-no-files-found: warn
+          retention-days: 7

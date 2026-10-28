@@ -26,3 +26,5 @@
 31-git-fetch.log	0	git fetch origin
 32-git-ls-remote.log	0	git ls-remote origin
 33-git-rebase-onto-origin-main.log	0	git rebase --autostash --root --onto origin/main bank-aws-001
+34-git-push-branch.log	0	git push -u origin bank-aws-001
+35-gh-pr-create.log	0	gh pr create --draft --base main --head bank-aws-001 --title BANK-AWS-001: credential-free secure storage stack + evidence --body-file /workspace/pr-body.md
