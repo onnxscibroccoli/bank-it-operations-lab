@@ -1,0 +1,74 @@
+$ python3 -m unittest discover -s observability/tests -v
+test_host_command (test_collector_cli.CliEdgeTests.test_host_command) ... ok
+test_missing_payload_file (test_collector_cli.CliEdgeTests.test_missing_payload_file) ... ok
+test_policy_file (test_collector_cli.CliEdgeTests.test_policy_file) ... ok
+test_usage_error (test_collector_cli.CliEdgeTests.test_usage_error) ... usage: healthcheck [-h] {evaluate,collect,host} ...
+healthcheck: error: argument cmd: invalid choice: 'frobnicate' (choose from evaluate, collect, host)
+ok
+test_bad_config_exit_2 (test_collector_cli.CollectCliTests.test_bad_config_exit_2) ... ok
+test_collect_fail_closed_paths (test_collector_cli.CollectCliTests.test_collect_fail_closed_paths) ... ok
+test_collect_healthy_end_to_end (test_collector_cli.CollectCliTests.test_collect_healthy_end_to_end) ... ok
+test_collect_payload_out_matches_evaluate (test_collector_cli.CollectCliTests.test_collect_payload_out_matches_evaluate) ... ok
+test_internal_error_fails_closed (test_collector_cli.CollectCliTests.test_internal_error_fails_closed) ... ok
+test_missing_probe_in_config_is_unhealthy (test_collector_cli.CollectCliTests.test_missing_probe_in_config_is_unhealthy) ... ok
+test_failing_or_missing_reader_yields_null_and_error (test_collector_cli.CollectorTests.test_failing_or_missing_reader_yields_null_and_error) ... ok
+test_only_allowlisted_fields (test_collector_cli.CollectorTests.test_only_allowlisted_fields) ... ok
+test_proc_parsers (test_collector_cli.CollectorTests.test_proc_parsers) ... ok
+test_snapshot_from_fake_readers (test_collector_cli.CollectorTests.test_snapshot_from_fake_readers) ... ok
+test_logger_refuses_sensitive_keys (test_collector_cli.PrivacyTests.test_logger_refuses_sensitive_keys) ... ok
+test_logger_shape_and_truncation (test_collector_cli.PrivacyTests.test_logger_shape_and_truncation) ... ok
+test_no_personal_data_in_output_or_logs (test_collector_cli.PrivacyTests.test_no_personal_data_in_output_or_logs) ... ok
+test_baseline_healthy (test_decision.DecisionTests.test_baseline_healthy) ... ok
+test_duplicate_expected_name_is_unhealthy (test_decision.DecisionTests.test_duplicate_expected_name_is_unhealthy) ... ok
+test_duplicate_probe_result_is_unhealthy (test_decision.DecisionTests.test_duplicate_probe_result_is_unhealthy) ... ok
+test_every_non_ok_status_is_unhealthy (test_decision.DecisionTests.test_every_non_ok_status_is_unhealthy) ... ok
+test_every_null_host_metric_is_unhealthy (test_decision.DecisionTests.test_every_null_host_metric_is_unhealthy) ... ok
+test_future_timestamp_is_unhealthy (test_decision.DecisionTests.test_future_timestamp_is_unhealthy) ... ok
+test_host_thresholds (test_decision.DecisionTests.test_host_thresholds) ... ok
+test_inconsistent_host_figures (test_decision.DecisionTests.test_inconsistent_host_figures) ... ok
+test_malformed_result_shape (test_decision.DecisionTests.test_malformed_result_shape) ... ok
+test_no_expected_probes_is_unhealthy (test_decision.DecisionTests.test_no_expected_probes_is_unhealthy) ... ok
+test_policy_override_and_rejection (test_decision.DecisionTests.test_policy_override_and_rejection) ... ok
+test_probe_latency_over_policy (test_decision.DecisionTests.test_probe_latency_over_policy) ... ok
+test_small_future_skew_tolerated (test_decision.DecisionTests.test_small_future_skew_tolerated) ... ok
+test_stale_boundary (test_decision.DecisionTests.test_stale_boundary) ... ok
+test_unexpected_probe_result_is_unhealthy (test_decision.DecisionTests.test_unexpected_probe_result_is_unhealthy) ... ok
+test_non_object_payload (test_decision.PayloadValidationTests.test_non_object_payload) ... ok
+test_rejections (test_decision.PayloadValidationTests.test_rejections) ... ok
+test_strict_json (test_decision.PayloadValidationTests.test_strict_json) ... ok
+test_deterministic_output (test_fixtures.FixtureTests.test_deterministic_output) ... ok
+test_every_fixture_has_expectation (test_fixtures.FixtureTests.test_every_fixture_has_expectation) ... ok
+test_healthy (test_fixtures.FixtureTests.test_healthy) ... ok
+test_host_metric_missing (test_fixtures.FixtureTests.test_host_metric_missing) ... ok
+test_malformed_payloads (test_fixtures.FixtureTests.test_malformed_payloads) ... ok
+test_missing_probe (test_fixtures.FixtureTests.test_missing_probe) ... ok
+test_only_healthy_fixture_is_healthy (test_fixtures.FixtureTests.test_only_healthy_fixture_is_healthy) ... ok
+test_required_scenarios_present (test_fixtures.FixtureTests.test_required_scenarios_present) ... ok
+test_stale (test_fixtures.FixtureTests.test_stale) ... ok
+test_stale_fixture_is_fresh_if_clock_matches (test_fixtures.FixtureTests.test_stale_fixture_is_fresh_if_clock_matches) ... ok
+test_timeout (test_fixtures.FixtureTests.test_timeout) ... ok
+test_unhealthy (test_fixtures.FixtureTests.test_unhealthy) ... ok
+test_unknown_status (test_fixtures.FixtureTests.test_unknown_status) ... ok
+test_hung_transport_is_abandoned_as_timeout (test_probes.HardTimeoutTests.test_hung_transport_is_abandoned_as_timeout) ... ok
+test_body_over_max_bytes_is_error (test_probes.HttpProbeTests.test_body_over_max_bytes_is_error) ... ok
+test_config_validation (test_probes.HttpProbeTests.test_config_validation) ... ok
+test_expected_substring (test_probes.HttpProbeTests.test_expected_substring) ... ok
+test_malformed_transport_response_is_error (test_probes.HttpProbeTests.test_malformed_transport_response_is_error) ... ok
+test_ok (test_probes.HttpProbeTests.test_ok) ... ok
+test_target_drops_query_string (test_probes.HttpProbeTests.test_target_drops_query_string) ... ok
+test_transport_exception_is_error_without_message_leak (test_probes.HttpProbeTests.test_transport_exception_is_error_without_message_leak) ... ok
+test_transport_timeout_maps_to_timeout (test_probes.HttpProbeTests.test_transport_timeout_maps_to_timeout) ... ok
+test_unexpected_status_fails (test_probes.HttpProbeTests.test_unexpected_status_fails) ... ok
+test_logs_probe_result (test_probes.RunnerTests.test_logs_probe_result) ... ok
+test_max_probes_and_duplicates (test_probes.RunnerTests.test_max_probes_and_duplicates) ... ok
+test_probe_from_config (test_probes.RunnerTests.test_probe_from_config) ... ok
+test_unrecognised_status_becomes_unknown (test_probes.RunnerTests.test_unrecognised_status_becomes_unknown) ... ok
+test_dns (test_probes.TcpDnsTests.test_dns) ... ok
+test_tcp (test_probes.TcpDnsTests.test_tcp) ... ok
+
+----------------------------------------------------------------------
+Ran 64 tests in 0.094s
+
+OK
+
+[exit_code=0 expected=0]
