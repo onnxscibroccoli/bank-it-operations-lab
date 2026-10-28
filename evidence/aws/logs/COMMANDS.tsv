@@ -39,3 +39,10 @@
 45-git-push-evidence-schema.log	0	git push origin bank-aws-001
 46-gh-run-watch-ci-2.log	0	gh run watch 40630990406 --exit-status --interval 10
 47-gh-run-view-ci-2.log	0	gh run view 40630990406 --json url,conclusion,headSha,event,databaseId,createdAt,updatedAt
+48-git-push-ci-record.log	0	git push origin bank-aws-001
+49-rclone-copy-checkpoint-archive.log	0	/home/box/bin/rclone copy --drive-root-folder-id 1CqK-pYAFx3bsXI5ggMpvmh-XloO00DwE /workspace/BANK-AWS-001-upload/checkpoint-20261028T001341-0400/bank-it-operations-lab-BANK-AWS-001-20261028T001341-0400-25ba2f6.tar.gz gdrive:
+50-rclone-copy-checkpoint-sha256.log	0	/home/box/bin/rclone copy --drive-root-folder-id 1CqK-pYAFx3bsXI5ggMpvmh-XloO00DwE /workspace/BANK-AWS-001-upload/checkpoint-20261028T001341-0400/bank-it-operations-lab-BANK-AWS-001-20261028T001341-0400-25ba2f6.tar.gz.sha256 gdrive:
+51-rclone-copy-checkpoint-report.log	0	/home/box/bin/rclone copy --drive-root-folder-id 1CqK-pYAFx3bsXI5ggMpvmh-XloO00DwE /workspace/BANK-AWS-001-upload/checkpoint-20261028T001341-0400/MORNING_REPORT-20261028T001341-0400.md gdrive:
+52-rclone-lsjson-hash.log	0	/home/box/bin/rclone lsjson --hash --drive-root-folder-id 1CqK-pYAFx3bsXI5ggMpvmh-XloO00DwE gdrive:
+53-gh-run-watch-ci-3.log	0	gh run watch 40631120535 --exit-status --interval 10
+54-gh-run-view-ci-3.log	0	gh run view 40631120535 --json url,conclusion,headSha,event,databaseId
