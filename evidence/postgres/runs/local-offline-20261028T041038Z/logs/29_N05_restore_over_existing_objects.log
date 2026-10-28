@@ -1,0 +1,7 @@
+# step=N05_restore_over_existing_objects kind=negative expect=nonzero started=2026-10-28T04:10:39Z
+# cmd: bash -c createdb\ lab_restore_dup\ \&\&\ pg_restore\ --exit-on-error\ --no-owner\ -d\ lab_restore_dup\ \'/workspace/bank-it-operations-lab-ci/evidence/postgres/runs/local-offline-20261028T041038Z/artifacts/lab_source.dump\'\ \&\&\ pg_restore\ --exit-on-error\ --no-owner\ -d\ lab_restore_dup\ \'/workspace/bank-it-operations-lab-ci/evidence/postgres/runs/local-offline-20261028T041038Z/artifacts/lab_source.dump\' 
+pg_restore: error: could not execute query: ERROR:  schema "lab" already exists
+Command was: CREATE SCHEMA lab;
+
+
+# exit_code=1 duration_ms=65
