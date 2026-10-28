@@ -1,0 +1,6 @@
+# step=ST06_setup_failure kind=setup expect=zero started=2026-10-28T18:02:13Z
+# reason_regex: <none>
+# cmd: false
+# --- output ---
+# --- end output ---
+# exit_code=1 duration_ms=4

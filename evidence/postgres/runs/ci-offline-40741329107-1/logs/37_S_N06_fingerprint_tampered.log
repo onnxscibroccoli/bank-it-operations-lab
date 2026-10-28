@@ -1,0 +1,9 @@
+# step=S_N06_fingerprint_tampered kind=setup expect=zero started=2026-10-28T18:02:24Z
+# reason_regex: ^lab\.ledger_entries\|1000\|[0-9a-f]{32}$
+# cmd: fingerprint lab_restore_tamper /home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-offline-40741329107-1/fingerprints/restore_tampered.txt
+# --- output ---
+lab.accounts|50|18ce2a21b6db0941bbafafc7100c664e
+lab.ledger_entries|1000|22fd941d7411e70d0a5b8bbd8d5fb6ab
+lab.account_balances|50|112340e3bfc32713bdb8fe5db5cf245e
+# --- end output ---
+# exit_code=0 duration_ms=13

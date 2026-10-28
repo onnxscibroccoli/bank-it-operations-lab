@@ -1,0 +1,3 @@
+# Binary/plain dumps and scratch archives are uploaded as CI artifacts, not committed.
+# Their SHA-256 hashes are kept in each run's ARTIFACTS.sha256.
+runs/*/artifacts/

@@ -1,0 +1,7 @@
+# step=S_N01_make_truncated_dump kind=setup expect=zero started=2026-10-28T18:02:12Z
+# reason_regex: ^truncated [0-9]+ of [0-9]+ bytes$
+# cmd: make_truncated
+# --- output ---
+truncated 7930 of 15860 bytes
+# --- end output ---
+# exit_code=0 duration_ms=5

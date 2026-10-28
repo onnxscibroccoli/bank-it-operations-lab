@@ -1,0 +1,5 @@
+# step=P04_pg_restore kind=positive expect=zero started=2026-10-28T04:11:08Z
+# cmd: pg_restore --exit-on-error --no-owner -d lab_restore_ok /home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-service-40630856041-1/artifacts/lab_source.dump 
+pg_restore: error: could not execute query: ERROR:  unrecognized configuration parameter "transaction_timeout"
+Command was: SET transaction_timeout = 0;
+# exit_code=1 duration_ms=16
