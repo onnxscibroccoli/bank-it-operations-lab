@@ -2,18 +2,19 @@ name: postgres-restore-evidence
 
 on:
   push:
-    branches: [main, ci-evidence-postgres]
+    branches: [main, ci-evidence-postgres, overnight/integration]
     paths:
-      - ".github/workflows/**"
+      - ".github/workflows/postgres-restore-evidence.yml"
       - "evidence/postgres/**"
+      - "evidence/shared/**"
       - "tests/integration/**"
-      - "**/cdk.json"
   pull_request:
+    branches: [main, overnight/integration]
     paths:
-      - ".github/workflows/**"
+      - ".github/workflows/postgres-restore-evidence.yml"
       - "evidence/postgres/**"
+      - "evidence/shared/**"
       - "tests/integration/**"
-      - "**/cdk.json"
   workflow_dispatch:
 
 permissions:
@@ -57,6 +58,8 @@ jobs:
       RUN_LABEL: ci-service-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Run backup/restore scenario (exit code preserved)
         id: scenario
         run: |
@@ -71,6 +74,14 @@ jobs:
         run: |
           set +e
           bash tests/integration/postgres/verify_evidence.sh "evidence/postgres/runs/$RUN_LABEL"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Negative tests failed for the intended reason (evidence/shared)
+        id: negatives
+        if: always()
+        run: |
+          set +e
+          python3 evidence/shared/validate_evidence.py postgres-negatives "evidence/postgres/runs/$RUN_LABEL"
           rc=$?
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
       - name: Job summary
@@ -89,8 +100,8 @@ jobs:
       - name: Fail job if scenario or verification failed
         if: always()
         run: |
-          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }}"
-          [ "${{ steps.scenario.outputs.rc }}" = "0" ] && [ "${{ steps.verify.outputs.rc }}" = "0" ]
+          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }} negatives rc=${{ steps.negatives.outputs.rc }}"
+          [ "${{ steps.scenario.outputs.rc }}" = "0" ] && [ "${{ steps.verify.outputs.rc }}" = "0" ] && [ "${{ steps.negatives.outputs.rc }}" = "0" ]
 
   restore-exercise-offline:
     name: restore exercise (offline, unix-socket-only cluster)
@@ -100,6 +111,8 @@ jobs:
       RUN_LABEL: ci-offline-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Show preinstalled PostgreSQL binaries
         run: ls -d /usr/lib/postgresql/*/bin && ls /usr/lib/postgresql/*/bin | grep -E '^(initdb|pg_ctl|pg_dump|pg_restore|psql)$'
       - name: Run backup/restore scenario offline (exit code preserved)
@@ -119,6 +132,14 @@ jobs:
           bash tests/integration/postgres/verify_evidence.sh "evidence/postgres/runs/$RUN_LABEL"
           rc=$?
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Negative tests failed for the intended reason (evidence/shared)
+        id: negatives
+        if: always()
+        run: |
+          set +e
+          python3 evidence/shared/validate_evidence.py postgres-negatives "evidence/postgres/runs/$RUN_LABEL"
+          rc=$?
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
       - name: Job summary
         if: always()
         run: |
@@ -135,50 +156,8 @@ jobs:
       - name: Fail job if scenario or verification failed
         if: always()
         run: |
-          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }}"
-          [ "${{ steps.scenario.outputs.rc }}" = "0" ] && [ "${{ steps.verify.outputs.rc }}" = "0" ]
+          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }} negatives rc=${{ steps.negatives.outputs.rc }}"
+          [ "${{ steps.scenario.outputs.rc }}" = "0" ] && [ "${{ steps.verify.outputs.rc }}" = "0" ] && [ "${{ steps.negatives.outputs.rc }}" = "0" ]
 
-  cdk-synth:
-    name: CDK synth (only if CDK app present, no credentials)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      CDK_DEFAULT_ACCOUNT: "000000000000"
-      CDK_DEFAULT_REGION: us-east-1
-    steps:
-      - uses: actions/checkout@v5
-      - name: Detect CDK apps
-        id: detect
-        run: |
-          apps=$(git ls-files '*cdk.json' | grep -v node_modules | xargs -r -n1 dirname | sort -u | tr '\n' ' ')
-          echo "apps=$apps" >> "$GITHUB_OUTPUT"
-          if [ -z "$apps" ]; then
-            echo "No cdk.json found in repository; CDK synth skipped." | tee -a "$GITHUB_STEP_SUMMARY"
-          else
-            echo "CDK apps: $apps" | tee -a "$GITHUB_STEP_SUMMARY"
-          fi
-      - uses: actions/setup-node@v5
-        if: steps.detect.outputs.apps != ''
-        with:
-          node-version: "20"
-      - name: cdk synth (no lookups, no credentials)
-        if: steps.detect.outputs.apps != ''
-        run: |
-          mkdir -p cdk-evidence
-          status=0
-          for app in ${{ steps.detect.outputs.apps }}; do
-            log="cdk-evidence/$(echo "$app" | tr '/' '_').log"
-            ( cd "$app" && { [ -f package-lock.json ] && npm ci || npm install; } && npx --yes aws-cdk synth --no-lookups --quiet ) > "$log" 2>&1
-            rc=$?
-            printf '%s\t%s\n' "$app" "$rc" >> cdk-evidence/COMMANDS.tsv
-            [ $rc -eq 0 ] || status=1
-          done
-          (cd cdk-evidence && sha256sum * > SHA256SUMS)
-          exit $status
-      - name: Upload CDK synth evidence
-        if: always() && steps.detect.outputs.apps != ''
-        uses: actions/upload-artifact@v5
-        with:
-          name: cdk-synth-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: cdk-evidence/
-          if-no-files-found: warn
+  # The former cdk-synth job was removed at integration: CDK apps are covered by .github/workflows/aws-cdk.yml
+  # (pinned local aws-cdk, no CDK_DEFAULT_ACCOUNT/REGION, cdk-nag gate). See reports/INTEGRATION.md.

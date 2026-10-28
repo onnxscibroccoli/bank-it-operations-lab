@@ -1,0 +1,86 @@
+name: aws-cdk
+
+# Credential-free CI for infra/aws-cdk (BankItLabSecureStorage + BankItLabNetworkDatabase).
+# Adapted at integration from PR #1's bank-aws-001-cdk.yml to the PR #5 app: both stacks, both cdk-nag packs
+# (AwsSolutions + NIST 800-53 R5), evidence path evidence/aws/aws-remediation-vpc-rds, and the shared
+# evidence/shared S3 self-logging check. No AWS secrets are referenced and nothing is deployed.
+on:
+  push:
+    branches: [main, overnight/integration]
+    paths: ['infra/aws-cdk/**', 'evidence/aws/**', 'evidence/shared/**', '.github/workflows/aws-cdk.yml']
+  pull_request:
+    branches: [main, overnight/integration]
+    paths: ['infra/aws-cdk/**', 'evidence/aws/**', 'evidence/shared/**', '.github/workflows/aws-cdk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aws-cdk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  synth-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AWS_EC2_METADATA_DISABLED: 'true'
+      AWS_CONFIG_FILE: /dev/null
+      AWS_SHARED_CREDENTIALS_FILE: /dev/null
+      CDK_DISABLE_CLI_TELEMETRY: 'true'
+    defaults:
+      run:
+        working-directory: infra/aws-cdk
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: infra/aws-cdk/package-lock.json
+      - name: Assert no AWS credentials in environment
+        run: |
+          if env | grep -E '^(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|AWS_PROFILE|AWS_ROLE_ARN|AWS_WEB_IDENTITY_TOKEN_FILE|AWS_CONTAINER_CREDENTIALS_FULL_URI|AWS_CONTAINER_CREDENTIALS_RELATIVE_URI|CDK_DEFAULT_ACCOUNT)='; then
+            echo "AWS credentials or account context present; refusing to continue" >&2; exit 1
+          fi
+      - run: npm ci --no-audit --no-fund --ignore-scripts
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Unit tests
+        run: npm test
+      - name: Credential-free synth
+        run: npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --quiet
+      - name: cdk-nag gate (0 unsuppressed Non-Compliant, both packs, both stacks)
+        run: |
+          set -e
+          n_reports=0
+          for f in cdk.out/*-NagReport.csv; do
+            n_reports=$((n_reports+1))
+            rows=$(tail -n +2 "$f" | grep -c . || true)
+            n=$(grep -c '"Non-Compliant"' "$f" || true)
+            echo "$f rows=$rows non-compliant=$n"
+            test "$rows" -gt 0
+            test "$n" -eq 0
+          done
+          test "$n_reports" -eq 4
+      - name: No S3 bucket logs to itself (evidence/shared)
+        working-directory: .
+        run: |
+          for t in infra/aws-cdk/cdk.out/*.template.json; do python3 evidence/shared/validate_evidence.py cfn-s3-selflog "$t"; done
+      - name: Synth drift vs committed evidence
+        working-directory: .
+        run: |
+          for t in evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do diff -u "$t" "infra/aws-cdk/cdk.out/$(basename "$t")"; done
+      - name: Evidence integrity (SHA256SUMS)
+        working-directory: evidence/aws/aws-remediation-vpc-rds
+        run: sha256sum -c SHA256SUMS --quiet
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cdk-out
+          path: infra/aws-cdk/cdk.out/
+          if-no-files-found: warn
+          retention-days: 7

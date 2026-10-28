@@ -1,7 +1,7 @@
 # infra/aws-cdk: BANK-AWS-001 secure storage stack
 
 AWS CDK v2 (TypeScript) app that synthesizes `BankItLabSecureStorage` **without AWS credentials**. Nothing here is
-deployed; outputs are static evidence only (see `evidence/aws/README.md`). Not a certification.
+deployed; outputs are static evidence only (see `evidence/aws/aws-remediation-vpc-rds/`). Not a certification.
 
 ## Stacks
 `BankItLabSecureStorage`
@@ -22,7 +22,7 @@ EX-01..EX-04 (`evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md`). St
 ## Commands (Node 20)
     npm ci
     npx tsc --noEmit
-    npm test                      # stack assertions + evidence validator tests
+    npm test                      # stack assertions + negative controls
     npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
 
 For logged, credential-free runs use `../../evidence/aws/aws-remediation-vpc-rds/run-cmd.sh <logname> <command...>`.
@@ -31,7 +31,7 @@ For logged, credential-free runs use `../../evidence/aws/aws-remediation-vpc-rds
 - `bin/app.ts`: app entry, applies both cdk-nag packs. `lib/secure-storage-stack.ts`, `lib/network-database-stack.ts`: the stacks.
 - `lib/least-privilege-key.ts`: CMK factory with explicit key policy. `lib/guards.ts`: static template guards.
 - `lib/lab-context.ts`: feature flags shared with tests. `test/`: Jest tests incl. `negative-controls.test.ts`. `docs/adr/`: ADR-0001..0004.
-- CI: none on this branch (the BANK-AWS-001 workflow lives on `bank-aws-001`; `.github/` is out of scope here).
+- CI: `.github/workflows/aws-cdk.yml` (added at integration; adapted from PR #1's `bank-aws-001-cdk.yml`).
 
 ## Known gaps
 Default `BootstrapVersion` parameter/rule; cdk-nag 2.x pin; proposed exceptions EX-01..EX-04; hosted rotation uses a SAR application.

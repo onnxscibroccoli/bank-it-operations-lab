@@ -105,7 +105,9 @@ run_step server_version setup zero "${PSQL[@]}" -d postgres -Atc "select version
 # pg_dump output from a newer client can contain settings an older server rejects
 # (e.g. PG17+ emits "SET transaction_timeout"), so require matching major versions.
 CLIENT_MAJOR="$(pg_dump --version | sed -E 's/.* ([0-9]+)(\.[0-9]+)?.*/\1/')"
-SERVER_MAJOR="$(psql -X -d postgres -Atc 'show server_version_num' 2>/dev/null | cut -c1-2)"
+SERVER_VERSION_NUM="$(psql -X -d postgres -Atc 'show server_version_num' 2>/dev/null || echo 0)"
+# server_version_num is MMmmpp for PG>=10 (e.g. 160015) and MMmmpp with a minor major for <10 (e.g. 90624)
+if [ "${SERVER_VERSION_NUM:-0}" -ge 100000 ] 2>/dev/null; then SERVER_MAJOR=$((SERVER_VERSION_NUM / 10000)); else SERVER_MAJOR="$((SERVER_VERSION_NUM / 10000)).$(((SERVER_VERSION_NUM / 100) % 100))"; fi
 echo "client_major=$CLIENT_MAJOR" >> "$EVIDENCE_DIR/ENVIRONMENT.txt"
 echo "server_major=$SERVER_MAJOR" >> "$EVIDENCE_DIR/ENVIRONMENT.txt"
 run_step client_server_major_match setup zero test "$CLIENT_MAJOR" = "$SERVER_MAJOR"
@@ -137,13 +139,25 @@ run_step P11_compare_plain positive zero diff -u "$FP_DIR/source.txt" "$FP_DIR/r
 SIZE=$(stat -c %s "$DUMP" 2>/dev/null || echo 0)
 head -c $((SIZE / 2)) "$DUMP" > "$ARTIFACT_DIR/truncated.dump" 2>/dev/null || true
 printf 'this is not a postgres archive\n' > "$ARTIFACT_DIR/garbage.dump"
-run_step N01_restore_truncated_dump negative nonzero bash -c "createdb lab_restore_trunc && pg_restore --exit-on-error --no-owner -d lab_restore_trunc '$ARTIFACT_DIR/truncated.dump'"
+# Each negative step is ONE command whose failure is the behaviour under test. Setup for it runs as separate
+# `setup` steps that must succeed, so a setup error can never be counted as the expected failure (false PASS).
+# The expected error text per step lives in evidence/shared/negative-expectations.postgres.json and is checked by
+# `evidence/shared/validate_evidence.py postgres-negatives`.
+run_step N01_setup_createdb setup zero createdb lab_restore_trunc
+run_step N01_restore_truncated_dump negative nonzero pg_restore --exit-on-error --no-owner -d lab_restore_trunc "$ARTIFACT_DIR/truncated.dump"
 run_step N02_list_garbage_archive negative nonzero pg_restore --list "$ARTIFACT_DIR/garbage.dump"
 run_step N03_restore_missing_database negative nonzero pg_restore --exit-on-error --no-owner -d lab_db_does_not_exist "$DUMP"
+run_step N04_setup_table_present setup zero "${PSQL[@]}" -d lab_restore_ok -Atc "select 'lab.ledger_entries'::regclass"
 run_step N04_fk_enforced_after_restore negative nonzero "${PSQL[@]}" -d lab_restore_ok -c \
   "insert into lab.ledger_entries(entry_id, account_id, amount_cents, memo, posted_on) values (999999, 424242, 1, 'orphan', current_date)"
-run_step N05_restore_over_existing_objects negative nonzero bash -c "createdb lab_restore_dup && pg_restore --exit-on-error --no-owner -d lab_restore_dup '$DUMP' && pg_restore --exit-on-error --no-owner -d lab_restore_dup '$DUMP'"
-run_step N06_tamper_detected negative nonzero bash -c "createdb lab_restore_tamper && pg_restore --exit-on-error --no-owner -d lab_restore_tamper '$DUMP' && \"\$@\" -d lab_restore_tamper -c \"update lab.ledger_entries set amount_cents = amount_cents + 1 where entry_id = 500\" && \"\$@\" -d lab_restore_tamper -At -f '$HERE/fingerprint.sql' > '$FP_DIR/restore_tampered.txt' && diff -u '$FP_DIR/source.txt' '$FP_DIR/restore_tampered.txt'" _ "${PSQL[@]}"
+run_step N05_setup_createdb setup zero createdb lab_restore_dup
+run_step N05_setup_first_restore setup zero pg_restore --exit-on-error --no-owner -d lab_restore_dup "$DUMP"
+run_step N05_restore_over_existing_objects negative nonzero pg_restore --exit-on-error --no-owner -d lab_restore_dup "$DUMP"
+run_step N06_setup_createdb setup zero createdb lab_restore_tamper
+run_step N06_setup_restore setup zero pg_restore --exit-on-error --no-owner -d lab_restore_tamper "$DUMP"
+run_step N06_setup_tamper setup zero "${PSQL[@]}" -d lab_restore_tamper -c "update lab.ledger_entries set amount_cents = amount_cents + 1 where entry_id = 500"
+run_step N06_setup_fingerprint setup zero bash -c "\"\$@\" -d lab_restore_tamper -At -f '$HERE/fingerprint.sql' > '$FP_DIR/restore_tampered.txt'" _ "${PSQL[@]}"
+run_step N06_tamper_detected negative nonzero diff -u "$FP_DIR/source.txt" "$FP_DIR/restore_tampered.txt"
 
 # ---------- summary + hashes ----------
 (cd "$ARTIFACT_DIR" && sha256sum -- * > "$EVIDENCE_DIR/ARTIFACTS.sha256")
