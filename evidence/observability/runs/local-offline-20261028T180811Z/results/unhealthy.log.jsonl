@@ -1,0 +1,2 @@
+{"bytes":1166,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"289e94cc9dadf1466691e2fb4a5865869cc8daa3eacc9a440e3bba1068b15719","source":"observability/fixtures/unhealthy.json","ts":"2026-10-28T12:01:00Z"}
+{"component":"healthcheck","event":"health.decision","exit_code":1,"failed_checks":["host:disk_free_ratio","probe:app-http"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}
