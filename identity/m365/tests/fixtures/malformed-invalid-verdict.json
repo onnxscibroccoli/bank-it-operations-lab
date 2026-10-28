@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ACC-001",
+  "type": "access-troubleshooting",
+  "title": "Payments ops user blocked from Outlook: AADSTS53000 on a non-compliant laptop",
+  "narrative": "Emery reports Outlook keeps asking to sign in and then shows 'You can't get there from here'. The sign-in log shows AADSTS53000 from CA004. Intune shows NWL-LT-0506 still on Windows 10 22H2 with BitLocker off, non-compliant since 20 Oct (well past the 24h grace). An Intune reporting-delay advisory is active but does not explain the real setting violations.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000005",
+    "workload": "mailbox",
+    "reportedUtc": "2026-10-28T14:20:00Z",
+    "signIns": [
+      {
+        "id": "SI-LAB-3001",
+        "timeUtc": "2026-10-28T14:02:00Z",
+        "appDisplayName": "Outlook (synthetic)",
+        "errorCode": 53000,
+        "deviceId": "0d110000-0000-4000-8000-000000000006"
+      },
+      {
+        "id": "SI-LAB-3002",
+        "timeUtc": "2026-10-28T14:10:00Z",
+        "appDisplayName": "Outlook (synthetic)",
+        "errorCode": 53000,
+        "deviceId": "0d110000-0000-4000-8000-000000000006"
+      }
+    ]
+  },
+  "auditEvidence": [
+    {
+      "category": "sign-in-log",
+      "ref": "AUD-LAB-3101",
+      "source": "Entra sign-in log SI-LAB-3002 (synthetic)"
+    },
+    {
+      "category": "diagnosis",
+      "ref": "AUD-LAB-3102",
+      "source": "Intune compliance policy state NWL-LT-0506 (synthetic)"
+    },
+    {
+      "category": "resolution",
+      "ref": "INC-LAB-3103",
+      "source": "Service desk ticket: BitLocker enabled, feature update scheduled (synthetic)"
+    }
+  ],
+  "expected": {
+    "verdict": "READY",
+    "findings": [
+      "CA-DEVICE-NOT-COMPLIANT",
+      "DEV-BITLOCKER",
+      "DEV-OS-MIN",
+      "SH-ADVISORY"
+    ]
+  }
+}
