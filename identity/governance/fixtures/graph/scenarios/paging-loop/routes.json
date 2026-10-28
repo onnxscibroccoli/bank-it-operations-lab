@@ -1,0 +1,12 @@
+{
+  "description": "@odata.nextLink points back at the same URL. Expected exit 2.",
+  "inherit": "baseline",
+  "routes": {
+    "/roleManagement/directory/roleEligibilityScheduleInstances": [
+      {
+        "bodyFile": "eligible.loop.json",
+        "status": 200
+      }
+    ]
+  }
+}

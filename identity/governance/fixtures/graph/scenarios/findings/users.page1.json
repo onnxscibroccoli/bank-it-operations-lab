@@ -1,0 +1,48 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(id,displayName,userPrincipalName,userType,accountEnabled)",
+  "value": [
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000001",
+      "displayName": "BG Emergency Access 01",
+      "userPrincipalName": "bg-emergency-01@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000002",
+      "displayName": "BG Emergency Access 02",
+      "userPrincipalName": "bg-emergency-02@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000010",
+      "displayName": "Avery Admin (synthetic)",
+      "userPrincipalName": "avery.admin@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000011",
+      "displayName": "Blake Security (synthetic)",
+      "userPrincipalName": "blake.security@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000012",
+      "displayName": "Casey Helpdesk (synthetic)",
+      "userPrincipalName": "casey.helpdesk@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000013",
+      "displayName": "Devon Apps (synthetic)",
+      "userPrincipalName": "devon.apps@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    }
+  ],
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/users?$select=id,displayName,userPrincipalName,userType,accountEnabled&$skiptoken=SYNTHETIC-USERS-PAGE-2"
+}

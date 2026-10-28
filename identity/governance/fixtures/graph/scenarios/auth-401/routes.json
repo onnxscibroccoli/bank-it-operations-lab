@@ -1,0 +1,21 @@
+{
+  "description": "401 InvalidAuthenticationToken on the first call. Expected exit 2, no retry.",
+  "inherit": "baseline",
+  "routes": {
+    "/roleManagement/directory/roleDefinitions?$select=id,displayName,templateId,isBuiltIn": [
+      {
+        "body": {
+          "error": {
+            "code": "InvalidAuthenticationToken",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-401-InvalidAuthenticationToken"
+            },
+            "message": "Access token is empty. (synthetic)"
+          }
+        },
+        "status": 401
+      }
+    ]
+  }
+}

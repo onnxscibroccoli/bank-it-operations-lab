@@ -1,0 +1,34 @@
+{
+  "description": "Entra ID Free fallback: roleAssignments only. Expected exit 0 with INV-010 INFO.",
+  "inherit": "baseline",
+  "mode": "free",
+  "routes": {
+    "/roleManagement/directory/roleAssignmentScheduleInstances": [
+      {
+        "body": {
+          "error": {
+            "code": "Authorization_RequestDenied",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-403-Authorization_RequestDenied"
+            },
+            "message": "PIM API not available in this synthetic free-tier scenario. (synthetic)"
+          }
+        },
+        "status": 403
+      }
+    ],
+    "/roleManagement/directory/roleAssignments": [
+      {
+        "bodyFile": "assignments.page1.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleAssignments?$skiptoken=SYNTHETIC-ASSIGNMENTS-PAGE-2": [
+      {
+        "bodyFile": "assignments.page2.json",
+        "status": 200
+      }
+    ]
+  }
+}

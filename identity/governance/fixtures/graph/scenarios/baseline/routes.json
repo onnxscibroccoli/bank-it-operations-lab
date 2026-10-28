@@ -1,0 +1,80 @@
+{
+  "asOfUtc": "2026-10-28T12:00:00Z",
+  "description": "Healthy synthetic tenant: 2 break-glass permanent GA, JIT (PIM) admins, multi-page collections. Expected exit 0.",
+  "mode": "pim",
+  "routes": {
+    "/groups?$filter=isAssignableToRole%20eq%20true&$select=id,displayName,isAssignableToRole": [
+      {
+        "bodyFile": "groups.page1.json",
+        "status": 200
+      }
+    ],
+    "/identityGovernance/accessReviews/definitions/b9a5e000-0000-4000-8000-000000000500/instances/b9a5e000-0000-4000-8000-000000000501/decisions": [
+      {
+        "bodyFile": "accessReviewDecisions.page1.json",
+        "status": 200
+      }
+    ],
+    "/identityGovernance/accessReviews/definitions/b9a5e000-0000-4000-8000-000000000500/instances/b9a5e000-0000-4000-8000-000000000501/decisions?$skiptoken=SYNTHETIC-ACCESSREVIEWDECISIONS-PAGE-2": [
+      {
+        "bodyFile": "accessReviewDecisions.page2.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleAssignmentScheduleInstances": [
+      {
+        "bodyFile": "active.page1.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleAssignmentScheduleInstances?$skiptoken=SYNTHETIC-ACTIVE-PAGE-2": [
+      {
+        "bodyFile": "active.page2.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleDefinitions?$select=id,displayName,templateId,isBuiltIn": [
+      {
+        "bodyFile": "roleDefinitions.page1.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleEligibilityScheduleInstances": [
+      {
+        "bodyFile": "eligible.page1.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleEligibilityScheduleInstances?$skiptoken=SYNTHETIC-ELIGIBLE-PAGE-2": [
+      {
+        "bodyFile": "eligible.page2.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleEligibilityScheduleInstances?$skiptoken=SYNTHETIC-ELIGIBLE-PAGE-3": [
+      {
+        "bodyFile": "eligible.page3.json",
+        "status": 200
+      }
+    ],
+    "/servicePrincipals?$select=id,displayName,appId,servicePrincipalType": [
+      {
+        "bodyFile": "servicePrincipals.page1.json",
+        "status": 200
+      }
+    ],
+    "/users?$select=id,displayName,userPrincipalName,userType,accountEnabled": [
+      {
+        "bodyFile": "users.page1.json",
+        "status": 200
+      }
+    ],
+    "/users?$select=id,displayName,userPrincipalName,userType,accountEnabled&$skiptoken=SYNTHETIC-USERS-PAGE-2": [
+      {
+        "bodyFile": "users.page2.json",
+        "status": 200
+      }
+    ]
+  },
+  "tenantId": "b9a5e000-0000-4000-8000-0000000000f0"
+}

@@ -1,0 +1,23 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleAssignments",
+  "value": [
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000405",
+      "principalId": "b9a5e000-0000-4000-8000-000000000016",
+      "roleDefinitionId": "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+      "directoryScopeId": "/"
+    },
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000406",
+      "principalId": "b9a5e000-0000-4000-8000-000000000030",
+      "roleDefinitionId": "88d8e3e3-8f55-4a1e-953a-9b9898b8876b",
+      "directoryScopeId": "/"
+    },
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000407",
+      "principalId": "b9a5e000-0000-4000-8000-000000000012",
+      "roleDefinitionId": "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+      "directoryScopeId": "/"
+    }
+  ]
+}

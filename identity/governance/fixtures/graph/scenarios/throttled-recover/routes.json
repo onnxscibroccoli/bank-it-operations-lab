@@ -1,0 +1,63 @@
+{
+  "description": "429 with Retry-After twice, then 200; 503 without Retry-After once. Expected exit 0 with 3 retries.",
+  "inherit": "baseline",
+  "routes": {
+    "/roleManagement/directory/roleAssignmentScheduleInstances": [
+      {
+        "body": {
+          "error": {
+            "code": "TooManyRequests",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-429-TooManyRequests"
+            },
+            "message": "Too many requests. (synthetic)"
+          }
+        },
+        "headers": {
+          "Retry-After": "3"
+        },
+        "status": 429
+      },
+      {
+        "body": {
+          "error": {
+            "code": "TooManyRequests",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-429-TooManyRequests"
+            },
+            "message": "Too many requests. (synthetic)"
+          }
+        },
+        "headers": {
+          "Retry-After": "1"
+        },
+        "status": 429
+      },
+      {
+        "bodyFile": "../baseline/active.page1.json",
+        "status": 200
+      }
+    ],
+    "/users?$select=id,displayName,userPrincipalName,userType,accountEnabled": [
+      {
+        "body": {
+          "error": {
+            "code": "ServiceUnavailable",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-503-ServiceUnavailable"
+            },
+            "message": "Service unavailable. (synthetic)"
+          }
+        },
+        "status": 503
+      },
+      {
+        "bodyFile": "../baseline/users.page1.json",
+        "status": 200
+      }
+    ]
+  }
+}
