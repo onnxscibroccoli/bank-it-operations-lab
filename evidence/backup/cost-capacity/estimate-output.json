@@ -1,0 +1,130 @@
+{
+  "label": "ESTIMATE",
+  "not_billing": "This is a model output from placeholder inputs. It is not an ACTUAL_BILLING_OBSERVATION.",
+  "inputs_placeholder": true,
+  "resources": [
+    {
+      "name": "rds-postgres",
+      "type": "RDS",
+      "label": "ESTIMATE",
+      "primary_vault": {
+        "warm_gb_month": 1640.0,
+        "cold_gb_month": 0.0
+      },
+      "dr_vault": {
+        "warm_gb_month": 1570.0,
+        "cold_gb_month": 0.0
+      },
+      "monthly_points_warm": 13,
+      "monthly_points_cold": 0,
+      "cross_region_transfer_gb_month": 252.0,
+      "initial_full_copy_gb_one_time": 100
+    },
+    {
+      "name": "efs-shared",
+      "type": "EFS",
+      "label": "ESTIMATE",
+      "primary_vault": {
+        "warm_gb_month": 234.0,
+        "cold_gb_month": 500.0
+      },
+      "dr_vault": {
+        "warm_gb_month": 234.0,
+        "cold_gb_month": 500.0
+      },
+      "monthly_points_warm": 3,
+      "monthly_points_cold": 10,
+      "cross_region_transfer_gb_month": 80.4,
+      "initial_full_copy_gb_one_time": 50
+    }
+  ],
+  "lines": [
+    {
+      "driver": "rds-postgres: warm storage (both vaults)",
+      "quantity": 3210.0,
+      "unit": "GB-month",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "rds-postgres: cold storage (both vaults)",
+      "quantity": 0.0,
+      "unit": "GB-month",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "rds-postgres: cross-region copy transfer",
+      "quantity": 252.0,
+      "unit": "GB",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "rds-postgres: restore drills (warm)",
+      "quantity": 100.0,
+      "unit": "GB",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "efs-shared: warm storage (both vaults)",
+      "quantity": 468.0,
+      "unit": "GB-month",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "efs-shared: cold storage (both vaults)",
+      "quantity": 1000.0,
+      "unit": "GB-month",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "efs-shared: cross-region copy transfer",
+      "quantity": 80.4,
+      "unit": "GB",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "efs-shared: restore drills (warm)",
+      "quantity": 50.0,
+      "unit": "GB",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "restore testing: restored instance runtime",
+      "quantity": 24,
+      "unit": "instance-hour",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "KMS: vault CMKs",
+      "quantity": 2,
+      "unit": "key-month",
+      "unit_price": null,
+      "estimate_cost": null
+    },
+    {
+      "driver": "KMS: API requests",
+      "quantity": 2.0,
+      "unit": "10k requests",
+      "unit_price": null,
+      "estimate_cost": null
+    }
+  ],
+  "estimate_total_known": null,
+  "lines_without_price": 11,
+  "vault_lock_committed_storage_note": "With Vault Lock, warm/cold GB-month above is committed until each recovery point's lifecycle ends; it cannot be reduced by deletion.",
+  "price_references": [
+    "https://aws.amazon.com/backup/pricing/",
+    "https://aws.amazon.com/kms/pricing/",
+    "https://aws.amazon.com/ec2/pricing/on-demand/#Data_Transfer",
+    "https://aws.amazon.com/rds/postgresql/pricing/",
+    "https://calculator.aws/"
+  ]
+}

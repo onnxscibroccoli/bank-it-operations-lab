@@ -1,0 +1,19 @@
+{
+  "file": "/workspace/bkp-dr-aws-worker/backup/aws/config/backup-policy.json",
+  "errors": 0,
+  "warnings": 2,
+  "findings": [
+    {
+      "level": "warning",
+      "code": "COLD_IGNORED_FOR_TYPES",
+      "where": "rule:monthly-365d-cold",
+      "detail": "AWS Backup ignores cold-storage transition for: RDS, S3 (warm storage billed for full retention)"
+    },
+    {
+      "level": "warning",
+      "code": "DYNAMODB_ADVANCED_REQUIRED",
+      "where": "selection",
+      "detail": "DynamoDB cross-region copy and cold storage require AWS Backup advanced DynamoDB features (account opt-in)"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "label": "RTO_RPO",
+  "source": "docs/runbooks/aws-backup/RTO_RPO.md",
+  "scenarios": [
+    { "id": "S1", "name": "RDS PITR restore, primary region", "hypothesis": { "label": "HYPOTHESIS", "rpo_minutes": 15, "rto_minutes": 240 }, "observed": { "status": "NOT_EXECUTED", "rpo_minutes": null, "rto_minutes": null, "evidence": null } },
+    { "id": "S2", "name": "RDS snapshot restore, primary region", "hypothesis": { "label": "HYPOTHESIS", "rpo_minutes": 1440, "rto_minutes": 240 }, "observed": { "status": "NOT_EXECUTED", "rpo_minutes": null, "rto_minutes": null, "evidence": null } },
+    { "id": "S3", "name": "RDS restore in DR region", "hypothesis": { "label": "HYPOTHESIS", "rpo_minutes": 1440, "rpo_note": "plus copy lag (unmeasured)", "rto_minutes": 480 }, "observed": { "status": "NOT_EXECUTED", "rpo_minutes": null, "rto_minutes": null, "evidence": null } },
+    { "id": "S4", "name": "EFS/EBS restore in DR region", "hypothesis": { "label": "HYPOTHESIS", "rpo_minutes": 1440, "rpo_note": "plus copy lag (unmeasured)", "rto_minutes": 480 }, "observed": { "status": "NOT_EXECUTED", "rpo_minutes": null, "rto_minutes": null, "evidence": null } },
+    { "id": "S5", "name": "Cold monthly recovery point restore", "hypothesis": { "label": "HYPOTHESIS", "rpo_minutes": 44640, "rto_minutes": null, "rto_note": "no basis until measured" }, "observed": { "status": "NOT_EXECUTED", "rpo_minutes": null, "rto_minutes": null, "evidence": null } }
+  ]
+}

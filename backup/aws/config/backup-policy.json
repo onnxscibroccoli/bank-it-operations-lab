@@ -1,0 +1,54 @@
+{
+  "$comment": "Single source of truth for the AWS Backup reference design. Static lab config: never deployed. Validated by scripts/validate-config.ts and test/backup-policy.test.ts. Days are calendar days.",
+  "schema_version": "1.0.0",
+  "naming_prefix": "bank-it-lab",
+  "regions": {
+    "primary": "us-east-1",
+    "secondary": "us-west-2",
+    "$comment": "Matches ALLOWED_REGIONS in the orgs region-lock SCP reference (branch orgs-security-refs, infra/orgs/lib/lab-context.ts)."
+  },
+  "selection": {
+    "tag_key": "backup-plan",
+    "tag_value": "bank-it-lab-standard",
+    "in_scope_resource_types": ["RDS", "EBS", "EFS", "S3", "DynamoDB"]
+  },
+  "vaults": {
+    "primary": {
+      "name": "bank-it-lab-primary-vault",
+      "lock": { "mode": "GOVERNANCE", "min_retention_days": 30, "max_retention_days": 400 }
+    },
+    "dr_copy": {
+      "name": "bank-it-lab-dr-copy-vault",
+      "lock": { "mode": "GOVERNANCE", "min_retention_days": 30, "max_retention_days": 400 }
+    }
+  },
+  "break_glass_role_name": "OrgBreakGlass",
+  "rules": [
+    {
+      "name": "daily-35d-pitr",
+      "schedule_cron_utc": { "minute": "0", "hour": "5" },
+      "start_window_minutes": 60,
+      "completion_window_minutes": 480,
+      "enable_continuous_backup": true,
+      "lifecycle": { "delete_after_days": 35 },
+      "copy_to_dr": { "lifecycle": { "delete_after_days": 35 } }
+    },
+    {
+      "name": "monthly-365d-cold",
+      "schedule_cron_utc": { "minute": "0", "hour": "6", "day": "1" },
+      "start_window_minutes": 60,
+      "completion_window_minutes": 720,
+      "enable_continuous_backup": false,
+      "lifecycle": { "move_to_cold_storage_after_days": 90, "delete_after_days": 365 },
+      "copy_to_dr": { "lifecycle": { "move_to_cold_storage_after_days": 90, "delete_after_days": 365 } }
+    }
+  ],
+  "restore_testing": {
+    "name": "bank_it_lab_monthly_restore_test",
+    "schedule_cron_utc": "cron(0 8 15 * ? *)",
+    "start_window_hours": 24,
+    "recovery_point_window_days": 30,
+    "validation_window_hours": 24,
+    "protected_resource_type": "RDS"
+  }
+}

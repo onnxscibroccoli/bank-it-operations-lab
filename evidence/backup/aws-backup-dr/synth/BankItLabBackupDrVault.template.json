@@ -1,0 +1,305 @@
+{
+ "Description": "AWS Backup DR copy vault, intended region us-west-2 (static synthesis lab; not deployed)",
+ "Rules": {
+  "PinRegion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Equals": [
+       {
+        "Ref": "AWS::Region"
+       },
+       "us-west-2"
+      ]
+     },
+     "AssertDescription": "This stack may only be deployed in us-west-2."
+    }
+   ]
+  },
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ },
+ "Resources": {
+  "DrVaultKeyE3D6C377": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "CMK for bank-it-lab-dr-copy-vault (cross-region copy destination)",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:Create*",
+        "kms:Describe*",
+        "kms:Enable*",
+        "kms:List*",
+        "kms:Put*",
+        "kms:Update*",
+        "kms:Revoke*",
+        "kms:Disable*",
+        "kms:Get*",
+        "kms:Delete*",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "KeyAdministrationByAccountRoot"
+      },
+      {
+       "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "rds.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "CryptoViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:RevokeGrant"
+       ],
+       "Condition": {
+        "Bool": {
+         "kms:GrantIsForAWSResource": "true"
+        },
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "rds.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "GrantsForAwsResourcesViaApprovedServicesOnly"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PendingWindowInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "DrCopyVault881113CB": {
+   "Type": "AWS::Backup::BackupVault",
+   "Properties": {
+    "AccessPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "backup:DeleteRecoveryPoint",
+        "backup:UpdateRecoveryPointLifecycle",
+        "backup:PutBackupVaultLockConfiguration",
+        "backup:DeleteBackupVaultLockConfiguration",
+        "backup:DeleteBackupVault",
+        "backup:DeleteBackupVaultAccessPolicy",
+        "backup:PutBackupVaultAccessPolicy"
+       ],
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":role/OrgBreakGlass"
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "DenyRecoveryPointAndLockChangesExceptBreakGlass"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "BackupVaultName": "bank-it-lab-dr-copy-vault",
+    "EncryptionKeyArn": {
+     "Fn::GetAtt": [
+      "DrVaultKeyE3D6C377",
+      "Arn"
+     ]
+    },
+    "LockConfiguration": {
+     "MaxRetentionDays": 400,
+     "MinRetentionDays": 30
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  }
+ },
+ "Outputs": {
+  "DrCopyVaultArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "DrCopyVault881113CB",
+     "BackupVaultArn"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ }
+}
