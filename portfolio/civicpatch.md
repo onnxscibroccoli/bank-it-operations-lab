@@ -45,12 +45,35 @@ There are also 14 Node/TS tests under `scripts/*.test.mjs` and `src/lib/**.test.
 
 **Notable PRs**
 - [#14](https://github.com/onnxscibroccoli/civicpatch/pull/14) (merged as `8172e14`, +847/−36, 18 files): handed development over to the bounded multi-agent state machine. The PR itself says "a successful pull_request build is not proof that chained workflow_dispatch, Pages preview routing or automatic merge permissions work."
-- The README says the full dispatch → intake → synthesis → draft PR → gatekeeper → merge → Pages cycle "was verified with live GitHub Actions on October 17, 2026," and points to [`docs/AGENT-HANDOVER.md`](https://github.com/onnxscibroccoli/civicpatch/blob/cd94213ec2707827aa178794e962e6a4ffc5b74d/docs/AGENT-HANDOVER.md) as the record. That record was not audited for this case study.
+- **The live chain is verified.** [`docs/AGENT-HANDOVER.md`](https://github.com/onnxscibroccoli/civicpatch/blob/cd94213ec2707827aa178794e962e6a4ffc5b74d/docs/AGENT-HANDOVER.md) lists five runs from 2026-10-17. All five were confirmed through the Actions API to have concluded **success**, between 02:27 and 02:28 EDT:
+  - dispatcher [39009951716](https://github.com/onnxscibroccoli/civicpatch/actions/runs/39009951716)
+  - task ingestion [39009956991](https://github.com/onnxscibroccoli/civicpatch/actions/runs/39009956991)
+  - synthesis [39009966302](https://github.com/onnxscibroccoli/civicpatch/actions/runs/39009966302), which opened draft PR [#18](https://github.com/onnxscibroccoli/civicpatch/pull/18)
+  - gatekeeper [39009983238](https://github.com/onnxscibroccoli/civicpatch/actions/runs/39009983238)
+  - Pages deploy [39010015925](https://github.com/onnxscibroccoli/civicpatch/actions/runs/39010015925)
+  
+  PR #18 was merged by `app/github-actions` at 2026-10-17 02:28 EDT. The earlier recipe attempt [39009824757](https://github.com/onnxscibroccoli/civicpatch/actions/runs/39009824757) concluded **failure**, as the handover says, which shows a failed gate stopping promotion.
+- The handover also records the operating boundaries:
+  - **Least-privilege deploy:** a `contents:read` build job, separate from a `pages:write`/`id-token:write` deploy job.
+  - **Schedule:** `cron: 19 2,8,14,20 * * *`.
+  - **Budget:** "1,860 minutes… covers the worker only." The document warns that this is not the total monthly budget and that external LLM spend is not bounded by runner minutes.
+  - **Recovery:** revert the problematic commit on `main` and re-run Pages. Don't force-push `agent/beta`.
+  - **Stated limits:** the previews "do not constitute independent cloud environments." Branch protection, spending caps, and post-deploy health checks are listed as future work.
 - [#26](https://github.com/onnxscibroccoli/civicpatch/pull/26), [#27](https://github.com/onnxscibroccoli/civicpatch/pull/27), and [#29](https://github.com/onnxscibroccoli/civicpatch/pull/29) are merged autonomous "[Agentic review] Next CivicPatch code-and-test increment" PRs. Main's HEAD `cd94213` is #29.
 - [#19](https://github.com/onnxscibroccoli/civicpatch/pull/19): hardened Pages deployment token isolation. [#25](https://github.com/onnxscibroccoli/civicpatch/pull/25): limited URL-health probing to relevant changes, to save CI compute.
 - [#5](https://github.com/onnxscibroccoli/civicpatch/pull/5)–[#9](https://github.com/onnxscibroccoli/civicpatch/pull/9): seeded and refreshed the Massachusetts registry. #9 added a regression guard for the Fall River 2026 committee PDF URL.
 
 **History**: the first commit is `b1d6223`, "Export from Grok" (2026-10-16).
+
+## Relevance to role
+
+Requirement IDs refer to [JOB_ALIGNMENT.md](JOB_ALIGNMENT.md).
+
+- **B4 automation and CI/CD (Strong):** a bounded multi-stage GitHub Actions pipeline, with the end-to-end run chain verified above. It includes an immutable-SHA gatekeeper and a fixed file allowlist.
+- **C5 job scheduling (Partial):** a cron-scheduled dispatcher with a single active worker and per-job timeouts.
+- **B10 / C9 security controls (Partial):** least-privilege separation of the deploy token (PR #19), private-network redirect rejection (folded into #14), and model output treated as untrusted.
+- **B11 runbook-style documentation (Partial):** operator controls, pause and restore procedures, and stated limitations in the handover document.
+- **Not relevant to:** AWS, Microsoft identity, or banking. This is a GitHub Pages and Actions project.
 
 ## Limitations and unknowns
 

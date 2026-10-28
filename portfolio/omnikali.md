@@ -42,6 +42,15 @@ The repo description is "Permanent GitHub Pages door for OmniKali Track B. Healt
   - [`docs/LIVE_PATHS.md`](https://github.com/onnxscibroccoli/omnikali/blob/a5faf9b82bedb0057cb3164bebf190bfa199b446/docs/LIVE_PATHS.md)
 - **History**: the first commit is `3d5743a`, "Initial commit" (2026-09-21).
 
+## Relevance to role
+
+Requirement IDs refer to [JOB_ALIGNMENT.md](JOB_ALIGNMENT.md).
+
+- **B5 monitoring (Partial):** a scheduled external health probe with fail-closed criteria. It requires HTTP 200 and JSON with the expected service identity, rejects Cloudflare "port not found" bodies, and does not follow redirects. It publishes a target only when the probe establishes health. There is no alerting or ticketing.
+- **B10 secure configuration (Partial):** endpoint-record validation that rejects non-HTTPS, private, and loopback targets (PR #2).
+- **C5 job scheduling and CI/CD (Partial):** an hourly probe workflow plus Pages publication.
+- **Not shown:** any workstation or infrastructure operation. This repository is the discovery layer only.
+
 ## Limitations and unknowns
 
 - This repository is only a discovery layer. It does not prove the desktop or workstation behind it works. The README itself says to distinguish "QEMU is running" from "RFB is usable," and "gateway is reachable" from "authenticated desktop is usable."

@@ -51,11 +51,48 @@ The stack (from `package.json`) is Node/Vite with TanStack, Radix UI, `@novnc/no
 
 **History**: the first commit is `cfe896b`, "Helix control plane: nested KVM, Kasm WebSocket stream, OIDC" (2026-09-22).
 
+## Incident and preventive control (2026-10-06/07 UTC)
+
+Main's last four commits share the message "ops: document and guard against Kali host OOM storm". **They are not duplicates.** Each adds one distinct new file (checked through the commits API):
+
+| Commit | File added |
+|---|---|
+| [`8840c57`](https://github.com/onnxscibroccoli/helix/commit/8840c575650b1d8343f23ab9def0e0fc7898aacb) | `docs/incidents/2026-10-06-kali-oom-recovery.md` (+88) |
+| [`faab1d8`](https://github.com/onnxscibroccoli/helix/commit/faab1d8ef9cbb2696ec66fbc6ebf1a1ac243a140) | `ops/omnikali-memory-guard.sh` (+29) |
+| [`c348007`](https://github.com/onnxscibroccoli/helix/commit/c3480078d71a8571f66b9bc9c4f0bb6b26115727) | `ops/systemd/omnikali-memory-guard.service` (+8) |
+| [`8f68703`](https://github.com/onnxscibroccoli/helix/commit/8f687036344e1c09c592b9fbfb9f8036b07614c0) | `ops/systemd/omnikali-memory-guard.timer` (+11) |
+
+The [incident record](https://github.com/onnxscibroccoli/helix/blob/8f687036344e1c09c592b9fbfb9f8036b07614c0/docs/incidents/2026-10-06-kali-oom-recovery.md) is classed "SEV-1 workstation availability":
+
+- **Root cause:** "resource overcommit on a 4 GiB KVM host." Multiple Android QEMU workers were running alongside the Kali guest, and the OOM killer terminated QEMU processes.
+- **Diagnosis:** done over SSM while another remote tool timed out. It used kernel OOM logs and memory, swap, process, and libvirt state.
+- **Recovery:** stopped two non-primary workers and restarted the Kali guest.
+- **Preventive control:** [`ops/omnikali-memory-guard.sh`](https://github.com/onnxscibroccoli/helix/blob/8f687036344e1c09c592b9fbfb9f8036b07614c0/ops/omnikali-memory-guard.sh), run every 30 seconds by a systemd timer.
+  - Under pressure (<700 MiB available or <300 MiB free swap), it kills only the two named non-primary workers.
+  - It restarts Kali only when at least 1.2 GiB is available.
+- **Capacity decision:** move to an 8 GiB instance in a planned maintenance window.
+- **Open follow-ups:** memory alarms and a launch-time admission check.
+
+## Live state vs. IaC
+
+Grasshopper's [`PRODUCTION_LIVE_EVIDENCE.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_LIVE_EVIDENCE.md) (2026-09-26) records the live Helix RDS instance with 1-day backup retention and IAM DB authentication **disabled**. Helix PR #49, merged 2026-09-29, *defines* 14-day backups and IAM DB auth in CDK. The observation predates that PR, and whether #49 was ever deployed is **Unknown**. Treat #49 as design, not as live state.
+
+Grasshopper's [`PRODUCTION_EXECUTOR_PROVENANCE.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_EXECUTOR_PROVENANCE.md) also states that the deployed Helix task-runner commits exist on the production host "but are not currently represented by the visible GitHub `helix` history." This repository is therefore not a complete record of what is deployed.
+
+## Relevance to role
+
+Requirement IDs refer to [JOB_ALIGNMENT.md](JOB_ALIGNMENT.md).
+
+- **B13 incident leadership (Strong):** the OOM incident above, with RCA, corrective steps, a preventive control committed as code, and a capacity decision. Also PR #62 (CPU exhaustion recovery).
+- **A1 / C8 hands-on Linux troubleshooting (Strong):** SSM-based diagnosis, kernel log analysis, systemd units, `virsh` guest control.
+- **A3 / A4 / C3 AWS (Partial):** EC2 KVM host, RDS, SSM, IAM, CloudFront (observed). CDK and Terraform IaC, and fresh-account bootstrap PRs #47, #48, #32. A single account, with no Lambda, load balancers, VPN, DNS, or cost tooling.
+- **C5 configuration management (Partial):** Ansible in `infra/ansible/`, `ansible-validation.yml`, and PR #50 (SSM Ansible convergence).
+- **B12 capacity planning (Partial):** a capacity decision derived from incident evidence.
+
 ## Limitations and unknowns
 
 - The README describes the project as "ACTIVE PRODUCTION RECONSTRUCTION / VALIDATION" and warns: "Do not infer a working guest merely because Terraform validates."
 - The README and [`docs/LIVE_PATHS.md`](https://github.com/onnxscibroccoli/helix/blob/8f687036344e1c09c592b9fbfb9f8036b07614c0/docs/LIVE_PATHS.md) describe live public paths as of 2026-09-29. **Current live availability was not verified** for this case study, and endpoint hostnames are left out on purpose.
-- Main's last four commits (`8840c57`, `faab1d8`, `c348007`, `8f68703`) all share the message "ops: document and guard against Kali host OOM storm" and were made seconds apart. Whether they are duplicates or incremental changes is **not verified**.
 - The README links to `.omnikali/project-knowledge-graph.md`, but the tree contains `.omnikali/PROJECT_KNOWLEDGE_GRAPH.md` (uppercase). The link is likely broken on case-sensitive hosts.
 - The README says "approximately 285 tracked files"; the snapshot tree has 340. The README count is out of date.
 - 15 PRs are open, including sandbox, agent-launch, and self-healing architecture work ([#33](https://github.com/onnxscibroccoli/helix/pull/33)–[#56](https://github.com/onnxscibroccoli/helix/pull/56)), so main does not include it.

@@ -48,6 +48,43 @@ Top-level layout at the snapshot (354 tracked files): `docs/` (84), `scripts/` (
 
 **History**: the first commit is `8993248`, "chore: initialize Grasshopper reference implementation" (2026-09-25 21:53 EDT).
 
+## Production evidence documents (read for this case study)
+
+These records, dated 2026-09-26 to 2026-09-29, document read-only observations of the live Helix/OmniKali production environment. They were read in full. Their claims are the project's own records and **were not re-observed**. Instance IDs, IP addresses, secret names, and hashes they contain are left out here on purpose.
+
+- [`docs/PRODUCTION_LIVE_EVIDENCE.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_LIVE_EVIDENCE.md) (2026-09-26) records:
+  - a Multi-AZ RDS PostgreSQL instance that is not publicly accessible, with KMS storage encryption, deletion protection, CloudWatch log exports, and Secrets Manager rotation every 7 days
+  - the `_helix_migrations` ledger (0001–0004), reconciled by SHA-256 against the deployed checkout's migration files
+  - the live task schema, with states `PENDING | RUNNING | COMPLETED | FAILED`, a unique idempotency key, and a lease index
+  
+  The document states that "no package was installed…, no service was restarted, and no database mutation was performed." It also notes that the deployed checkout is "dirty" and "not a reproducible release artifact by itself."
+- [`docs/PRODUCTION_SECURITY_HARDENING.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_SECURITY_HARDENING.md) records open findings:
+  - The runtime DB role is broader than least privilege (`CREATEROLE`, `CREATEDB`, broad DML).
+  - The original agent-bridge credential handling "was not reproducible-safe." The value is deliberately not retained, and the contract now requires a secret-manager reference.
+  - Backup retention is 1 day.
+  
+  It also lists 12 required remediation-evidence steps. Its disposition is "Open hardening items."
+- [`docs/PRODUCTION_CONTRACT_INVENTORY.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_CONTRACT_INVENTORY.md) (2026-09-27) records:
+  - a narrowly scoped inline IAM policy, with allow/deny checks from the instance role
+  - that "a working credential read has not been demonstrated" for the backup secret
+  - that the backup runner's isolation is unproven
+  
+  It also says the JSON reference store "does not deploy or replace the PostgreSQL production path."
+- [`docs/PRODUCTION_EXECUTOR_PROVENANCE.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_EXECUTOR_PROVENANCE.md) is marked "partially resolved." The deployed gateway executor's bytes are traced to a commit chain that exists on the production host but "not currently represented by the visible GitHub `helix` history." The execution bridge it calls has no recoverable source history.
+- [`docs/PRODUCTION_SERVICE_LIFECYCLE_EVIDENCE.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_SERVICE_LIFECYCLE_EVIDENCE.md) notes that two different gateway systemd units exist in source. It therefore treats source inspection as "not… proof of deployment identity."
+- [`docs/PRODUCTION_STATE_AND_MIGRATION.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/PRODUCTION_STATE_AND_MIGRATION.md) is the migration contract. It covers ordered migrations and durable ownership, and it says "never print credential-bearing connection strings." Per this document, migration SQL "remains blocked on recovery of the authoritative deployed PostgreSQL schema." The later live-evidence document recovers that schema.
+- [`docs/ARCHITECTURE_VERIFICATION_2026-09-29.md`](https://github.com/onnxscibroccoli/Grasshopper/blob/3eef009aa4a88f6d81dbd082cd35b90379929518/docs/ARCHITECTURE_VERIFICATION_2026-09-29.md) records the validated public path at verification time: CloudFront → nginx → Helix gateway → libvirt/QEMU/KVM → Kali guest. Its purpose is to stop agents from treating the planned Kubernetes/FRP architecture as the live path.
+
+## Relevance to role
+
+Requirement IDs refer to [JOB_ALIGNMENT.md](JOB_ALIGNMENT.md).
+
+- **B9 audit evidence (Partial):** secret-free evidence records, SHA-256 reconciliation between source and live state, and explicit "not claimed" boundaries (documents above).
+- **B3 / B10 security findings (Partial):** least-privilege and credential-handling findings with a defined remediation-evidence plan. The items are still open.
+- **B15 resilience (Partial):** failure-injection scenarios for worker termination, stale leases, gateway restart, network interruption, DB failure, and duplicate fencing.
+- **B4 / C5 automation (Strong / Partial):** 18 workflows, including a production merge gate and a security-phase contract.
+- **Not shown:** any AWS service operated *by* Grasshopper itself. Its local reference uses a JSON store, and its AWS facts are observations of the Helix environment.
+
 ## Limitations and unknowns
 
 - The README itself lists these as unproven: "actual reboot survival, authenticated Android/operator access, production device scopes, off-host backup recovery, and complete authenticated desktop acceptance." It also says clean-host production reproduction "remains a separate gate."
@@ -55,3 +92,4 @@ Top-level layout at the snapshot (354 tracked files): `docs/` (84), `scripts/` (
 - The test suite was **not re-run independently** for this case study. Pass/fail status comes from GitHub Actions only.
 - 54 PRs are open. Many of them are unmerged feature work, so the main branch does not include those capabilities.
 - The README links to `.omnikali/project-knowledge-graph.md`, which exists here. Its contents were not reviewed.
+- The production evidence documents are self-recorded, dated September 2026, and not re-observed. Production source is not fully in GitHub (see executor provenance above).

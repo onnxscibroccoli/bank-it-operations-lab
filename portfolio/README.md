@@ -43,8 +43,17 @@ Commit counts come from the GitHub commits API on the default branch. PR counts 
 
 Most of omnikali's commits are automated `chore: refresh endpoint.json from public health probe` commits made by its probe workflow. They are not hand-written changes.
 
+## Job alignment
+
+[JOB_ALIGNMENT.md](JOB_ALIGNMENT.md) maps every requirement of the target IT Manager posting to evidence in these case studies. Each requirement is marked Strong, Partial, or Gap. The requirement IDs and wording come from [`docs/JOB_REQUIREMENTS_MATRIX.md`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/31b69db90838f59bfe28f8214dfc51a1c4ffd429/docs/JOB_REQUIREMENTS_MATRIX.md) (draft PR [#12](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/12)). Result: 4 Strong, 20 Partial, 14 Gap. Each case study also has a short **Relevance to role** section.
+
 ## Cross-cutting gaps
 
-- No case study has an independent re-run of the test suites. The test results cited are the projects' own CI runs or their own README claims.
-- Live and production claims (deployed gateways, device acceptance, recovery drills) could not be verified from the repositories alone. They are marked as such in each case study.
-- Only CivicPatch declares a license. Reuse terms for the other four repositories are **Unknown**.
+- **Tests not re-run.** No case study re-runs a project's test suite. Test results come from each project's CI runs or its own README claims.
+- **Live records not re-observed.** Grasshopper's production evidence documents and Helix's incident records were read in full, but the live systems they describe were not checked again.
+- **AI-agent authorship.** Much of the work in these repositories was produced by AI coding agents under the owner's direction. The evidence shows directed and operated systems, not hand authorship of every change. See the caveats in [JOB_ALIGNMENT.md](JOB_ALIGNMENT.md).
+- **Licensing.** Only CivicPatch declares a license, so reuse terms for the other four repositories are **Unknown**.
+- **Resolved since the first draft:**
+  - Helix's four same-message commits turned out to be four distinct files.
+  - CivicPatch's 2026-10-17 live run chain is now verified.
+  - Grasshopper's production evidence documents have been read and summarized.

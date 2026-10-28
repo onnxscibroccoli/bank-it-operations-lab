@@ -46,6 +46,15 @@ The repo description is "Broccoli Core - Android Automation Framework." The [REA
   - an AutoJS smoke retry
 - The rish transport was later extracted to [onnxscibroccoli/broccoli-rish](https://github.com/onnxscibroccoli/broccoli-rish), which describes itself as "Extracted from broccoli-core; not a rewrite."
 
+## Relevance to role
+
+Requirement IDs refer to [JOB_ALIGNMENT.md](JOB_ALIGNMENT.md).
+
+- **C8 Linux and shell (Strong, shared with Helix):** about 1.5 MB of shell, including the canonical `lib/rish_run.sh` wrapper and a fail-closed `lib/rish_transport_probe.sh`.
+- **B2 endpoint automation (Partial):** privileged Android device automation (Rish/Shizuku), plus a hybrid controller with mTLS and gRPC (PR #77). This is Android, not managed corporate endpoints. Live device acceptance is recorded as `NOT_RUN`.
+- **B9 evidence discipline (Partial):** PR #77 lists what it does **not** claim (device, Shizuku/rish, RDC, release).
+- **Caution for reuse:** the README warns about credential-like historical paths. This repository is the least suitable of the five to show an employer without an audit first.
+
 ## Limitations and unknowns
 
 - The README states the repository "does **not**, by itself, prove current production availability, current credentials, current device state, or equivalence with the current OmniKali production system."
