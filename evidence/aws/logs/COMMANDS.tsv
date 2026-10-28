@@ -22,3 +22,7 @@
 22-no-suppressions-check.log	1	bash -c ! grep -rn "NagSuppressions\|acknowledge(" bin lib test && ! grep -q cdk_nag cdk.out/BankItLabSecureStorage.template.json && echo "no suppressions"
 22b-no-suppressions-check.log	0	bash -c ! grep -rnE "NagSuppressions\.|Validations\.of\(.*\)\.acknowledge|import .*NagSuppressions" bin lib test && ! grep -q cdk_nag cdk.out/BankItLabSecureStorage.template.json && echo "no suppressions in code or template metadata"
 23-jest-json.log	0	npx jest --ci --json --outputFile=../../evidence/aws/jest-results.json
+30-git-remote-add.log	0	git remote add origin https://github.com/onnxscibroccoli/bank-it-operations-lab.git
+31-git-fetch.log	0	git fetch origin
+32-git-ls-remote.log	0	git ls-remote origin
+33-git-rebase-onto-origin-main.log	0	git rebase --autostash --root --onto origin/main bank-aws-001
