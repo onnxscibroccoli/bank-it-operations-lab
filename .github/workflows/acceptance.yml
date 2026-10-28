@@ -73,13 +73,34 @@ jobs:
       - name: Gate (0 = all required PASS; 1 = FAIL; 2 = required UNKNOWN)
         if: always()
         run: test "${{ steps.run.outputs.rc }}" = "0"
-      - name: "I1+I2: ACCEPTED for the target SHA, NOT accepted for its parent commit"
+      - name: "I2: EXECUTION_PASS bound to the target SHA only, never to its parent"
         if: always()
         run: |
-          python3 scripts/acceptance/verify_results.py acceptance-out --accept-for "$TARGET_SHA"
+          python3 scripts/acceptance/verify_results.py acceptance-out --execution-pass-for "$TARGET_SHA"
           PARENT="$(git rev-parse "$TARGET_SHA^")"
-          set +e; python3 scripts/acceptance/verify_results.py acceptance-out --accept-for "$PARENT"; rc=$?; set -e
-          echo "accept-for parent $PARENT exit=$rc (must be 3)"; test "$rc" = "3"
+          set +e; python3 scripts/acceptance/verify_results.py acceptance-out --execution-pass-for "$PARENT"; rc=$?; set -e
+          echo "execution-pass-for parent $PARENT exit=$rc (must be nonzero)"; test "$rc" != "0"
+      - name: "C4: final decision via worker A's contract = REVIEW_PENDING (never ACCEPTED without independent review)"
+        id: decide
+        if: always()
+        run: |
+          set +e
+          python3 scripts/acceptance/decide.py acceptance-out --sha "$TARGET_SHA" --decision-out decision.json --contract-out acceptance-contract.json
+          rc=$?; set -e
+          echo "decide exit=$rc (5 = REVIEW_PENDING expected; 0 would claim ACCEPTED)"
+          python3 -c 'import json; d=json.load(open("decision.json")); print(json.dumps({k: d[k] for k in ("state","execution_state","technically_eligible","contract_decision","contract_valid","reviews_supplied")}))' | tee -a "$GITHUB_STEP_SUMMARY"
+          test "$rc" = "5"
+          set +e; python3 scripts/acceptance/verify_results.py acceptance-out --accept-for "$TARGET_SHA" >/dev/null; rc2=$?; set -e
+          test "$rc2" = "5"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: acceptance-decision-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            decision.json
+            acceptance-contract.json
+          if-no-files-found: warn
+          retention-days: 30
 
   defect-control:
     name: defect control (injected CA002 report-only MUST make acceptance fail)
@@ -122,4 +143,4 @@ jobs:
           print("defect detected: ENTRA-02 FAIL, overall FAIL")
           PY
           set +e; python3 scripts/acceptance/verify_results.py defect-out --accept-for "$TARGET_SHA"; rc=$?; set -e
-          echo "I1: accept-for on defect run exit=$rc (must be 3)"; test "$rc" = "3"
+          echo "I1: accept-for on defect run exit=$rc (must be 1 = EXECUTION_FAIL)"; test "$rc" = "1"

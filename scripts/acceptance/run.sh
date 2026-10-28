@@ -11,7 +11,9 @@
 #      Reports/hashes (every committed SHA256SUMS bundle; this run's own results are hashed and re-verified)
 #      Defect controls (deliberately broken copies MUST be rejected by the target's checkers)
 # 3. Writes results.tsv / results.json / SUMMARY.md / SHA256SUMS to --out (default ./acceptance-out).
-# 4. Exit codes: 0 = every required check PASS; 1 = at least one FAIL; 2 = no FAIL but a required check UNKNOWN.
+# 4. Exit codes: 0 = EXECUTION_PASS (every required check PASS); 1 = at least one FAIL; 2 = no FAIL but a required
+#    check UNKNOWN. Exit 0 is technical execution only, never acceptance: scripts/acceptance/decide.py exports the
+#    results into worker A's contract and returns REVIEW_PENDING until an independent review concurs.
 #
 # --inject-defect entra-mfa-report-only   flips CA002 (Require MFA, all users) to report-only INSIDE the
 #   checked-out worktree before the checks run. The run MUST then exit nonzero with ENTRA-02 = FAIL.
@@ -100,9 +102,7 @@ PY
 fi
 
 # ---------------------------------------------------------------- 2a. AWS static checks
-if env | grep -qE '^(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|AWS_PROFILE)='; then
-  record AWS-00 yes FAIL 1 "AWS credentials present in environment; refusing" -
-else record AWS-00 yes PASS 0 "no AWS credential variables in environment" -; fi
+check AWS-00 yes "no AWS credential variables in environment" -- bash -c '! env | grep -qE "^(AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|AWS_PROFILE)="'
 if [ ! -f infra/aws-cdk/package-lock.json ]; then
   unknown AWS-01 yes "infra/aws-cdk/package-lock.json not present at target"
 elif ! command -v npm >/dev/null; then
@@ -168,7 +168,7 @@ else
   check ENTRA-03 yes "Entra fixtures regenerate with no drift" -- python3 tests/entra/make_fixtures.py --check
   n=0; for r in evidence/entra/runs/*/; do [ -d "$r" ] || continue; n=$((n+1))
     check "ENTRA-04.$n" yes "re-verify committed Entra evidence ${r%/}" -- python3 evidence/entra/generate_evidence.py --verify "${r%/}"; done
-  [ $n -eq 0 ] && unknown ENTRA-04 yes "no committed Entra evidence runs"
+  [ $n -eq 0 ] && unknown ENTRA-04.1 yes "no committed Entra evidence runs"
   # defect control on a COPY (never the worktree baseline): same policy flipped to report-only must be rejected
   D="$(mktemp -d)"; cp identity/entra/policies/*.json "$D/"
   python3 -c 'import json,sys; p=sys.argv[1]; d=json.load(open(p)); d["state"]="enabledForReportingButNotEnforced"; json.dump(d,open(p,"w"))' "$D/CA002-Require-MFA-All-Users.json" \
@@ -231,18 +231,24 @@ else record SOURCE-BINDING yes FAIL 1 "worktree no longer exactly $SHA (moved HE
 cd "$REPO"
 fi  # checkout ok
 
-# ---------------------------------------------------------------- 3. gate + own report integrity
-python3 - "$RESULTS" "$OUT" "$SHA" "$DEFECT" <<'PY'
+# ---------------------------------------------------------------- 3. inventory coverage (C1)
+# Every check in the reviewed inventory gets a row: one that never ran is recorded UNKNOWN, never left out.
+while IFS= read -r id; do
+  cut -f1 "$RESULTS" | grep -qxF "$id" || unknown "$id" yes "not run on this path (inventory coverage: $(basename "$HERE")/required-checks.v1.json)"
+done < <(python3 -c 'import json,sys; [print(c["id"]) for c in json.load(open(sys.argv[1]))["checks"]]' "$HERE/required-checks.v1.json")
+
+# ---------------------------------------------------------------- 4. gate (single implementation: verify_results.gate) + own report integrity
+python3 - "$RESULTS" "$OUT" "$SHA" "$DEFECT" "$HERE" <<'PY'
 import csv,json,sys,os,datetime
-res,out,sha,defect=sys.argv[1:5]
-rows=list(csv.DictReader(open(res),delimiter="\t"))
-req=[r for r in rows if r["required"]=="yes"]
-fail=[r["check_id"] for r in req if r["verdict"]=="FAIL"]
-unk=[r["check_id"] for r in req if r["verdict"]=="UNKNOWN"]
-bad=[r for r in rows if r["verdict"] not in ("PASS","FAIL","UNKNOWN","INFO")]+[r for r in req if r["verdict"] not in ("PASS","FAIL","UNKNOWN")]
-overall="FAIL" if (fail or bad or not req) else ("UNKNOWN" if unk else "PASS")
-s={"target_sha":sha,"injected_defect":defect or None,"overall":overall,"required":len(req),
-   "pass":sum(r["verdict"]=="PASS" for r in req),"fail":fail,"unknown":unk,
+res,out,sha,defect,here=sys.argv[1:6]
+sys.path.insert(0,here); import verify_results as vr
+rows=[dict(r) for r in csv.DictReader(open(res),delimiter="\t")]
+overall=vr.gate(rows); c=vr.counters(rows); fail,unk,req=c["fail"],c["unknown"],[r for r in rows if r["required"]=="yes"]
+inv=vr.load_inventory()
+s={"target_sha":sha,"injected_defect":defect or None,"overall":overall,**c,
+   "inventory_version":inv["version"],"inventory_sha256":vr.sha256_file(vr.INVENTORY),
+   "execution_state":{"PASS":"EXECUTION_PASS","FAIL":"EXECUTION_FAIL"}.get(overall,"EXECUTION_UNKNOWN"),
+   "acceptance_note":"execution result only; final acceptance is decided by scripts/acceptance/decide.py and requires independent review",
    "generated_utc":datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),"checks":rows}
 json.dump(s,open(os.path.join(out,"results.json"),"w"),indent=2)
 with open(os.path.join(out,"SUMMARY.md"),"w") as f:
@@ -255,5 +261,5 @@ PY
 ( cd "$OUT" && find . -type f ! -name SHA256SUMS ! -path './postgres-run/*' | sort | sed 's|^\./||' | xargs sha256sum > SHA256SUMS )
 if ! python3 "$REPO/scripts/acceptance/verify_results.py" "$OUT"; then echo "acceptance output failed self-verification" >&2; exit 1; fi
 overall="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["overall"])' "$OUT/results.json")"
-echo "acceptance: $overall for $SHA (out: $OUT)"
+echo "execution: $overall for $SHA (out: $OUT). This is NOT acceptance; see scripts/acceptance/decide.py (review pending)."
 case "$overall" in PASS) exit 0 ;; UNKNOWN) exit 2 ;; *) exit 1 ;; esac
