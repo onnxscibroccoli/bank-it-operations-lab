@@ -12,7 +12,7 @@ log delivery must be authorized by a bucket policy rather than the legacy log-de
 
 ## Decision
 - `AccessLogsBucket`: `BucketEncryption.S3_MANAGED`, Block Public Access all, `enforceSSL`, versioning,
-  BucketOwnerEnforced, RETAIN, and its own access logs under `self-access-logs/` (satisfies AwsSolutions-S1 with no suppression).
+  BucketOwnerEnforced, RETAIN. ~~Its own access logs under `self-access-logs/`~~ removed: self-logging recursion, see ADR-0004.
 - Feature flag `@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy=true` so CDK grants `logging.s3.amazonaws.com`
   `s3:PutObject` via bucket policy, scoped with `aws:SourceArn`/`aws:SourceAccount`.
 

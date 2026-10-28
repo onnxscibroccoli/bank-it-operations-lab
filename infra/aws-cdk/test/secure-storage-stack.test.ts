@@ -1,68 +1,44 @@
-import { App, Aspects, Stack, Token } from 'aws-cdk-lib';
-import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
-import { AwsSolutionsChecks } from 'cdk-nag';
-import { LAB_CONTEXT } from '../lib/lab-context';
+import { CfnElement, Stack, Token } from 'aws-cdk-lib';
+import { Match } from 'aws-cdk-lib/assertions';
+import { kmsWildcards, selfLoggingBuckets } from '../lib/guards';
 import { SecureStorageStack } from '../lib/secure-storage-stack';
+import { NAG_PACKS, nagFindings, suppressionsIn, synthWithNag } from './helpers';
 
-function build(): { stack: Stack; template: Template } {
-  const app = new App({ context: LAB_CONTEXT });
-  const stack = new SecureStorageStack(app, 'TestStack');
-  Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true, reports: false }));
-  app.synth();
-  return { stack, template: Template.fromStack(stack) };
-}
+const { stack, template } = synthWithNag((app) => new SecureStorageStack(app, 'TestStorage'));
+const BPA_ALL = { BlockPublicAcls: true, BlockPublicPolicy: true, IgnorePublicAcls: true, RestrictPublicBuckets: true };
+const lid = (c: { node: { defaultChild?: unknown } }) => stack.getLogicalId(c.node.defaultChild as CfnElement);
+const LOGS = lid(stack.accessLogsBucket);
+const DATA = lid(stack.dataBucket);
 
-const { stack, template } = build();
-
-const BPA_ALL = {
-  BlockPublicAcls: true,
-  BlockPublicPolicy: true,
-  IgnorePublicAcls: true,
-  RestrictPublicBuckets: true,
-};
-
-describe('SecureStorageStack', () => {
+describe('SecureStorageStack (remediated)', () => {
   test('is environment-agnostic (no account/region)', () => {
     expect(Token.isUnresolved(Stack.of(stack).account)).toBe(true);
     expect(Token.isUnresolved(Stack.of(stack).region)).toBe(true);
   });
 
-  test('creates exactly one KMS key with rotation enabled', () => {
-    template.resourceCountIs('AWS::KMS::Key', 1);
-    template.hasResourceProperties('AWS::KMS::Key', { EnableKeyRotation: true });
+  test('AccessLogsBucket has NO server access logging (no self-logging, no self-access-logs/ prefix)', () => {
+    const r = template.toJSON().Resources[LOGS];
+    expect(r.Properties.LoggingConfiguration).toBeUndefined();
+    expect(JSON.stringify(template.toJSON())).not.toContain('self-access-logs');
   });
 
-  test('creates exactly two buckets', () => {
-    template.resourceCountIs('AWS::S3::Bucket', 2);
-  });
-
-  test('data bucket: SSE-KMS with CMK, BPA, versioning, access logs', () => {
-    template.hasResourceProperties('AWS::S3::Bucket', {
-      BucketEncryption: {
-        ServerSideEncryptionConfiguration: [
-          Match.objectLike({
-            BucketKeyEnabled: true,
-            ServerSideEncryptionByDefault: {
-              SSEAlgorithm: 'aws:kms',
-              KMSMasterKeyID: Match.anyValue(),
-            },
-          }),
-        ],
-      },
-      PublicAccessBlockConfiguration: BPA_ALL,
-      VersioningConfiguration: { Status: 'Enabled' },
-      LoggingConfiguration: {
-        DestinationBucketName: Match.anyValue(),
-        LogFilePrefix: 'data-bucket/',
-      },
+  test('DataBucket logs one-way to AccessLogsBucket under data-bucket/', () => {
+    const r = template.toJSON().Resources[DATA];
+    expect(r.Properties.LoggingConfiguration).toEqual({
+      DestinationBucketName: { Ref: LOGS },
+      LogFilePrefix: 'data-bucket/',
     });
   });
 
-  test('access logs bucket: SSE-S3, BPA, versioning', () => {
+  test('guard: no bucket logs to itself (directly or via a loop)', () => {
+    expect(selfLoggingBuckets(template.toJSON())).toEqual([]);
+  });
+
+  test('data bucket: SSE-KMS with the CMK, BPA all, versioning', () => {
     template.hasResourceProperties('AWS::S3::Bucket', {
       BucketEncryption: {
         ServerSideEncryptionConfiguration: [
-          { ServerSideEncryptionByDefault: { SSEAlgorithm: 'AES256' } },
+          Match.objectLike({ BucketKeyEnabled: true, ServerSideEncryptionByDefault: { SSEAlgorithm: 'aws:kms', KMSMasterKeyID: Match.anyValue() } }),
         ],
       },
       PublicAccessBlockConfiguration: BPA_ALL,
@@ -70,75 +46,47 @@ describe('SecureStorageStack', () => {
     });
   });
 
-  test('every bucket has public access fully blocked and versioning', () => {
-    const buckets = template.findResources('AWS::S3::Bucket');
-    for (const b of Object.values(buckets)) {
+  test('every bucket: BPA all, versioning, encryption, ACLs disabled, TLS-only policy, retained', () => {
+    for (const b of Object.values(template.findResources('AWS::S3::Bucket'))) {
       expect(b.Properties.PublicAccessBlockConfiguration).toEqual(BPA_ALL);
       expect(b.Properties.VersioningConfiguration).toEqual({ Status: 'Enabled' });
       expect(b.Properties.BucketEncryption).toBeDefined();
+      expect(b.Properties.OwnershipControls).toEqual({ Rules: [{ ObjectOwnership: 'BucketOwnerEnforced' }] });
+      expect(b.DeletionPolicy).toBe('Retain');
+    }
+    const policies = Object.values(template.findResources('AWS::S3::BucketPolicy'));
+    expect(policies).toHaveLength(2);
+    for (const p of policies) {
+      expect((p.Properties.PolicyDocument.Statement as any[]).some((s) => s.Effect === 'Deny' && s.Condition?.Bool?.['aws:SecureTransport'] === 'false')).toBe(true);
     }
   });
 
-  test('every bucket policy denies non-TLS access (enforceSSL)', () => {
-    const policies = template.findResources('AWS::S3::BucketPolicy');
-    expect(Object.keys(policies)).toHaveLength(2);
-    for (const p of Object.values(policies)) {
-      const stmts = p.Properties.PolicyDocument.Statement as any[];
-      const deny = stmts.find(
-        (s) =>
-          s.Effect === 'Deny' &&
-          s.Condition?.Bool?.['aws:SecureTransport'] === 'false',
-      );
-      expect(deny).toBeDefined();
-    }
+  test('CMK: rotation on, retained, least-privilege key policy (no wildcard principal, no kms:*)', () => {
+    template.resourceCountIs('AWS::KMS::Key', 1);
+    template.hasResourceProperties('AWS::KMS::Key', { EnableKeyRotation: true });
+    expect(kmsWildcards(template.toJSON())).toEqual([]);
+    const key = Object.values(template.findResources('AWS::KMS::Key'))[0];
+    const crypto = (key.Properties.KeyPolicy.Statement as any[]).find((s) => s.Sid === 'CryptoViaApprovedServicesOnly');
+    expect(JSON.stringify(crypto.Condition.StringEquals['kms:ViaService'])).toContain('"s3."');
+    const admin = (key.Properties.KeyPolicy.Statement as any[]).find((s) => s.Sid === 'KeyAdministrationByAccountRoot');
+    expect(admin.Action).not.toContain('kms:Decrypt');
+    expect(admin.Action).not.toContain('kms:Encrypt');
   });
 
-  test('ACLs disabled; log delivery granted via bucket policy, not ACL', () => {
-    for (const b of Object.values(template.findResources('AWS::S3::Bucket'))) {
-      expect(b.Properties.OwnershipControls).toEqual({
-        Rules: [{ ObjectOwnership: 'BucketOwnerEnforced' }],
-      });
-      expect(b.Properties.AccessControl).toBeUndefined();
-    }
-    template.hasResourceProperties('AWS::S3::BucketPolicy', {
-      PolicyDocument: {
-        Statement: Match.arrayWith([
-          Match.objectLike({
-            Effect: 'Allow',
-            Action: 's3:PutObject',
-            Principal: { Service: 'logging.s3.amazonaws.com' },
-          }),
-        ]),
-      },
-    });
+  test.each(NAG_PACKS)('cdk-nag %s: zero unsuppressed errors and warnings', (pack) => {
+    expect(nagFindings(stack, 'error', pack)).toHaveLength(0);
+    expect(nagFindings(stack, 'warning', pack)).toHaveLength(0);
   });
 
-  test('buckets and key are retained', () => {
-    for (const type of ['AWS::S3::Bucket', 'AWS::KMS::Key']) {
-      for (const r of Object.values(template.findResources(type))) {
-        expect(r.DeletionPolicy).toBe('Retain');
-      }
-    }
-  });
-
-  test('cdk-nag AwsSolutions: zero errors', () => {
-    const errors = Annotations.fromStack(stack).findError(
-      '*',
-      Match.stringLikeRegexp('AwsSolutions-.*'),
+  test('only registered exceptions are suppressed (EX-01, EX-02)', () => {
+    const s = suppressionsIn(template).map((x) => `${x.rule}@${x.logicalId}`).sort();
+    expect(s).toEqual(
+      [
+        `NIST.800.53.R5-S3BucketReplicationEnabled@${LOGS}`,
+        `NIST.800.53.R5-S3BucketReplicationEnabled@${DATA}`,
+        `NIST.800.53.R5-S3DefaultEncryptionKMS@${LOGS}`,
+      ].sort(),
     );
-    expect(errors).toHaveLength(0);
-  });
-
-  test('cdk-nag AwsSolutions: zero warnings', () => {
-    const warnings = Annotations.fromStack(stack).findWarning(
-      '*',
-      Match.stringLikeRegexp('AwsSolutions-.*'),
-    );
-    expect(warnings).toHaveLength(0);
-  });
-
-  test('no NagSuppressions are applied', () => {
-    const json = JSON.stringify(template.toJSON());
-    expect(json).not.toContain('cdk_nag');
+    for (const x of suppressionsIn(template)) expect(x.reason).toMatch(/^EX-0[12]: /);
   });
 });

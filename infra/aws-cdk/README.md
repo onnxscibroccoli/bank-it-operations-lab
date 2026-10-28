@@ -3,27 +3,35 @@
 AWS CDK v2 (TypeScript) app that synthesizes `BankItLabSecureStorage` **without AWS credentials**. Nothing here is
 deployed; outputs are static evidence only (see `evidence/aws/README.md`). Not a certification.
 
-## Stack
-- `DataKey`: customer-managed KMS key, rotation enabled, RETAIN.
-- `DataBucket`: SSE-KMS (DataKey, S3 Bucket Key), Block Public Access all, TLS-only, versioned, ACLs disabled,
-  server access logs to `AccessLogsBucket/data-bucket/`, RETAIN.
-- `AccessLogsBucket`: SSE-S3 (see ADR-0002), same controls, self access logs, log delivery via bucket policy.
-- cdk-nag `AwsSolutionsChecks` (2.x, see ADR-0001) on the whole app, no suppressions.
+## Stacks
+`BankItLabSecureStorage`
+- `DataKey`: customer-managed KMS key, rotation, RETAIN, least-privilege key policy (root = admin only; crypto only via S3).
+- `DataBucket`: SSE-KMS (DataKey, Bucket Key), BPA all, TLS-only, versioned, ACLs disabled, access logs -> `AccessLogsBucket/data-bucket/`.
+- `AccessLogsBucket`: SSE-S3 (ADR-0002), same controls, terminal log sink with **no** self-logging (ADR-0004).
+
+`BankItLabNetworkDatabase`
+- VPC 10.40.0.0/16, 2 AZs, PRIVATE_ISOLATED `app` + `db` subnets only (no IGW/NAT/routes), default SG restricted, flow logs (ALL) to a KMS log group.
+- RDS PostgreSQL 17: `publiclyAccessible: false`, `db` isolated subnets, storage/PI/secret encrypted with `DatabaseKey` (CMK), Multi-AZ,
+  deletion protection, 14-day backups + AWS Backup plan (CMK vault), IAM auth, `rds.force_ssl=1`, log exports, enhanced monitoring, port 5433,
+  secret rotation every 30 days via a Secrets Manager interface endpoint.
+- SGs: DB ingress only from app SG and rotation SG on 5433; no 0.0.0.0/0 anywhere.
+
+cdk-nag: `AwsSolutionsChecks` + `NIST80053R5Checks` on the whole app. Suppressions only for registered exceptions
+EX-01..EX-04 (`evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md`). Static guards in `lib/guards.ts`.
 
 ## Commands (Node 20)
     npm ci
     npx tsc --noEmit
     npm test                      # stack assertions + evidence validator tests
     npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
-    npm run validate:evidence     # validates evidence/aws against evidence/aws/evidence-schema.json
 
-For logged, credential-free runs use `../../evidence/aws/run-cmd.sh <logname> <command...>`.
+For logged, credential-free runs use `../../evidence/aws/aws-remediation-vpc-rds/run-cmd.sh <logname> <command...>`.
 
 ## Layout
-- `bin/app.ts`: app entry, applies cdk-nag Aspect. `lib/secure-storage-stack.ts`: the stack.
-- `lib/lab-context.ts`: feature flags shared with tests. `lib/evidence-validator.ts` + `scripts/validate-evidence.ts`: evidence checks.
-- `test/`: Jest tests. `docs/adr/`: decisions (ADR-0001..0003).
-- CI: `.github/workflows/bank-aws-001-cdk.yml` (typecheck, tests, synth, cdk-nag gate, SHA256SUMS).
+- `bin/app.ts`: app entry, applies both cdk-nag packs. `lib/secure-storage-stack.ts`, `lib/network-database-stack.ts`: the stacks.
+- `lib/least-privilege-key.ts`: CMK factory with explicit key policy. `lib/guards.ts`: static template guards.
+- `lib/lab-context.ts`: feature flags shared with tests. `test/`: Jest tests incl. `negative-controls.test.ts`. `docs/adr/`: ADR-0001..0004.
+- CI: none on this branch (the BANK-AWS-001 workflow lives on `bank-aws-001`; `.github/` is out of scope here).
 
 ## Known gaps
-Default CDK KMS key policy (account root); default `BootstrapVersion` parameter/rule; cdk-nag 2.x pin.
+Default `BootstrapVersion` parameter/rule; cdk-nag 2.x pin; proposed exceptions EX-01..EX-04; hosted rotation uses a SAR application.

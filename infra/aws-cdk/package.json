@@ -2,15 +2,14 @@
   "name": "bank-it-lab-aws-cdk",
   "version": "0.1.0",
   "private": true,
-  "description": "BANK-AWS-001: credential-free CDK synthesis of a secure S3 storage stack (static evidence only).",
+  "description": "Credential-free CDK synthesis: secure S3 storage + private VPC/PostgreSQL, cdk-nag AwsSolutions + NIST 800-53 R5 (static evidence only).",
   "bin": {
     "bank-it-lab-aws-cdk": "bin/app.js"
   },
   "scripts": {
     "build": "tsc",
     "test": "jest --ci",
-    "synth": "cdk synth --no-lookups --no-version-reporting --path-metadata false",
-    "validate:evidence": "ts-node scripts/validate-evidence.ts"
+    "synth": "cdk synth --no-lookups --no-version-reporting --path-metadata false"
   },
   "engines": {
     "node": ">=20"
