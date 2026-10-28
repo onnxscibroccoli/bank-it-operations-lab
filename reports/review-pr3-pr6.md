@@ -330,3 +330,31 @@ is labelled `mode: offline-synthetic` and `tenantStateClaimed: false`. No tenant
 - No AWS, Entra or Access Analyzer validation was run. Everything here is static analysis.
 - SCP semantics (B6-2, the Bool/absent-key behaviour) were reasoned from policy text and AWS docs, not run in a real organization.
 - The Terraform requirement comes from Ian's plan as relayed to this reviewer. No copy of that plan exists in the repo.
+
+---
+
+## Checkpoint 1 (2026-10-28 14:15 EDT): files inspected, unconfirmed items, remaining steps
+
+### Files inspected (PR source, excluding generated evidence/ and cdk.out)
+- #3: `reports/review-pr1-pr2.md`, `evidence/shared/**` (validator plus tests). The validator was run against #1 `e494bcf` and #2 `e610015`.
+- #4: `identity/entra/{ca_validator.py,baseline.json,README.md}`, `identity/entra/policies/CA001–CA007*.json`, `tests/entra/**` (fixtures INDEX, malformed-*, neg-*, tests).
+- #5: `infra/aws-cdk/{bin/app.ts,cdk.json,package.json}`, `lib/{guards,lab-context,least-privilege-key,network-database-stack,secure-storage-stack}.ts`, `test/{helpers,negative-controls.test,network-database-stack.test,secure-storage-stack.test}.ts`, `docs/adr/ADR-0001..0004`, plus synthesized templates and nag reports.
+- #6: `infra/orgs/lib/{org-cloudtrail-stack,org-governance-stack,ou-layout,policy-lint,scp-evaluator,scps,security-services-stack,lab-context}.ts`, `scripts/{export-policies,lint-policies}.ts`, `scripts/{nag-gate,parliament}.sh`, `parliament-allowlist.json`, `test/*.test.ts`, `docs/adr/ADR-0001..0003`.
+
+### PostgreSQL false-PASS remediation (priority B)
+- VERIFIED: PR #2 run `ci-service-40630856041-1` has 4 false-pass negatives (N01, N04, N05, N06), caused by `transaction_timeout` and the missing relation `lab.ledger_entries`. `NOTE.md:4` is inaccurate.
+- VERIFIED: the local-offline run of #2 fails all 6 negatives for the intended reason.
+- UNCONFIRMED: none of PRs #3–#6 remediates the CI false-passes. No fix commit on #2 was reviewed. Status: **open**.
+
+### Unconfirmed items
+- Whether the encryption SCPs in #6 deny requests that omit the encryption key entirely (behaviour when the Bool key is absent).
+- The second parliament allowlist entry in #6, checked against the AWS service reference.
+- Live behaviour in AWS, Entra and Access Analyzer. Nothing was run live.
+- The Terraform requirement for #6, which comes from the owner's plan and is not in the repo.
+
+### Remaining review steps
+1. Review the PostgreSQL false-PASS fix on #2 (or a new PR) once it exists, re-run N01–N06 in CI and confirm each fails for the intended reason.
+2. Confirm the absent-key behaviour of the encryption SCPs in #6 against AWS docs or the policy simulator.
+3. Re-review #5 after the owner signs off on EX-01..EX-04 and the KMS key-admin statement is fixed. Decide the #1/#5 merge order.
+4. Re-review #6 after B6-1 and B6-2 are fixed and the CDK-for-Terraform deviation is documented in the PR.
+5. Extend #3's self-log checker to catch A→B→A loops. Add a CA007 baseline rule in #4.
