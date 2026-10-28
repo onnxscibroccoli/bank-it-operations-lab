@@ -86,3 +86,13 @@ The artifacts of the 14:02–14:03 EDT runs (40741…) were not listed in this s
 | `patch-hardening` @ `5605b78` | `evidence/host-operations/runs/local-offline-20261028T181252Z/` | 102/102 OK, `--verify` PASS |
 | `identity-governance` @ `f48e7e3` | `evidence/identity-governance/runs/local-offline-20261028T181435Z/` | 49/49 OK, `--verify` OK |
 | `m365-endpoint` @ `86a555a` | none committed | — |
+
+### Refresh at about 17:45 EDT (verified this update)
+| Item | Run / bundle | Head | Result |
+|---|---|---|---|
+| #26 acceptance (push) | [40749373581](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40749373581) | `181bcdd` | **success**. Acceptance job OVERALL=PASS (43 required), verify_results OK; defect-control job OVERALL=FAIL as intended |
+| #26 acceptance (PR) | [40749387217](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40749387217) | `181bcdd` | success |
+| #26 aws-cdk / offline-validation / postgres (PR) | [40749387209](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40749387209), [40749387223](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40749387223), [40749387416](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40749387416) | `181bcdd` | success |
+| #7 at its new head | [40743606730](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743606730), [40743606409](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743606409), [40743592407](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743592407), [40743606483](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743606483) | `49122f2` | success |
+| #2 harness v2 | `selftest_harness.sh` [re-run] | `e7399fb` | 26/26 assertions |
+| #22 SIMULATION | `evidence/incident/runs/local-20261028T181818Z/SHA256SUMS` | `3f13622` | 38/38 OK; `timeline.py --verify` PASS; selftest 4/4 |
