@@ -1,0 +1,114 @@
+name: acceptance
+
+# First executable acceptance command (Worker D vertical slice). Checks out ONE pinned commit SHA into a
+# detached worktree and runs AWS static checks, PostgreSQL recovery, Entra offline validation, report/hash
+# validation and defect controls via scripts/acceptance/run.sh. Nonzero on any FAIL or required UNKNOWN.
+# Credential-free: no AWS/Entra/Graph secrets are referenced, nothing is deployed.
+on:
+  push:
+    branches: [acceptance/vertical-slice]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: 'Full 40-hex commit SHA to accept (default: the commit under test)'
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  # Exact commit under test: dispatch input, else the PR head commit (not the synthetic merge), else the pushed commit.
+  TARGET_SHA: ${{ github.event.inputs.target_sha || github.event.pull_request.head.sha || github.sha }}
+  AWS_EC2_METADATA_DISABLED: 'true'
+  CDK_DISABLE_CLI_TELEMETRY: 'true'
+
+jobs:
+  gate-selftest:
+    name: gate self-test (FAIL / required UNKNOWN must not pass)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with: { persist-credentials: false }
+      - run: python3 scripts/acceptance/verify_results.py --selftest
+
+  acceptance:
+    name: acceptance @ target SHA
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with: { persist-credentials: false, fetch-depth: 0 }
+      - uses: actions/setup-node@v5
+        with: { node-version: 20 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Run acceptance (exit code via PIPESTATUS)
+        id: run
+        run: |
+          set +e
+          SHA="$TARGET_SHA"
+          echo "target_sha=$SHA" | tee -a "$GITHUB_OUTPUT"
+          bash scripts/acceptance/run.sh "$SHA" --out acceptance-out 2>&1 | tee acceptance-console.log
+          rc=${PIPESTATUS[0]}; echo "rc=$rc" >> "$GITHUB_OUTPUT"; echo "acceptance exit code: $rc"
+      - name: Independent re-verification of the output
+        if: always()
+        run: python3 scripts/acceptance/verify_results.py acceptance-out
+      - name: Job summary
+        if: always()
+        run: cat acceptance-out/SUMMARY.md >> "$GITHUB_STEP_SUMMARY" || echo "no SUMMARY.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: acceptance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            acceptance-out/
+            acceptance-console.log
+          if-no-files-found: error
+          retention-days: 30
+      - name: Gate (0 = all required PASS; 1 = FAIL; 2 = required UNKNOWN)
+        if: always()
+        run: test "${{ steps.run.outputs.rc }}" = "0"
+
+  defect-control:
+    name: defect control (injected CA002 report-only MUST make acceptance fail)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with: { persist-credentials: false, fetch-depth: 0 }
+      - uses: actions/setup-node@v5
+        with: { node-version: 20 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Run acceptance with injected defect
+        id: run
+        run: |
+          set +e
+          SHA="$TARGET_SHA"
+          bash scripts/acceptance/run.sh "$SHA" --out defect-out --inject-defect entra-mfa-report-only 2>&1 | tee defect-console.log
+          rc=${PIPESTATUS[0]}; echo "rc=$rc" >> "$GITHUB_OUTPUT"; echo "defect-run exit code: $rc"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: acceptance-defect-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            defect-out/
+            defect-console.log
+          if-no-files-found: error
+          retention-days: 30
+      - name: Assert defect was detected (exit 1, ENTRA-02 FAIL, overall FAIL, output self-consistent)
+        if: always()
+        run: |
+          test "${{ steps.run.outputs.rc }}" = "1"
+          python3 scripts/acceptance/verify_results.py defect-out
+          python3 - <<'PY'
+          import json; j=json.load(open("defect-out/results.json"))
+          v={c["check_id"]:c["verdict"] for c in j["checks"]}
+          assert j["overall"]=="FAIL", j["overall"]
+          assert v.get("ENTRA-02")=="FAIL", v.get("ENTRA-02")
+          assert j["injected_defect"]=="entra-mfa-report-only"
+          print("defect detected: ENTRA-02 FAIL, overall FAIL")
+          PY
