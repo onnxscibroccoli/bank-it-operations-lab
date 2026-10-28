@@ -32,6 +32,12 @@ class ContractTest(unittest.TestCase):
         r = mk(check("A", "t", "positive", False, "TOOL_UNAVAILABLE", status_if_fail="NOT_EXECUTED"))
         self.assertEqual(r.status, "NOT_EXECUTED")
 
+    def test_pass_plus_not_executed_is_not_pass(self):
+        # regression (Worker D review): a skipped live check must not let the module PASS
+        r = mk(check("A", "t", "positive", True, "OK"),
+               check("B", "t", "positive", False, "TOOL_UNAVAILABLE", status_if_fail="NOT_EXECUTED"))
+        self.assertEqual(r.status, "NOT_EXECUTED")
+
     def test_failed_check_without_reason_rejected(self):
         with self.assertRaises(AssertionError):
             Check("A", "t", "positive", "FAIL", "OK")

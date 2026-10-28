@@ -129,9 +129,11 @@ class ModuleResult:
             return "ERROR"
         if "FAIL" in sts:
             return "FAIL"
-        if all(s == "NOT_EXECUTED" for s in sts):
+        # Worker D integration fix: any NOT_EXECUTED check makes the module NOT_EXECUTED. Previously a mix of
+        # PASS + NOT_EXECUTED aggregated to PASS (exit 0), e.g. live-offline postgres with no PG binaries.
+        if "NOT_EXECUTED" in sts:
             return "NOT_EXECUTED"
-        return "PASS" if all(s in ("PASS", "NOT_EXECUTED") for s in sts) and "PASS" in sts else "FAIL"
+        return "PASS" if all(s == "PASS" for s in sts) else "FAIL"
 
     @property
     def reason_codes(self) -> List[str]:

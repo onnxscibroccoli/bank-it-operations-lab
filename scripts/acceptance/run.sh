@@ -187,6 +187,20 @@ if [ -f tools/acceptance/runner.py ]; then
   check ACC-B-02 yes "acceptance-runner (B) allowlisted checks.json run + shared-validator bundle check" -- python3 tools/acceptance/runner.py --label "acceptance-$SHA"
 else unknown ACC-B-01 yes "tools/acceptance/runner.py (worker B) not present at target"; fi
 
+if [ -f acceptance/modules/run.py ]; then
+  check ACC-C-01 yes "acceptance-adapters (C) unit tests incl. reason-asserting negatives" -- python3 -m unittest discover -s acceptance/modules/tests
+  check ACC-C-02 yes "acceptance-adapters (C) static-evidence: aws-cdk, postgres, entra-offline" -- python3 acceptance/modules/run.py all --mode static-evidence --json-out "$OUT/adapters-static.json"
+  if [ -n "${PGBIN:-}" ] && [ -x "${PGBIN:-}/initdb" ] && [ -d infra/aws-cdk/node_modules ]; then
+    log=logs/ACC-C-03.log
+    { echo "# check: ACC-C-03 - adapters live-offline (exit 4 = NOT_EXECUTED -> UNKNOWN)"; echo "# cmd: PG_BIN=$PGBIN python3 acceptance/modules/run.py all --mode live-offline"; } > "$OUT/$log"
+    PG_BIN="$PGBIN" python3 acceptance/modules/run.py all --mode live-offline --json-out "$OUT/adapters-live.json" >> "$OUT/$log" 2>&1; rc=$?
+    echo "# exit_code: $rc" >> "$OUT/$log"
+    case $rc in 0) record ACC-C-03 yes PASS 0 "adapters live-offline all modules PASS" "$log" ;;
+      4) record ACC-C-03 yes UNKNOWN 4 "adapters live-offline NOT_EXECUTED (tool unavailable)" "$log" ;;
+      *) record ACC-C-03 yes FAIL $rc "adapters live-offline FAIL/ERROR" "$log" ;; esac
+  else unknown ACC-C-03 yes "adapters live-offline not run: needs PG server binaries and infra/aws-cdk/node_modules"; fi
+else unknown ACC-C-01 yes "acceptance/modules/run.py (worker C) not present at target"; fi
+
 # ---------------------------------------------------------------- 2d. reports and hashes
 n=0; while IFS= read -r s; do n=$((n+1))
   check "HASH-$n" yes "committed bundle $s verifies (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s"

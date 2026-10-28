@@ -46,6 +46,8 @@ def verify(out):
                 rx = re.search(r"^# reason_regex: (.*)$", t, re.M)
                 body = "\n".join(l for l in t.splitlines() if not l.startswith("# "))
                 want = "FAIL" if rc == 0 else ("PASS" if rx and re.search(rx.group(1), body) else "UNKNOWN")
+            elif r["check_id"] == "ACC-C-03":
+                want = {0: "PASS", 4: "UNKNOWN"}.get(rc, "FAIL")
             else:
                 want = "PASS" if rc == 0 else "FAIL"
             if r["verdict"] != want: errs.append(f"{r['check_id']}: verdict {r['verdict']} but exit {rc} implies {want}")
