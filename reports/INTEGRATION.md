@@ -7,16 +7,16 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
-## Accelerated completion plan (PR #27 @ 72aa8b7, lane B): progress as of 2026-10-28 18:20 EDT
+## Accelerated completion plan (PR #27 @ 72aa8b7, lane B): progress as of 2026-10-28 18:27 EDT
 
-Deadline 2026-10-29 00:00 EDT. Remaining window at commit time: about 5h40m. This commit started from `4f54a016`.
+Deadline 2026-10-29 00:00 EDT. Remaining window at commit time: about 5h33m. This commit started from `4f54a016`.
 
 | # | Item | Status |
 |---|---|---|
 | 1 | USER ACTION REQUIRED reporting in Actions (`integration-gate.yml`: `user-actions` early job, `final-summary` with `if: always()`) | Done; pending CI on the candidate |
 | 2 | Actions pinned to full commit SHAs | Done (all `actions/*`). Only the same-repo reusable workflows (`./.github/workflows/*.yml`) are not SHA-pinned, because they always resolve at the commit under test |
 | 3 | Module registry `coordination/modules.json` + `scripts/ci/check_modules.py` | Done; runs in validate-all.sh and in CI |
-| 4 | Freeze candidate; test against current `main` on `candidate/main-validation-<sha>` | In progress; the candidate is the commit that introduces this section |
+| 4 | Freeze candidate; test against current `main` on `candidate/main-validation-<sha>` | Done: candidate `82ab7e6` tested on `candidate/main-validation-82ab7e6` @ `ccbb442`; passed |
 | 5 | tasks.json / INTEGRATION.md updated | Done for this commit (`accelerated_plan`, `user_actions`, `autonomous_blockers`) |
 
 The USER ACTION REQUIRED top line is currently **USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4**, plus UA-5 (AC6), which isn't actionable yet. The user actions are: exception approval, Entra baseline choices, branch-protection decision and closing PR #1.
@@ -25,7 +25,19 @@ Component workflows also accept `workflow_call`, so the gate runs them for the e
 
 **Gates**
 - Exact-SHA review: **UNMET** (AC1).
-- Current-main validation: pending; see below.
+- Current-main validation: **PASSED**. Frozen candidate `82ab7e6bbec1d20e034494c987253f3a81f3296c` was merged with `--no-ff` onto main `7f50348` as throwaway branch `candidate/main-validation-82ab7e6` @ `ccbb44216a777174b688767e0fb900db599e8eb1`. The merge was clean with no conflicts (main is an ancestor), and the tree is identical to the candidate. Local `validate-all` PASSED 35/35. In [integration-gate run 40778969827](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778969827), user-actions, module-registry, offline-validation, aws-cdk, all 5 postgres jobs and final-summary succeeded. merge-eligibility failed, as designed.
+
+**Frozen candidate `82ab7e6` CI** (later commits on this branch change only `coordination/tasks.json` and this report):
+
+| Run | Result |
+|---|---|
+| [integration-gate push 40778886245](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886245) | All jobs succeeded except merge-eligibility (failed, by design) |
+| [integration-gate PR 40778896261](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896261) | Same |
+| [postgres-restore-evidence PR 40778896275](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896275) | 5/5 succeeded |
+| [aws-cdk PR 40778896256](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896256) | Succeeded |
+| [aws-cdk push 40778886053](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886053) | Succeeded |
+| [offline-validation PR 40778896220](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896220) | Succeeded |
+| [offline-validation push 40778886069](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886069) | Succeeded |
 - Merge eligibility (C6): **NOT ELIGIBLE**. The `merge-eligibility` job is expected to fail until AC1–AC5 are MET for one exact SHA.
 
 PR #27 C1–C5 are about PR #26's acceptance verifier. That verifier is not integrated, so none of C1–C5 is addressed here, and PR #26's branch was not touched.
@@ -117,7 +129,7 @@ Evaluated at the PR #7 head pushed with this report. Under the merge policy abov
 |---|---|---|---|
 | AC1 | An independent review (human or independent reviewer, e.g. ChatGPT) approves the **exact** candidate SHA. Provenance must be bound to that SHA, and author or agent self-review does not count. *Reworded per PR #27 C6.* | **UNMET** | No approval for any PR #7 head. PR #14 @ `eb8d259` counts only for PR #2's harness v2, and it requests changes on integrated #5. PR #27 reviewed #26, not #7. |
 | AC2 | Security exceptions recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded and test-enforced, but not approved. PR #14 B5-1: the suppressions are already applied. |
-| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **Met for `afb41278` and `49122f24`; CI pending for this head** | Local `validate-all` PASS 33/33 on this tree. |
+| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **Met for candidate `82ab7e6`** (all technical jobs succeeded; earlier SHAs are history only) | Local `validate-all` PASSED 35/35 on the candidate and on the main-validation merge. |
 | AC4 | Docs match the code. | **PARTIAL** | PR #1 is still open with the superseded design; #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings in integrated code. | **UNMET** | PR #14 B5-1/B5-2 on integrated #5. Fixed in this commit: the shared `postgres-negatives` reported OK on all-NOT_RUN runs. |
 | AC6 | Final human portfolio acceptance (Ian). Separate gate. | **UNMET** | Not requested; it follows AC1–AC5. |

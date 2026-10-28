@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T18:20:00-04:00",
-    "remaining": "5h40m",
+    "as_of": "2026-10-28T18:27:00-04:00",
+    "remaining": "5h33m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T18:20:00-04:00",
+  "updated": "2026-10-28T18:27:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -156,8 +156,8 @@
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "MET_FOR_PRIOR_HEAD_PENDING_CI",
-        "detail": "Met for afb41278 (runs 40743023477, 40743023651, 40743023533, 40743011205) and 49122f24 (runs 40743606730, 40743606483, 40743606409, 40743592407): all jobs success. This commit changes the shared validator (it is stricter now), so CI must be re-read for the new head.",
+        "status": "MET",
+        "detail": "All technical checks success on 82ab7e6 (runs 40778886245/40778896261 gate jobs except merge-eligibility, 40778896275, 40778896256, 40778886053, 40778896220, 40778886069) and validate-all PASS (35 steps). Earlier SHAs are history only.",
         "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
         "runs": {
           "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
@@ -184,7 +184,8 @@
         "not_triggered": [
           "aws-cdk push (path filter not matched by that push)",
           "postgres-restore-evidence push (overnight/integration is not in its push branches)"
-        ]
+        ],
+        "met_for_sha": "82ab7e6bbec1d20e034494c987253f3a81f3296c"
       },
       {
         "id": "AC4",
@@ -438,7 +439,7 @@
       {
         "id": "P1",
         "item": "USER ACTION REQUIRED reporting in GitHub Actions",
-        "status": "DONE_PENDING_CI",
+        "status": "DONE",
         "detail": "integration-gate.yml: user-actions job (fast, sparse checkout, step summary + warning annotations + 7-day artifact) and final-summary job (if: always(), needs all jobs, aggregates success/failure/cancelled/skipped plus the USER ACTION REQUIRED top line). Source of truth: user_actions in this file. scripts/ci/user_actions.py validates every field and escapes all values."
       },
       {
@@ -469,8 +470,8 @@
       {
         "id": "P4",
         "item": "Freeze the combined candidate and test it against current main",
-        "status": "IN_PROGRESS",
-        "detail": "Candidate = the commit that introduces this record (see reports/INTEGRATION.md and the PR #7 comment trail for its SHA); test branch candidate/main-validation-<short sha> = origin/main + --no-ff merge of the candidate."
+        "status": "DONE",
+        "detail": "Candidate 82ab7e6 tested on candidate/main-validation-82ab7e6 (ccbb442): clean merge, validate-all PASS, all technical CI jobs success."
       },
       {
         "id": "P5",
@@ -480,9 +481,58 @@
     ],
     "gates": {
       "exact_sha_review": "UNMET (AC1): no independent review of the candidate SHA yet. Review packets in coordination/review-requests/.",
-      "current_main_validation": "PENDING: run validate-all.sh and Actions on candidate/main-validation-<sha>.",
-      "merge_eligibility": "NOT ELIGIBLE: AC1 UNMET, AC2 PARTIAL, AC3 pending CI for the candidate, AC4 PARTIAL, AC5 UNMET. AC6 is a separate human gate."
+      "current_main_validation": "PASSED for candidate 82ab7e6 against main 7f50348 (branch candidate/main-validation-82ab7e6 @ ccbb442; run 40778969827; every technical job success)",
+      "merge_eligibility": "NOT ELIGIBLE (merge-eligibility job failed by design in runs 40778969827, 40778886245, 40778896261): AC1 UNMET, AC2 PARTIAL, AC3 MET for 82ab7e6 technical checks, AC4 PARTIAL, AC5 UNMET. AC6 is a separate human gate."
     },
-    "pr27_c1_c5": "Not addressed here: C1-C5 are on PR #26's acceptance verifier, which is not integrated, and PR #26's branch is not modified by the integrator."
+    "pr27_c1_c5": "Not addressed here: C1-C5 are on PR #26's acceptance verifier, which is not integrated, and PR #26's branch is not modified by the integrator.",
+    "frozen_candidate": {
+      "candidate_sha": "82ab7e6bbec1d20e034494c987253f3a81f3296c",
+      "frozen_at": "2026-10-28T18:21:00-04:00",
+      "note": "Commits on overnight/integration after the candidate change only coordination/tasks.json and reports/INTEGRATION.md (result records). Reviews must cite the candidate SHA.",
+      "main_at_test": "7f50348bf1370381615eaed91c02607fe41de2f5",
+      "main_validation_branch": "candidate/main-validation-82ab7e6",
+      "main_validation_sha": "ccbb44216a777174b688767e0fb900db599e8eb1",
+      "merge_result": "clean; main is an ancestor of the candidate, so no conflicts and the merged tree is identical to the candidate tree (git diff 82ab7e6 ccbb442 is empty)",
+      "local_validate_all": {
+        "candidate": "PASS (35 steps)",
+        "main_validation": "PASS (35 steps)",
+        "pg_bin": "PostgreSQL 16.15 (local)"
+      },
+      "ci": {
+        "integration-gate push candidate/main-validation-82ab7e6 (ccbb442)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778969827",
+          "conclusion": "failure (only merge-eligibility, by design)",
+          "jobs": "user-actions, module-registry, offline-validation/validate, aws-cdk/synth-and-test, postgres x5, final-summary: success; merge-eligibility: failure (NOT ELIGIBLE)"
+        },
+        "integration-gate push overnight/integration (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886245",
+          "conclusion": "failure (only merge-eligibility, by design)"
+        },
+        "integration-gate pull_request PR #7 (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896261",
+          "conclusion": "failure (only merge-eligibility, by design)"
+        },
+        "postgres-restore-evidence pull_request (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896275",
+          "conclusion": "success (5/5)"
+        },
+        "aws-cdk pull_request (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896256",
+          "conclusion": "success"
+        },
+        "aws-cdk push (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886053",
+          "conclusion": "success"
+        },
+        "offline-validation pull_request (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896220",
+          "conclusion": "success"
+        },
+        "offline-validation push (82ab7e6)": {
+          "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886069",
+          "conclusion": "success"
+        }
+      }
+    }
   }
 }
