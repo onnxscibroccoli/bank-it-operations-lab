@@ -1,0 +1,5 @@
+$ python3 identity/governance/inventory.py --scenario findings --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-findings.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-findings.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-findings.csv --quiet
+--- stdout ---
+FINDINGS scenario=findings mode=pim exit=1
+--- stderr ---
+--- exit_code=1 expected=1 started_utc=2026-10-28T18:14:35Z duration_ms=27 ---
