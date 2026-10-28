@@ -1,0 +1,26 @@
+# validation-run.log
+# generated: 2026-10-28 14:12:24 EDT on branch control-mapping, base 7f50348bf1370381615eaed91c02607fe41de2f5
+# python: Python 3.13.5; git: git version 2.47.3
+
+$ python3 governance/controls/validate_mapping.py --check-branches
+rows=17 artifacts=97 NOT_EXECUTED=1 OBSERVED=0 SIMULATION=14 STATIC=2
+MAPPING VALID
+# exit_code: 0
+
+$ python3 -m unittest discover -s governance/controls/tests -v
+test_bad_status (test_validate_mapping.ValidateMappingTest.test_bad_status) ... ok
+test_markdown_missing_row (test_validate_mapping.ValidateMappingTest.test_markdown_missing_row) ... ok
+test_markdown_wording (test_validate_mapping.ValidateMappingTest.test_markdown_wording) ... ok
+test_missing_path (test_validate_mapping.ValidateMappingTest.test_missing_path) ... ok
+test_row_without_artifacts (test_validate_mapping.ValidateMappingTest.test_row_without_artifacts) ... ok
+test_short_sha_rejected (test_validate_mapping.ValidateMappingTest.test_short_sha_rejected) ... ok
+test_simulation_needs_evidence (test_validate_mapping.ValidateMappingTest.test_simulation_needs_evidence) ... ok
+test_static_without_evidence_ok (test_validate_mapping.ValidateMappingTest.test_static_without_evidence_ok) ... ok
+test_unknown_section (test_validate_mapping.ValidateMappingTest.test_unknown_section) ... ok
+test_valid (test_validate_mapping.ValidateMappingTest.test_valid) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.122s
+
+OK
+# exit_code: 0
