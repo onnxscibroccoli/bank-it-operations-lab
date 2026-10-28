@@ -1,0 +1,69 @@
+{
+  "schema": "bank-it-operations-lab/coordination/tasks@1",
+  "integration_branch": "overnight/integration",
+  "base": {"branch": "main", "sha": "7f50348", "verified": "main contains only README.md; nothing to break"},
+  "updated": "2026-10-28 (America/New_York)",
+  "rules": ["never merge into main from automation", "no deploys", "no AWS/Entra/Graph calls", "no credentials", "PRs are not closed by integration"],
+  "merge_order": [3, 5, 4, 2],
+  "tasks": [
+    {
+      "pr": 3, "branch": "review/pr1-pr2-evidence-audit", "head": "fb36341",
+      "title": "review: evidence audit of PR #1 and PR #2 + shared evidence validator",
+      "status": "integrated",
+      "paths": ["evidence/shared/**", "reports/review-pr1-pr2.md"],
+      "why": "Dependency-free shared tooling (validate_evidence.py, manifest schema, Postgres negative expectations) used by the other components' CI. Wired into CI at integration.",
+      "review": "No formal GitHub review recorded. This PR is itself the review of #1/#2."
+    },
+    {
+      "pr": 5, "branch": "aws-remediation-vpc-rds", "head": "099479e",
+      "title": "AWS remediation: private VPC + RDS, remove S3 self-logging, AwsSolutions + NIST 800-53 R5 nag",
+      "status": "integrated",
+      "paths": ["infra/aws-cdk/**", "evidence/aws/aws-remediation-vpc-rds/**"],
+      "why": "Newer implementation of infra/aws-cdk. It imports PR #1's app at e494bcf and fixes PR #3's blocking finding (AccessLogsBucket self-logging). Its templates pass evidence/shared cfn-s3-selflog.",
+      "review": "No formal GitHub review recorded. Proposed security exceptions EX-01..EX-04 still need an owner's approval.",
+      "integration_changes": ["infra/aws-cdk/README.md: fixed the stale evidence/aws/README.md pointer and the CI note"]
+    },
+    {
+      "pr": 1, "branch": "bank-aws-001", "head": "e494bcf",
+      "title": "BANK-AWS-001: credential-free secure storage stack + evidence",
+      "status": "superseded",
+      "superseded_by": "PR #5 for infra/aws-cdk/**. The CI workflow was adapted into .github/workflows/aws-cdk.yml.",
+      "not_carried": ["infra/aws-cdk/** (the PR #5 version is used)", "infra/aws-cdk/lib/evidence-validator.ts + scripts/validate-evidence.ts (PR #5 dropped it; evidence/shared/validate_evidence.py replaces it)", "evidence/aws/** top level (evidence for the self-logging template; it fails cfn-s3-selflog)", "reports/MORNING_REPORT.md (overnight run log for the superseded implementation)"],
+      "why": "14 of its infra/aws-cdk files duplicate PR #5. PR #3 rated it 'accept with changes' because of the self-logging bug, which only PR #5 fixes. Combining both implementations would duplicate the app.",
+      "suggested_action": "Owner: close as superseded by #5 once #5 lands, or rebase onto overnight/integration to keep only the evidence history."
+    },
+    {
+      "pr": 4, "branch": "entra-ca-offline", "head": "d302c99",
+      "title": "entra: offline Conditional Access policy validation",
+      "status": "integrated",
+      "paths": ["identity/entra/**", "tests/entra/**", "evidence/entra/**"],
+      "why": "Disjoint paths and stdlib only. 25/25 unit tests, baseline exit 0, fixture drift check and evidence --verify all pass. Wired into offline-validation.yml.",
+      "review": "No formal GitHub review recorded. Baseline policy choices in the PR body still need an owner's confirmation."
+    },
+    {
+      "pr": 2, "branch": "ci-evidence-postgres", "head": "e610015",
+      "title": "ci: Postgres backup/restore exercise with offline tests and evidence",
+      "status": "integrated",
+      "paths": [".github/workflows/postgres-restore-evidence.yml", "evidence/postgres/**", "tests/integration/**"],
+      "why": "PR #3 rated it 'accept with changes'. The required changes were applied at integration.",
+      "integration_changes": [
+        "run_restore_scenario.sh: each negative test is now one command, and its setup runs as separately checked steps (no more false PASS)",
+        "run_restore_scenario.sh: server major computed from server_version_num/10000, not cut -c1-2",
+        "workflow: removed the cdk-synth job (it duplicated aws-cdk.yml, set CDK_DEFAULT_ACCOUNT/REGION and ran unpinned npx --yes / npm install)",
+        "workflow: added persist-credentials: false, a postgres-negatives gate and a PR branch filter; paths scoped to its own workflow file",
+        "ci-service-40630856041-1/NOTE.md: corrected the inaccurate 'negatives behaved as expected' claim (that file is not hash-covered)",
+        "new evidence run integration-offline-20261028T180134Z: 39/39 PASS and 6/6 negatives failed for the intended reason"
+      ],
+      "open": ["PR body is still stale (says postgres:16 and that no cdk.json exists)", "no committed passing service-mode run"]
+    },
+    {
+      "pr": 6, "branch": "orgs-security-refs", "head": "e5e7f46",
+      "title": "orgs: credential-free Organizations security reference modules + evidence (draft)",
+      "status": "awaiting_changes",
+      "why": "It repeats the defect PR #3 flagged in PR #1: infra/orgs/lib/org-cloudtrail-stack.ts:50 sets serverAccessLogsPrefix 'self-access-logs/' on TrailAccessLogsBucket with no destination, so the bucket logs to itself. evidence/shared cfn-s3-selflog reports ERROR TrailAccessLogsBucket30C0D746 on evidence/orgs/synth/BankItLabOrgCloudTrail.template.json. evidence/orgs/SHA256SUMS covers infra/orgs, so a fix has to regenerate the evidence. Otherwise tsc, 49/49 Jest, synth, SHA256SUMS and the synth drift check were clean when trial-merged. The PR is also an explicit draft with no review.",
+      "required_changes": ["Remove the self-logging the same way PR #5 did (terminal sink + documented S1 suppression or exception, plus a test asserting no LoggingConfiguration)", "Regenerate evidence/orgs and SHA256SUMS", "Optionally add an infra/orgs CI workflow modelled on aws-cdk.yml"],
+      "merge_conflicts": "none (disjoint paths: infra/orgs/**, evidence/orgs/**)"
+    }
+  ],
+  "validation": {"command": "scripts/validate-all.sh", "python_only": "scripts/validate-all.sh --python-only", "postgres_binaries": "set PG_BIN if initdb is not on PATH"}
+}
