@@ -1,0 +1,7 @@
+# step=ST01_control_expected_fault kind=negative expect=nonzero started=2026-10-28T18:02:13Z
+# reason_regex: ^injected fault: disk full$
+# cmd: fault
+# --- output ---
+injected fault: disk full
+# --- end output ---
+# exit_code=3 duration_ms=1

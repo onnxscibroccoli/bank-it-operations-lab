@@ -1,0 +1,7 @@
+# step=ST02_unexpected_success kind=negative expect=nonzero started=2026-10-28T18:02:17Z
+# reason_regex: ^injected fault: disk full$
+# cmd: ok
+# --- output ---
+all good
+# --- end output ---
+# exit_code=0 duration_ms=4

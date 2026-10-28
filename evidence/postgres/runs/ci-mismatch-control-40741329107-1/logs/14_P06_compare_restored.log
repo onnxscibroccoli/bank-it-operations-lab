@@ -1,0 +1,1 @@
+# step=P06_compare_restored NOT RUN: dependency P05_fingerprint_restored is NOT_RUN

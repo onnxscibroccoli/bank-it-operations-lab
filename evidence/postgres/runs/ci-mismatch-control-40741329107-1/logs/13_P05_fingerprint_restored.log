@@ -1,0 +1,1 @@
+# step=P05_fingerprint_restored NOT RUN: dependency P04_pg_restore is NOT_RUN
