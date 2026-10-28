@@ -28,3 +28,11 @@
 33-git-rebase-onto-origin-main.log	0	git rebase --autostash --root --onto origin/main bank-aws-001
 34-git-push-branch.log	0	git push -u origin bank-aws-001
 35-gh-pr-create.log	0	gh pr create --draft --base main --head bank-aws-001 --title BANK-AWS-001: credential-free secure storage stack + evidence --body-file /workspace/pr-body.md
+36-git-push-ci-workflow.log	0	git push origin bank-aws-001
+37-gh-run-watch-ci-1.log	0	gh run watch 40630567160 --exit-status --interval 10
+38-gh-run-view-ci-1.log	0	gh run view 40630567160 --json url,conclusion,headSha,event,databaseId,createdAt,updatedAt
+40-npm-ci.log	0	npm ci --no-audit --no-fund
+41-tsc-noemit.log	0	npx tsc --noEmit
+42-cdk-synth.log	0	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
+43-jest-json.log	0	npx jest --ci --json --outputFile=../../evidence/aws/jest-results.json
+44-validate-evidence.log	0	npm run validate:evidence

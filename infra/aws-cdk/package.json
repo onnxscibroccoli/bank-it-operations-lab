@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --ci",
-    "synth": "cdk synth --no-lookups --no-version-reporting --path-metadata false"
+    "synth": "cdk synth --no-lookups --no-version-reporting --path-metadata false",
+    "validate:evidence": "ts-node scripts/validate-evidence.ts"
   },
   "engines": {
     "node": ">=20"

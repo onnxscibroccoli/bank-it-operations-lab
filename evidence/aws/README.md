@@ -35,8 +35,13 @@ Stack `BankItLabSecureStorage` (env-agnostic: `aws://unknown-account/unknown-reg
 - run-cmd.sh: wrapper that unsets AWS_* and CDK_DEFAULT_*, points AWS config and credentials at /dev/null, and disables IMDS.
 - synth/: synthesized template + cloud assembly manifest (copied from infra/aws-cdk/cdk.out).
 - cdk-nag/: NagReport CSV (original), JSON conversion, CDK validation-report.json.
-- jest-results.json: machine-readable test results (12/12 passed).
-- SHA256SUMS: hashes of the key source and evidence files (`sha256sum -c SHA256SUMS` from repo root).
+- jest-results.json: machine-readable test results (21/21 passed: 12 stack tests + 9 evidence-validator tests, log 43).
+- SHA256SUMS: hashes of every tracked file in the owned paths, the CI workflow and reports/MORNING_REPORT.md
+  (`sha256sum -c evidence/aws/SHA256SUMS` from repo root; regenerate with update-sha256sums.sh).
+- run-git.sh: wrapper for git/gh/rclone commands (logs 30+), scrubs token-like strings, appends COMMANDS.tsv.
+- evidence-schema.json: descriptor of this bundle; checked by `npm run validate:evidence` (infra/aws-cdk) and by Jest.
+- logs/REBASE-MAP.md: pre/post SHAs after replaying local history onto origin/main.
+- ci/: GitHub Actions run records (and failing logs, if any).
 
 ## Reproduce (from repo root)
     evidence/aws/run-cmd.sh x npm ci && evidence/aws/run-cmd.sh y npx tsc --noEmit
@@ -47,4 +52,4 @@ Stack `BankItLabSecureStorage` (env-agnostic: `aws://unknown-account/unknown-reg
 - The synthesized template keeps the default synthesizer's BootstrapVersion parameter and rule. Deploying would
   need a bootstrap, which is out of scope.
 - cdk-nag is pinned to 2.38.2, the v2 Aspects API the spec requires. cdk-nag 3.x moved to `Validations.of().addPlugins`.
-- No upstream repo, spec, or CI existed. This is a fresh local repo.
+- No upstream spec existed. The repo was created locally, then replayed onto the GitHub repo's main (see logs/REBASE-MAP.md); CI is now in .github/workflows/bank-aws-001-cdk.yml.

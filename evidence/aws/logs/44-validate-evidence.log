@@ -1,0 +1,12 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-28T00:11:40-04:00
+# command: npm run validate:evidence
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+
+> bank-it-lab-aws-cdk@0.1.0 validate:evidence
+> ts-node scripts/validate-evidence.ts
+
+checked 18 files
+EVIDENCE VALID
+# finished: 2026-10-28T00:11:41-04:00
+# exit_code: 0

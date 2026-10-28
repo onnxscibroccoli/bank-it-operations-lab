@@ -1,0 +1,14 @@
+# cwd: /workspace/bank-it-operations-lab/infra/aws-cdk
+# started: 2026-10-28T00:11:25-04:00
+# command: npx jest --ci --json --outputFile=../../evidence/aws/jest-results.json
+# env: AWS_* and CDK_DEFAULT_* unset; AWS_EC2_METADATA_DISABLED=true
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+
+Test Suites: 2 passed, 2 total
+Tests:       21 passed, 21 total
+Snapshots:   0 total
+Time:        10.917 s
+Ran all test suites.
+Test results written to: ../../evidence/aws/jest-results.json
+# finished: 2026-10-28T00:11:36-04:00
+# exit_code: 0

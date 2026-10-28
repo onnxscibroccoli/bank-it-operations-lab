@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "task": "BANK-AWS-001",
+  "description": "Describes the BANK-AWS-001 static evidence bundle under evidence/aws/. Validated by infra/aws-cdk/lib/evidence-validator.ts (npm run validate:evidence). Static evidence only: not a deployment record or certification.",
+  "root": "evidence/aws",
+  "files": [
+    { "path": "README.md", "format": "markdown", "required": true, "description": "Evidence overview, toolchain, layout, known gaps." },
+    { "path": "PRE_IMPLEMENTATION.md", "format": "markdown", "required": true, "description": "Pre-implementation record (scope, constraints, plan)." },
+    { "path": "SHA256SUMS", "format": "sha256sum", "required": true, "description": "sha256sum(1) lines over tracked files in owned paths, relative to repo root; excludes itself.", "rules": ["sha256sums-verify"] },
+    { "path": "evidence-schema.json", "format": "json", "required": true, "description": "This descriptor." },
+    { "path": "run-cmd.sh", "format": "shell", "required": true, "description": "Credential-free wrapper for CDK/npm commands (logs output and exit code)." },
+    { "path": "run-git.sh", "format": "shell", "required": true, "description": "Wrapper for git/gh/rclone commands at repo root (logs output and exit code, scrubs token-like strings)." },
+    { "path": "update-sha256sums.sh", "format": "shell", "required": true, "description": "Regenerates SHA256SUMS." },
+    { "path": "logs/COMMANDS.tsv", "format": "tsv", "required": true, "description": "One row per command: <log file>\\t<exit code>\\t<command>.", "rules": ["commands-tsv"] },
+    { "path": "logs/CORRECTION-PASS-1.md", "format": "markdown", "required": true, "description": "Correction pass 1 (failing logs preserved)." },
+    { "path": "logs/CORRECTION-PASS-2.md", "format": "markdown", "required": true, "description": "Correction pass 2." },
+    { "path": "logs/CORRECTION-PASS-3.md", "format": "markdown", "required": true, "description": "Correction pass 3." },
+    { "path": "logs/REBASE-MAP.md", "format": "markdown", "required": true, "description": "Pre/post rebase SHA mapping onto origin/main." },
+    { "path": "synth/BankItLabSecureStorage.template.json", "format": "json", "required": true, "description": "Synthesized CloudFormation template.", "rules": ["template-env-agnostic"] },
+    { "path": "synth/manifest.json", "format": "json", "required": true, "description": "Cloud assembly manifest.", "rules": ["manifest-env-agnostic"] },
+    { "path": "cdk-nag/AwsSolutions--BankItLabSecureStorage-NagReport.csv", "format": "csv", "required": true, "description": "cdk-nag AwsSolutions report.", "rules": ["nag-zero-noncompliant"] },
+    { "path": "cdk-nag/AwsSolutions-NagReport.json", "format": "json", "required": true, "description": "JSON conversion of the nag CSV." },
+    { "path": "cdk-nag/validation-report.json", "format": "json", "required": true, "description": "CDK policy validation report." },
+    { "path": "jest-results.json", "format": "json", "required": true, "description": "Jest --json output.", "rules": ["jest-all-passed"] }
+  ],
+  "logFile": {
+    "pattern": "^logs/[0-9]{2}[a-z]?-[A-Za-z0-9._-]+\\.log$",
+    "requiredHeaders": ["# command:"],
+    "exitCodeTrailer": "^# exit_code: (-?[0-9]+)$"
+  },
+  "rules": {
+    "sha256sums-verify": "Every listed file exists and its sha256 matches.",
+    "commands-tsv": "Each row has 3 tab-separated fields; exit code is an integer; the log file exists under logs/ and its '# exit_code:' trailer equals the TSV exit code.",
+    "template-env-agnostic": "Template contains no literal 12-digit AWS account IDs.",
+    "manifest-env-agnostic": "Every stack artifact environment is aws://unknown-account/unknown-region.",
+    "nag-zero-noncompliant": "At least one rule row and zero Non-Compliant rows.",
+    "jest-all-passed": "success is true and numFailedTests is 0."
+  }
+}
