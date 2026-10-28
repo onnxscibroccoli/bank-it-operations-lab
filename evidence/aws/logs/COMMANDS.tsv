@@ -36,3 +36,6 @@
 42-cdk-synth.log	0	npx cdk synth --no-lookups --no-version-reporting --no-path-metadata --no-asset-metadata --quiet
 43-jest-json.log	0	npx jest --ci --json --outputFile=../../evidence/aws/jest-results.json
 44-validate-evidence.log	0	npm run validate:evidence
+45-git-push-evidence-schema.log	0	git push origin bank-aws-001
+46-gh-run-watch-ci-2.log	0	gh run watch 40630990406 --exit-status --interval 10
+47-gh-run-view-ci-2.log	0	gh run view 40630990406 --json url,conclusion,headSha,event,databaseId,createdAt,updatedAt

@@ -4,7 +4,7 @@ f833288a1f2f7350fa61cd10841b9e834bb952a3f8390902ecdc6c4e0cddfb75  evidence/aws/P
 c517e8a9a6d130d6d7efd12907aea3eeaa0ff7c3357dfed3f742c62cfa337755  evidence/aws/cdk-nag/AwsSolutions--BankItLabSecureStorage-NagReport.csv
 8f15657ec47201bd35be15848d32d8caa2b7399c6caa4f1f344d476518002028  evidence/aws/cdk-nag/AwsSolutions-NagReport.json
 cbebe50f044ceaab25443e7d742800baae183e829634ddcc7a60a0a47e9a2301  evidence/aws/cdk-nag/validation-report.json
-900b23a3c2afeb9a6fc9f36a5f902ec9a51fee2d473ec179ce5e79fd86f8b2dd  evidence/aws/ci/RUNS.md
+5015d46cca4a2df144aa7e602b3d7f12ebbcf9d7c2ad4e9228c6ddaf8b75c3b0  evidence/aws/ci/RUNS.md
 8e80c8260f97d18e3a701b78beb523e39c04366d7e32787f3c543569aacee510  evidence/aws/evidence-schema.json
 f39654949d806069f04da41c9027e08dc7e18654c4c433aa391cf23b58c66e32  evidence/aws/jest-results.json
 687969d75b1083f93ec871f0921511d59f297e43f3206d9b364042ce67396bfb  evidence/aws/logs/01-node-version.log
@@ -46,7 +46,10 @@ d623ebd9e8b1ea646650a6f23b309da6436b431a2d65e466d8e25a4024d4d339  evidence/aws/l
 d6c6ce724b6ae8e071481a62f192df37d119cdfb2e02a911aa131a8b7bc80213  evidence/aws/logs/42-cdk-synth.log
 201dec4f50925e6ff84b5d56a5148326a7496f8263e1951199cda41a2e319f23  evidence/aws/logs/43-jest-json.log
 e3f5ff427aff0f2f739648b4786f376c500c01a8688408f16639e9439bd5f4a7  evidence/aws/logs/44-validate-evidence.log
-03e19ae3fedf0c21f47e4ce480795798fe2a4a62378b8d0f97f70096d3afcd0e  evidence/aws/logs/COMMANDS.tsv
+7640c9fa49ec07a06d89df790efdb1958ad2501ec416ae52d356a03334de6908  evidence/aws/logs/45-git-push-evidence-schema.log
+a024c22758e3b0017a9ae2dc0a2973532a99b46376021df0771550db4df25cbf  evidence/aws/logs/46-gh-run-watch-ci-2.log
+b42f5477095609a54ffb4268752933248b1067a93a26f64f2da2c8caa689a865  evidence/aws/logs/47-gh-run-view-ci-2.log
+564cde7a74ccb4d01c249a7b23eeaf620ef0a08ee06620d966f8a5ed10897198  evidence/aws/logs/COMMANDS.tsv
 5be53783b966b50402cd4828024f01485508a3f974f79771ee2638bfaf20b781  evidence/aws/logs/CORRECTION-PASS-1.md
 5185437e588e7b60c5cb76eeb2e7fdac0ab090a6c85cb3a4c05193d95065435d  evidence/aws/logs/CORRECTION-PASS-2.md
 19eec3131d20e937f398f00d1778bda4d00793dc82d2616abdf717070b3bb4b5  evidence/aws/logs/CORRECTION-PASS-3.md
@@ -73,4 +76,4 @@ c352d2b1a441299c44d345a9bedca04659c1fdb0bb779b3359149ed145e3aff0  infra/aws-cdk/
 84364fd4857a75e58f53336aba096498dd1e1184ecbe1838cf63117dbe6fb312  infra/aws-cdk/test/evidence-validator.test.ts
 035c3322dd4b0ae554c0019bdc22a6af9a644c4c329a58a856d490255019a1c4  infra/aws-cdk/test/secure-storage-stack.test.ts
 a46fbd0954377e892ae19d57fb1165cc9579bf9dfe893129263e234580f6b4f6  infra/aws-cdk/tsconfig.json
-05c4ec64d335127aa3039e89a6a64dac0b38c5755cba7e64c7610a0821d34f59  reports/MORNING_REPORT.md
+68082ce7e6d5ba3feceb8dd3059662fc4abe79610fdb4352b09cd11cf0c8d67d  reports/MORNING_REPORT.md

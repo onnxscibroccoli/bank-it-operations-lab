@@ -15,10 +15,16 @@ See `git log origin/main..bank-aws-001` and `evidence/aws/logs/REBASE-MAP.md`.
 | 03b93d1 | stack, tests, cdk-nag, static evidence (was 15421c9) |
 | 22c72b0 | git/GitHub ops evidence logger and rebase map |
 | 88684d1 | credential-free CI workflow |
-| (this commit) | evidence schema + validator, ADRs, READMEs, morning report |
+| af76d20 | evidence schema + validator, ADRs, READMEs, morning report skeleton |
+| (next) | CI run record, Drive checkpoint record |
 
 ## Actions runs
-See `evidence/aws/ci/RUNS.md` (run IDs, head SHAs, conclusions, URLs).
+| Run | Head | Conclusion |
+|---|---|---|
+| https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40630567160 | 88684d1 | success |
+| https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40630990406 | af76d20 | success |
+
+Full record: `evidence/aws/ci/RUNS.md`. CI correction passes used: 0 of 3.
 
 ## Checks (local, credential-free; logs in evidence/aws/logs)
 - `npm ci` 0 (log 40), `tsc --noEmit` 0 (41), `cdk synth --no-lookups` 0 (42), Jest 21/21 (43), evidence validator VALID (44).
