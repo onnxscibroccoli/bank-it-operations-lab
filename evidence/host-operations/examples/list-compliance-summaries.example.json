@@ -1,0 +1,22 @@
+{
+  "_exampleData": "EXAMPLE DATA - illustrative shape of `aws ssm list-compliance-summaries --filters Key=ComplianceType,Values=Patch,Type=EQUAL` output after the canary ring and before wave1. Not from any AWS account.",
+  "ComplianceSummaryItems": [
+    {
+      "ComplianceType": "Patch",
+      "CompliantSummary": {
+        "CompliantCount": 2,
+        "SeveritySummary": {
+          "CriticalCount": 0, "HighCount": 0, "MediumCount": 0, "LowCount": 0,
+          "InformationalCount": 0, "UnspecifiedCount": 2
+        }
+      },
+      "NonCompliantSummary": {
+        "NonCompliantCount": 38,
+        "SeveritySummary": {
+          "CriticalCount": 31, "HighCount": 7, "MediumCount": 0, "LowCount": 0,
+          "InformationalCount": 0, "UnspecifiedCount": 0
+        }
+      }
+    }
+  ]
+}

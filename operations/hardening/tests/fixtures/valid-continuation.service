@@ -1,0 +1,27 @@
+[Unit]
+Description=fixture
+
+[Service]
+ExecStart=/usr/bin/sleep infinity
+User=fixture
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+CapabilityBoundingSet=
+SystemCallFilter=@system-service \
+    ~@privileged
+RestrictAddressFamilies=AF_UNIX \
+    AF_INET
+SystemCallArchitectures=native
+UMask=0027
+; semicolon comments are comments too
+# so are hash comments

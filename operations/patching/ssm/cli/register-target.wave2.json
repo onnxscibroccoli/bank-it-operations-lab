@@ -1,0 +1,14 @@
+{
+  "WindowId": "<WAVE2_WINDOW_ID>",
+  "Name": "wave2-hosts",
+  "ResourceType": "INSTANCE",
+  "Targets": [
+    {
+      "Key": "tag:PatchGroup",
+      "Values": [
+        "wave2",
+        "wave2-rhel"
+      ]
+    }
+  ]
+}

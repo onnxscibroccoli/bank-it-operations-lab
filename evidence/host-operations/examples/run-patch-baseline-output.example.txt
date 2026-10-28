@@ -1,0 +1,15 @@
+# EXAMPLE DATA - abridged, illustrative AWS-RunPatchBaseline (Install) stdout for one canary host.
+# Not captured from any real instance; wording and counts are representative only.
+Instance ID: i-EXAMPLEcanary001
+Patch group: canary
+Baseline ID: pb-EXAMPLE-al2023
+Operation type: Install
+Reboot option: RebootIfNeeded
+Patch summary:
+  Installed: 412   Installed other: 38   Pending reboot: 0
+  Missing: 0       Failed: 0             Not applicable: 1290
+Updated packages (excerpt):
+  kernel        6.1.EXAMPLE-1.amzn2023 -> 6.1.EXAMPLE-2.amzn2023
+  openssl-libs  3.0.EXAMPLE-1          -> 3.0.EXAMPLE-2
+Reboot required: yes -> rebooting (RebootIfNeeded)
+Post-reboot scan: COMPLIANT

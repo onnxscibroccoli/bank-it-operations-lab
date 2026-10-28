@@ -1,0 +1,36 @@
+{
+  "Name": "bank-lab-rhel-security",
+  "Description": "EXAMPLE ONLY - RHEL security+bugfix baseline with delayed auto-approval (aws ssm create-patch-baseline --cli-input-json)",
+  "OperatingSystem": "REDHAT_ENTERPRISE_LINUX",
+  "ApprovalRules": {
+    "PatchRules": [
+      {
+        "PatchFilterGroup": {
+          "PatchFilters": [
+            {"Key": "CLASSIFICATION", "Values": ["Security"]},
+            {"Key": "SEVERITY", "Values": ["Critical", "Important"]}
+          ]
+        },
+        "ComplianceLevel": "CRITICAL",
+        "ApproveAfterDays": 3
+      },
+      {
+        "PatchFilterGroup": {
+          "PatchFilters": [
+            {"Key": "CLASSIFICATION", "Values": ["Security", "Bugfix"]}
+          ]
+        },
+        "ComplianceLevel": "MEDIUM",
+        "ApproveAfterDays": 14
+      }
+    ]
+  },
+  "ApprovedPatches": [],
+  "ApprovedPatchesComplianceLevel": "HIGH",
+  "RejectedPatches": [],
+  "RejectedPatchesAction": "BLOCK",
+  "Tags": [
+    {"Key": "lab", "Value": "bank-it-operations-lab"},
+    {"Key": "example-data", "Value": "true"}
+  ]
+}

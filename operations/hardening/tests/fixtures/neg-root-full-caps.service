@@ -1,0 +1,8 @@
+[Unit]
+Description=fixture
+
+[Service]
+ExecStart=/usr/bin/sleep infinity
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
