@@ -1,0 +1,56 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleAssignmentScheduleInstances",
+  "value": [
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000201",
+      "principalId": "b9a5e000-0000-4000-8000-000000000001",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-01-05T00:00:00Z",
+      "endDateTime": null,
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001201",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002201"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000202",
+      "principalId": "b9a5e000-0000-4000-8000-000000000002",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-01-05T00:00:00Z",
+      "endDateTime": null,
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001202",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002202"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000221",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-10-28T09:00:00Z",
+      "endDateTime": "2026-10-28T13:00:00Z",
+      "assignmentType": "Activated",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001221",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002221"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000222",
+      "principalId": "b9a5e000-0000-4000-8000-000000000011",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-01-01T00:00:00Z",
+      "endDateTime": "2027-01-01T00:00:00Z",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001222",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002222"
+    }
+  ],
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances?$skiptoken=SYNTHETIC-ACTIVE-PAGE-2"
+}

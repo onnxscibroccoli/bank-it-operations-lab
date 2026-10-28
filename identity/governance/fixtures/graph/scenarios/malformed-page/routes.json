@@ -1,0 +1,15 @@
+{
+  "description": "200 page without a value array. Expected exit 2.",
+  "inherit": "baseline",
+  "routes": {
+    "/users?$select=id,displayName,userPrincipalName,userType,accountEnabled": [
+      {
+        "body": {
+          "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users",
+          "values": []
+        },
+        "status": 200
+      }
+    ]
+  }
+}

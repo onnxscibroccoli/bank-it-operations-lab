@@ -1,0 +1,6 @@
+$ python3 identity/governance/inventory.py --scenario paging-loop --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-paging-loop.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-paging-loop.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-paging-loop.csv --quiet
+--- stdout ---
+ERROR scenario=paging-loop mode=pim exit=2
+--- stderr ---
+ERROR scenario=paging-loop {"kind": "response", "status": null, "code": null, "requestId": null, "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleEligibilityScheduleInstances", "message": "@odata.nextLink loop"}
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:14:36Z duration_ms=27 ---

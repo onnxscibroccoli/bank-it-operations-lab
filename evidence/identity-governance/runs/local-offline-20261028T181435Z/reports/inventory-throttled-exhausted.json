@@ -1,0 +1,55 @@
+{
+  "schema": "bank-it-lab/identity-governance-inventory/v1",
+  "mode": "pim",
+  "offline": true,
+  "tenantStateClaimed": false,
+  "disclaimer": "OFFLINE / SYNTHETIC. Generated from local Microsoft Graph-shaped JSON fixtures. No tenant, Microsoft Graph API call or credential was used; nothing here describes any real tenant.",
+  "scenario": "throttled-exhausted",
+  "asOfUtc": "2026-10-28T12:00:00Z",
+  "graph": {
+    "requests": 10,
+    "pages": 5,
+    "retries": [
+      {
+        "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances",
+        "status": 429,
+        "attempt": 1,
+        "retryAfterHeader": "5",
+        "waitSeconds": 5
+      },
+      {
+        "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances",
+        "status": 429,
+        "attempt": 2,
+        "retryAfterHeader": "5",
+        "waitSeconds": 5
+      },
+      {
+        "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances",
+        "status": 429,
+        "attempt": 3,
+        "retryAfterHeader": "5",
+        "waitSeconds": 5
+      },
+      {
+        "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances",
+        "status": 429,
+        "attempt": 4,
+        "retryAfterHeader": "5",
+        "waitSeconds": 5
+      }
+    ]
+  },
+  "exitCode": 2,
+  "overall": "ERROR",
+  "error": {
+    "kind": "throttled",
+    "status": 429,
+    "code": "TooManyRequests",
+    "requestId": "synthetic-429-TooManyRequests",
+    "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances",
+    "message": "HTTP 429 after 4 retries"
+  },
+  "inventory": [],
+  "findings": []
+}

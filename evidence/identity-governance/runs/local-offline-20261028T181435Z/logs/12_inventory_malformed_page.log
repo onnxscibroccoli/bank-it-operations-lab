@@ -1,0 +1,6 @@
+$ python3 identity/governance/inventory.py --scenario malformed-page --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-malformed-page.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-malformed-page.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-malformed-page.csv --quiet
+--- stdout ---
+ERROR scenario=malformed-page mode=pim exit=2
+--- stderr ---
+ERROR scenario=malformed-page {"kind": "response", "status": null, "code": null, "requestId": null, "url": "https://graph.microsoft.com/v1.0/users?$select=id,displayName,userPrincipalName,userType,accountEnabled", "message": "collection page without a 'value' array"}
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:14:36Z duration_ms=26 ---

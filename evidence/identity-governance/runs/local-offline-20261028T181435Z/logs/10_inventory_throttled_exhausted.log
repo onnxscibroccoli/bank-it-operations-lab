@@ -1,0 +1,6 @@
+$ python3 identity/governance/inventory.py --scenario throttled-exhausted --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-throttled-exhausted.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-throttled-exhausted.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-throttled-exhausted.csv --quiet
+--- stdout ---
+ERROR scenario=throttled-exhausted mode=pim exit=2
+--- stderr ---
+ERROR scenario=throttled-exhausted {"kind": "throttled", "status": 429, "code": "TooManyRequests", "requestId": "synthetic-429-TooManyRequests", "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances", "message": "HTTP 429 after 4 retries"}
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:14:36Z duration_ms=29 ---

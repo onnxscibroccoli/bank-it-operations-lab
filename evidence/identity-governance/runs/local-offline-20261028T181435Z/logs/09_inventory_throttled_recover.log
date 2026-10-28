@@ -1,0 +1,5 @@
+$ python3 identity/governance/inventory.py --scenario throttled-recover --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-throttled-recover.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-throttled-recover.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-throttled-recover.csv --quiet
+--- stdout ---
+PASS scenario=throttled-recover mode=pim exit=0
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:14:36Z duration_ms=28 ---

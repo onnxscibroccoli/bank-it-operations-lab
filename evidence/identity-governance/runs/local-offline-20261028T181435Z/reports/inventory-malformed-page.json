@@ -1,0 +1,26 @@
+{
+  "schema": "bank-it-lab/identity-governance-inventory/v1",
+  "mode": "pim",
+  "offline": true,
+  "tenantStateClaimed": false,
+  "disclaimer": "OFFLINE / SYNTHETIC. Generated from local Microsoft Graph-shaped JSON fixtures. No tenant, Microsoft Graph API call or credential was used; nothing here describes any real tenant.",
+  "scenario": "malformed-page",
+  "asOfUtc": "2026-10-28T12:00:00Z",
+  "graph": {
+    "requests": 2,
+    "pages": 2,
+    "retries": []
+  },
+  "exitCode": 2,
+  "overall": "ERROR",
+  "error": {
+    "kind": "response",
+    "status": null,
+    "code": null,
+    "requestId": null,
+    "url": "https://graph.microsoft.com/v1.0/users?$select=id,displayName,userPrincipalName,userType,accountEnabled",
+    "message": "collection page without a 'value' array"
+  },
+  "inventory": [],
+  "findings": []
+}

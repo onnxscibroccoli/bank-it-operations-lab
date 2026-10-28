@@ -1,0 +1,6 @@
+$ python3 identity/governance/inventory.py --scenario auth-401 --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-auth-401.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-auth-401.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-auth-401.csv --quiet
+--- stdout ---
+ERROR scenario=auth-401 mode=pim exit=2
+--- stderr ---
+ERROR scenario=auth-401 {"kind": "authorization", "status": 401, "code": "InvalidAuthenticationToken", "requestId": "synthetic-401-InvalidAuthenticationToken", "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleDefinitions?$select=id,displayName,templateId,isBuiltIn", "message": "HTTP 401 InvalidAuthenticationToken: Access token is empty. (synthetic)"}
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:14:36Z duration_ms=26 ---
