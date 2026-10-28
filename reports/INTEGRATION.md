@@ -7,6 +7,29 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Accelerated completion plan (PR #27 @ 72aa8b7, lane B): progress as of 2026-10-28 18:20 EDT
+
+Deadline 2026-10-29 00:00 EDT. Remaining window at commit time: about 5h40m. This commit started from `4f54a016`.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | USER ACTION REQUIRED reporting in Actions (`integration-gate.yml`: `user-actions` early job, `final-summary` with `if: always()`) | Done; pending CI on the candidate |
+| 2 | Actions pinned to full commit SHAs | Done (all `actions/*`). Only the same-repo reusable workflows (`./.github/workflows/*.yml`) are not SHA-pinned, because they always resolve at the commit under test |
+| 3 | Module registry `coordination/modules.json` + `scripts/ci/check_modules.py` | Done; runs in validate-all.sh and in CI |
+| 4 | Freeze candidate; test against current `main` on `candidate/main-validation-<sha>` | In progress; the candidate is the commit that introduces this section |
+| 5 | tasks.json / INTEGRATION.md updated | Done for this commit (`accelerated_plan`, `user_actions`, `autonomous_blockers`) |
+
+The USER ACTION REQUIRED top line is currently **USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4**, plus UA-5 (AC6), which isn't actionable yet. The user actions are: exception approval, Entra baseline choices, branch-protection decision and closing PR #1.
+
+Component workflows also accept `workflow_call`, so the gate runs them for the exact SHA. Their own push and pull_request triggers are unchanged, which means some jobs run twice on a PR. aws-cdk's concurrency group now includes the caller workflow name, so a gate run and a standalone run don't cancel each other.
+
+**Gates**
+- Exact-SHA review: **UNMET** (AC1).
+- Current-main validation: pending; see below.
+- Merge eligibility (C6): **NOT ELIGIBLE**. The `merge-eligibility` job is expected to fail until AC1–AC5 are MET for one exact SHA.
+
+PR #27 C1–C5 are about PR #26's acceptance verifier. That verifier is not integrated, so none of C1–C5 is addressed here, and PR #26's branch was not touched.
+
 ## Merge policy (updated per [PR #27](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27) finding C6)
 - **Automated merges into `main` are allowed once independently proven.** That means an independent review approving the *exact* candidate SHA (AC1), with every other acceptance condition (AC2–AC5) met for that same SHA.
 - **Final human portfolio acceptance (AC6) is a separate gate.** Technical merge eligibility is not portfolio acceptance.

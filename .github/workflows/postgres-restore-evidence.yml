@@ -14,6 +14,7 @@ on:
       - "evidence/postgres/**"
       - "tests/integration/**"
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -37,7 +38,7 @@ jobs:
     env:
       RUN_LABEL: ci-selftest-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
       - name: Run harness self-test (pipeline exit code via PIPESTATUS)
@@ -50,7 +51,7 @@ jobs:
           echo "selftest exit code: $rc"
       - name: Upload self-test evidence (always)
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: postgres-evidence-selftest-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -84,7 +85,7 @@ jobs:
       PGPASSWORD: postgres
       RUN_LABEL: ci-service-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
       - name: Run scenario (exit code via PIPESTATUS)
@@ -110,7 +111,7 @@ jobs:
           if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; else echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Upload evidence (always, including failures)
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: postgres-evidence-service-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -132,7 +133,7 @@ jobs:
     env:
       RUN_LABEL: ci-offline-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
       - name: Run scenario offline (exit code via PIPESTATUS)
@@ -159,7 +160,7 @@ jobs:
           if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; else echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Upload evidence (always, including failures)
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: postgres-evidence-offline-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -196,7 +197,7 @@ jobs:
       PGPASSWORD: postgres
       RUN_LABEL: ci-mismatch-control-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
       - name: Run scenario against mismatched server (expected to fail)
@@ -226,7 +227,7 @@ jobs:
           [ "$ok" = 1 ]
       - name: Upload evidence (always)
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: postgres-evidence-mismatch-control-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -241,7 +242,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
       - name: Detect CDK apps
@@ -251,7 +252,7 @@ jobs:
           echo "apps=$apps" >> "$GITHUB_OUTPUT"
           if [ -z "$apps" ]; then echo "No cdk.json found; CDK synth skipped (not counted as a pass)." | tee -a "$GITHUB_STEP_SUMMARY"
           else echo "CDK apps: $apps" | tee -a "$GITHUB_STEP_SUMMARY"; fi
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         if: steps.detect.outputs.apps != ''
         with:
           node-version: "20"
@@ -273,7 +274,7 @@ jobs:
           exit $status
       - name: Upload CDK synth evidence
         if: always() && steps.detect.outputs.apps != ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: cdk-synth-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: cdk-evidence/

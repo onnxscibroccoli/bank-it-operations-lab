@@ -16,6 +16,8 @@ FAILED=(); N=0
 step() { local name="$1"; shift; N=$((N+1)); echo "::: [$N] $name"; if "$@"; then echo "    ok"; else echo "    FAILED: $name"; FAILED+=("$name"); fi; }
 
 # --- PR #3 shared evidence tooling
+step "module registry"             python3 scripts/ci/check_modules.py
+step "user-actions report"         python3 scripts/ci/user_actions.py --out /dev/null
 step "shared validator unit tests" python3 -m unittest discover -s evidence/shared/tests
 # --- PR #4 Entra CA (offline, synthetic)
 step "entra unit tests"            python3 -m unittest discover -s tests/entra

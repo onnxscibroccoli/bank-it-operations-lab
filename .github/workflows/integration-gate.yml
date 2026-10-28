@@ -1,0 +1,94 @@
+name: integration-gate
+
+# Aggregate gate for the combined candidate (PR #27 accelerated plan, lane B).
+# 1. user-actions: fast, dependency-free job that publishes USER ACTION REQUIRED items from
+#    coordination/tasks.json to the job summary and as annotations.
+# 2. module-registry: coordination/modules.json must match the tree, validate-all.sh and CI jobs.
+# 3. The component workflows run as reusable workflows for this exact SHA.
+# 4. final-summary (always runs): aggregates every job result; fails unless all succeeded.
+# 5. merge-eligibility (always runs): PR #27 C6 policy check. Expected to FAIL while AC1-AC5 are open.
+# No secrets, no cloud credentials, nothing is deployed, nothing is merged.
+on:
+  push:
+    branches: [main, overnight/integration, 'candidate/**']
+  pull_request:
+    branches: [main, overnight/integration]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gate-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  user-actions:
+    name: user-actions (USER ACTION REQUIRED report)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            coordination
+            scripts/ci
+      - name: Publish user actions
+        run: python3 scripts/ci/user_actions.py --annotations --summary "$GITHUB_STEP_SUMMARY" --out user-actions.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: user-actions-${{ github.sha }}
+          path: user-actions.json
+          retention-days: 7
+
+  module-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Check coordination/modules.json
+        run: python3 scripts/ci/check_modules.py
+
+  offline-validation:
+    uses: ./.github/workflows/offline-validation.yml
+
+  aws-cdk:
+    uses: ./.github/workflows/aws-cdk.yml
+
+  postgres:
+    uses: ./.github/workflows/postgres-restore-evidence.yml
+
+  final-summary:
+    if: always()
+    needs: [user-actions, module-registry, offline-validation, aws-cdk, postgres]
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            coordination
+            scripts/ci
+      - name: Aggregate results
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: python3 scripts/ci/final_summary.py --summary "$GITHUB_STEP_SUMMARY"
+
+  merge-eligibility:
+    if: always()
+    needs: [final-summary]
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            coordination
+            scripts/ci
+      - name: AC1-AC5 for this exact SHA (PR #27 C6)
+        run: python3 scripts/ci/merge_eligibility.py --sha "$GITHUB_SHA" --summary "$GITHUB_STEP_SUMMARY"

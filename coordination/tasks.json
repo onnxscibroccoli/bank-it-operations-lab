@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T17:48:27-04:00",
-    "remaining": "6h11m",
+    "as_of": "2026-10-28T18:20:00-04:00",
+    "remaining": "5h40m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T17:48:27-04:00",
+  "updated": "2026-10-28T18:20:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -319,5 +319,170 @@
       "verdict": null,
       "prior_external_review": "PR #27 (CHANGES REQUIRED, C1-C5); the request asks for re-review against those findings"
     }
-  ]
+  ],
+  "user_actions": [
+    {
+      "id": "UA-1",
+      "task_id": "PR-5/AC2",
+      "classification": "USER_ACTION_REQUIRED",
+      "status": "OPEN",
+      "action": "Approve or reject the AWS security exceptions EX-01..EX-04 in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, and the cdk-nag suppressions that are already applied for them (PR #14 B5-1).",
+      "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
+      "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded.",
+      "smallest_permission": "Owner decision (comment on PR #5 or edit SECURITY_EXCEPTIONS.md approval fields).",
+      "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
+      "blocks": [
+        "AC2",
+        "merge of PR #7 into main"
+      ],
+      "continuing": "All other lanes continue; the B5-2 KMS key-policy fix is an autonomous code fix.",
+      "deadline_impact": "Blocks a merge to main before 2026-10-29T00:00-04:00 if not decided."
+    },
+    {
+      "id": "UA-2",
+      "task_id": "PR-4/AC4",
+      "classification": "USER_ACTION_REQUIRED",
+      "status": "OPEN",
+      "action": "Confirm the Entra Conditional Access baseline choices: risk policies stay report-only, device compliance applies to All users on All apps, and the 12-role privileged list.",
+      "reason": "Baseline policy scope is an identity-risk decision for the owner.",
+      "observed": "PR #4 body lists these as open questions; identity/entra/baseline.json encodes the current choice.",
+      "smallest_permission": "Owner decision (comment on PR #4).",
+      "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
+      "blocks": [
+        "AC4"
+      ],
+      "continuing": "All other lanes continue.",
+      "deadline_impact": "Blocks AC4 (docs match) for a merge before midnight."
+    },
+    {
+      "id": "UA-3",
+      "task_id": "REPO/branch-protection",
+      "classification": "USER_ACTION_REQUIRED",
+      "status": "OPEN",
+      "action": "Decide whether to protect main and require the integration-gate checks final-summary and merge-eligibility.",
+      "reason": "main is unprotected (branch protection API returns 404). Repository settings changes were not delegated to this agent.",
+      "observed": "Branch not protected (HTTP 404). The owner account has admin permission, so this is a decision, not a permission gap.",
+      "smallest_permission": "Repository admin (already held by the owner account).",
+      "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/branches",
+      "blocks": [],
+      "continuing": "The gate runs and reports regardless; without protection it is advisory.",
+      "deadline_impact": "None for testing; affects whether the gate is enforced."
+    },
+    {
+      "id": "UA-4",
+      "task_id": "PR-1",
+      "classification": "USER_ACTION_REQUIRED",
+      "status": "OPEN",
+      "action": "Close PR #1 as superseded by PR #5, or tell the integrator to keep it open.",
+      "reason": "This agent does not close PRs.",
+      "observed": "PR #1 is open and still describes the superseded self-logging design.",
+      "smallest_permission": "Owner closes the PR.",
+      "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/1",
+      "blocks": [
+        "AC4"
+      ],
+      "continuing": "All other lanes continue.",
+      "deadline_impact": "Minor (docs consistency)."
+    },
+    {
+      "id": "UA-5",
+      "task_id": "AC6",
+      "classification": "USER_ACTION_REQUIRED",
+      "status": "NOT_YET_ACTIONABLE",
+      "action": "Final human portfolio acceptance of the merged result.",
+      "reason": "Separate final gate by policy (PR #27 C6).",
+      "observed": "AC1, AC2, AC4 and AC5 are not met yet.",
+      "smallest_permission": "Owner decision.",
+      "instructions": "After AC1-AC5 are MET for one exact SHA, review reports/INTEGRATION.md for that SHA.",
+      "blocks": [
+        "AC6"
+      ],
+      "continuing": "Everything else.",
+      "deadline_impact": "Required for portfolio acceptance, not for technical merge eligibility."
+    }
+  ],
+  "autonomous_blockers": [
+    {
+      "id": "AB-1",
+      "source": "PR #14 B5-2",
+      "item": "KMS key-admin statement allows grant or key-policy escalation (infra/aws-cdk/lib/least-privilege-key.ts)",
+      "classification": "AUTONOMOUS_FIX",
+      "owner": "aws-cdk module owner"
+    },
+    {
+      "id": "AB-2",
+      "source": "AC1",
+      "item": "Independent exact-SHA review of the frozen PR #7 candidate",
+      "classification": "AUTONOMOUS_FIX",
+      "owner": "lane E (independent review)"
+    },
+    {
+      "id": "AB-3",
+      "source": "PR #27 C1-C5",
+      "item": "Acceptance verifier repairs on PR #26 (reported at 17cfaea / eb42b23); exact-SHA re-review",
+      "classification": "AUTONOMOUS_FIX",
+      "owner": "lane A (Worker D)"
+    },
+    {
+      "id": "AB-4",
+      "source": "PR #14 B6-1/B6-2",
+      "item": "PR #6 self-logging and exempt-role SCP bypass",
+      "classification": "AUTONOMOUS_FIX",
+      "owner": "orgs module owner"
+    }
+  ],
+  "accelerated_plan": {
+    "source": "PR #27 @ 72aa8b7, reports/independent/chatgpt/accelerated-completion-plan-20261028.md (lane B, integrator)",
+    "started_from_head": "4f54a0164f25c0e9bd4ab17d718bc188fd242772",
+    "items": [
+      {
+        "id": "P1",
+        "item": "USER ACTION REQUIRED reporting in GitHub Actions",
+        "status": "DONE_PENDING_CI",
+        "detail": "integration-gate.yml: user-actions job (fast, sparse checkout, step summary + warning annotations + 7-day artifact) and final-summary job (if: always(), needs all jobs, aggregates success/failure/cancelled/skipped plus the USER ACTION REQUIRED top line). Source of truth: user_actions in this file. scripts/ci/user_actions.py validates every field and escapes all values."
+      },
+      {
+        "id": "P2",
+        "item": "Pin actions to full commit SHAs",
+        "status": "DONE",
+        "pinned": {
+          "actions/checkout": "fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5",
+          "actions/setup-node": "a0853c24544627f65ddf259abe73b1d18a591444 # v5",
+          "actions/setup-python": "a26af69be951a213d495a4c3e4e4022e16d87065 # v5",
+          "actions/upload-artifact v4": "ea165f8d65b6e75b540449e92b4886f43607fa02 # v4",
+          "actions/upload-artifact v5": "330a01c490aca151604b8cf639adc76d48f6c5d4 # v5"
+        },
+        "unpinned": [
+          {
+            "uses": "./.github/workflows/{offline-validation,aws-cdk,postgres-restore-evidence}.yml",
+            "why": "same-repository reusable workflows; they always resolve at the commit under test"
+          }
+        ],
+        "not_done": "Major upgrades (checkout v7, setup-node/python v7, upload-artifact v7) deferred: not needed for correctness before the deadline."
+      },
+      {
+        "id": "P3",
+        "item": "Module registry",
+        "status": "DONE",
+        "detail": "coordination/modules.json (22 modules: 5 INTEGRATED, 1 EXCLUDED, 16 NOT_INTEGRATED) checked by scripts/ci/check_modules.py in validate-all.sh and the integration-gate module-registry job: paths exist or are absent as declared, every tracked file is claimed, every listed validate-all step and CI job exists."
+      },
+      {
+        "id": "P4",
+        "item": "Freeze the combined candidate and test it against current main",
+        "status": "IN_PROGRESS",
+        "detail": "Candidate = the commit that introduces this record (see reports/INTEGRATION.md and the PR #7 comment trail for its SHA); test branch candidate/main-validation-<short sha> = origin/main + --no-ff merge of the candidate."
+      },
+      {
+        "id": "P5",
+        "item": "Update tasks.json and INTEGRATION.md",
+        "status": "DONE_FOR_THIS_COMMIT"
+      }
+    ],
+    "gates": {
+      "exact_sha_review": "UNMET (AC1): no independent review of the candidate SHA yet. Review packets in coordination/review-requests/.",
+      "current_main_validation": "PENDING: run validate-all.sh and Actions on candidate/main-validation-<sha>.",
+      "merge_eligibility": "NOT ELIGIBLE: AC1 UNMET, AC2 PARTIAL, AC3 pending CI for the candidate, AC4 PARTIAL, AC5 UNMET. AC6 is a separate human gate."
+    },
+    "pr27_c1_c5": "Not addressed here: C1-C5 are on PR #26's acceptance verifier, which is not integrated, and PR #26's branch is not modified by the integrator."
+  }
 }
