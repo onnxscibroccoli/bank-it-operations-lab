@@ -90,7 +90,7 @@ The commit that adds this file changes HEAD. Its own acceptance run result is re
 
 ---
 
-## Addendum, 2026-10-28 ~18:05 EDT: independent review (PR #27) and repairs. Earlier sections are kept unchanged as the historical record.
+## Addendum, 2026-10-28 ~17:56 EDT: independent review (PR #27) and repairs. Earlier sections are kept unchanged as the historical record.
 
 PR #27 (`reports/independent/chatgpt/acceptance-181bcdd-review.md`) reviewed `181bcdd` and found **CHANGES REQUIRED**. The C1–C3 probes
 reproduced false acceptances against the verifier as it stood at that commit. As a result:
