@@ -190,7 +190,7 @@ else unknown ACC-B-01 yes "tools/acceptance/runner.py (worker B) not present at 
 # ---------------------------------------------------------------- 2d. reports and hashes
 n=0; while IFS= read -r s; do n=$((n+1))
   check "HASH-$n" yes "committed bundle $s verifies (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s"
-done < <(git ls-files | grep -E '(^|/)SHA256SUMS$' | sort)
+done < <(git ls-files 'evidence/**/SHA256SUMS' | sort)  # evidence bundles only; tests/**/fixtures hold deliberately broken bundles exercised by ACC-A-01
 [ $n -eq 0 ] && unknown HASH-1 yes "no committed SHA256SUMS bundles found"
 f="$(git ls-files 'evidence/aws/*/SHA256SUMS' | head -1)"
 if [ -n "$f" ]; then
