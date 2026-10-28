@@ -1,0 +1,100 @@
+{
+  "cases": {
+    "healthy.json": {
+      "exit": 0,
+      "failed_checks": [],
+      "overall": "HEALTHY"
+    },
+    "host-metric-missing.json": {
+      "exit": 1,
+      "failed_checks": [
+        "host:collection_errors",
+        "host:metrics_present"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "malformed-bad-status.json": {
+      "exit": 2,
+      "failed_checks": [
+        "payload:valid"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "malformed-duplicate-key.json": {
+      "exit": 2,
+      "failed_checks": [
+        "payload:valid"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "malformed-nan.json": {
+      "exit": 2,
+      "failed_checks": [
+        "payload:valid"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "malformed-truncated.json": {
+      "exit": 2,
+      "failed_checks": [
+        "payload:valid"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "malformed-unknown-key.json": {
+      "exit": 2,
+      "failed_checks": [
+        "payload:valid"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "malformed-wrong-type.json": {
+      "exit": 2,
+      "failed_checks": [
+        "payload:valid"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "missing-probe.json": {
+      "exit": 1,
+      "failed_checks": [
+        "probe:resolver-dns"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "stale.json": {
+      "exit": 1,
+      "failed_checks": [
+        "freshness:host",
+        "freshness:payload",
+        "freshness:probe:app-http",
+        "freshness:probe:db-tcp",
+        "freshness:probe:resolver-dns"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "timeout.json": {
+      "exit": 1,
+      "failed_checks": [
+        "probe:db-tcp"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "unhealthy.json": {
+      "exit": 1,
+      "failed_checks": [
+        "host:disk_free_ratio",
+        "probe:app-http"
+      ],
+      "overall": "UNHEALTHY"
+    },
+    "unknown-status.json": {
+      "exit": 1,
+      "failed_checks": [
+        "probe:resolver-dns"
+      ],
+      "overall": "UNHEALTHY"
+    }
+  },
+  "now": "2026-10-28T12:01:00Z"
+}
