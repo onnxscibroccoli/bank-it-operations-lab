@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "bundle": {
+    "id": "acceptance-bad-manifest",
+    "root": "evidence/acceptance-bad-manifest",
+    "kind": "not-a-kind"
+  },
+  "producer": {
+    "script": "tests/acceptance-contract/make_fixtures.py",
+    "source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff"
+  },
+  "hashes": {
+    "file": "SHA256SUMS",
+    "base": "bundle",
+    "algorithm": "sha256"
+  },
+  "commands": {
+    "file": "logs/COMMANDS.tsv",
+    "format": "aws-3col",
+    "rows_written_by": "producer-script"
+  },
+  "exclusions": [
+    {
+      "path": "SHA256SUMS",
+      "reason": "self-reference"
+    },
+    {
+      "path": "MANIFEST.json",
+      "reason": "added-after-run"
+    }
+  ],
+  "anchors": [
+    {
+      "type": "git-commit",
+      "ref": "49122f2457aff41f14a3f3dec4ae378ac0147cff"
+    }
+  ]
+}
