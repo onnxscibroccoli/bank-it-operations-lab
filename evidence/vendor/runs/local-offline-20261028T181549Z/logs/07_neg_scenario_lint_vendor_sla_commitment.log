@@ -1,0 +1,13 @@
+# SIMULATION evidence log
+# step: neg_scenario_lint_vendor_sla_commitment (negative)
+# cwd: $REPO
+# command: /usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --scenario $TMP/scenario-vendor-sla-SIMULATION.md --link-base $REPO/governance/vendor-risk/scenarios
+# started_utc: 2026-10-28T18:15:50.147043+00:00
+
+--- stdout ---
+FINDING: scenario-vendor-sla-SIMULATION.md:260: SLA-like numeric commitment attributed to vendor: '4 hours'
+SIMULATION governance lint: FAIL (1 findings)
+
+--- stderr ---
+
+--- exit_code: 1 (expected 1) -> PASS ---
