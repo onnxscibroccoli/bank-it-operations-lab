@@ -45,6 +45,11 @@ def steps(tmp: Path):
     bad_raci.write_text(src.replace("| 1 | Business need & data requirements (minimization) | A | R |",
                                     "| 1 | Business need & data requirements (minimization) | A | A |"),
                         encoding="utf-8")
+    scen = GOV / "scenarios" / "core-banking-vendor-outage-SIMULATION.md"
+    bad_scen = tmp / "scenario-vendor-sla-SIMULATION.md"
+    bad_scen.write_text(scen.read_text(encoding="utf-8")
+                        + "\n- The vendor will restore service within 4 hours (99.9% uptime SLA).\n",
+                        encoding="utf-8")
     mut = tmp / "vendor-mock-mutant"
     shutil.copytree(MOCK, mut, ignore=shutil.ignore_patterns("__pycache__"))
     c = mut / "vendor_mock" / "contract.py"
@@ -58,7 +63,11 @@ def steps(tmp: Path):
         ("contract_json_parses", "check", 0, [PY, "-m", "json.tool", "contract/openapi.json"], MOCK),
         ("unit_tests", "test", 0, [PY, "-m", "unittest", "discover", "-s", "tests", "-t", ".", "-v"], MOCK),
         ("simulation_label_scan", "check", 0, [PY, "-c", SCAN, str(MOCK), str(GOV)], REPO),
+        ("governance_unit_tests", "test", 0,
+         [PY, "-m", "unittest", "discover", "-s", "governance/vendor-risk/tests", "-v"], REPO),
         ("governance_lint", "check", 0, [PY, str(GOV / "check_governance.py")], REPO),
+        ("neg_scenario_lint_vendor_sla_commitment", "negative", 1,
+         [PY, str(GOV / "check_governance.py"), "--scenario", str(bad_scen)], REPO),
         ("neg_governance_lint_blank_raci_template", "negative", 1,
          [PY, str(GOV / "check_governance.py"), "--raci", str(GOV / "raci-matrix-template.md")], REPO),
         ("neg_governance_lint_two_accountable", "negative", 1,

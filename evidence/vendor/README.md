@@ -22,11 +22,24 @@ runs/<RUN_LABEL>/
   SHA256SUMS     SHA-256 of every other file in the run directory
 ```
 
-Steps: Python version; contract JSON parses; full unittest suite (`-v`, 45 tests); SIMULATION-label
-scan over `integrations/vendor-mock` and `governance/vendor-risk`; governance lint; and four
-**negative** steps that must exit 1 — lint of the blank RACI template, lint of a RACI with two
-Accountables, and two mutation runs (validator ignoring extra fields; client ignoring the
-Retry-After cap) proving the suite catches a lenient implementation (no false PASS).
+Steps:
+- Python version.
+- Contract JSON parses.
+- Vendor-mock unittest suite (`-v`).
+- SIMULATION-label scan over `integrations/vendor-mock` and `governance/vendor-risk`.
+- Governance lint unit tests (`-v`).
+- Governance lint, which includes the escalation scenario.
+
+Five **negative** steps must exit 1:
+- lint of the blank RACI template
+- lint of a RACI with two Accountables
+- lint of the scenario after a vendor SLA claim is injected ("within 4 hours", "99.9% uptime")
+- a mutated validator that ignores extra fields
+- a mutated client that ignores the Retry-After cap
+
+The mutation runs show the suite catches a lenient implementation, so it cannot give a false PASS.
+
+Escalation evidence checklist for the tabletop: `escalation-evidence-checklist-SIMULATION.md`.
 
 ## Evidence → control mapping (SIMULATION; control IDs refer to `governance/vendor-risk`)
 
@@ -42,6 +55,7 @@ Retry-After cap) proving the suite catches a lenient implementation (no false PA
 | §2 / §8 Data minimization | unexpected `ssn` field rejected, not passed through; masked account-number pattern enforced | `test_extra_pii_field_is_rejected_not_passed_through`, `test_pattern_unmasked_account_number` |
 | Offline / synthetic-only | sockets blocked for the whole test run; all fixtures and documents labelled SIMULATION | `Offline.test_sockets_are_blocked`, `simulation_label_scan` |
 | RACI accountability | exactly one Accountable per activity; lint fails on blank template / duplicate A | `governance_lint`, `neg_governance_lint_*` |
+| E4–E7 Escalation / BCP tabletop readiness | The scenario has impact assessment, evidence collection, escalation, a bank-set update cadence, restoration criteria and post-incident review. No vendor SLA numbers, contacts or URLs; contract-dependent items are placeholders | `governance_lint`, `governance_unit_tests`, `neg_scenario_lint_vendor_sla_commitment` |
 | C1, C6, E1–E7, X1–X6 | **Not evidenced by tests** — documentary/contractual controls; see findings F1–F5 in the SIMULATION assessment | `governance/vendor-risk/examples/` |
 
 ## CI
