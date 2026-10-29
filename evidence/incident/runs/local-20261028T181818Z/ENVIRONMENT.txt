@@ -1,0 +1,10 @@
+SIMULATION run environment
+run_id=local-20261028T181818Z
+os=Linux 6.12.94+
+python=Python 3.13.5
+postgres=postgres (PostgreSQL) 17.10
+vendor_ref=88a37856da05468ecce86b4c5d1e1ac0b8530bc5
+observability_ref=3e40e39d73da3f0d20bced68651a54ee6c63846c
+postgres_ref=e7399fbb538504f723d1fb83e32ce50604807b8e
+scenario_commit=43e607ec31ad7e62b54e66ebb9abc5ca69d9ac52
+vendor_port=18099 pg_port=55432 poll_interval_s=5 inject_offset_s=1.5
