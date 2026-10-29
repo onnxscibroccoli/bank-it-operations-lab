@@ -1,0 +1,40 @@
+{
+  "id": "c0a00001-0000-4000-8000-000000000001",
+  "displayName": "CA001-Block-Legacy-Authentication-All-Users",
+  "state": "enabled",
+  "conditions": {
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "excludeUsers": [
+        "b9a5e000-0000-4000-8000-000000000001",
+        "b9a5e000-0000-4000-8000-000000000002"
+      ],
+      "includeGroups": [],
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeRoles": []
+    },
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": []
+    },
+    "clientAppTypes": [
+      "exchangeActiveSync",
+      "other"
+    ]
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [
+      "block"
+    ],
+    "customAuthenticationFactors": [],
+    "termsOfUse": [],
+    "authenticationStrength": null
+  },
+  "sessionControls": null
+}

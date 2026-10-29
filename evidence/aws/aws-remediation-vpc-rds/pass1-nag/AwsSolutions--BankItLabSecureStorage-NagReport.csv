@@ -1,0 +1,12 @@
+Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info
+"AwsSolutions-KMS5","BankItLabSecureStorage/DataKey/Resource","Compliant","N/A","Error","The KMS Symmetric key does not have automatic key rotation enabled."
+"AwsSolutions-S1","BankItLabSecureStorage/AccessLogsBucket/Resource","Compliant","N/A","Error","The S3 Bucket has server access logs disabled."
+"AwsSolutions-S2","BankItLabSecureStorage/AccessLogsBucket/Resource","Compliant","N/A","Error","The S3 Bucket does not have public access restricted and blocked."
+"AwsSolutions-S5","BankItLabSecureStorage/AccessLogsBucket/Resource","Compliant","N/A","Error","The S3 static website bucket either has an open world bucket policy or does not use a CloudFront Origin Access Identity (OAI) in the bucket policy for limited getObject and/or putObject permissions."
+"AwsSolutions-S10","BankItLabSecureStorage/AccessLogsBucket/Resource","Compliant","N/A","Error","The S3 Bucket or bucket policy does not require requests to use SSL."
+"AwsSolutions-S10","BankItLabSecureStorage/AccessLogsBucket/Policy/Resource","Compliant","N/A","Error","The S3 Bucket or bucket policy does not require requests to use SSL."
+"AwsSolutions-S1","BankItLabSecureStorage/DataBucket/Resource","Compliant","N/A","Error","The S3 Bucket has server access logs disabled."
+"AwsSolutions-S2","BankItLabSecureStorage/DataBucket/Resource","Compliant","N/A","Error","The S3 Bucket does not have public access restricted and blocked."
+"AwsSolutions-S5","BankItLabSecureStorage/DataBucket/Resource","Compliant","N/A","Error","The S3 static website bucket either has an open world bucket policy or does not use a CloudFront Origin Access Identity (OAI) in the bucket policy for limited getObject and/or putObject permissions."
+"AwsSolutions-S10","BankItLabSecureStorage/DataBucket/Resource","Compliant","N/A","Error","The S3 Bucket or bucket policy does not require requests to use SSL."
+"AwsSolutions-S10","BankItLabSecureStorage/DataBucket/Policy/Resource","Compliant","N/A","Error","The S3 Bucket or bucket policy does not require requests to use SSL."

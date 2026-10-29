@@ -1,0 +1,12 @@
+# step=N04_fk_enforced_after_restore kind=negative expect=nonzero started=2026-10-28T18:02:24Z
+# reason_regex: 23503: insert or update on table "ledger_entries" violates foreign key constraint "ledger_entries_account_id_fkey"
+# cmd: psql -X -v ON_ERROR_STOP=1 -v VERBOSITY=verbose -q -d lab_restore_ok -c insert\ into\ lab.ledger_entries\(entry_id\,\ account_id\,\ amount_cents\,\ memo\,\ posted_on\)\ values\ \(999999\,\ 424242\,\ 1\,\ \'orphan\'\,\ current_date\)
+# --- output ---
+ERROR:  23503: insert or update on table "ledger_entries" violates foreign key constraint "ledger_entries_account_id_fkey"
+DETAIL:  Key (account_id)=(424242) is not present in table "accounts".
+SCHEMA NAME:  lab
+TABLE NAME:  ledger_entries
+CONSTRAINT NAME:  ledger_entries_account_id_fkey
+LOCATION:  ri_ReportViolation, ri_triggers.c:2772
+# --- end output ---
+# exit_code=1 duration_ms=9

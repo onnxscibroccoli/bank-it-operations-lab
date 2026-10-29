@@ -1,0 +1,5 @@
+PASS pristine_run_verifies (exit 0)
+PASS forged_mttd_rejected (exit 1)
+PASS missing_detection_event_rejected (exit 1)
+PASS missing_pg_binaries_not_executed (exit 3)
+SIMULATION selftest: 0 failure(s)

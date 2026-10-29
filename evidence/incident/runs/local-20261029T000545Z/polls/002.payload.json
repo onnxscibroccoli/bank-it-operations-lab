@@ -1,0 +1,49 @@
+{
+  "collected_at": "2026-10-29T00:05:51.725614Z",
+  "expected_probes": [
+    "vendor-api-http",
+    "core-ledger-db-tcp",
+    "resolver-dns"
+  ],
+  "host": {
+    "collected_at": "2026-10-29T00:05:51.721685Z",
+    "cpu_count": 8,
+    "disk_free_bytes": 123658018816,
+    "disk_path": "/",
+    "disk_total_bytes": 136782041088,
+    "errors": [],
+    "load_avg_1m": 0.31,
+    "mem_available_ratio": 0.8784,
+    "uptime_s": 9499.4
+  },
+  "probes": [
+    {
+      "detail": "HTTP 200",
+      "kind": "http",
+      "latency_ms": 2.514,
+      "name": "vendor-api-http",
+      "observed_at": "2026-10-29T00:05:51.724598Z",
+      "status": "OK",
+      "target": "http://127.0.0.1:18099/v1/health"
+    },
+    {
+      "detail": "ConnectionRefusedError",
+      "kind": "tcp",
+      "latency_ms": 0.462,
+      "name": "core-ledger-db-tcp",
+      "observed_at": "2026-10-29T00:05:51.725163Z",
+      "status": "ERROR",
+      "target": "127.0.0.1:55432"
+    },
+    {
+      "detail": "2 answers",
+      "kind": "dns",
+      "latency_ms": 0.353,
+      "name": "resolver-dns",
+      "observed_at": "2026-10-29T00:05:51.725570Z",
+      "status": "OK",
+      "target": "localhost"
+    }
+  ],
+  "schema": "bank-it-lab/observability/health-payload/v1"
+}
