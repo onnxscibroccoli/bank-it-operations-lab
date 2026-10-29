@@ -7,6 +7,15 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Round 10 (2026-10-28 22:28 EDT): repairs for PR #33 (CHANGES REQUIRED on `2e3041a`)
+
+| Finding | Fix |
+|---|---|
+| **D3-a**: the manifest's workflow hash came from the candidate and was never checked against the pin | `merge_eligibility.py` now computes gate trust itself (`verify_trusted_gate.gate_trust_at_runtime`); a `--gate-trust` file written by the workflow is ignored. For every manifest file the **expected hash is `git show <gate_sha>:path`, hashed at runtime**. It must equal (1) the manifest value and (2) the file executing now: the running `scripts/ci` modules (no extra files), the `--config` being read, and `integration-gate.yml` at `GITHUB_WORKFLOW_SHA`. Any mismatch, an unknown workflow commit, or a gate checkout not at the pin means TRUSTED GATE UNVERIFIED, so NOT ELIGIBLE. Manifests are built from git objects of the pinned commit. Regression: a workflow that just prints VERIFIED, plus a manifest whose workflow hash was updated to match, plus a valid review is UNVERIFIED / NOT ELIGIBLE |
+| Re-pin | The pin is the gate commit `af49a27`, **not the candidate**, and contains the identical gate (`git diff af49a27 <candidate> -- scripts/ci .github` is empty). `52e362e` is not reusable: its `scripts/ci` predates the D3-a code. `independent_review` is still null, so the gate is UNVERIFIED |
+| Nits | `tasks.json` P2 wording is now login-bound. On `evidence/acceptance`, the trusted-gate README has the `ce69f84` time 21:44 / 21:47 EDT and calls `48660b7` the grandparent. Attested `tested_merge` SHAs must have parents (main, candidate), checked via the API, with tests |
+| Residual | A workflow that never runs the gate can still pass the job name until UA-3 (required check from protected `main`, plus protected `evidence/acceptance`) |
+
 ## Round 9 (2026-10-28 22:10 EDT): repairs for PR #32 (CHANGES REQUIRED on `5a75d9c`)
 
 | Finding | Fix |

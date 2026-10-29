@@ -981,7 +981,7 @@
    "requested": "Ian 21:41 recovery directive + 21:50 execution alignment (P1-P5)",
    "superseded_candidate": "e9310f3a94162a5dae31ee1cca9e35452de033ed was frozen before the 21:50 alignment; it is NOT the review candidate (its attestation format lacked main/tested-merge/run binding and exception states)",
    "P1": "AC1 unchanged design (non-author, API write+ permission, trusted allow-list, APPROVED on exact 40-hex SHA, latest decisive review per account, fail closed on any undismissed CHANGES_REQUESTED); added superseded/dismissed/abbreviated regressions",
-   "P2": "AC2/AC4/AC5 only from ACCEPTANCE-ATTESTATION v2 comments (GitHub-authenticated author+timestamp) binding candidate, main, tested merge(s), criterion, decision, evidence refs, workflow run (run.head_sha verified via API); decision artifact separates candidate_produced from independent_acceptance",
+   "P2": "AC2/AC4/AC5 only from ACCEPTANCE-ATTESTATION v2 comments (owner-login-bound / reviewer-login-bound: GitHub vouches for the login and timestamp, not the person; PR #32 D2) binding candidate, main, tested merge(s), criterion, decision, evidence refs, workflow run (run.head_sha verified via API); decision artifact separates candidate_produced from independent_acceptance",
    "P3": "exception states PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED (+CONDITIONS_VERIFIED); scope must equal applied rule+resources; conditional approval effective only after a later CONDITIONS_VERIFIED; nothing approved",
    "P4": "trusted manifest-pinned gate unchanged; no pull_request_target used; base-controlled closure = UA-3 (exact settings) ; residual documented",
    "exception_reconciliation": {
@@ -1035,6 +1035,14 @@
     "separate owner posts EXCEPTION attestations EX-01..EX-04 (EX-04 unresolved today); owner or reviewer posts AC4/AC5",
     "re-run integration-gate"
    ]
+  },
+  "round10_pr33_repairs": {
+   "requested": "relayed 22:23 EDT: PR #33 CHANGES REQUIRED on 2e3041a (D3-a + nits)",
+   "D3-a": "gate trust is computed inside merge_eligibility.py (never read from a workflow-written file): for every manifest file the expected sha256 is git show <gate_sha>:path hashed at runtime; it must equal the manifest value and the executing copy (running scripts/ci modules, the --config read, integration-gate.yml at GITHUB_WORKFLOW_SHA); any mismatch -> TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE",
+   "pin": "gate commit af49a27d6cef040478edafe8324d83b919ea9ffb (contains the identical scripts/ci, trusted config and integration-gate.yml as the candidate; byte-for-byte checked with git diff); candidate = af49a27d6cef040478edafe8324d83b919ea9ffb + records only; independent_review null -> UNVERIFIED until a qualifying review of af49a27d6cef040478edafe8324d83b919ea9ffb",
+   "52e362e_note": "52e362e is not re-pinned: its scripts/ci and workflow differ from this candidate's (the D3-a code is new), so pinning it would fail the executing-file check",
+   "nits": "tasks.json P2 wording -> login-bound; trusted-gate README ce69f84 time 21:44/21:47 EDT and 48660b7 = grandparent; attested tested_merge parents must be (main, candidate)",
+   "residual": "the merge-eligibility job is still defined by the executing workflow; a workflow that does not run the gate at all is only stopped by UA-3 (required check from a protected main + protected evidence/acceptance)"
   }
  },
  "checkpoints": [
