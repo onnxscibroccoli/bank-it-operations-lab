@@ -1,0 +1,161 @@
+{
+  "schema": "bank-lab/merge-eligibility-decision/v1",
+  "identity": {
+    "schema": "bank-lab/run-identity/v1",
+    "event": "pull_request",
+    "ref_name": "7/merge",
+    "repository": "onnxscibroccoli/bank-it-operations-lab",
+    "run_id": "40805033256",
+    "run_attempt": "1",
+    "tested_sha": "d8e9f0a9a2ad1d648260e2a22f700272aef70de9",
+    "kind": "merge",
+    "pr": 7,
+    "candidate_sha": "2e3041a6f5c3f56dad460e9c431f0f42799beec2",
+    "base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "event_base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "main_sha_at_runtime": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "valid": true,
+    "errors": []
+  },
+  "verdict": "NOT ELIGIBLE",
+  "acceptance": {
+    "AC1": {
+      "status": "UNMET",
+      "detail": [
+        "trusted reviewer_allowlist is empty",
+        "no APPROVED review on exact candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 by an allow-listed, write-permitted account other than the PR author onnxscibroccoli"
+      ]
+    },
+    "AC2": {
+      "status": "UNMET",
+      "detail": [
+        "owner login(s) onnxscibroccoli = the PR author / shared account: owner decisions are owner-login-bound, NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6)",
+        "EX-01: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2)",
+        "EX-02: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2)",
+        "EX-03: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2)",
+        "EX-04: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2)",
+        "BLOCKING USER ACTION UA-1: applied exceptions without an effective owner-login-bound approval from an account distinct from the PR author: EX-01 EX-02 EX-03 EX-04"
+      ]
+    },
+    "AC3": {
+      "status": "MET_AT_RUNTIME",
+      "detail": [
+        "candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 merged into base 7f50348bf1370381615eaed91c02607fe41de2f5 as d8e9f0a9a2ad1d648260e2a22f700272aef70de9; run 40805033256 attempt 1"
+      ]
+    },
+    "AC4": {
+      "status": "UNMET",
+      "detail": [
+        "owner login(s) onnxscibroccoli = the PR author / shared account: owner decisions are owner-login-bound, NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6)",
+        "no authorized AC4 attestation bound to candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 / this run's main and tested merge"
+      ]
+    },
+    "AC5": {
+      "status": "UNMET",
+      "detail": [
+        "owner login(s) onnxscibroccoli = the PR author / shared account: owner decisions are owner-login-bound, NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6)",
+        "no authorized AC5 attestation bound to candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 / this run's main and tested merge"
+      ]
+    }
+  },
+  "AC6": "UNMET",
+  "required_check_problems": [],
+  "problems": [
+    "AC1: trusted reviewer_allowlist is empty; no APPROVED review on exact candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 by an allow-listed, write-permitted account other than the PR author onnxscibroccoli",
+    "AC2: owner login(s) onnxscibroccoli = the PR author / shared account: owner decisions are owner-login-bound, NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6); EX-01: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2); EX-02: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2); EX-03: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2); EX-04: PROPOSED (no owner-login-bound decision on 2e3041a6f5c3f56dad460e9c431f0f42799beec2); BLOCKING USER ACTION UA-1: applied exceptions without an effective owner-login-bound approval from an account distinct from the PR author: EX-01 EX-02 EX-03 EX-04",
+    "AC4: owner login(s) onnxscibroccoli = the PR author / shared account: owner decisions are owner-login-bound, NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6); no authorized AC4 attestation bound to candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 / this run's main and tested merge",
+    "AC5: owner login(s) onnxscibroccoli = the PR author / shared account: owner decisions are owner-login-bound, NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6); no authorized AC5 attestation bound to candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2 / this run's main and tested merge",
+    "TRUSTED GATE UNVERIFIED: no independently reviewed gate pin: the manifest records no qualifying review of gate_sha 48660b725dbf51b51a38d71fcd0150de56214496"
+  ],
+  "gate_code": {
+    "source": "manifest evidence/acceptance@25908eadd2e5220ee2e813146c6ba4245f3fce73",
+    "sha": "48660b725dbf51b51a38d71fcd0150de56214496",
+    "data_root": "/home/runner/work/bank-it-operations-lab/bank-it-operations-lab"
+  },
+  "reviews": {
+    "ok": true,
+    "pr": 7,
+    "pr_author": "onnxscibroccoli",
+    "head_sha": "2e3041a6f5c3f56dad460e9c431f0f42799beec2",
+    "error": null
+  },
+  "trusted_config": {
+    "path": "/home/runner/work/bank-it-operations-lab/bank-it-operations-lab/.trusted/gate/.github/acceptance/trusted-config.json",
+    "owner_logins": [
+      "onnxscibroccoli"
+    ],
+    "reviewer_allowlist": []
+  },
+  "security_exceptions": {
+    "applied": 5,
+    "applied_ids": [
+      "EX-01",
+      "EX-02",
+      "EX-03",
+      "EX-04"
+    ],
+    "register_text_unapproved (informational; never approves)": [
+      "EX-01",
+      "EX-02",
+      "EX-03",
+      "EX-04"
+    ],
+    "errors": [],
+    "blocking_user_action": true
+  },
+  "required_jobs": {
+    "user-actions": "success",
+    "module-registry": "success",
+    "offline-validation": "success",
+    "aws-cdk": "success",
+    "postgres": "success",
+    "m365-scenario-evaluation": "success",
+    "m365-unit-tests": "success",
+    "m365-evidence-verification": "success",
+    "plan-only-assertions": "success",
+    "incident-committed-runs": "success",
+    "incident-fresh-run": "success",
+    "incident-not-executed-negative": "success",
+    "labeling-markers": "success",
+    "final-summary": "success"
+  },
+  "candidate_produced (never satisfies AC1-AC5)": {
+    "tasks_json_status": {
+      "AC1": "COMPUTED_AT_RUNTIME",
+      "AC2": "COMPUTED_AT_RUNTIME",
+      "AC3": "COMPUTED_AT_RUNTIME",
+      "AC4": "COMPUTED_AT_RUNTIME",
+      "AC5": "COMPUTED_AT_RUNTIME"
+    },
+    "register_status_text": {
+      "EX-01": "PROPOSED",
+      "EX-02": "PROPOSED",
+      "EX-03": "PROPOSED",
+      "EX-04": "PROPOSED"
+    }
+  },
+  "independent_acceptance": {
+    "source": "GitHub API: PR reviews and ACCEPTANCE-ATTESTATION v2 comments on the trusted decision_pr",
+    "exception_states": {
+      "EX-01": "PROPOSED",
+      "EX-02": "PROPOSED",
+      "EX-03": "PROPOSED",
+      "EX-04": "PROPOSED"
+    },
+    "AC1": "UNMET",
+    "AC2": "UNMET",
+    "AC4": "UNMET",
+    "AC5": "UNMET"
+  },
+  "gate_trust": {
+    "schema": "bank-lab/gate-trust/v1",
+    "status": "UNVERIFIED",
+    "reasons": [
+      "no independently reviewed gate pin: the manifest records no qualifying review of gate_sha 48660b725dbf51b51a38d71fcd0150de56214496"
+    ],
+    "gate_sha": "48660b725dbf51b51a38d71fcd0150de56214496",
+    "candidate_sha": "2e3041a6f5c3f56dad460e9c431f0f42799beec2",
+    "independent_review": null
+  },
+  "policy": "PR #27 C6"
+}

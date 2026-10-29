@@ -1,0 +1,7 @@
+{
+  "schema": "bank-lab/gate-verification/v1",
+  "manifest_gate_sha": "48660b725dbf51b51a38d71fcd0150de56214496",
+  "gate_head": "48660b725dbf51b51a38d71fcd0150de56214496",
+  "ok": true,
+  "errors": []
+}

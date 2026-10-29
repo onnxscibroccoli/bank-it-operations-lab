@@ -1,0 +1,113 @@
+{
+  "schema": "bank-lab/security-exceptions-check/v1",
+  "register": "evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md",
+  "exceptions": {
+    "EX-01": {
+      "rule": "NIST.800.53.R5-S3DefaultEncryptionKMS",
+      "resource": "BankItLabSecureStorage/AccessLogsBucket",
+      "status": "PROPOSED"
+    },
+    "EX-02": {
+      "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+      "resource": "AccessLogsBucket, DataBucket",
+      "status": "PROPOSED"
+    },
+    "EX-03": {
+      "rule": "AwsSolutions-IAM5",
+      "resource": "BankItLabNetworkDatabase/RdsMonitoringPolicy",
+      "status": "PROPOSED"
+    },
+    "EX-04": {
+      "rule": "AwsSolutions-IAM4",
+      "resource": "BankItLabNetworkDatabase/BackupPlan/Postgres/Role",
+      "status": "PROPOSED"
+    }
+  },
+  "applied": [
+    {
+      "template": "BankItLabNetworkDatabase.template.json",
+      "resource": "RdsMonitoringPolicy5DA8ACAC",
+      "rule": "AwsSolutions-IAM5",
+      "reason": "EX-03: RDS enhanced monitoring creates log streams with service-chosen names inside the single RDSOSMetrics log group of this account/region; the wildcard is limited to that group's log streams.",
+      "exception": "EX-03",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabNetworkDatabase.template.json",
+      "resource": "BackupPlanPostgresRole2A2CEBDF",
+      "rule": "AwsSolutions-IAM4",
+      "reason": "EX-04: AWS Backup selection role uses the AWS-documented service-role policy AWSBackupServiceRolePolicyForBackup; a hand-written copy would need snapshot-name wildcards (IAM5) and drift from AWS updates.",
+      "exception": "EX-04",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "resource": "AccessLogsBucket83982689",
+      "rule": "NIST.800.53.R5-S3DefaultEncryptionKMS",
+      "reason": "EX-01: S3 server access log delivery only supports SSE-S3 (AES256) on the target bucket; SSE-KMS would break log delivery (ADR-0002).",
+      "exception": "EX-01",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "resource": "AccessLogsBucket83982689",
+      "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+      "reason": "EX-02: Cross-region replication needs a destination bucket in a second region/account; out of scope for an env-agnostic, never-deployed lab stack.",
+      "exception": "EX-02",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "resource": "DataBucketE3889A50",
+      "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+      "reason": "EX-02: Cross-region replication needs a destination bucket in a second region/account; out of scope for an env-agnostic, never-deployed lab stack.",
+      "exception": "EX-02",
+      "status": "PROPOSED"
+    }
+  ],
+  "unapproved": [
+    {
+      "template": "BankItLabNetworkDatabase.template.json",
+      "resource": "RdsMonitoringPolicy5DA8ACAC",
+      "rule": "AwsSolutions-IAM5",
+      "reason": "EX-03: RDS enhanced monitoring creates log streams with service-chosen names inside the single RDSOSMetrics log group of this account/region; the wildcard is limited to that group's log streams.",
+      "exception": "EX-03",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabNetworkDatabase.template.json",
+      "resource": "BackupPlanPostgresRole2A2CEBDF",
+      "rule": "AwsSolutions-IAM4",
+      "reason": "EX-04: AWS Backup selection role uses the AWS-documented service-role policy AWSBackupServiceRolePolicyForBackup; a hand-written copy would need snapshot-name wildcards (IAM5) and drift from AWS updates.",
+      "exception": "EX-04",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "resource": "AccessLogsBucket83982689",
+      "rule": "NIST.800.53.R5-S3DefaultEncryptionKMS",
+      "reason": "EX-01: S3 server access log delivery only supports SSE-S3 (AES256) on the target bucket; SSE-KMS would break log delivery (ADR-0002).",
+      "exception": "EX-01",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "resource": "AccessLogsBucket83982689",
+      "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+      "reason": "EX-02: Cross-region replication needs a destination bucket in a second region/account; out of scope for an env-agnostic, never-deployed lab stack.",
+      "exception": "EX-02",
+      "status": "PROPOSED"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "resource": "DataBucketE3889A50",
+      "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+      "reason": "EX-02: Cross-region replication needs a destination bucket in a second region/account; out of scope for an env-agnostic, never-deployed lab stack.",
+      "exception": "EX-02",
+      "status": "PROPOSED"
+    }
+  ],
+  "errors": [],
+  "blocking_user_action": true,
+  "user_action": "UA-1: approve or reject EX-01, EX-02, EX-03, EX-04"
+}
