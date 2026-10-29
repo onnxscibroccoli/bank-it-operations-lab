@@ -7,7 +7,7 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
-## Round 9 (2026-10-28 ~22:30 EDT): repairs for PR #32 (CHANGES REQUIRED on `5a75d9c`)
+## Round 9 (2026-10-28 22:10 EDT): repairs for PR #32 (CHANGES REQUIRED on `5a75d9c`)
 
 | Finding | Fix |
 |---|---|
