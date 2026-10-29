@@ -1,15 +1,15 @@
 # USER ACTIONS REQUIRED (Ian)
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 21:13 EDT): about 2 h 46 min.**
-> Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The acceptance vertical slice runs green in CI on a draft PR (#26). That is a working gate, not a merge. Nothing here claims completion that was not verified.
+> **Remaining window at commit time (2026-10-28 21:48 EDT): about 2 h 11 min.**
+> Status: **not complete.** Nothing is merged into `main` (`7f50348`). The live candidate is PR #7 @ `1fdf25a`: 7 of 25 active modules integrated, every technical CI job green, and merge-eligibility **NOT ELIGIBLE** (AC1, AC2, AC4 and AC5 UNMET). No approval is stated here that Ian did not give.
 
-Snapshot: 2026-10-28, about 21:04 EDT. The #7 integration head is `08cdf11` (final candidate `7fe6d72`: every technical CI job green, merge-eligibility NOT ELIGIBLE, review packet prepared but **not yet requested**, so the AC1 gate is unmet), and the acceptance slice #26 is at `eb42b23` (CI green, decision REVIEW_PENDING). This reports agent never merges, closes PRs or deploys. Since #7 @ `4f54a01` (C6), coordination policy allows *independently proven* automated merges. No merge into `main` has happened, and none is currently provable (AC1 gate unmet; `main` unprotected). The integrator did merge #20 @ `1b3c240` and #22 @ `9f21329` into the integration branch (#7), not into `main`. Only the USER_ACTION_REQUIRED items need Ian; the AUTONOMOUS_FIX items belong to the lane owners. See `FINAL_REPORT.md` §2 for the merge policy (gates G1–G9) and the status of each PR.
+Snapshot: 2026-10-28, about 21:48 EDT, against #7 @ `1fdf25ad10c56bb457d6242392f9305c539d1209`, gate run [40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073).
 
 ```
-USER ACTION REQUIRED: 2 — UA-1/EX-04 Backup-role risk decision; UA-2 Entra CA baseline choices
+USER ACTION REQUIRED: 2 — UA-1 record EX-01..EX-04 decisions in the register (EX-04 role-review gap); UA-2 Entra CA baseline choices
 ```
-CI currently prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4` (see the reconciliation below; the difference is intentional and explained).
+CI prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4`; the reconciliation below explains the difference.
 
 ## User-action reporting format (implements PR #27, "User intervention without stopping the project")
 - **Top line, always present, even when the overall status is failing:** `USER ACTION REQUIRED: NONE`, or `USER ACTION REQUIRED: <number> — <short action>`.
@@ -35,48 +35,56 @@ CI currently prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4` (see th
   2. IDs are stable `UA-n`; resolved items stay listed with `status: RESOLVED` and a verification note.
   3. The JSON is the canonical copy and the table below is generated from the same data in this commit.
 
-## Reconciliation with the Actions log (about 21:04 EDT)
-Exact log lines, `user-actions (USER ACTION REQUIRED report)` job, [run 40794058923](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40794058923) (#7 head `08cdf11`, pull_request, 2026-10-29T00:26:41Z = 20:26 EDT):
+## Reconciliation with the Actions log (re-done about 21:48 EDT at `1fdf25a`)
+Exact log lines from integration-gate [40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073) (#7 @ `1fdf25a`, pull_request, 01:25:43Z, which is 21:25 EDT):
 ```
 USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4
-##[warning]Approve or reject the AWS security exceptions EX-01..EX-04 in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, and the cdk-nag suppressions that are already applied for them (PR #14 B5-1). Where: https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5
-##[warning]Confirm the Entra Conditional Access baseline choices: risk policies stay report-only, device compliance applies to All users on All apps, and the 12-role privileged list. Where: https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4
-##[warning]Decide whether to protect main and require the integration-gate checks final-summary and merge-eligibility. Where: https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/branches
-##[warning]Close PR #1 as superseded by PR #5, or tell the integrator to keep it open. Where: https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/1
+MODULE COVERAGE: 7/25 integrated (28.0%), functional 7/17; denominator 26 (BLOCKED=1, INTEGRATED=7, NOT_INTEGRATED=14, NOT_STARTED=3, SUPERSEDED=1)
+BLOCKING USER ACTION (UA-1): suppression AwsSolutions-IAM5 on BankItLabNetworkDatabase.template.json:RdsMonitoringPolicy5DA8ACAC is applied while EX-03 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression AwsSolutions-IAM4 on BankItLabNetworkDatabase.template.json:BackupPlanPostgresRole2A2CEBDF is applied while EX-04 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression NIST.800.53.R5-S3DefaultEncryptionKMS on BankItLabSecureStorage.template.json:AccessLogsBucket83982689 is applied while EX-01 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression NIST.800.53.R5-S3BucketReplicationEnabled on BankItLabSecureStorage.template.json:AccessLogsBucket83982689 is applied while EX-02 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression NIST.800.53.R5-S3BucketReplicationEnabled on BankItLabSecureStorage.template.json:DataBucketE3889A50 is applied while EX-02 is PROPOSED
+merge-eligibility for tested 07eea1cefdc15873af2a579d3795af402961edd6 (candidate 1fdf25ad10c56bb457d6242392f9305c539d1209): NOT ELIGIBLE
 ```
-The same top line also appears in that run's `offline-validation / validate` and `final-summary` jobs, and identically in runs [40794054069](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40794054069) (`08cdf11` push), [40793225624](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225624) / [40793219129](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793219129) (final candidate `7fe6d72`), [40792426144](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144) (`5f159f1`, line at 00:11:57Z) and [40778896261](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896261) (`82ab7e6`, first occurrence 22:18:16Z).
 
-| ID (same as CI) | CI item (exact `##[warning]` text, abridged) | Reconciled class | Evidence |
+**Correction to the 21:04 EDT version:** it called EX-01, EX-02 and EX-03 "RESOLVED_BY_RECORD" and narrowed UA-1 to EX-04. That overstated the record:
+- Ian's decisions on EX-01, EX-03 and EX-04 are **conditional**.
+- EX-02 is accepted, but it is not recorded in the register.
+- The live gate reads only an exact `APPROVED` in `SECURITY_EXCEPTIONS.md`.
+
+So UA-1 covers all four exceptions.
+
+| ID | CI item | Reconciled class | Evidence |
 |---|---|---|---|
-| UA-1 / EX-01 | "Approve or reject the AWS security exceptions EX-01..EX-04 … (PR #14 B5-1)" | **RESOLVED_BY_RECORD** | Decision on record (Ian via ChatGPT security review, 14:10 EDT): accepted for the lab, pending bucket-policy verification. Verification exists in #5's committed synth template [`synth/BankItLabSecureStorage.template.json`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/099479e6d23968adb17762d88d84131998fca07c/evidence/aws/aws-remediation-vpc-rds/synth/BankItLabSecureStorage.template.json) @ `099479e` (sha256 `0b0eda0fed541fe0…`, listed in the bundle's `SHA256SUMS`): `AccessLogsBucketPolicy` = Deny `s3:*` when `aws:SecureTransport=false`; Allow `s3:PutObject` only to `logging.s3.amazonaws.com` with `aws:SourceArn` = DataBucket ARN and `aws:SourceAccount` = this account. Template only; never deployed |
-| UA-1 / EX-02 | same | **RESOLVED_BY_RECORD** (+ AUTONOMOUS_FIX docs) | Decision on record: accepted as an explicit lab limitation; the "not expressible in an env-agnostic stack" wording is rejected. Rewording [`SECURITY_EXCEPTIONS.md`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/099479e6d23968adb17762d88d84131998fca07c/evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md) is a docs fix for the #5 owner, not a user action |
-| UA-1 / EX-03 | same | **RESOLVED_BY_RECORD** | Decision on record: open pending exact wildcard-scope verification. Verified in [`synth/BankItLabNetworkDatabase.template.json`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/099479e6d23968adb17762d88d84131998fca07c/evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json) @ `099479e` (sha256 `44d48d2e43e73725…`): `RdsMonitoringPolicy` wildcard is only `arn:…:logs:<region>:<account>:log-group:RDSOSMetrics:log-stream:*` (CreateLogStream, PutLogEvents, DescribeLogStreams, GetLogEvents); the group-level statement has no wildcard; role trust `monitoring.rds.amazonaws.com` with `aws:SourceAccount`. Matches the register's claim |
-| UA-1 / EX-04 | same | **USER_ACTION_REQUIRED** (real risk decision; can collapse to AUTONOMOUS_FIX) | Decision on record: conditionally acceptable, pending role review. The role review in the same template **finds a gap**: `BackupPlanPostgresRole` trust is `backup.amazonaws.com` with **no `aws:SourceAccount` condition** (unlike the monitoring role). #14 also notes the vault has no access policy or Vault Lock and shares the DB CMK. Choose: (a) accept as is, or (b) require the #5 owner to add `aws:SourceAccount` (an AUTONOMOUS_FIX), after which EX-04 becomes RESOLVED_BY_RECORD |
-| UA-2 | "Confirm the Entra Conditional Access baseline choices: risk policies stay report-only, device compliance applies to All users on All apps, and the 12-role privileged list" | **USER_ACTION_REQUIRED** (real risk decision) | No decision is recorded anywhere: PR [#4](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4) has 0 comments and its body still lists these under "Notes / open questions"; `identity/entra/baseline.json` encodes the proposed choice only |
-| UA-3 | "Decide whether to protect main and require the integration-gate checks final-summary and merge-eligibility" | **OWNER_DECISION, non-blocking** (not escalated) | **No admin-permission failure occurred.** `GET /repos/…/branches/main/protection` → `HTTP 404 {"message":"Branch not protected"}` (unset, not 403); `GET /repos/…/rulesets` → `[]`; `GET /repos/…` → `permissions.admin: true` for the owner account (all checked about 20:58 EDT). tasks.json itself records `"blocks": []`. Without protection the gate is advisory; nothing tonight is blocked |
-| UA-4 | "Close PR #1 as superseded by PR #5, or tell the integrator to keep it open" | **HOUSEKEEPING** (not a user blocker) | Routine PR hygiene after #7 lands. tasks.json marks its impact "Minor (docs consistency)" |
-| UA-5 | (not printed: `status: NOT_YET_ACTIONABLE`, so CI does not count it) | **NOT_YET_ACTIONABLE** | AC6 final human portfolio acceptance; only after AC1–AC5 are MET for one SHA |
+| **UA-1** | Approve or reject EX-01..EX-04 and their 5 applied suppressions | **USER_ACTION_REQUIRED** (blocks AC2 and AC5) | Register @ `1fdf25a`: all entries PROPOSED. The decisions Ian relayed and the verification evidence are in the register section below |
+| **UA-2** | Confirm the Entra CA baseline: risk policies report-only, device compliance on All users / All apps, the 12-role privileged list | **USER_ACTION_REQUIRED** (blocks AC4) | `evidence/entra/BASELINE-CHOICES-PENDING.md` @ `1fdf25a` says PENDING. No decision is recorded |
+| UA-3 | Branch protection on `main` | OWNER_DECISION, non-blocking | 404 "Branch not protected" (unset, not 403). Admin is held. `blocks: []` |
+| UA-4 | Close PR #1 | HOUSEKEEPING | `bank-aws-001` is SUPERSEDED in the registry |
+| UA-5 | AC6 final acceptance | NOT_YET_ACTIONABLE | Applies after AC1–AC5 |
 
-**Why this differs from the CI count (intentional):** CI prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4` from `coordination/tasks.json` `user_actions` on #7. Its UA-1 text says "Register lists EX-01..EX-04 as PROPOSED … no approval is recorded", which is stale: Ian's decisions were recorded in this report at 14:10 EDT, and the committed #5 templates verify EX-01 and EX-03. Its UA-3 is a decision with no permission failure and `blocks: []`, and its UA-4 is housekeeping. Net: **4 printed → 2 user blockers** (UA-1 narrowed to EX-04, UA-2 unchanged). This report does not edit `coordination/tasks.json` (integrator-owned). Proposed change for the integrator: set UA-1 `observed` to the recorded decisions and narrow its action to EX-04; reclassify UA-3 as non-blocking owner decision and UA-4 as housekeeping (`classification` ≠ `USER_ACTION_REQUIRED`), so the CI top line becomes `USER ACTION REQUIRED: 2 — UA-1; UA-2`.
+**What Ian can do for UA-1 (smallest step, per `tasks.json`):** comment on [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5), or edit the register's approval fields, with one of these per exception:
+- **EX-02:** "approved as a lab limitation". This matches the decision already relayed.
+- **EX-01 and EX-03:** confirm that the verification evidence below satisfies the condition. Then they can be marked APPROVED. Until then, leave them PROPOSED.
+- **EX-04:** choose (a) accept as is, or (b) require an `aws:SourceAccount` condition on the Backup role trust first.
 
-**"NONE" relay:** no Actions run printed `USER ACTION REQUIRED: NONE`. All 72 runs created since 21:00 UTC (17:00 EDT) were scanned; every integration-gate and #7 offline-validation run since `82ab7e6` (first run 22:18 UTC = 18:18 EDT) prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4`; the others (aws-cdk, postgres, #26 acceptance) print no top line. The NONE relay was wrong.
+#31 F7 notes that approval is currently just a text edit (`EX-NN status: APPROVED`). Whoever records it should cite Ian's decision.
 
-**Re-checked about 21:13 EDT:** #7 head `b908a66` still prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4` in integration-gate [run 40798145700](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40798145700). Its `tasks.json` user_actions are unchanged, so the reconciliation above still applies. `b908a66` adds `evidence/entra/BASELINE-CHOICES-PENDING.md`, which documents UA-2 as pending. It does not record a decision.
-
-**ETA dependency:** UA-1 (EX-04) and UA-2 (Entra baseline) are on the critical path for AC2 and AC4. The earliest possible merge is about 00:30–01:30 EDT Thursday, and only if both are decided now and the B5-2 fix and an independent review also land. See [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md) §4.
+**ETA dependency:** UA-1 and UA-2 are on the critical path, together with a non-author AC1 review and #31's gate fixes. The earliest merge is about 01:30–03:00 EDT Thursday. See [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md) §4.
 
 ### Gates and deferred items (not counted as user actions)
 | Item | Class | Evidence |
 |---|---|---|
-| AC1 independent review of the exact final candidate `7fe6d72` | **GATE** (tracked by `merge-eligibility`, not by user-actions) | [run 40794058923](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40794058923) and [40793225624](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225624): `NOT ELIGIBLE`, `AC1: UNMET`. The review packet `coordination/review-requests/PR-7-candidate-7fe6d72.md` is prepared but **not yet requested** (integrator step). Previously listed here as UA-1 "authenticated reviewer"; it needs the owner only if a GitHub-authenticated approval from a second identity is required, because all PRs share one author account |
-| #6 Terraform-vs-CDK (#14 B6-3) | **DEFERRED owner scope decision**, non-blocking | #6 is excluded from the #7 candidate (B6-1, B6-2 open), so nothing tonight depends on it |
-| B5-2 KMS key-admin escalation | AUTONOMOUS_FIX (#5 owner) | #14 finding; blocks AC2 regardless of the exception decisions |
+| AC1: an APPROVED review on exact `1fdf25a` by an account other than `onnxscibroccoli` | **GATE** | Gate: "no APPROVED review on exact candidate … by an account other than the PR author". Every review note (#14, #27–#31) comes from the author account. If the owner must supply a second identity or a human reviewer, that becomes a user action. It is not counted yet, because the integrator has not requested it |
+| #31 F4 / F6 / R6 (gate design) | AUTONOMOUS_FIX (integrator) | As reported in the PR #31 body; not re-verified here |
+| B5-2 KMS key-admin escalation | **FIXED** in `80f01d6` | `tasks.json` AC5 detail and #31. The key policy was not audited here |
+| #6 Terraform-vs-CDK (B6-3) | DEFERRED | `orgs-security` is BLOCKED in the registry |
 
 ## Classification of the remaining A/B items below
 | Class | Items |
 |---|---|
-| USER_ACTION_REQUIRED | EX-04 decision (→ UA-1), A3 Entra baseline (→ UA-2) |
-| RESOLVED_BY_RECORD | EX-01, EX-02, EX-03 (decisions on record; EX-01/EX-03 verified in #5 synth templates) |
+| USER_ACTION_REQUIRED | EX-01..EX-04 decisions recorded in the register (→ UA-1), A3 Entra baseline (→ UA-2) |
+| CONDITIONAL (Ian's decision relayed, not APPROVED) | EX-01 (policy evidence verified), EX-03 (scope evidence verified), EX-04 (role review finds a gap); EX-02 accepted but not recorded |
 | OWNER_DECISION, non-blocking | B4 branch protection (→ UA-3; 404 unset, admin held, no failure) |
 | HOUSEKEEPING | A5 close #1 (→ UA-4) |
 | GATE / DEFERRED / NOT_YET_ACTIONABLE | A4 independent review (AC1 gate), A6 B6-3 Terraform-vs-CDK (deferred), AC6 (→ UA-5) |
@@ -99,8 +107,8 @@ The same top line also appears in that run's `offline-validation / validate` and
 ## A. Decisions, verifications and approvals
 | ID | Action | Where |
 |---|---|---|
-| A1 | **Finish the remaining exception verifications.** EX-01..EX-04 are DECIDED (see the register below), but four checks are still open:<br>• **EX-01:** verify the AccessLogsBucket policy (TLS-only deny, PutObject only from `logging.s3.amazonaws.com` with SourceArn = DataBucket and SourceAccount), then sign off.<br>• **EX-02:** have #5's `SECURITY_EXCEPTIONS.md` reworded as an explicit lab limitation. Remove the "not expressible in an env-agnostic stack" rationale and note that the exception covers 2 resources.<br>• **EX-03:** verify the exact wildcard scope (`…:log-group:RDSOSMetrics:log-stream:*`, 4 log actions, this account and region; trust `monitoring.rds.amazonaws.com` + `aws:SourceAccount`), then accept or reject.<br>• **EX-04:** review the Backup role. Its trust lacks `aws:SourceAccount`; the vault has no access policy or Vault Lock and shares the DB CMK. Then accept or reject.<br>Afterwards, record the decisions in #5 (register status plus approver) so that B5-1 is closed | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` |
-| A2 | **Fix B5-2 (KMS key-admin escalation) before #5 or #7 can merge:**<br>• use a named key-admin principal<br>• drop `kms:CreateGrant` from the admin actions, or add `kms:GrantIsForAWSResource`<br>• restrict `kms:PutKeyPolicy`<br>• add a negative test<br>• withdraw the "least-privilege CMK" claim until it is fixed<br>Correct #7's AC5 ("MET" at `afb41278`) as well | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5), [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7), [#14](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/14) |
+| A1 | **Close UA-1.** Decisions are relayed for EX-01..EX-04 (see the register below), but none is APPROVED in the register. The verification evidence at `1fdf25a` is below:<br>• **EX-01:** verify the AccessLogsBucket policy (TLS-only deny, PutObject only from `logging.s3.amazonaws.com` with SourceArn = DataBucket and SourceAccount), then sign off.<br>• **EX-02:** have #5's `SECURITY_EXCEPTIONS.md` reworded as an explicit lab limitation. Remove the "not expressible in an env-agnostic stack" rationale and note that the exception covers 2 resources.<br>• **EX-03:** verify the exact wildcard scope (`…:log-group:RDSOSMetrics:log-stream:*`, 4 log actions, this account and region; trust `monitoring.rds.amazonaws.com` + `aws:SourceAccount`), then accept or reject.<br>• **EX-04:** review the Backup role. Its trust lacks `aws:SourceAccount`; the vault has no access policy or Vault Lock and shares the DB CMK. Then accept or reject.<br>Afterwards, record the decisions in #5 (register status plus approver) so that B5-1 is closed | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` |
+| A2 | **B5-2: recorded FIXED in #7 @ `80f01d6`** (confirmed by #31; not audited here). Original ask, kept for history:<br>• use a named key-admin principal<br>• drop `kms:CreateGrant` from the admin actions, or add `kms:GrantIsForAWSResource`<br>• restrict `kms:PutKeyPolicy`<br>• add a negative test<br>• withdraw the "least-privilege CMK" claim until it is fixed<br>Correct #7's AC5 ("MET" at `afb41278`) as well | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5), [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7), [#14](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/14) |
 | A3 | **Confirm the Entra CA baseline choices:** risk policies stay report-only, device compliance applies to All users on All apps, and the list of 12 privileged roles | [#4](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4) |
 | A4 | **Do a human GitHub review of each exact head SHA** (G1). No PR has one. #14's agent notes: #3 approve, #4 approve with comments, #5 and #6 request changes, and (checkpoint 2) **#2's false-PASS fix remediated at `e7399fb`**. That review item is done and verified here, so #2 now needs only your human review. Optional #2 hardening: regex ordering, verifier EXPECTATIONS check, cdk-synth skip status | all PRs, [#14](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/14) |
 | A5 | **Close #1 as superseded by #5** once #7 lands | [#1](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/1) |
@@ -121,12 +129,16 @@ The same top line also appears in that run's `offline-validation / validate` and
 | B3 | **Set up a dedicated rclone Google client_id** for Drive evidence checkpoints | The shared client_id is being retired [#1 MORNING_REPORT] |
 | B4 | **Turn on branch protection for `main`:** require a review plus the checks `aws-cdk`, `offline-validation` and `postgres-restore-evidence` | Repo admin setting; not done |
 
-## Security exception register: EX-01..EX-04 (#5), DECIDED
-Source: the ChatGPT security review as adopted by Ian, relayed 2026-10-28 at about 14:10 EDT. It is not yet recorded in #5.
+## Security exception register: EX-01..EX-04 (#5), reconciled at `1fdf25a`
+Decisions are recorded exactly as Ian relayed them (21:41 EDT, consistent with the 14:10 EDT relay). The register file in the repo still reads PROPOSED. The evidence comes from the synth templates @ `1fdf25a`:
+- `BankItLabSecureStorage.template.json` sha256 `9ba9be1d…`
+- `BankItLabNetworkDatabase.template.json` sha256 `c3dd0a0c…`
 
-| ID | cdk-nag rule | Resource | Decision | Open condition |
-|---|---|---|---|---|
-| EX-01 | NIST.800.53.R5-S3DefaultEncryptionKMS | BankItLabSecureStorage/AccessLogsBucket | **ACCEPTED for the lab** | **RESOLVED_BY_RECORD**: bucket policy verified in the #5 synth template (see reconciliation) |
-| EX-02 | NIST.800.53.R5-S3BucketReplicationEnabled | AccessLogsBucket, DataBucket | **ACCEPTED as an explicit limitation.** The "env-agnostic makes it impossible" claim is **REJECTED** | **RESOLVED_BY_RECORD**; register rewording is an AUTONOMOUS_FIX for the #5 owner |
-| EX-03 | AwsSolutions-IAM5 (`log-group:RDSOSMetrics:log-stream:*`) | BankItLabNetworkDatabase/RdsMonitoringPolicy | was OPEN pending scope verification | **RESOLVED_BY_RECORD**: scope verified in the #5 synth template (log streams of the one RDSOSMetrics group, this account/region) |
-| EX-04 | AwsSolutions-IAM4 (AWSBackupServiceRolePolicyForBackup) | BankItLabNetworkDatabase/BackupPlan/Postgres/Role | **CONDITIONALLY ACCEPTABLE** | **Still open (UA-1)**: role review found no `aws:SourceAccount` on the trust policy |
+The bundle's `SHA256SUMS` re-checked 44/44 OK.
+
+| ID | cdk-nag rule / resource | Ian's decision | Register | Verification evidence | Status |
+|---|---|---|---|---|---|
+| EX-01 | NIST.800.53.R5-S3DefaultEncryptionKMS / AccessLogsBucket | Accepted, pending policy verification | PROPOSED | **Bucket:** SSE-S3 (AES256), Block Public Access ×4, versioning, BucketOwnerEnforced.<br>**Policy:** denies `s3:*` without TLS. Allows `s3:PutObject` only to `logging.s3.amazonaws.com` on `/data-bucket/*`, with SourceArn = DataBucket and SourceAccount = this account.<br>**AWS docs:** "The destination bucket must use Amazon S3 managed keys (SSE-S3)" | **Conditional.** Evidence verified; awaiting Ian's confirmation. Not APPROVED |
+| EX-02 | NIST.800.53.R5-S3BucketReplicationEnabled / AccessLogsBucket, DataBucket | Accepted as a limitation | PROPOSED | Versioning Enabled and Retain on both buckets; no replication. The register wording "not expressible…" still needs the docs fix | **Accepted (Ian).** Not yet recorded in the register |
+| EX-03 | AwsSolutions-IAM5 / RdsMonitoringPolicy | Conditional on scope verification | PROPOSED | The wildcard covers only `log-group:RDSOSMetrics:log-stream:*` in this account and region. The group statement has no wildcard. The trust is `monitoring.rds.amazonaws.com` + `aws:SourceAccount` | **Conditional.** Evidence verified; awaiting Ian's confirmation. Not APPROVED |
+| EX-04 | AwsSolutions-IAM4 / BackupPlan/Postgres/Role | Conditional on role review | PROPOSED | The trust is `backup.amazonaws.com` with **no `aws:SourceAccount`**. The policy is AWS's documented `AWSBackupServiceRolePolicyForBackup`. The vault has no access policy or Vault Lock (#14) | **Conditional; gap found.** Ian decides: accept, or require the fix |

@@ -1,107 +1,120 @@
 {
-  "schema": "bank-it-operations-lab/user-actions@1",
-  "generated_at": "2026-10-28T21:04:00-04:00",
-  "deadline": "2026-10-29T00:00:00-04:00",
-  "top_line": "USER ACTION REQUIRED: 2 \u2014 UA-1/EX-04 Backup-role risk decision; UA-2 Entra CA baseline choices",
-  "count": 2,
-  "ci_reference": {
-    "top_line": "USER ACTION REQUIRED: 4 \u2014 UA-1; UA-2; UA-3; UA-4",
-    "count": 4,
-    "source": "coordination/tasks.json user_actions on #7 @ 08cdf11",
-    "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40794058923",
-    "job": "user-actions (USER ACTION REQUIRED report)",
-    "logged_at": "2026-10-29T00:26:41Z",
-    "difference": "intentional: UA-1 narrowed to EX-04 (EX-01..EX-03 resolved by record), UA-3 non-blocking owner decision (no permission failure), UA-4 housekeeping",
-    "none_relay": "no run printed USER ACTION REQUIRED: NONE"
+ "schema": "bank-it-operations-lab/user-actions@1",
+ "generated_at": "2026-10-28T21:50:00-04:00",
+ "deadline": "2026-10-29T00:00:00-04:00",
+ "top_line": "USER ACTION REQUIRED: 2 — UA-1 record EX-01..EX-04 decisions in the register (EX-04 role-review gap); UA-2 Entra CA baseline choices",
+ "count": 2,
+ "ci_reference": {
+  "top_line": "USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4",
+  "count": 4,
+  "source": "coordination/tasks.json user_actions on #7 @ 1fdf25ad10c56bb457d6242392f9305c539d1209",
+  "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073",
+  "job": "user-actions (USER ACTION REQUIRED report)",
+  "logged_at": "2026-10-29T01:25:53Z",
+  "difference": "intentional: UA-3 non-blocking owner decision (no permission failure), UA-4 housekeeping. UA-1 covers all of EX-01..EX-04 (correction of the 21:04 EDT version, which narrowed it to EX-04)",
+  "none_relay": "no run printed USER ACTION REQUIRED: NONE"
+ },
+ "items": [
+  {
+   "id": "UA-1",
+   "scope": "EX-01..EX-04",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Record the EX-01..EX-04 decisions in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md (comment on PR #5 or edit the approval fields): EX-02 accepted as a lab limitation (already decided); EX-01 and EX-03 confirm that the verification evidence satisfies the condition, then APPROVED; EX-04 accept as is, or require aws:SourceAccount on the Backup role trust first.",
+   "reason": "Material risk decision. Ian's relayed decisions: EX-01 accepted pending policy verification; EX-02 accepted limitation; EX-03 conditional on scope verification; EX-04 conditional on role review. Conditional decisions are not approvals.",
+   "error": "check_exceptions.py @ 1fdf25a: 5 applied suppressions tied to PROPOSED EX-01..EX-04 (run 40800364073). EX-04 role review: BackupPlanPostgresRole trust backup.amazonaws.com without aws:SourceAccount (synth @ 1fdf25a, sha256 c3dd0a0c...).",
+   "permission": "Owner decision (comment on PR #5).",
+   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
+   "blocks": [
+    "AC2",
+    "AC5"
+   ],
+   "continuing": "All other lanes; B5-2 fixed in 80f01d6.",
+   "deadline": "Blocks AC2/AC5; no merge meeting AC1-AC5 is possible by midnight regardless (AC1 has no non-author reviewer)."
   },
-  "items": [
-    {
-      "id": "UA-1",
-      "scope": "EX-04",
-      "classification": "USER_ACTION_REQUIRED",
-      "status": "OPEN",
-      "action": "Decide EX-04: accept the AWS Backup service role as is, or require the #5 owner to add an aws:SourceAccount condition to its trust policy (then EX-04 is resolved by record).",
-      "reason": "Material risk decision; recorded decision was 'conditionally acceptable pending role review' and the review found a gap.",
-      "error": "BackupPlanPostgresRole AssumeRolePolicyDocument: Principal backup.amazonaws.com, no Condition (synth template @ 099479e).",
-      "permission": "Owner decision (comment on PR #5).",
-      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
-      "blocks": [
-        "AC2"
-      ],
-      "continuing": "All other lanes; B5-2 KMS fix is an autonomous code fix.",
-      "deadline": "Blocks AC2 for a merge before midnight if undecided."
-    },
-    {
-      "id": "UA-2",
-      "scope": "Entra CA baseline",
-      "classification": "USER_ACTION_REQUIRED",
-      "status": "OPEN",
-      "action": "Confirm the Entra CA baseline choices: risk policies report-only, device compliance for All users on All apps, the 12-role privileged list.",
-      "reason": "Identity-risk policy decision; no decision is recorded.",
-      "error": "PR #4 has 0 comments; body lists these as open questions.",
-      "permission": "Owner decision (comment on PR #4).",
-      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
-      "blocks": [
-        "AC4"
-      ],
-      "continuing": "All other lanes.",
-      "deadline": "Blocks AC4 for a merge before midnight."
-    }
-  ],
-  "reclassified": [
-    {
-      "id": "UA-1",
-      "scope": "EX-01",
-      "classification": "RESOLVED_BY_RECORD",
-      "evidence": "Decision 14:10 EDT; bucket policy verified in evidence/aws/aws-remediation-vpc-rds/synth/BankItLabSecureStorage.template.json @ 099479e (sha256 0b0eda0fed541fe0...)"
-    },
-    {
-      "id": "UA-1",
-      "scope": "EX-02",
-      "classification": "RESOLVED_BY_RECORD",
-      "evidence": "Decision 14:10 EDT: accepted explicit limitation; register rewording is AUTONOMOUS_FIX"
-    },
-    {
-      "id": "UA-1",
-      "scope": "EX-03",
-      "classification": "RESOLVED_BY_RECORD",
-      "evidence": "Wildcard scope verified in synth/BankItLabNetworkDatabase.template.json @ 099479e (sha256 44d48d2e43e73725...)"
-    },
-    {
-      "id": "UA-3",
-      "scope": "branch protection",
-      "classification": "OWNER_DECISION_NON_BLOCKING",
-      "evidence": "GET branches/main/protection -> 404 Branch not protected (not 403); rulesets []; permissions.admin true; tasks.json blocks []"
-    },
-    {
-      "id": "UA-4",
-      "scope": "close PR #1",
-      "classification": "HOUSEKEEPING",
-      "evidence": "tasks.json deadline_impact: Minor (docs consistency)"
-    },
-    {
-      "id": "UA-5",
-      "scope": "AC6",
-      "classification": "NOT_YET_ACTIONABLE",
-      "evidence": "tasks.json status NOT_YET_ACTIONABLE"
-    },
-    {
-      "id": "AC1",
-      "scope": "independent review of 7fe6d72",
-      "classification": "GATE",
-      "evidence": "merge-eligibility AC1: UNMET in run 40793225624; review packet not yet requested"
-    },
-    {
-      "id": "B6-3",
-      "scope": "#6 Terraform-vs-CDK",
-      "classification": "DEFERRED_OWNER_DECISION",
-      "evidence": "#6 excluded from the #7 candidate"
-    }
-  ],
-  "out_of_scope": [
-    "B1 AWS sandbox",
-    "B2 Entra tenant",
-    "B3 rclone client_id"
-  ],
-  "notification_delivery_claimed": false
+  {
+   "id": "UA-2",
+   "scope": "Entra CA baseline",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Confirm the Entra CA baseline choices: risk policies report-only, device compliance for All users on All apps, the 12-role privileged list.",
+   "reason": "Identity-risk policy decision; no decision is recorded.",
+   "error": "evidence/entra/BASELINE-CHOICES-PENDING.md @ 1fdf25a records the choices as PENDING; PR #4 has no decision.",
+   "permission": "Owner decision (comment on PR #4).",
+   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
+   "blocks": [
+    "AC4"
+   ],
+   "continuing": "All other lanes.",
+   "deadline": "Blocks AC4 for a merge before midnight."
+  }
+ ],
+ "reclassified": [
+  {
+   "id": "UA-3",
+   "scope": "branch protection",
+   "classification": "OWNER_DECISION_NON_BLOCKING",
+   "evidence": "GET branches/main/protection -> 404 Branch not protected (not 403); rulesets []; permissions.admin true; tasks.json blocks []"
+  },
+  {
+   "id": "UA-4",
+   "scope": "close PR #1",
+   "classification": "HOUSEKEEPING",
+   "evidence": "tasks.json deadline_impact: Minor (docs consistency)"
+  },
+  {
+   "id": "UA-5",
+   "scope": "AC6",
+   "classification": "NOT_YET_ACTIONABLE",
+   "evidence": "tasks.json status NOT_YET_ACTIONABLE"
+  },
+  {
+   "id": "AC1",
+   "scope": "independent review of 1fdf25a (non-author APPROVED)",
+   "classification": "GATE",
+   "evidence": "merge-eligibility AC1: UNMET in run 40800364073; all review notes are from the author account"
+  },
+  {
+   "id": "B6-3",
+   "scope": "#6 Terraform-vs-CDK",
+   "classification": "DEFERRED_OWNER_DECISION",
+   "evidence": "#6 excluded from the #7 candidate"
+  }
+ ],
+ "out_of_scope": [
+  "B1 AWS sandbox",
+  "B2 Entra tenant",
+  "B3 rclone client_id"
+ ],
+ "notification_delivery_claimed": false,
+ "exception_decisions": [
+  {
+   "id": "EX-01",
+   "decision_relayed": "accepted, pending policy verification",
+   "register_status": "PROPOSED",
+   "verification": "verified at 1fdf25a: SSE-S3, BPA x4, TLS-only deny, PutObject only logging.s3 with SourceArn/SourceAccount; AWS S3 docs require SSE-S3 on the destination",
+   "status": "CONDITIONAL_NOT_APPROVED"
+  },
+  {
+   "id": "EX-02",
+   "decision_relayed": "accepted as a limitation",
+   "register_status": "PROPOSED",
+   "verification": "versioning + Retain on both buckets; no replication",
+   "status": "ACCEPTED_NOT_RECORDED_IN_REGISTER"
+  },
+  {
+   "id": "EX-03",
+   "decision_relayed": "conditional on scope verification",
+   "register_status": "PROPOSED",
+   "verification": "verified at 1fdf25a: wildcard only log-group:RDSOSMetrics:log-stream:* in this account/region; trust with aws:SourceAccount",
+   "status": "CONDITIONAL_NOT_APPROVED"
+  },
+  {
+   "id": "EX-04",
+   "decision_relayed": "conditional on role review",
+   "register_status": "PROPOSED",
+   "verification": "gap: Backup role trust lacks aws:SourceAccount",
+   "status": "CONDITIONAL_GAP_FOUND"
+  }
+ ]
 }

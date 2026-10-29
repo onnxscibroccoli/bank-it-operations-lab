@@ -2,9 +2,9 @@
 
 For a hiring manager or interviewer reviewing this lab against the bank **IT Manager** posting (AMS Technology Solutions, Boston; requirement IDs A1–D4 from the [job requirements matrix](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d/docs/JOB_REQUIREMENTS_MATRIX.md)).
 
-- **Prepared:** 2026-10-28, about 20:30 EDT; re-pinned to the final candidate at about 21:15 EDT. **Demo target:** PR [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) integration candidate [`7fe6d72`](https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/7fe6d7281316190d9b39e35a448fb9fb81b92d50) (draft, not merged, not independently reviewed).
+- **Prepared:** 2026-10-28, about 20:30 EDT; re-pinned to the live candidate `1fdf25a` at about 21:50 EDT. **Demo target:** PR [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) integration candidate [`1fdf25a`](https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/1fdf25ad10c56bb457d6242392f9305c539d1209) (draft, not merged, not independently reviewed).
 - **Labels:** every step says whether what you see is **EXECUTED** (CI run or evidence hash), **SIMULATION**, or **NOT_EXECUTED** reference. See the [README](../README.md#evidence-labels).
-- **Tested:** every command in the "Run" lines was re-run by the reports agent at `7fe6d72` on 2026-10-28 about 21:05 EDT, on Linux with Python 3.13 and no credentials. The output quoted is what it printed. Total command time is under 10 seconds.
+- **Tested:** every command in the "Run" lines was re-run by the reports agent at `1fdf25a` on 2026-10-28 about 21:45 EDT, on Linux with Python 3.13 and no credentials. The output quoted is what it printed. Total command time is under 10 seconds.
 - **Needs:** `git`, `python3` (stdlib only), `bash`. PostgreSQL server binaries are only needed for the optional fresh incident run.
 
 ## Setup (before the clock starts)
@@ -12,7 +12,7 @@ For a hiring manager or interviewer reviewing this lab against the bank **IT Man
 ```bash
 git clone https://github.com/onnxscibroccoli/bank-it-operations-lab.git
 cd bank-it-operations-lab
-git checkout 7fe6d7281316190d9b39e35a448fb9fb81b92d50
+git checkout 1fdf25ad10c56bb457d6242392f9305c539d1209
 ```
 
 ## Timeline
@@ -20,7 +20,7 @@ git checkout 7fe6d7281316190d9b39e35a448fb9fb81b92d50
 | Time | Step | Label | Show | Job rows |
 |---|---|---|---|---|
 | 0:00–1:30 | 1. Framing | — | README module map and "What the lab does not show" | — |
-| 1:30–3:30 | 2. The integration gate | EXECUTED (CI) | Run 40793225624 | B4, B7, B9 |
+| 1:30–3:30 | 2. The integration gate | EXECUTED (CI) | Run 40800364073 | B4, B7, B9 |
 | 3:30–6:00 | 3. Backup validation on real PostgreSQL | EXECUTED (CI) | Run 40741329107 and its evidence | B15a, B13, C8 |
 | 6:00–8:00 | 4. AWS architecture and exceptions | EXECUTED (CI) synth/test/nag; deploy NOT_EXECUTED | CDK stacks, cdk-nag, exception register | A3, B3, C3, C9 |
 | 8:00–10:00 | 5. Identity: Entra CA and M365 operations | EXECUTED (offline, synthetic) | Validator and PLAN_ONLY scenarios | C6, B2 |
@@ -35,13 +35,13 @@ git checkout 7fe6d7281316190d9b39e35a448fb9fb81b92d50
 
 ### 2. The integration gate (1:30–3:30), **EXECUTED (CI)**
 
-- Open integration-gate [run 40793225624](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225624) at `7fe6d72`. 19 jobs: 18 success. `merge-eligibility` **fails on purpose**: AC1 (independent review of this exact SHA) UNMET, AC5 UNMET.
+- Open integration-gate [run 40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073) at `1fdf25a`. 19 jobs: 18 success. `merge-eligibility` **fails on purpose**: AC1 (non-author approval of this exact SHA, read from the GitHub reviews API) UNMET; AC2 and AC5 UNMET because 5 cdk-nag suppressions are tied to exceptions still PROPOSED (UA-1); AC4 UNMET; AC3 MET at runtime.
 - Talking point: the gate fails closed. A green scanner is not acceptance; review of the exact SHA is required, and a skipped, cancelled or NOT_EXECUTED check counts as a failure.
-- Sibling runs at the same SHA: aws-cdk [40793225339](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225339), postgres [40793225365](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225365), offline-validation [40793225341](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225341): success.
+- Sibling runs at the same SHA: aws-cdk [40800363940](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800363940), postgres [40800363954](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800363954), offline-validation [40800364076](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364076): success.
 - Run:
   ```bash
   scripts/validate-all.sh --python-only
-  # validate-all: PASS (30 steps)
+  # validate-all: PASS (33 steps)
   ```
 
 ### 3. Backup validation on real PostgreSQL (3:30–6:00), **EXECUTED (CI)**
@@ -58,7 +58,7 @@ git checkout 7fe6d7281316190d9b39e35a448fb9fb81b92d50
 
 - Open `infra/aws-cdk/lib/network-database-stack.ts`: isolated subnets, Multi-AZ RDS, IAM DB auth, KMS CMKs, AWS Backup vault.
 - Open `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` and the cdk-nag reports. EX-01..EX-04 status: see [FINAL_REPORT §3](../reports/FINAL_REPORT.md).
-- Say plainly: these stacks were **never deployed**. Open finding B5-2 (a KMS privilege-escalation path that cdk-nag missed) is the example of why a scanner pass is not enough.
+- Say plainly: these stacks were **never deployed**. Finding B5-2 (a KMS privilege-escalation path that cdk-nag missed, fixed in `80f01d6`) is the example of why a scanner pass is not enough.
 
 ### 5. Identity: Entra CA and M365 (8:00–10:00), **EXECUTED** offline on synthetic data
 
@@ -84,7 +84,7 @@ git checkout 7fe6d7281316190d9b39e35a448fb9fb81b92d50
 
 ### 7. Operations and governance references (12:30–14:00)
 
-These are on separate draft PRs, not in the `7fe6d72` candidate. Open them in the browser.
+These are on separate draft PRs, not in the `1fdf25a` candidate. Open them in the browser.
 - [#17](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/17) patch rings and systemd hardening: inspectors **EXECUTED** offline (27 tests); patching **NOT_EXECUTED**.
 - [#21](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/21) AWS Backup DR: `evidence/backup/aws-backup-dr/RECOVERY_EXECUTION_STATUS.json` lists all 7 recovery items as **NOT_EXECUTED**. Cost model EXECUTED offline.
 - [#19](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/19) Windows/AD/DNS/GPO runbooks: **NOT_EXECUTED** (`operations/hybrid/EXECUTION_STATUS.md`).
@@ -94,7 +94,7 @@ These are on separate draft PRs, not in the `7fe6d72` candidate. Open them in th
 ### 8. Gaps and what is still open (14:00–15:00)
 
 - Matrix rows no lab can show: A2, A5, A6, B1, B6, B14, B16, C2, C11, C12, D1–D4. Answer from real history only.
-- Open items needing the owner: [`reports/USER_ACTIONS_REQUIRED.md`](../reports/USER_ACTIONS_REQUIRED.md) (independent reviewer for the exact SHA, branch protection on `main`, EX-03/EX-04 sign-off, Entra baseline, #6 Terraform-vs-CDK, final portfolio acceptance).
+- Open items needing the owner: [`reports/USER_ACTIONS_REQUIRED.md`](../reports/USER_ACTIONS_REQUIRED.md) (independent reviewer for the exact SHA, branch protection on `main`, recording the EX-01..EX-04 decisions in the register (UA-1), Entra baseline, #6 Terraform-vs-CDK, final portfolio acceptance).
 
 ## If something does not match
 
