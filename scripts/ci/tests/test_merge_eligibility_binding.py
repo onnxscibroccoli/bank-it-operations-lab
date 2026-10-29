@@ -18,7 +18,7 @@ CAND = "08cdf11aecfdae56867f21cbec33e7505c8ce8a9"
 BASE = "7f50348bf1370381615eaed91c02607fe41de2f5"
 MERGE = "771045ee413f7550cd0279db06915dddba548dfd"
 IDENT = {"valid": True, "errors": [], "kind": "merge", "candidate_sha": CAND, "base_sha": BASE, "tested_sha": MERGE,
-         "run_id": "1", "run_attempt": "1", "event": "pull_request"}
+         "run_id": "1", "run_attempt": "1", "event": "pull_request", "expected_tree_sha": "9" * 40, "tested_tree_sha": "9" * 40}
 BIND = {"candidate_sha": CAND, "base_sha": BASE, "tested_sha": MERGE}
 
 

@@ -228,9 +228,11 @@ def attestations(rv, ident, cfg):
         commits = rv.get("commits") or {}
         bad_tm = [m for m in a["tested_merge"]
                   if not ((m == tested and (ident or {}).get("kind") == "merge" and norm((ident or {}).get("base_sha")) == a["main"])
-                          or [norm(x) for x in ((commits.get(m) or {}).get("parents") or [])] == [a["main"], cand])]
+                          or ([norm(x) for x in ((commits.get(m) or {}).get("parents") or [])] == [a["main"], cand]
+                              and norm((ident or {}).get("expected_tree_sha")) is not None
+                              and norm((commits.get(m) or {}).get("tree_sha")) == norm((ident or {}).get("expected_tree_sha"))))]
         if bad_tm:
-            notes.append(f"attestation {cid} ignored: tested_merge {' '.join(x[:12] for x in bad_tm)} is not a merge with parents (main {a['main'][:12]}, candidate {cand[:12]})"); continue
+            notes.append(f"attestation {cid} ignored: tested_merge {' '.join(x[:12] for x in bad_tm)} does not match the verified merge tree and parents (main {a['main'][:12]}, candidate {cand[:12]})"); continue
         rp = run_problem(runs.get(a["workflow_run"]), cand, a["tested_merge"])
         if rp:
             notes.append(f"attestation {cid} ignored: workflow run {a['workflow_run']}: {rp}"); continue
@@ -384,7 +386,9 @@ def fetch(ident, env, cfg=None):
                 s = s.lower()
                 if HEX40.match(s) and s not in commits and len(commits) < 50:
                     try:
-                        commits[s] = {"parents": [x.get("sha") for x in api(f"/repos/{repo}/commits/{s}", token, base).get("parents") or []]}
+                        commit = api(f"/repos/{repo}/commits/{s}", token, base)
+                        commits[s] = {"parents": [x.get("sha") for x in commit.get("parents") or []],
+                                      "tree_sha": ((commit.get("commit") or {}).get("tree") or {}).get("sha")}
                     except Exception as e:
                         commits[s] = {"error": f"{type(e).__name__}: {e}"}
         out["commits"] = commits

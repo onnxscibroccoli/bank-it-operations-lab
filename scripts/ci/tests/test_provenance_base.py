@@ -75,6 +75,13 @@ class BaseMustBeMain(unittest.TestCase):
         i = self.ident(self.GOOD, ref="7/merge", main=self.M, event="pull_request", payload=pl)
         self.assertTrue(i["valid"], i["errors"])
 
+    def test_correct_parents_cannot_hide_a_different_tested_tree(self):
+        tree = g(self.d, "rev-parse", self.M + "^{tree}")
+        fake = g(self.d, "commit-tree", tree, "-p", self.M, "-p", self.C, "-m", "fake merge")
+        i = self.ident(fake, main=self.M)
+        self.assertFalse(i["valid"], "Correct parents must not authenticate altered merge contents")
+        self.assertTrue(any("tree" in e for e in i["errors"]))
+
     def test_direct_push_needs_no_main_and_stays_direct(self):
         i = self.ident(self.C, ref="overnight/integration")
         self.assertEqual(i["kind"], "direct")

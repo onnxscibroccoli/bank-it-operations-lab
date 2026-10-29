@@ -166,8 +166,11 @@ class TestedMergeParents(unittest.TestCase):
         r = copy.deepcopy(APPROVED_REVIEWS); r["comments"] = [attestation(REVIEWER, "AC4", "ACCEPT")]
         self.assertEqual(reviews.decisions_from_comments(r, ident, CONFIG, EXC)["AC4"][0], "UNMET")
 
+    def test_extra_merge_with_correct_parents_but_wrong_tree_is_rejected(self):
+        self.assertEqual(self.dec((MERGE,self.OTHER), {self.OTHER:{"parents":[BASE,CAND],"tree_sha":"e"*40}}),"UNMET")
+
     def test_control_parents_main_candidate_accepted(self):
-        self.assertEqual(self.dec((MERGE, self.OTHER), {self.OTHER: {"parents": [BASE, CAND]}}), "MET_AT_RUNTIME")
+        self.assertEqual(self.dec((MERGE, self.OTHER), {self.OTHER: {"parents": [BASE, CAND], "tree_sha": "9" * 40}}), "MET_AT_RUNTIME")
         self.assertEqual(self.dec((MERGE,), {}), "MET_AT_RUNTIME")
 
 

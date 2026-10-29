@@ -89,6 +89,16 @@ def compute(env):
             errs.append(f"current main SHA not available or not 40-hex (TRUSTED_MAIN_SHA={raw_main!r}): base cannot be verified as main")
         elif ident.get("base_sha") and ident["base_sha"] != main_sha:
             errs.append(f"base {ident['base_sha']} is not the current main {main_sha}: candidate was merged into a non-main parent")
+    # Correct parent SHAs alone do not prove the tested contents. Recompute the
+    # clean merge tree using Git; conflict or unavailable objects is fail-closed.
+    if ident.get("kind") == "merge" and len(ps) == 2:
+        actual_tree = norm(git("rev-parse", tested + "^{tree}"))
+        merged = git("merge-tree", "--write-tree", ps[0], ps[1])
+        expected_tree = norm(merged.splitlines()[0]) if merged else None
+        ident["tested_tree_sha"] = actual_tree
+        ident["expected_tree_sha"] = expected_tree
+        if not expected_tree or actual_tree != expected_tree:
+            errs.append("tested tree does not match the clean merge of main and candidate (or merge conflicts)")
     for k in ("candidate_sha", "tested_sha") + (("base_sha",) if ident.get("kind") == "merge" else ()):
         if not ident.get(k):
             errs.append(f"{k} missing or not 40-hex")

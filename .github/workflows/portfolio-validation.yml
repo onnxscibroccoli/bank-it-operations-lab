@@ -68,7 +68,9 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build
       - run: npm test
+      - run: npm run synth
       - run: npm run export:policies
       - name: Exported SCP documents are committed
         run: git diff --exit-code -- ../../evidence/orgs/policies
@@ -86,9 +88,34 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build
       - run: npm test
+      - run: npm run synth
+  endpoint-pester:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Install pinned Pester
+        shell: pwsh
+        run: |
+          Install-Module Pester -RequiredVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+          Import-Module Pester -RequiredVersion 5.7.1
+      - name: Execute offline PowerShell behavior tests
+        shell: pwsh
+        run: |
+          Import-Module Pester -RequiredVersion 5.7.1
+          Invoke-Pester -Path operations/endpoint/powershell/tests -CI -Output Detailed
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: endpoint-pester-${{ github.sha }}
+          path: testResults.xml
+          retention-days: 7
   package:
-    needs: [offline, backup-static, orgs-static, network-edge]
+    needs: [offline, backup-static, orgs-static, network-edge, endpoint-pester]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -134,7 +134,7 @@ class P2ExternalAttestations(unittest.TestCase):
             with self.subTest(body=c["body"][:120]):
                 self.assertEqual(self.dec([c], runs={"40800364073": gate_run(), "40799999999": gate_run(head=OTHER)})["AC4"][0], "UNMET")
         self.assertEqual(self.dec([attestation(REVIEWER, "AC4", "ACCEPT", tested=(OTHER, MERGE))],
-                                  commits={OTHER: {"parents": [BASE, CAND]}})["AC4"][0], "MET_AT_RUNTIME")
+                                  commits={OTHER: {"parents": [BASE, CAND], "tree_sha": "9" * 40}})["AC4"][0], "MET_AT_RUNTIME")
 
     def test_malformed_attestations_are_ignored(self):
         good = attestation(REVIEWER, "AC4", "ACCEPT")
