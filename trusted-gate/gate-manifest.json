@@ -31,5 +31,5 @@
   "scripts/ci/verify_trusted_gate.py": "2fb92aa5947555bb475dce1936493b158d1012836002246da705bed53d396a30"
  },
  "independent_review": null,
- "note": "gate_sha is the gate commit 48660b725dbf51b51a38d71fcd0150de56214496 (parent of candidate 52e362ead6d4226eb5d0cd177851a19b5a20c344), NOT the candidate. It has NO independent review, so --check-pin reports TRUSTED GATE UNVERIFIED and every run is NOT ELIGIBLE (PR #32 D3) until an allow-listed, write-permitted non-author approves 48660b725dbf51b51a38d71fcd0150de56214496 and this manifest records independent_review {pr, review_id}."
+ "note": "gate_sha is the gate commit 48660b725dbf51b51a38d71fcd0150de56214496 (ancestor of candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2; the candidate adds only the workflow and records), NOT the candidate. It has NO independent review, so --check-pin reports TRUSTED GATE UNVERIFIED and every run is NOT ELIGIBLE (PR #32 D3) until an allow-listed, write-permitted non-author approves 48660b725dbf51b51a38d71fcd0150de56214496 and this manifest records independent_review {pr, review_id}."
 }
