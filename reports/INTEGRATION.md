@@ -7,6 +7,14 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Final candidate (2026-10-28 ~20:18 EDT, Ian 20:16 EDT final sprint)
+
+- **M365:** stays at `1b3c240374285d7b0760b946e861dee15197dcf3`. At ~20:18 EDT that was still the head of `m365-endpoint` and PR #20, which has 0 reviews, so no newer reviewed head existed to refresh to.
+- **Incident demo:** stays at exactly `9f21329f0e796362c4498d49687fd0f99ce3a042`.
+- **Fresh incident run:** `incident-fresh-run` now **apt-installs the PostgreSQL server binaries on the runner**. It tries `postgresql-16` first and falls back to the distro `postgresql` package, then puts `initdb`/`pg_ctl` on `PATH`. **No services container is used.** `scripts/ci/tests/test_fresh_run_wiring.py` enforces this.
+- **Exit code 3:** the harness exit 3 means NOT_EXECUTED. It fails the step and therefore the required job. The step has no `if:` and no `continue-on-error`.
+- **`5f159f1`:** superseded. Its results above are history only.
+
 ## Round 3 (2026-10-28 ~20:10 EDT, Ian 20:03 EDT): M365 and incident demo integrated at exact SHAs
 
 - **Merged by exact commit, not branch tip:**

@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T20:17:00-04:00",
-    "remaining": "3h43m",
+    "as_of": "2026-10-28T20:18:00-04:00",
+    "remaining": "3h42m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T20:17:00-04:00",
+  "updated": "2026-10-28T20:18:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -699,6 +699,17 @@
           "note": "No independent review exists for this exact SHA. Earlier approvals or reviews (eb42b23, 82ab7e6, 02ac2de, PR #14, PR #27, anything else) do not transfer."
         }
       }
+    },
+    "round4_final": {
+      "requested": "2026-10-28T20:16:00-04:00 (Ian final sprint)",
+      "sole_writer": "The integrator is the sole writer of overnight/integration.",
+      "m365_sha": {
+        "used": "1b3c240374285d7b0760b946e861dee15197dcf3",
+        "why": "Checked at ~20:18 EDT: origin/m365-endpoint and PR #20's head are still 1b3c240, with 0 reviews. No newer reviewed head exists, so there was nothing to refresh to."
+      },
+      "incident_sha": "9f21329f0e796362c4498d49687fd0f99ce3a042 (exact; unchanged)",
+      "fresh_run_postgres": "incident-fresh-run installs PostgreSQL SERVER binaries with apt (postgresql-16 first, distro postgresql as fallback), adds the bin dir to PATH and sets PG_BIN. No services container; guarded by scripts/ci/tests/test_fresh_run_wiring.py. If installation fails, PG_BIN points at a nonexistent dir, the harness exits 3 (NOT_EXECUTED) and the required check FAILS. The step has no if: and no continue-on-error, so it cannot be skipped.",
+      "earlier_candidate_5f159f1": "Superseded by the final candidate. Its CI (fresh run used the image's PGDG 18.6 binaries) is history only; its review packet was never sent."
     }
   },
   "checkpoints": [

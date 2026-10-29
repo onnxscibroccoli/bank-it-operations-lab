@@ -119,7 +119,7 @@ jobs:
         run: bash scripts/ci/incident_checks.sh committed
 
   incident-fresh-run:
-    name: incident-fresh-run (NEW SIMULATION scenario with PostgreSQL; NOT_EXECUTED blocks)
+    name: incident-fresh-run (NEW SIMULATION scenario, apt-installed PostgreSQL server binaries; exit 3 = NOT_EXECUTED = FAIL)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -134,17 +134,30 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0   # the scenario extracts pinned component commits with git archive
-      - name: Locate PostgreSQL server binaries (runner image; apt only if absent)
+      - name: Install PostgreSQL SERVER binaries on the runner (apt; no services container) and put initdb/pg_ctl on PATH
         run: |
           set -u
-          b="$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1 || true)"
-          if [ -z "$b" ] || [ ! -x "$b/initdb" ]; then
-            echo "no PostgreSQL server binaries on the image; installing the distro package"
-            sudo apt-get update -qq && sudo apt-get install -y -qq postgresql >/dev/null || echo "::warning::apt install failed; the run will report NOT_EXECUTED"
-            b="$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1 || true)"
+          sudo apt-get update -qq || echo "::warning::apt-get update failed"
+          src=""
+          if sudo apt-get install -y -qq postgresql-16 >/dev/null 2>&1 && [ -x /usr/lib/postgresql/16/bin/initdb ]; then
+            b=/usr/lib/postgresql/16/bin; src="apt postgresql-16"
+          elif sudo apt-get install -y -qq postgresql >/dev/null 2>&1; then
+            b="$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1 || true)"; src="apt postgresql (distro default; postgresql-16 unavailable)"
+          else
+            b=""; echo "::warning::apt install of PostgreSQL server packages failed; the harness will report NOT_EXECUTED (exit 3) and this check will FAIL"
           fi
-          if [ -n "$b" ] && [ -x "$b/initdb" ]; then echo "PG_BIN=$b" >> "$GITHUB_ENV"; "$b/postgres" --version; else echo "PostgreSQL binaries unavailable"; fi
-      - name: Fresh SIMULATION incident run (written to the runner temp dir, never over committed runs)
+          if [ -n "$b" ] && [ -x "$b/initdb" ] && [ -x "$b/pg_ctl" ]; then
+            echo "$b" >> "$GITHUB_PATH"; echo "PG_BIN=$b" >> "$GITHUB_ENV"
+            echo "PostgreSQL server binaries: $b ($src): $("$b/postgres" --version)"
+            echo "PostgreSQL for the fresh run: \`$b\` ($src), $("$b/postgres" --version)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "PG_BIN=/nonexistent-postgresql-server-binaries" >> "$GITHUB_ENV"
+            echo "PostgreSQL server binaries unavailable: the fresh run must report NOT_EXECUTED and FAIL" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Confirm initdb and pg_ctl resolve on PATH
+        run: |
+          command -v initdb && command -v pg_ctl || echo "initdb/pg_ctl not on PATH (expected only when installation failed; the run will be NOT_EXECUTED and fail)"
+      - name: Fresh SIMULATION incident run (runner temp dir, never over committed runs; harness exit 3 = NOT_EXECUTED fails this step)
         env:
           INCIDENT_OUT: ${{ runner.temp }}/incident
         run: bash scripts/ci/incident_checks.sh fresh
