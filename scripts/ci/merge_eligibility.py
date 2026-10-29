@@ -9,15 +9,28 @@ Identity: a run-identity file from provenance.py (--identity), giving candidate_
   kind "merge"   the tested commit is a merge of the candidate into base (PR synthetic merge or candidate/main-validation)
   kind "direct"  tested == candidate (no base)
 AC status values in coordination/tasks.json:
-  "COMPUTED_AT_RUNTIME" (AC3 only): satisfied only when the identity is a valid kind "merge" AND every required job and
-      output in this run succeeded. The decision is written to --decision-out (uploaded as a run artifact), never
-      stored as MET in the candidate tree, so recording it cannot change the SHA it describes.
+  "COMPUTED_AT_RUNTIME" (AC1 and AC3 only; anything else is rejected):
+      AC3: satisfied only when the identity is a valid kind "merge" (base verified == current main, provenance.py F1)
+           AND every required job and output in this run succeeded.
+      AC1: satisfied only from the GitHub reviews API (--reviews, written by reviews.py with the read-only
+           GITHUB_TOKEN): an APPROVED review on the exact candidate SHA by an account other than the PR author
+           (reviews.ac1_from_reviews). A same-account review can never satisfy AC1. AC1 "MET" in tasks.json is
+           rejected: an approval cannot be self-asserted in the tree it approves (PR #30 F3).
+      The decision is written to --decision-out (uploaded as a run artifact), never stored as MET in the candidate
+      tree, so recording it cannot change the SHA it describes.
+  Security exceptions (B5-1): check_exceptions.py is evaluated on the data root (or --exceptions FILE). Any applied
+      cdk-nag suppression tied to a non-APPROVED exception (or an inconsistent register) is a blocking user action
+      (UA-1) and forces AC2 and AC5 UNMET, whatever tasks.json says.
   "MET": requires met_for = {candidate_sha, base_sha, tested_sha} (each exactly 40 hex, case-normalized) equal to
       this run's identity, and a non-empty evidence string. A missing, abbreviated, non-hex or different SHA is NOT
       eligible; a candidate SHA given where the tested-merge SHA belongs (or the reverse) is reported as a mixup.
       A legacy bare met_for_sha is not accepted.
   anything else: not satisfied.
---lint-tasks: fail if tasks.json carries a MET without a complete met_for binding, or COMPUTED_AT_RUNTIME on an AC other than AC3.
+--root DIR: the tree whose data (coordination/tasks.json, coordination/modules.json, the exception register and
+  synthesized templates) is evaluated. In CI this is the candidate checkout, while the gate CODE runs from a trusted
+  checkout (main if it carries the gate, else a pinned SHA): the candidate does not grade itself with its own copy.
+--lint-tasks: fail if tasks.json carries a MET without a complete met_for binding, COMPUTED_AT_RUNTIME on an AC other
+  than AC1/AC3, or AC1 as MET.
 Exit 0 = eligible (or lint clean), 1 = not eligible (expected while conditions are open) or lint violations.
 """
 import argparse, json, os, re, sys
@@ -25,7 +38,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import user_actions  # noqa: E402
+import check_exceptions, reviews  # noqa: E402
 
+RUNTIME_ACS = ("AC1", "AC3")
 TECH = ["AC1", "AC2", "AC3", "AC4", "AC5"]
 RUNTIME = "COMPUTED_AT_RUNTIME"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
@@ -71,8 +86,10 @@ def lint(conds):
     v = []
     for ac, c in conds.items():
         st = c.get("status")
-        if st == RUNTIME and ac != "AC3":
-            v.append(f"{ac}: {RUNTIME} is only allowed for AC3")
+        if st == RUNTIME and ac not in RUNTIME_ACS:
+            v.append(f"{ac}: {RUNTIME} is only allowed for AC1 and AC3")
+        if ac == "AC1" and st == "MET":
+            v.append("AC1: MET in tasks.json is not accepted; AC1 must be COMPUTED_AT_RUNTIME from the GitHub reviews API")
         if st == "MET":
             v += [x for x in binding_problems(ac, c, None) if "no run identity" not in x]
     return v
@@ -84,9 +101,13 @@ def main(argv=None):
     ap.add_argument("--identity", default=os.environ.get("RUN_IDENTITY"))
     ap.add_argument("--decision-out")
     ap.add_argument("--lint-tasks", action="store_true")
-    ap.add_argument("--tasks", default=str(user_actions.ROOT / "coordination/tasks.json"))
+    ap.add_argument("--root", default=str(user_actions.ROOT), help="data root (candidate checkout)")
+    ap.add_argument("--tasks")
+    ap.add_argument("--reviews", help="reviews.py output (AC1 at runtime)")
+    ap.add_argument("--exceptions", help="check_exceptions.py --out JSON (default: evaluate --root)")
     a = ap.parse_args(argv)
-    d = json.loads(Path(a.tasks).read_text())
+    root = Path(a.root)
+    d = json.loads(Path(a.tasks or root / "coordination/tasks.json").read_text())
     conds = {c.get("id"): c for c in (d.get("acceptance_conditions_for_main") or {}).get("conditions") or []}
     if a.lint_tasks:
         v = lint(conds)
@@ -104,7 +125,7 @@ def main(argv=None):
         problems.append("run identity not available (provenance.py --out): not verified for any exact SHA")
 
     # Required checks for this exact run: missing, skipped, cancelled or failed all make the identity ineligible.
-    reg = json.loads((user_actions.ROOT / "coordination/modules.json").read_text())
+    reg = json.loads((root / "coordination/modules.json").read_text())
     required = reg.get("required_gate_jobs") or []
     req_problems = []
     if not required:
@@ -123,6 +144,19 @@ def main(argv=None):
             req_problems.append(f"required check {job}.{k}: {v}")
     problems += req_problems
 
+    rv = None
+    if a.reviews and Path(a.reviews).exists():
+        rv = json.loads(Path(a.reviews).read_text())
+    exc = json.loads(Path(a.exceptions).read_text()) if a.exceptions else check_exceptions.evaluate(root)
+    exc_block = []
+    if exc.get("errors"):
+        exc_block += ["security exception register inconsistent: " + "; ".join(exc["errors"])]
+    if exc.get("unapproved"):
+        ids = sorted({u.get("exception") for u in exc["unapproved"]})
+        exc_block += [f"BLOCKING USER ACTION UA-1: {len(exc['unapproved'])} applied cdk-nag suppression(s) tied to non-APPROVED exception(s) {', '.join(ids)}"]
+    if not isinstance(exc.get("applied"), list):
+        exc_block += ["security exception check did not run"]
+
     ac_results = {}
     for ac in TECH:
         c = conds.get(ac)
@@ -130,7 +164,11 @@ def main(argv=None):
             ac_results[ac] = ("UNMET", ["missing"])
             continue
         st = c.get("status")
-        if st == RUNTIME:
+        if ac == "AC1" and st == "MET":
+            ac_results[ac] = ("UNMET", ["AC1: MET in tasks.json is self-asserted; AC1 must be computed from the GitHub reviews API"])
+        elif st == RUNTIME and ac == "AC1":
+            ac_results[ac] = reviews.ac1_from_reviews(rv, ident) if rv is not None else ("UNMET", ["reviews not fetched (--reviews)"])
+        elif st == RUNTIME:
             if ac != "AC3":
                 ac_results[ac] = ("UNMET", [f"{RUNTIME} not allowed for {ac}"])
             elif ident is None or not ident.get("valid"):
@@ -147,6 +185,10 @@ def main(argv=None):
             ac_results[ac] = ("MET", []) if not bp else ("UNMET", bp)
         else:
             ac_results[ac] = ("UNMET", [f"{ac}: {st}"])
+    for ac in ("AC2", "AC5"):
+        if exc_block:
+            st, why = ac_results[ac]
+            ac_results[ac] = ("UNMET", ([f"{ac}: {st} in tasks.json overridden"] if st != "UNMET" else []) + list(why) + exc_block)
     for ac, (st, why) in ac_results.items():
         if st not in ("MET", "MET_AT_RUNTIME"):
             problems += why if any(w.startswith(ac) for w in why) else [f"{ac}: {'; '.join(why)}"]
@@ -164,6 +206,11 @@ def main(argv=None):
             "schema": "bank-lab/merge-eligibility-decision/v1", "identity": ident, "verdict": verdict,
             "acceptance": {ac: {"status": st, "detail": why} for ac, (st, why) in ac_results.items()},
             "AC6": ac6, "required_check_problems": req_problems, "problems": problems,
+            "gate_code": {"source": os.environ.get("GATE_SOURCE", "local"), "sha": os.environ.get("GATE_SHA"),
+                          "data_root": str(root)},
+            "reviews": {k: (rv or {}).get(k) for k in ("ok", "pr", "pr_author", "head_sha", "error")} if rv is not None else None,
+            "security_exceptions": {"applied": len(exc.get("applied") or []), "unapproved": sorted({u.get("exception") for u in exc.get("unapproved") or []}),
+                                    "errors": exc.get("errors"), "blocking_user_action": bool(exc_block)},
             "required_jobs": {j: (needs or {}).get(j, {}).get("result", "missing") for j in required + ["final-summary"]} if isinstance(needs, dict) else None,
             "policy": "PR #27 C6"}, indent=2) + "\n")
     if a.summary:

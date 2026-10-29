@@ -36,6 +36,7 @@ step "incident committed runs"        bash scripts/ci/incident_checks.sh committ
 step "incident NOT_EXECUTED negative" bash scripts/ci/incident_checks.sh not-executed-negative
 step "labeling markers"               python3 scripts/ci/check_labels.py
 # --- PR #5 AWS evidence bundle (static)
+step "security exceptions register (B5-1; UA-1 blocking reported)" python3 scripts/ci/check_exceptions.py
 step "aws evidence SHA256SUMS" bash -c 'cd evidence/aws/aws-remediation-vpc-rds && sha256sum -c SHA256SUMS --quiet'
 for t in evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do step "s3 self-logging $t" python3 "$V" cfn-s3-selflog "$t"; done
 # --- PR #2 Postgres evidence (harness v2, committed runs; see evidence/postgres/runs/INDEX.md)

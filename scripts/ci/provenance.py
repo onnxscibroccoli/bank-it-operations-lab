@@ -14,7 +14,11 @@ Every SHA is validated as 40 lowercase hex. Cross-checks (any mismatch -> exit 1
   pull_request: tested^2 == event.pull_request.head.sha (candidate); tested^1 recorded as base_sha and compared
                 with event.pull_request.base.sha (a moved base is recorded as base_moved, not hidden)
   candidate/main-validation-<abbrev>: tested^2 starts with <abbrev>; tested^1 == base
-Usage: provenance.py --out FILE [--summary FILE]. Standard library + git only; no network, no token.
+  F1 (PR #30): for every kind "merge", base_sha (tested^1) MUST equal the CURRENT main SHA, read at runtime from the
+  base ref (env TRUSTED_MAIN_SHA, set by the workflow from `git ls-remote origin refs/heads/main`, or --main-sha).
+  A merge into any other commit (an old candidate, a side branch) is INVALID, as is a missing main SHA.
+  pull_request: the event's base ref must be main and a moved base (event base != tested^1) is INVALID.
+Usage: provenance.py --out FILE [--summary FILE] [--main-sha SHA]. Standard library + git only; no token.
 """
 import argparse, json, os, re, subprocess, sys
 from pathlib import Path
@@ -65,6 +69,9 @@ def compute(env):
             errs.append(f"synthetic merge second parent {ps[1]} != pull_request.head.sha {head}")
         if base_ev and ident["base_sha"] and base_ev != ident["base_sha"]:
             ident["base_moved"] = True
+            errs.append(f"base moved: tested^1 {ident['base_sha']} != pull_request.base.sha {base_ev}")
+        if (pr.get("base") or {}).get("ref") not in (None, "main"):
+            errs.append(f"pull_request base ref is {(pr.get('base') or {}).get('ref')!r}, not main")
     elif event == "push" and ref.startswith("candidate/main-validation-"):
         abbrev = ref.rsplit("-", 1)[-1].lower()
         ident.update(kind="merge", candidate_sha=ps[1] if len(ps) == 2 else None, base_sha=ps[0] if len(ps) == 2 else None)
@@ -74,6 +81,14 @@ def compute(env):
             errs.append(f"branch suffix {abbrev!r} does not identify the merged candidate {ps[1]}")
     else:
         ident.update(kind="direct", candidate_sha=tested, base_sha=None)
+    if ident.get("kind") == "merge":
+        raw_main = env.get("TRUSTED_MAIN_SHA")
+        main_sha = norm(raw_main)
+        ident["main_sha_at_runtime"] = main_sha
+        if not main_sha:
+            errs.append(f"current main SHA not available or not 40-hex (TRUSTED_MAIN_SHA={raw_main!r}): base cannot be verified as main")
+        elif ident.get("base_sha") and ident["base_sha"] != main_sha:
+            errs.append(f"base {ident['base_sha']} is not the current main {main_sha}: candidate was merged into a non-main parent")
     for k in ("candidate_sha", "tested_sha") + (("base_sha",) if ident.get("kind") == "merge" else ()):
         if not ident.get(k):
             errs.append(f"{k} missing or not 40-hex")
@@ -88,14 +103,18 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--summary")
+    ap.add_argument("--main-sha", help="current main SHA (overrides env TRUSTED_MAIN_SHA)")
     a = ap.parse_args(argv)
-    ident = compute(os.environ)
+    env = dict(os.environ)
+    if a.main_sha:
+        env["TRUSTED_MAIN_SHA"] = a.main_sha
+    ident = compute(env)
     Path(a.out).write_text(json.dumps(ident, indent=2) + "\n")
     print(json.dumps(ident, indent=2))
     if a.summary:
         with open(a.summary, "a") as f:
             f.write("### Run identity (AC3 provenance)\n\n| field | value |\n|---|---|\n")
-            for k in ("event", "kind", "candidate_sha", "base_sha", "tested_sha", "run_id", "run_attempt", "valid"):
+            for k in ("event", "kind", "candidate_sha", "base_sha", "main_sha_at_runtime", "tested_sha", "run_id", "run_attempt", "valid"):
                 f.write(f"| {k} | `{ident.get(k)}` |\n")
     return 0 if ident["valid"] else 1
 

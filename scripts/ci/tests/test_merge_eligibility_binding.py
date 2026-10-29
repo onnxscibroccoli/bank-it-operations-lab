@@ -34,18 +34,29 @@ def met(binding=BIND, evidence="https://example.invalid/run/1", **extra):
     return c
 
 
+AUTHOR = "onnxscibroccoli"
+APPROVED_REVIEWS = {"ok": True, "pr": 7, "pr_author": AUTHOR, "head_sha": CAND, "base_ref": "main",
+                    "reviews": [{"id": 1, "user": {"login": "independent-reviewer"}, "state": "APPROVED", "commit_id": CAND,
+                                 "submitted_at": "2026-10-28T23:00:00Z"}]}
+CLEAN_EXC = {"applied": [], "unapproved": [], "errors": [], "blocking_user_action": False}
+
+
 def tasks(ac_over):
-    conds = [dict({"id": ac}, **met()) for ac in ("AC1", "AC2", "AC4", "AC5")]
-    conds += [{"id": "AC3", "status": "COMPUTED_AT_RUNTIME"}, {"id": "AC6", "status": "UNMET"}]
+    conds = [dict({"id": ac}, **met()) for ac in ("AC2", "AC4", "AC5")]
+    conds += [{"id": "AC1", "status": "COMPUTED_AT_RUNTIME"}, {"id": "AC3", "status": "COMPUTED_AT_RUNTIME"}, {"id": "AC6", "status": "UNMET"}]
     conds = [dict({"id": c["id"]}, **ac_over[c["id"]]) if c["id"] in ac_over else c for c in conds]
     return {"acceptance_conditions_for_main": {"conditions": conds}}
 
 
-def run(ac_over=None, ident=IDENT, needs=None, extra=()):
+def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC):
     with tempfile.TemporaryDirectory() as d:
         tp = Path(d) / "tasks.json"
         tp.write_text(json.dumps(tasks(ac_over or {})))
         args = ["--tasks", str(tp), *extra]
+        if reviews is not None:
+            (Path(d) / "rv.json").write_text(json.dumps(reviews)); args += ["--reviews", str(Path(d) / "rv.json")]
+        if exc is not None:
+            (Path(d) / "exc.json").write_text(json.dumps(exc)); args += ["--exceptions", str(Path(d) / "exc.json")]
         if ident is not None:
             ip = Path(d) / "id.json"
             ip.write_text(json.dumps(ident))
@@ -108,7 +119,7 @@ class Binding(unittest.TestCase):
         self.assertIn("mixup", out)
 
     def test_met_without_evidence_is_not_eligible(self):
-        rc, out = run({"AC1": met(evidence="")})
+        rc, out = run({"AC2": met(evidence="")})
         self.assertEqual(rc, 1)
 
     def test_runtime_status_only_for_ac3(self):
