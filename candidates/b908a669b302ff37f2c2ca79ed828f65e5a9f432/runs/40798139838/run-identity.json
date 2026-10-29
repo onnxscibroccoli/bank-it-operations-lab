@@ -1,0 +1,14 @@
+{
+  "schema": "bank-lab/run-identity/v1",
+  "event": "push",
+  "ref_name": "overnight/integration",
+  "repository": "onnxscibroccoli/bank-it-operations-lab",
+  "run_id": "40798139838",
+  "run_attempt": "1",
+  "tested_sha": "b908a669b302ff37f2c2ca79ed828f65e5a9f432",
+  "kind": "direct",
+  "candidate_sha": "b908a669b302ff37f2c2ca79ed828f65e5a9f432",
+  "base_sha": null,
+  "valid": true,
+  "errors": []
+}

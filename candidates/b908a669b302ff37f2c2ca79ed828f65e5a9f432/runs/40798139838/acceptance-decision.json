@@ -1,0 +1,76 @@
+{
+  "schema": "bank-lab/merge-eligibility-decision/v1",
+  "identity": {
+    "schema": "bank-lab/run-identity/v1",
+    "event": "push",
+    "ref_name": "overnight/integration",
+    "repository": "onnxscibroccoli/bank-it-operations-lab",
+    "run_id": "40798139838",
+    "run_attempt": "1",
+    "tested_sha": "b908a669b302ff37f2c2ca79ed828f65e5a9f432",
+    "kind": "direct",
+    "candidate_sha": "b908a669b302ff37f2c2ca79ed828f65e5a9f432",
+    "base_sha": null,
+    "valid": true,
+    "errors": []
+  },
+  "verdict": "NOT ELIGIBLE",
+  "acceptance": {
+    "AC1": {
+      "status": "UNMET",
+      "detail": [
+        "AC1: UNMET"
+      ]
+    },
+    "AC2": {
+      "status": "UNMET",
+      "detail": [
+        "AC2: PARTIAL"
+      ]
+    },
+    "AC3": {
+      "status": "UNMET",
+      "detail": [
+        "direct run: the candidate was not tested as a merge with main in this run"
+      ]
+    },
+    "AC4": {
+      "status": "UNMET",
+      "detail": [
+        "AC4: PARTIAL"
+      ]
+    },
+    "AC5": {
+      "status": "UNMET",
+      "detail": [
+        "AC5: UNMET"
+      ]
+    }
+  },
+  "AC6": "UNMET",
+  "required_check_problems": [],
+  "problems": [
+    "AC1: UNMET",
+    "AC2: PARTIAL",
+    "AC3: direct run: the candidate was not tested as a merge with main in this run",
+    "AC4: PARTIAL",
+    "AC5: UNMET"
+  ],
+  "required_jobs": {
+    "user-actions": "success",
+    "module-registry": "success",
+    "offline-validation": "success",
+    "aws-cdk": "success",
+    "postgres": "success",
+    "m365-scenario-evaluation": "success",
+    "m365-unit-tests": "success",
+    "m365-evidence-verification": "success",
+    "plan-only-assertions": "success",
+    "incident-committed-runs": "success",
+    "incident-fresh-run": "success",
+    "incident-not-executed-negative": "success",
+    "labeling-markers": "success",
+    "final-summary": "success"
+  },
+  "policy": "PR #27 C6"
+}
