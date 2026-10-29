@@ -1,0 +1,45 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyBpaChanges",
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutAccountPublicAccessBlock",
+        "s3:PutBucketPublicAccessBlock"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyPublicAcls",
+      "Effect": "Deny",
+      "Action": [
+        "s3:CreateBucket",
+        "s3:PutBucketAcl",
+        "s3:PutObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "s3:x-amz-acl": [
+            "public-read",
+            "public-read-write",
+            "authenticated-read"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyDisableOwnershipEnforced",
+      "Effect": "Deny",
+      "Action": "s3:PutBucketOwnershipControls",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:x-amz-object-ownership": "BucketOwnerEnforced"
+        }
+      }
+    }
+  ]
+}

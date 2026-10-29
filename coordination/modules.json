@@ -260,7 +260,7 @@
     },
     {
       "id": "orgs-security",
-      "status": "BLOCKED",
+      "status": "INTEGRATED",
       "prs": [
         6
       ],
@@ -268,8 +268,8 @@
         "infra/orgs",
         "evidence/orgs"
       ],
-      "reason": "BLOCKED, not excluded: counted in the portfolio denominator. B6-1: infra/orgs/lib/org-cloudtrail-stack.ts TrailAccessLogsBucket sets serverAccessLogsPrefix without serverAccessLogsBucket, so it logs to itself (evidence/shared cfn-s3-selflog ERROR; same defect that superseded PR #1). B6-2: exempt-role SCP bypass (PR #14). B6-3: the plan asked for a Terraform track and PR #6 delivers CDK only; Terraform coverage is MISSING. It is not descoped (descoping needs an owner decision), so fixing B6-1/B6-2 alone does not admit PR #6 (PR #30 N1). Verified at PR #6 head e5e7f4604597c7e6e35e69bf0607fe0535d4cdab, 2026-10-28 21:10 EDT.",
-      "category": "blocked",
+      "reason": "B6-1 fixed: TrailAccessLogsBucket is a terminal sink (no self-log prefix). B6-2 fixed: SCP documents no longer exempt any IAM role; break-glass is a management-account operation. B6-3 delivered as infra/orgs/terraform reading evidence/orgs/policies. Not deployed. Not independently accepted. Terraform apply is out of scope.",
+      "category": "functional",
       "delivery_location": [
         "infra/orgs"
       ],
@@ -283,30 +283,24 @@
         "JRM:A4,C9,gap-6"
       ],
       "required_checks": {
-        "present": [],
-        "proposed": [
-          "infra/orgs: npm ci && npx tsc --noEmit && npx jest",
-          "infra/orgs: cdk synth --no-lookups + scripts/nag-gate.sh",
-          "evidence/shared cfn-s3-selflog on infra/orgs cdk.out (must be 0 ERROR; fails today: B6-1)",
-          "infra/orgs scripts/lint-policies.ts",
-          "evidence/orgs SHA256SUMS"
-        ]
-      },
-      "blocker": {
-        "ids": [
-          "B6-1",
-          "B6-2",
-          "B6-3"
+        "present": [
+          "portfolio-validation.yml:offline",
+          "portfolio-validation.yml:orgs-static"
         ],
-        "source": "PR #14 eb8d259 + PR #3 cfn-s3-selflog",
-        "head_sha": "e5e7f4604597c7e6e35e69bf0607fe0535d4cdab",
-        "unblock": "Give TrailAccessLogsBucket no server access logging (or a separate dedicated log bucket) with a cdk-nag suppression recorded as an exception; remove the exempt-role SCP bypass; re-run cfn-s3-selflog = 0 ERROR. B6-3: deliver the requested Terraform track for the Organizations/SCP/CloudTrail references (with static checks equivalent to the CDK ones), or get an explicit owner decision descoping Terraform, recorded in tasks.json."
+        "proposed": []
       },
-      "blockers": [
-        "B6-1",
-        "B6-2",
-        "B6-3"
-      ]
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:offline",
+        "portfolio-validation.yml:orgs-static"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "limitations": "Static synthesis and policy lint only. No Organizations API calls. Terraform is not applied."
     },
     {
       "id": "acceptance",
@@ -1010,7 +1004,7 @@
     },
     {
       "id": "aws-network-edge",
-      "status": "NOT_STARTED",
+      "status": "INTEGRATED",
       "category": "functional",
       "prs": [],
       "paths": [
@@ -1019,27 +1013,35 @@
       "delivery_location": [
         "infra/aws-network"
       ],
-      "reason": "JRM 'Top gaps' #2: ALB + EC2/ASG (SSM-managed, no SSH), Route 53 private zone, Site-to-Site VPN reference, AWS Budgets + tagging policy; static first with nag gates. No PR. Cost model partly covered by backup-dr-aws.",
+      "reason": "Delivered as a credential-free CDK app: internal ALB, no IGW/NAT, SSM via interface endpoints, no SSH, IMDSv2, private zone, documentation-range VPN peer 203.0.113.10, monthly budget, required tags. NE-01 and NE-02 are proposed suppressions, not approved exceptions. Not deployed.",
       "owner": {
-        "agent": "Bank IT Lab AWS Remediation (proposed)",
-        "pr_author": null,
-        "branch": null
+        "agent": "delivery integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "delivery/portfolio"
       },
       "plan_sources": [
         "JRM:C3,section E,gap-2"
       ],
       "required_checks": {
-        "present": [],
-        "proposed": [
-          "tsc + jest",
-          "cdk synth --no-lookups + nag gate",
-          "cfn-s3-selflog"
-        ]
-      }
+        "present": [
+          "portfolio-validation.yml:network-edge"
+        ],
+        "proposed": []
+      },
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:network-edge"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
     },
     {
       "id": "endpoint-windows-automation",
-      "status": "NOT_STARTED",
+      "status": "INTEGRATED",
       "category": "functional",
       "prs": [],
       "paths": [
@@ -1048,23 +1050,33 @@
       "delivery_location": [
         "operations/endpoint"
       ],
-      "reason": "JRM 'Top gaps' #3: PowerShell scripts with Pester tests (AD/Entra user lifecycle, CA export diff), Intune compliance baseline validated offline, firewall rule-set reference + linter. No PR; #19 (runbooks) and #20 (M365 PLAN_ONLY) cover adjacent docs/scenarios only.",
+      "reason": "Python static checks of the PowerShell joiner/mover/leaver, Intune baseline, and firewall CSV. Not executed on Windows. Not a tenant change.",
       "owner": {
-        "agent": "unassigned",
-        "pr_author": null,
-        "branch": null
+        "agent": "delivery integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "delivery/portfolio"
       },
       "plan_sources": [
         "JRM:A2,B2,C6,C7,gap-3"
       ],
       "required_checks": {
-        "present": [],
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
         "proposed": [
-          "Pester tests (pwsh on ubuntu runner)",
-          "offline Intune baseline validator",
-          "firewall rule-set linter + negative fixtures"
+          "Pester on a domain-joined host (NOT_EXECUTED)"
         ]
-      }
+      },
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
     },
     {
       "id": "inventory-diagrams",
@@ -1103,6 +1115,44 @@
         "STATIC_VALIDATED"
       ],
       "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
+    },
+    {
+      "id": "owner-authentication",
+      "status": "INTEGRATED",
+      "category": "functional",
+      "prs": [],
+      "paths": [
+        "governance/owner-auth"
+      ],
+      "delivery_location": [
+        "governance/owner-auth"
+      ],
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "owner": {
+        "agent": "delivery integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "delivery/portfolio"
+      },
+      "plan_sources": [
+        "UA-6"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "limitations": "Allow-list empty. No owner key enrolled. Does not satisfy AC1, AC2, or AC4. Does not weaken merge eligibility.",
+      "reason": "Design and fail-closed verifier for a personal GitHub account. Not an approval."
     }
   ],
   "required_gate_jobs": [

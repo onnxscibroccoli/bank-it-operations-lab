@@ -1,4 +1,4 @@
-import { Duration, RemovalPolicy, Stack, StackProps, Token } from 'aws-cdk-lib';
+import { ArnFormat, Duration, RemovalPolicy, Stack, StackProps, Token } from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as events from 'aws-cdk-lib/aws-events';
@@ -220,23 +220,15 @@ export class NetworkDatabaseStack extends Stack {
         deleteAfter: Duration.days(35),
       }),
     );
-    const selection = plan.addSelection('Postgres', {
-      resources: [backup.BackupResource.fromRdsDatabaseInstance(this.database)],
+    const role = backupRole(this, vault, this.database, this.dbKey);
+    new backup.CfnBackupSelection(this, 'PostgresSelection', {
+      backupPlanId: plan.backupPlanId,
+      backupSelection: {
+        selectionName: 'postgres',
+        iamRoleArn: role.roleArn,
+        resources: [this.database.instanceArn],
+      },
     });
-    // Registered exception EX-04.
-    // Scoped to the selection's role resource only (not applied to children or the selection itself).
-    NagSuppressions.addResourceSuppressions(
-      selection.node.findChild('Role'),
-      [
-        {
-          id: 'AwsSolutions-IAM4',
-          reason:
-            'EX-04: AWS Backup selection role uses the AWS-documented service-role policy AWSBackupServiceRolePolicyForBackup; ' +
-            'a hand-written copy would need snapshot-name wildcards (IAM5) and drift from AWS updates.',
-          appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup'],
-        },
-      ],
-    );
 
     // Registered exception EX-03 (see evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md).
     NagSuppressions.addResourceSuppressions(monitoringPolicy, [
@@ -250,3 +242,89 @@ export class NetworkDatabaseStack extends Stack {
     ]);
   }
 }
+
+/**
+ * Customer-managed backup role. Trust is limited to backup.amazonaws.com in this account,
+ * and only when the source is this vault (confused-deputy conditions AWS Backup documents
+ * for the service role). The policy is this instance and awsbackup-* snapshots, not the
+ * AWS-managed AWSBackupServiceRolePolicyForBackup (that policy was EX-04).
+ *
+ * Snapshot names are chosen by AWS Backup at job time, so the snapshot ARN has a prefix
+ * wildcard. That is the remaining EX-04, and it is narrower than the managed policy.
+ */
+function backupRole(
+  scope: NetworkDatabaseStack,
+  vault: backup.BackupVault,
+  database: rds.DatabaseInstance,
+  key: kms.Key,
+): iam.Role {
+  const stack = Stack.of(scope);
+  const snapshotArn = stack.formatArn({
+    service: 'rds',
+    resource: 'snapshot',
+    arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+    resourceName: 'awsbackup-*',
+  });
+  const role = new iam.Role(scope, 'DbBackupRole', {
+    assumedBy: new iam.ServicePrincipal('backup.amazonaws.com', {
+      conditions: {
+        StringEquals: { 'aws:SourceAccount': stack.account },
+        ArnEquals: { 'aws:SourceArn': vault.backupVaultArn },
+      },
+    }),
+    description: 'Lab PostgreSQL backups only. Trust bound to this account and this vault.',
+  });
+  const policy = new iam.ManagedPolicy(scope, 'DbBackupPolicy', {
+    document: new iam.PolicyDocument({
+      statements: [
+        new iam.PolicyStatement({
+          sid: 'SnapshotThisInstance',
+          actions: [
+            'rds:AddTagsToResource',
+            'rds:CopyDBSnapshot',
+            'rds:CreateDBSnapshot',
+            'rds:DeleteDBSnapshot',
+            'rds:DescribeDBInstances',
+            'rds:DescribeDBSnapshotAttributes',
+            'rds:DescribeDBSnapshots',
+            'rds:ListTagsForResource',
+            'rds:ModifyDBSnapshotAttribute',
+          ],
+          resources: [database.instanceArn, snapshotArn],
+        }),
+        new iam.PolicyStatement({
+          sid: 'UseThisVault',
+          actions: ['backup:CopyIntoBackupVault', 'backup:DescribeBackupVault'],
+          resources: [vault.backupVaultArn],
+        }),
+        new iam.PolicyStatement({
+          sid: 'UseDbKeyViaBackupAndRds',
+          actions: ['kms:CreateGrant', 'kms:Decrypt', 'kms:DescribeKey', 'kms:GenerateDataKey'],
+          resources: [key.keyArn],
+          conditions: {
+            StringEquals: {
+              'kms:ViaService': [
+                `rds.${stack.region}.amazonaws.com`,
+                `backup.${stack.region}.amazonaws.com`,
+              ],
+            },
+          },
+        }),
+      ],
+    }),
+  });
+  role.addManagedPolicy(policy);
+  NagSuppressions.addResourceSuppressions(policy, [
+    {
+      id: 'AwsSolutions-IAM5',
+      reason:
+        'EX-04: AWS Backup names RDS snapshots awsbackup-<job> at runtime. The wildcard is only that prefix in this account. ' +
+        'The role trust requires aws:SourceAccount and aws:SourceArn of this vault. This replaces the AWS-managed backup policy.',
+      appliesTo: [
+        'Resource::arn:<AWS::Partition>:rds:<AWS::Region>:<AWS::AccountId>:snapshot:awsbackup-*',
+      ],
+    },
+  ]);
+  return role;
+}
+

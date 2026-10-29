@@ -33,7 +33,7 @@ The offline suite needs Python 3.10+, Git and Bash. No pip packages or credentia
 
 ## Module inventory
 
-The machine-readable authority is [coordination/modules.json](coordination/modules.json). INTEGRATED means present in this delivery tree with registered checks; it does not mean reviewed, accepted, or merged. The coverage count includes documentation and is not a production-readiness score.
+The machine-readable authority is [coordination/modules.json](coordination/modules.json). INTEGRATED means present in this delivery tree with registered checks; it does not mean reviewed, accepted, or merged. Owner authentication does not make the merge gate eligible. The coverage count includes documentation and is not a production-readiness score.
 
 | Module | State | Entry point |
 |---|---|---|
@@ -42,7 +42,7 @@ The machine-readable authority is [coordination/modules.json](coordination/modul
 | entra-offline | INTEGRATED | [identity/entra](identity/entra) |
 | aws-cdk | INTEGRATED | [infra/aws-cdk](infra/aws-cdk) |
 | postgres-recovery | INTEGRATED | [tests/integration](tests/integration) |
-| orgs-security | BLOCKED | Not delivered |
+| orgs-security | INTEGRATED | [infra/orgs](infra/orgs) static only; B6-1/B6-2/B6-3 repaired; not accepted |
 | acceptance | NOT_INTEGRATED | Not delivered |
 | review-notes | NOT_INTEGRATED | Not delivered |
 | portfolio-cases | INTEGRATED | [portfolio](portfolio) |
@@ -60,9 +60,10 @@ The machine-readable authority is [coordination/modules.json](coordination/modul
 | backup-dr-aws | INTEGRATED | [backup](backup) |
 | incident-demo | INTEGRATED | [scenarios](scenarios) |
 | bank-aws-001 | SUPERSEDED | Not delivered |
-| aws-network-edge | NOT_STARTED | Not delivered |
-| endpoint-windows-automation | NOT_STARTED | Not delivered |
+| aws-network-edge | INTEGRATED | [infra/aws-network](infra/aws-network) static only; not deployed |
+| endpoint-windows-automation | INTEGRATED | [operations/endpoint](operations/endpoint) STATIC_VALIDATED; not run on Windows |
 | inventory-diagrams | INTEGRATED | [Static inventory and generated diagrams](inventory/README.md) |
+| owner-authentication | INTEGRATED | [governance/owner-auth](governance/owner-auth) allow-list empty; AC1 still unmet |
 
 ## Validation and release
 

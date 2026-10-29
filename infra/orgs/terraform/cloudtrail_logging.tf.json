@@ -1,0 +1,29 @@
+{
+  "resource": {
+    "aws_s3_bucket": {
+      "trail_access_logs": {
+        "bucket_key_enabled": false
+      },
+      "trail": {
+        "bucket_key_enabled": true
+      }
+    },
+    "aws_s3_bucket_logging": {
+      "trail": {
+        "bucket": "${aws_s3_bucket.trail.id}",
+        "target_bucket": "${aws_s3_bucket.trail_access_logs.id}",
+        "target_prefix": "trail-bucket/"
+      }
+    },
+    "aws_s3_bucket_server_side_encryption_configuration": {
+      "trail_access_logs": {
+        "bucket": "${aws_s3_bucket.trail_access_logs.id}",
+        "rule": {
+          "apply_server_side_encryption_by_default": {
+            "sse_algorithm": "AES256"
+          }
+        }
+      }
+    }
+  }
+}

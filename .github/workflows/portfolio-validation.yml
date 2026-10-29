@@ -54,8 +54,41 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run synth
+  orgs-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: infra/orgs
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run export:policies
+      - name: Exported SCP documents are committed
+        run: git diff --exit-code -- ../../evidence/orgs/policies
+  network-edge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: infra/aws-network
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
   package:
-    needs: [offline, backup-static]
+    needs: [offline, backup-static, orgs-static, network-edge]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

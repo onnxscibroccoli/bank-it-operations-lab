@@ -161,7 +161,7 @@
     "id": "AC2",
     "condition": "Security exceptions are recorded and approved by an owner",
     "status": "COMPUTED_AT_RUNTIME",
-    "detail": "EX-01..EX-04 are PROPOSED (not approved). 5 applied suppressions: EX-01 AccessLogsBucket (NIST S3DefaultEncryptionKMS); EX-02 AccessLogsBucket + DataBucket (NIST S3BucketReplicationEnabled); EX-03 RdsMonitoringPolicy (AwsSolutions-IAM5); EX-04 BackupPlan/Postgres/Role (AwsSolutions-IAM4). Approval path: UA-1 decision comment by the owner (see UA-1 instructions).",
+    "detail": "EX-01..EX-04 are PROPOSED (not approved). 5 applied suppressions: EX-01 AccessLogsBucket (NIST S3DefaultEncryptionKMS); EX-02 AccessLogsBucket + DataBucket (NIST S3BucketReplicationEnabled); EX-03 RdsMonitoringPolicy (AwsSolutions-IAM5); EX-04 DbBackupPolicy (AwsSolutions-IAM5 snapshot:awsbackup-* only; managed backup policy removed; trust bound to this vault). Approval path: UA-1 decision comment by the owner (see UA-1 instructions).",
     "history": [
      {
       "status": "PARTIAL",

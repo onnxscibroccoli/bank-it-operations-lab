@@ -105,11 +105,29 @@ describe('NetworkDatabaseStack', () => {
     expect(nagFindings(stack, 'warning', pack)).toHaveLength(0);
   });
 
+  test('backup role is customer-managed and trust is bound to this vault (EX-04)', () => {
+    const roles = template.findResources('AWS::IAM::Role');
+    const backup = Object.values(roles).find((r) =>
+      JSON.stringify(r).includes('backup.amazonaws.com'),
+    ) as { Properties: { AssumeRolePolicyDocument: { Statement: Array<{ Condition?: Record<string, unknown> }> }; ManagedPolicyArns?: unknown[] } };
+    expect(backup).toBeDefined();
+    const condition = backup.Properties.AssumeRolePolicyDocument.Statement[0].Condition as {
+      StringEquals: Record<string, unknown>;
+      ArnEquals: Record<string, unknown>;
+    };
+    expect(condition.StringEquals['aws:SourceAccount']).toEqual({ Ref: 'AWS::AccountId' });
+    expect(JSON.stringify(condition.ArnEquals['aws:SourceArn'])).toContain('BackupVault');
+    const managed = JSON.stringify(backup.Properties.ManagedPolicyArns);
+    expect(managed).not.toContain('AWSBackupServiceRolePolicyForBackup');
+    expect(managed).toContain('DbBackupPolicy');
+  });
+
   test('only registered exceptions are suppressed (EX-03, EX-04)', () => {
     const s = suppressionsIn(template);
+    const policy = stack.node.findChild('DbBackupPolicy').node.defaultChild as CfnElement;
     expect(s.map((x) => `${x.rule}@${x.logicalId}`).sort()).toEqual(
       [
-        `AwsSolutions-IAM4@${stack.getLogicalId(stack.node.findChild('BackupPlan').node.findChild('Postgres').node.findChild('Role').node.defaultChild as CfnElement)}`,
+        `AwsSolutions-IAM5@${stack.getLogicalId(policy)}`,
         `AwsSolutions-IAM5@${stack.getLogicalId(stack.node.findChild('RdsMonitoringPolicy').node.defaultChild as CfnElement)}`,
       ].sort(),
     );
