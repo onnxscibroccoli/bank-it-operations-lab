@@ -1,0 +1,67 @@
+$ python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/manifests/patch-manifest.example.json --plan
+--- stdout ---
+patch manifest bank-lab-2026-11-monthly (operations/patching/manifests/patch-manifest.example.json) -- DRY RUN, no AWS calls
+NOTE: manifest is marked exampleData=true
+  [PASS] PM-RING-ORDER            ring orders [1, 2, 3] must be 1..N and names unique
+  [PASS] PM-CANARY-SIZE           first ring 'canary' maxConcurrency=1 (must be an absolute count <= 1)
+  [PASS] PM-CANARY-ERRORS         first ring 'canary' maxErrors=0 (must be 0: any canary failure stops the ring)
+  [PASS] PM-CANARY-NOGATE         first ring 'canary' must not depend on a gate
+  [PASS] PM-OPERATION             ring canary operation=Install
+  [PASS] PM-REBOOT                ring canary rebootOption=RebootIfNeeded
+  [PASS] PM-PATCHGROUP-KNOWN      ring canary patch groups not registered to any baseline: none
+  [PASS] PM-PATCHGROUP-UNIQUE     ring canary reuses patch groups already in another ring: none
+  [PASS] PM-PRESNAPSHOT           ring canary installs; preSnapshot must be true
+  [PASS] PM-SOAK                  ring canary soakHours=48
+  [PASS] PM-OPERATION             ring wave1 operation=Install
+  [PASS] PM-REBOOT                ring wave1 rebootOption=RebootIfNeeded
+  [PASS] PM-PATCHGROUP-KNOWN      ring wave1 patch groups not registered to any baseline: none
+  [PASS] PM-PATCHGROUP-UNIQUE     ring wave1 reuses patch groups already in another ring: none
+  [PASS] PM-PRESNAPSHOT           ring wave1 installs; preSnapshot must be true
+  [PASS] PM-SOAK                  ring wave1 soakHours=48
+  [PASS] PM-GATE-PRESENT          ring wave1 gated
+  [PASS] PM-GATE-ORDER            ring wave1 gate requires 'canary'; previous ring is 'canary'
+  [PASS] PM-GATE-APPROVERS        ring wave1 approvers=['service-owner', 'change-advisory-board']
+  [PASS] PM-GATE-SOAK             ring wave1 minSoakHours=48 (>= 24)
+  [PASS] PM-GATE-EVIDENCE         ring wave1 gate evidence must include compliance-summary
+  [PASS] PM-OPERATION             ring wave2 operation=Install
+  [PASS] PM-REBOOT                ring wave2 rebootOption=RebootIfNeeded
+  [PASS] PM-PATCHGROUP-KNOWN      ring wave2 patch groups not registered to any baseline: none
+  [PASS] PM-PATCHGROUP-UNIQUE     ring wave2 reuses patch groups already in another ring: none
+  [PASS] PM-PRESNAPSHOT           ring wave2 installs; preSnapshot must be true
+  [PASS] PM-SOAK                  ring wave2 soakHours=24
+  [PASS] PM-GATE-PRESENT          ring wave2 gated
+  [PASS] PM-GATE-ORDER            ring wave2 gate requires 'wave1'; previous ring is 'wave1'
+  [PASS] PM-GATE-APPROVERS        ring wave2 approvers=['change-advisory-board']
+  [PASS] PM-GATE-SOAK             ring wave2 minSoakHours=48 (>= 24)
+  [PASS] PM-GATE-EVIDENCE         ring wave2 gate evidence must include compliance-summary
+  [PASS] PM-BASELINE-OS           baseline al2023-security manifest OS AMAZON_LINUX_2023 vs file OS AMAZON_LINUX_2023
+  [PASS] PM-BASELINE-REJECT-BLOCK baseline al2023-security RejectedPatchesAction=BLOCK
+  [PASS] PM-BASELINE-DELAY        baseline al2023-security: every approval rule needs ApproveAfterDays/ApproveUntilDate (2 rules)
+  [PASS] PM-BASELINE-OS           baseline rhel-security manifest OS REDHAT_ENTERPRISE_LINUX vs file OS REDHAT_ENTERPRISE_LINUX
+  [PASS] PM-BASELINE-REJECT-BLOCK baseline rhel-security RejectedPatchesAction=BLOCK
+  [PASS] PM-BASELINE-DELAY        baseline rhel-security: every approval rule needs ApproveAfterDays/ApproveUntilDate (2 rules)
+  [PASS] PM-TASK-DOCUMENT         ring canary task AWS-RunPatchBaseline/RUN_COMMAND
+  [PASS] PM-TASK-RATES            ring canary task MaxConcurrency/MaxErrors 1/0 vs manifest 1/0
+  [PASS] PM-TASK-OPERATION        ring canary task Operation=Install vs manifest Install
+  [PASS] PM-TASK-REBOOT           ring canary task RebootOption=RebootIfNeeded
+  [PASS] PM-TASK-DOCUMENT         ring wave1 task AWS-RunPatchBaseline/RUN_COMMAND
+  [PASS] PM-TASK-RATES            ring wave1 task MaxConcurrency/MaxErrors 10%/5% vs manifest 10%/5%
+  [PASS] PM-TASK-GATED-SCAN       gated ring wave1 ships its task as Operation=Scan (must be Scan until the gate is approved)
+  [PASS] PM-TASK-REBOOT           ring wave1 task RebootOption=RebootIfNeeded
+  [PASS] PM-TASK-DOCUMENT         ring wave2 task AWS-RunPatchBaseline/RUN_COMMAND
+  [PASS] PM-TASK-RATES            ring wave2 task MaxConcurrency/MaxErrors 25%/5% vs manifest 25%/5%
+  [PASS] PM-TASK-GATED-SCAN       gated ring wave2 ships its task as Operation=Scan (must be Scan until the gate is approved)
+  [PASS] PM-TASK-REBOOT           ring wave2 task RebootOption=RebootIfNeeded
+  [PASS] PM-ROLLBACK-PROCEDURE    rollback procedure ../procedures/ROLLBACK.md exists
+  [PASS] PM-ROLLBACK-STRATEGY     rollback strategies ['package-downgrade', 'snapshot-restore'] (unknown: none)
+  [PASS] PM-ROLLBACK-TIME         maxRollbackMinutes=60
+  [PASS] PM-ESCALATION-PROCEDURE  escalation procedure ../procedures/ESCALATION.md exists
+  [PASS] PM-ESCALATION-CONTACTS   2 escalation contacts
+  [PASS] PM-NO-REAL-IDS           account/resource ids found: none
+planned rollout (would happen only after approval; nothing is executed):
+  1. canary  Install  groups=canary,canary-rhel concurrency=1 errors=0 soak=48h (first ring)
+  2. wave1   Install  groups=wave1,wave1-rhel concurrency=10% errors=5% soak=48h (after canary + 48h soak, approvers=service-owner,change-advisory-board)
+  3. wave2   Install  groups=wave2,wave2-rhel concurrency=25% errors=5% soak=24h (after wave1 + 48h soak, approvers=change-advisory-board)
+overall: PASS
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:54Z duration_ms=22 ---

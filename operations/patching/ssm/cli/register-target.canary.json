@@ -1,0 +1,14 @@
+{
+  "WindowId": "<CANARY_WINDOW_ID>",
+  "Name": "canary-hosts",
+  "ResourceType": "INSTANCE",
+  "Targets": [
+    {
+      "Key": "tag:PatchGroup",
+      "Values": [
+        "canary",
+        "canary-rhel"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleEligibilityScheduleInstances",
+  "value": [
+    {
+      "id": "resi-b9a5e000-0000-4000-8000-000000000307",
+      "principalId": "b9a5e000-0000-4000-8000-000000000014",
+      "roleDefinitionId": "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-05-01T00:00:00Z",
+      "endDateTime": "2027-04-30T23:59:59Z",
+      "memberType": "Direct",
+      "roleEligibilityScheduleId": "b9a5e000-0000-4000-8000-000000003307"
+    },
+    {
+      "id": "resi-b9a5e000-0000-4000-8000-000000000308",
+      "principalId": "b9a5e000-0000-4000-8000-000000000012",
+      "roleDefinitionId": "fe930be7-5e62-47db-91af-98c3a49a38b1",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-05-01T00:00:00Z",
+      "endDateTime": "2027-04-30T23:59:59Z",
+      "memberType": "Direct",
+      "roleEligibilityScheduleId": "b9a5e000-0000-4000-8000-000000003308"
+    }
+  ]
+}

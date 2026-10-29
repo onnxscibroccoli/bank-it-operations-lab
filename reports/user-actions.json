@@ -1,0 +1,182 @@
+{
+ "schema": "bank-it-operations-lab/user-actions@1",
+ "generated_at": "2026-10-28T21:54:00-04:00",
+ "deadline": "2026-10-29T00:00:00-04:00",
+ "top_line": "USER ACTION REQUIRED: 4 — UA-1 owner decision comment for EX-01..EX-04/AC4/AC5 (EX-04 role-review gap); UA-2 Entra CA baseline; UA-3 protect main; AC1 independent reviewer account",
+ "count": 4,
+ "ci_reference": {
+  "top_line": "USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4",
+  "count": 4,
+  "source": "coordination/tasks.json user_actions on #7 @ e9310f3a94162a5dae31ee1cca9e35452de033ed",
+  "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567048",
+  "job": "user-actions (USER ACTION REQUIRED report)",
+  "logged_at": "2026-10-29T01:48Z (approx.)",
+  "difference": "same count, different items: UA-4 housekeeping; AC1 reviewer account added (reviewer_allowlist empty); UA-3 now on path_to_eligible",
+  "none_relay": "no run printed USER ACTION REQUIRED: NONE"
+ },
+ "items": [
+  {
+   "id": "UA-1",
+   "scope": "EX-01..EX-04",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Post ONE new ACCEPTANCE-DECISION v1 comment on PR #7 for the exact candidate SHA (UA-1: APPROVE|REJECT EX-01 EX-02 EX-03 EX-04; AC4; AC5), only after settling the conditions: EX-02 accepted; EX-01/EX-03 conditional (evidence verified); EX-04 conditional with a gap (no aws:SourceAccount).",
+   "reason": "Material risk decision. Ian's relayed decisions: EX-01 accepted pending policy verification; EX-02 accepted limitation; EX-03 conditional on scope verification; EX-04 conditional on role review. Conditional decisions are not approvals.",
+   "error": "merge-eligibility @ e9310f3 (run 40802567048): AC2 UNMET (no owner decision on candidate for applied exceptions EX-01 EX-02 EX-03 EX-04); check_exceptions: 5 suppressions on PROPOSED entries.",
+   "permission": "Owner account onnxscibroccoli (admin), per .github/acceptance/trusted-config.json @ e9310f3; Ian should post it himself (F7 residual).",
+   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7",
+   "blocks": [
+    "AC2",
+    "AC4",
+    "AC5"
+   ],
+   "continuing": "All other lanes; B5-2 fixed in 80f01d6.",
+   "deadline": "Blocks AC2/AC5; no merge meeting AC1-AC5 is possible by midnight regardless (AC1 has no non-author reviewer)."
+  },
+  {
+   "id": "UA-2",
+   "scope": "Entra CA baseline",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Confirm the Entra CA baseline choices: risk policies report-only, device compliance for All users on All apps, the 12-role privileged list.",
+   "reason": "Identity-risk policy decision; no decision is recorded.",
+   "error": "evidence/entra/BASELINE-CHOICES-PENDING.md @ e9310f3 records the choices as PENDING; PR #4 has no decision.",
+   "permission": "Owner decision (comment on PR #4).",
+   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
+   "blocks": [
+    "AC4"
+   ],
+   "continuing": "All other lanes.",
+   "deadline": "Blocks AC4 for a merge before midnight."
+  },
+  {
+   "id": "UA-3",
+   "scope": "protect main",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Protect main with the exact ruleset settings printed by the gate (empty bypass list, 1 approval, dismiss stale, required gate checks), then land the gate/manifest/trusted config on main through it.",
+   "reason": "Repository settings change; tasks.json path_to_eligible step 1 at e9310f3.",
+   "error": "GET branches/main/protection -> 404; 0 rulesets.",
+   "permission": "Repository admin (held by the owner account).",
+   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/rules",
+   "blocks": [
+    "ELIGIBLE (path_to_eligible)"
+   ],
+   "continuing": "All lanes.",
+   "deadline": "Needed for ELIGIBLE; not achievable before midnight together with AC1."
+  },
+  {
+   "id": "AC1-REVIEWER",
+   "scope": "independent reviewer account",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Name an independent reviewer; add the account as a collaborator with Write; the integrator adds its login to reviewer_allowlist in the trusted config.",
+   "reason": "All reviews so far are from the author account; gate requires an allow-listed, write-permitted non-author approval.",
+   "error": "trusted reviewer_allowlist is empty (merge-eligibility, run 40802567048).",
+   "permission": "Repository admin to invite a collaborator.",
+   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/access",
+   "blocks": [
+    "AC1"
+   ],
+   "continuing": "All lanes.",
+   "deadline": "Critical path; no reviewer exists yet."
+  }
+ ],
+ "reclassified": [
+  {
+   "id": "UA-4",
+   "scope": "close PR #1",
+   "classification": "HOUSEKEEPING",
+   "evidence": "tasks.json deadline_impact: Minor (docs consistency)"
+  },
+  {
+   "id": "UA-5",
+   "scope": "AC6",
+   "classification": "NOT_YET_ACTIONABLE",
+   "evidence": "tasks.json status NOT_YET_ACTIONABLE"
+  },
+  {
+   "id": "AC1",
+   "scope": "independent review of e9310f3 (non-author APPROVED)",
+   "classification": "GATE",
+   "evidence": "merge-eligibility AC1: UNMET in run 40802567048; all review notes are from the author account"
+  },
+  {
+   "id": "B6-3",
+   "scope": "#6 Terraform-vs-CDK",
+   "classification": "DEFERRED_OWNER_DECISION",
+   "evidence": "#6 excluded from the #7 candidate"
+  }
+ ],
+ "out_of_scope": [
+  "B1 AWS sandbox",
+  "B2 Entra tenant",
+  "B3 rclone client_id"
+ ],
+ "notification_delivery_claimed": false,
+ "exception_decisions": [
+  {
+   "id": "EX-01",
+   "decision_relayed": "accepted, pending policy verification",
+   "register_status": "PROPOSED",
+   "verification": "verified at e9310f3: SSE-S3, BPA x4, TLS-only deny, PutObject only logging.s3 with SourceArn/SourceAccount; AWS S3 docs require SSE-S3 on the destination",
+   "status": "CONDITIONAL_NOT_APPROVED"
+  },
+  {
+   "id": "EX-02",
+   "decision_relayed": "accepted as a limitation",
+   "register_status": "PROPOSED",
+   "verification": "versioning + Retain on both buckets; no replication",
+   "status": "ACCEPTED_NOT_RECORDED_IN_REGISTER"
+  },
+  {
+   "id": "EX-03",
+   "decision_relayed": "conditional on scope verification",
+   "register_status": "PROPOSED",
+   "verification": "verified at e9310f3: wildcard only log-group:RDSOSMetrics:log-stream:* in this account/region; trust with aws:SourceAccount",
+   "status": "CONDITIONAL_NOT_APPROVED"
+  },
+  {
+   "id": "EX-04",
+   "decision_relayed": "conditional on role review",
+   "register_status": "PROPOSED",
+   "verification": "gap: Backup role trust lacks aws:SourceAccount",
+   "status": "CONDITIONAL_GAP_FOUND"
+  }
+ ],
+ "module_status": {
+  "active": 25,
+  "integrated": 7,
+  "verified": 7,
+  "independently_accepted": 0,
+  "blocked": 8,
+  "not_started": 3,
+  "modules": {
+   "integration-infra": "integrated",
+   "shared-evidence-validator": "integrated",
+   "entra-offline": "integrated",
+   "aws-cdk": "integrated",
+   "postgres-recovery": "integrated",
+   "m365-endpoint": "integrated",
+   "incident-demo": "integrated",
+   "acceptance": "verified",
+   "vendor-mock": "verified",
+   "observability": "verified",
+   "control-mapping": "verified",
+   "patch-hardening": "verified",
+   "identity-governance": "verified",
+   "hybrid-operations": "verified",
+   "orgs-security": "blocked",
+   "backup-dr-aws": "blocked",
+   "review-notes": "blocked",
+   "portfolio-cases": "blocked",
+   "final-report": "blocked",
+   "job-requirements-matrix": "blocked",
+   "team-management": "blocked",
+   "learning-guide": "blocked",
+   "aws-network-edge": "not-started",
+   "endpoint-windows-automation": "not-started",
+   "inventory-diagrams": "not-started"
+  }
+ }
+}

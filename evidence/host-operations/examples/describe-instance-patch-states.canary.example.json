@@ -1,0 +1,47 @@
+{
+  "_exampleData": "EXAMPLE DATA - illustrative shape of `aws ssm describe-instance-patch-states-for-patch-group --patch-group canary` output. Not from any AWS account; ids are fake.",
+  "InstancePatchStates": [
+    {
+      "InstanceId": "i-EXAMPLEcanary001",
+      "PatchGroup": "canary",
+      "BaselineId": "pb-EXAMPLE-al2023",
+      "OwnerInformation": "",
+      "InstalledCount": 412,
+      "InstalledOtherCount": 38,
+      "InstalledPendingRebootCount": 0,
+      "InstalledRejectedCount": 0,
+      "MissingCount": 0,
+      "FailedCount": 0,
+      "UnreportedNotApplicableCount": 0,
+      "NotApplicableCount": 1290,
+      "OperationStartTime": "2026-11-10T07:02:11Z",
+      "OperationEndTime": "2026-11-10T07:14:52Z",
+      "Operation": "Install",
+      "RebootOption": "RebootIfNeeded",
+      "CriticalNonCompliantCount": 0,
+      "SecurityNonCompliantCount": 0,
+      "OtherNonCompliantCount": 0
+    },
+    {
+      "InstanceId": "i-EXAMPLEcanary002",
+      "PatchGroup": "canary-rhel",
+      "BaselineId": "pb-EXAMPLE-rhel",
+      "OwnerInformation": "",
+      "InstalledCount": 655,
+      "InstalledOtherCount": 21,
+      "InstalledPendingRebootCount": 0,
+      "InstalledRejectedCount": 0,
+      "MissingCount": 0,
+      "FailedCount": 0,
+      "UnreportedNotApplicableCount": 0,
+      "NotApplicableCount": 2034,
+      "OperationStartTime": "2026-11-10T07:15:03Z",
+      "OperationEndTime": "2026-11-10T07:31:40Z",
+      "Operation": "Install",
+      "RebootOption": "RebootIfNeeded",
+      "CriticalNonCompliantCount": 0,
+      "SecurityNonCompliantCount": 0,
+      "OtherNonCompliantCount": 0
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+week,start_monday_et,end_monday_et,primary_technical,secondary_technical,duty_manager,security_oncall,notes
+1,2026-11-02 09:00,2026-11-09 09:00,P05,P08,P01,P09,synthetic example
+2,2026-11-09 09:00,2026-11-16 09:00,P06,P05,P02,P09,synthetic example
+3,2026-11-16 09:00,2026-11-23 09:00,P07,P06,P10,P08,synthetic example
+4,2026-11-23 09:00,2026-11-30 09:00,P08,P07,P01,P09,synthetic example
+5,2026-11-30 09:00,2026-12-07 09:00,P05,P08,P02,P09,synthetic example
+6,2026-12-07 09:00,2026-12-14 09:00,P06,P05,P10,P09,synthetic example; P07 planned leave Thu-Fri: P05 (level 2 backup) covers backup/restore, DB escalations go to vendor
+7,2026-12-14 09:00,2026-12-21 09:00,P07,P06,P01,P08,synthetic example
+8,2026-12-21 09:00,2026-12-28 09:00,P08,P07,P02,P09,synthetic example; holiday week (Dec 24-25): change freeze in effect, P08 primary gets a compensating day off

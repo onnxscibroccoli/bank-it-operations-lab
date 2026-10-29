@@ -1,0 +1,4 @@
+AI agent detected
+Successfully synthesized to /workspace/bkp-dr-aws-worker/backup/aws/cdk.out
+Supply a stack id (BankItLabBackupDrVault, BankItLabBackupPrimary) to display its template.
+85 feature flags are not configured. Run 'cdk flags --unstable=flags' to learn more.

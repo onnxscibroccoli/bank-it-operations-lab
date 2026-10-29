@@ -1,0 +1,13 @@
+test_early_cold_delete (test_cost_model.CostModel.test_early_cold_delete) ... ok
+test_filled_price_is_used (test_cost_model.CostModel.test_filled_price_is_used) ... ok
+test_monthly_points_cold_capable (test_cost_model.CostModel.test_monthly_points_cold_capable) ... ok
+test_monthly_points_not_cold_capable_stays_warm (test_cost_model.CostModel.test_monthly_points_not_cold_capable_stays_warm) ... ok
+test_null_prices_give_null_costs (test_cost_model.CostModel.test_null_prices_give_null_costs) ... ok
+test_pitr_logs_not_in_dr_vault (test_cost_model.CostModel.test_pitr_logs_not_in_dr_vault) ... ok
+test_quantities_formula (test_cost_model.CostModel.test_quantities_formula) ... ok
+test_shipped_inputs_have_no_prices (test_cost_model.CostModel.test_shipped_inputs_have_no_prices) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.000s
+
+OK

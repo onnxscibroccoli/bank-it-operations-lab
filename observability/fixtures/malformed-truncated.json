@@ -1,0 +1,26 @@
+{
+  "collected_at": "2026-10-28T12:00:00Z",
+  "expected_probes": [
+    "app-http",
+    "db-tcp",
+    "resolver-dns"
+  ],
+  "host": {
+    "collected_at": "2026-10-28T12:00:00Z",
+    "cpu_count": 4,
+    "disk_free_bytes": 60000000000,
+    "disk_path": "/",
+    "disk_total_bytes": 100000000000,
+    "errors": [],
+    "load_avg_1m": 0.42,
+    "mem_available_ratio": 0.55,
+    "uptime_s": 86400.0
+  },
+  "probes": [
+    {
+      "detail": "HTTP 200",
+      "kind": "http",
+      "latency_ms": 12.5,
+      "name": "app-http",
+      "observed_at": "2026-10-28T12:00:00Z",
+      "sta

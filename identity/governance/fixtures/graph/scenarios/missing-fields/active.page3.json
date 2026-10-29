@@ -1,0 +1,18 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleAssignmentScheduleInstances",
+  "value": [
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000227",
+      "principalId": "b9a5e000-0000-4000-8000-000000000016",
+      "roleDefinitionId": "b9a5e000-0000-4000-8000-00000000dead",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-01-01T00:00:00Z",
+      "endDateTime": null,
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001227",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002227"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "bank-it-lab/identity-governance-inventory/v1",
+  "mode": "pim",
+  "offline": true,
+  "tenantStateClaimed": false,
+  "disclaimer": "OFFLINE / SYNTHETIC. Generated from local Microsoft Graph-shaped JSON fixtures. No tenant, Microsoft Graph API call or credential was used; nothing here describes any real tenant.",
+  "scenario": "auth-401",
+  "asOfUtc": "2026-10-28T12:00:00Z",
+  "graph": {
+    "requests": 1,
+    "pages": 0,
+    "retries": []
+  },
+  "exitCode": 2,
+  "overall": "ERROR",
+  "error": {
+    "kind": "authorization",
+    "status": 401,
+    "code": "InvalidAuthenticationToken",
+    "requestId": "synthetic-401-InvalidAuthenticationToken",
+    "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleDefinitions?$select=id,displayName,templateId,isBuiltIn",
+    "message": "HTTP 401 InvalidAuthenticationToken: Access token is empty. (synthetic)"
+  },
+  "inventory": [],
+  "findings": []
+}

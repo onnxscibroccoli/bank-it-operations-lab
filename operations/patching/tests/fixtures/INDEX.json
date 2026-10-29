@@ -1,0 +1,219 @@
+{
+  "generatedBy": "operations/patching/tests/make_fixtures.py",
+  "fixtures": [
+    {
+      "file": "malformed-absolute-path.json",
+      "expectedExit": 2,
+      "why": "absolute path"
+    },
+    {
+      "file": "malformed-bad-percent.json",
+      "expectedExit": 2,
+      "why": "rate not numeric"
+    },
+    {
+      "file": "malformed-baseline-truncated.json",
+      "expectedExit": 2,
+      "why": "referenced baseline is invalid JSON"
+    },
+    {
+      "file": "malformed-bool-as-int.json",
+      "expectedExit": 2,
+      "why": "bool where int expected"
+    },
+    {
+      "file": "malformed-duplicate-key.json",
+      "expectedExit": 2,
+      "why": "duplicate key"
+    },
+    {
+      "file": "malformed-empty-rings.json",
+      "expectedExit": 2,
+      "why": "no rings"
+    },
+    {
+      "file": "malformed-missing-rings.json",
+      "expectedExit": 2,
+      "why": "required key missing"
+    },
+    {
+      "file": "malformed-nan.json",
+      "expectedExit": 2,
+      "why": "NaN literal"
+    },
+    {
+      "file": "malformed-not-object.json",
+      "expectedExit": 2,
+      "why": "top level is an array"
+    },
+    {
+      "file": "malformed-percent-over-100.json",
+      "expectedExit": 2,
+      "why": "rate > 100%"
+    },
+    {
+      "file": "malformed-schema-version.json",
+      "expectedExit": 2,
+      "why": "unsupported schema"
+    },
+    {
+      "file": "malformed-truncated.json",
+      "expectedExit": 2,
+      "why": "truncated JSON"
+    },
+    {
+      "file": "malformed-unknown-ring-key.json",
+      "expectedExit": 2,
+      "why": "unknown ring key"
+    },
+    {
+      "file": "malformed-unknown-top-key.json",
+      "expectedExit": 2,
+      "why": "unknown key"
+    },
+    {
+      "file": "malformed-wrong-type.json",
+      "expectedExit": 2,
+      "why": "order is a string"
+    },
+    {
+      "file": "neg-bad-operation.json",
+      "expectedExit": 1,
+      "why": "unknown operation"
+    },
+    {
+      "file": "neg-bad-reboot.json",
+      "expectedExit": 1,
+      "why": "unknown reboot option"
+    },
+    {
+      "file": "neg-baseline-no-delay.json",
+      "expectedExit": 1,
+      "why": "baseline auto-approves with no delay and RejectedPatchesAction ALLOW_AS_DEPENDENCY"
+    },
+    {
+      "file": "neg-baseline-os-mismatch.json",
+      "expectedExit": 1,
+      "why": "manifest OS differs from baseline file"
+    },
+    {
+      "file": "neg-canary-concurrency-5.json",
+      "expectedExit": 1,
+      "why": "canary too wide"
+    },
+    {
+      "file": "neg-canary-concurrency-percent.json",
+      "expectedExit": 1,
+      "why": "canary sized as a percentage"
+    },
+    {
+      "file": "neg-canary-errors.json",
+      "expectedExit": 1,
+      "why": "canary tolerates an error"
+    },
+    {
+      "file": "neg-canary-gated.json",
+      "expectedExit": 1,
+      "why": "canary has a gate"
+    },
+    {
+      "file": "neg-duplicate-patchgroup.json",
+      "expectedExit": 1,
+      "why": "same patch group in two rings"
+    },
+    {
+      "file": "neg-gate-no-compliance-evidence.json",
+      "expectedExit": 1,
+      "why": "gate evidence missing compliance-summary"
+    },
+    {
+      "file": "neg-gate-wrong-order.json",
+      "expectedExit": 1,
+      "why": "wave2 gated on canary instead of wave1"
+    },
+    {
+      "file": "neg-gated-task-install.json",
+      "expectedExit": 1,
+      "why": "gated ring points at an Install task"
+    },
+    {
+      "file": "neg-missing-baseline-file.json",
+      "expectedExit": 1,
+      "why": "baseline source missing"
+    },
+    {
+      "file": "neg-missing-gate.json",
+      "expectedExit": 1,
+      "why": "wave1 ungated"
+    },
+    {
+      "file": "neg-no-approver.json",
+      "expectedExit": 1,
+      "why": "gate without approvers"
+    },
+    {
+      "file": "neg-no-escalation-contacts.json",
+      "expectedExit": 1,
+      "why": "no escalation contacts"
+    },
+    {
+      "file": "neg-no-presnapshot.json",
+      "expectedExit": 1,
+      "why": "install without snapshot"
+    },
+    {
+      "file": "neg-real-account-id.json",
+      "expectedExit": 1,
+      "why": "12-digit account-like id"
+    },
+    {
+      "file": "neg-ring-order-gap.json",
+      "expectedExit": 1,
+      "why": "ring order not contiguous"
+    },
+    {
+      "file": "neg-rollback-no-procedure.json",
+      "expectedExit": 1,
+      "why": "rollback procedure missing"
+    },
+    {
+      "file": "neg-rollback-too-slow.json",
+      "expectedExit": 1,
+      "why": "rollback budget > 4h"
+    },
+    {
+      "file": "neg-rollback-unknown-strategy.json",
+      "expectedExit": 1,
+      "why": "unknown rollback"
+    },
+    {
+      "file": "neg-short-soak.json",
+      "expectedExit": 1,
+      "why": "gate soak below 24h"
+    },
+    {
+      "file": "neg-task-rate-mismatch.json",
+      "expectedExit": 1,
+      "why": "manifest rate disagrees with the CLI task"
+    },
+    {
+      "file": "neg-unknown-patchgroup.json",
+      "expectedExit": 1,
+      "why": "ring targets a patch group no baseline owns"
+    },
+    {
+      "file": "valid-example-manifest.json",
+      "expectedExit": 0,
+      "why": "example manifest as shipped"
+    },
+    {
+      "file": "valid-no-window-task.json",
+      "expectedExit": 0,
+      "why": "windowTask is optional"
+    }
+  ],
+  "helpers": [
+    "baseline-no-delay.json",
+    "baseline-truncated.json"
+  ]
+}

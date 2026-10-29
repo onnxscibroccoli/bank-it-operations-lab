@@ -1,0 +1,84 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleAssignmentScheduleInstances",
+  "value": [
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000201",
+      "principalId": "b9a5e000-0000-4000-8000-000000000001",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-01-05T00:00:00Z",
+      "endDateTime": null,
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001201",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002201"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000203",
+      "principalId": "b9a5e000-0000-4000-8000-000000000010",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-10-28T09:00:00Z",
+      "endDateTime": "2026-10-28T13:00:00Z",
+      "assignmentType": "Activated",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001203",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002203"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000205",
+      "principalId": "b9a5e000-0000-4000-8000-000000000016",
+      "roleDefinitionId": "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-02-01T00:00:00Z",
+      "endDateTime": null,
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001205",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002205"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000206",
+      "principalId": "b9a5e000-0000-4000-8000-000000000030",
+      "roleDefinitionId": "88d8e3e3-8f55-4a1e-953a-9b9898b8876b",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-02-01T00:00:00Z",
+      "endDateTime": null,
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001206",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002206"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000207",
+      "principalId": "b9a5e000-0000-4000-8000-000000000040",
+      "roleDefinitionId": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-05-01T00:00:00Z",
+      "endDateTime": "2027-04-30T23:59:59Z",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001207",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002207"
+    },
+    {
+      "id": "rasi-b9a5e000-0000-4000-8000-000000000208",
+      "principalId": "b9a5e000-0000-4000-8000-000000000012",
+      "roleDefinitionId": "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+      "directoryScopeId": "/",
+      "appScopeId": null,
+      "startDateTime": "2026-08-01T00:00:00Z",
+      "endDateTime": "2027-01-31T23:59:59Z",
+      "assignmentType": "Assigned",
+      "memberType": "Direct",
+      "roleAssignmentOriginId": "b9a5e000-0000-4000-8000-000000001208",
+      "roleAssignmentScheduleId": "b9a5e000-0000-4000-8000-000000002208"
+    }
+  ],
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances?$skiptoken=SYNTHETIC-ACTIVE-PAGE-2"
+}

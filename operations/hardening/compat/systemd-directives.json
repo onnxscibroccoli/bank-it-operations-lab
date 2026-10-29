@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "sources": [
+    "systemd.exec(5) 'Added in version N' annotations, https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html (fetched 2026-10-28)",
+    "systemd NEWS, https://raw.githubusercontent.com/systemd/systemd/main/NEWS (fetched 2026-10-28) for value-level additions",
+    "Distro systemd versions: the major version each release shipped at GA"
+  ],
+  "caveats": [
+    "minVersion 0 means the directive predates upstream's per-directive version annotations (older than every distro listed here).",
+    "Distro vendors (notably RHEL) backport features into older version numbers; a 'no' cell can be a 'yes' on a specific minor release. Always confirm on the target with `systemd-analyze verify` and `systemctl show -p <Directive> <unit>`.",
+    "systemd ignores unknown directives with a log warning and still starts the unit, so an unsupported hardening line silently provides no protection."
+  ],
+  "directives": {
+    "NoNewPrivileges":         {"minVersion": 187},
+    "PrivateTmp":              {"minVersion": 0, "values": {"disconnected": 260}},
+    "PrivateDevices":          {"minVersion": 209},
+    "PrivateNetwork":          {"minVersion": 0},
+    "PrivateUsers":            {"minVersion": 232},
+    "PrivateIPC":              {"minVersion": 248},
+    "ProtectSystem":           {"minVersion": 214, "values": {"strict": 232}},
+    "ProtectHome":             {"minVersion": 214, "values": {"tmpfs": 238}},
+    "ProtectKernelTunables":   {"minVersion": 232},
+    "ProtectKernelModules":    {"minVersion": 232},
+    "ProtectKernelLogs":       {"minVersion": 244},
+    "ProtectControlGroups":    {"minVersion": 232, "values": {"private": 257, "strict": 257}},
+    "ProtectClock":            {"minVersion": 245},
+    "ProtectHostname":         {"minVersion": 242},
+    "ProtectProc":             {"minVersion": 247},
+    "ProcSubset":              {"minVersion": 247},
+    "RestrictSUIDSGID":        {"minVersion": 242},
+    "RestrictRealtime":        {"minVersion": 231},
+    "RestrictNamespaces":      {"minVersion": 233},
+    "RestrictAddressFamilies": {"minVersion": 211},
+    "LockPersonality":         {"minVersion": 235},
+    "MemoryDenyWriteExecute":  {"minVersion": 231},
+    "CapabilityBoundingSet":   {"minVersion": 0},
+    "AmbientCapabilities":     {"minVersion": 229},
+    "SystemCallFilter":        {"minVersion": 187, "values": {"@system-service": 239}},
+    "SystemCallArchitectures": {"minVersion": 209},
+    "SystemCallErrorNumber":   {"minVersion": 209},
+    "DynamicUser":             {"minVersion": 232},
+    "RemoveIPC":               {"minVersion": 232},
+    "KeyringMode":             {"minVersion": 235},
+    "UMask":                   {"minVersion": 0},
+    "ReadWritePaths":          {"minVersion": 231},
+    "StateDirectory":          {"minVersion": 235},
+    "IPAddressDeny":           {"minVersion": 235}
+  },
+  "distros": [
+    {"id": "rhel7",        "name": "RHEL / CentOS 7",  "systemd": 219},
+    {"id": "amzn2",        "name": "Amazon Linux 2",   "systemd": 219},
+    {"id": "rhel8",        "name": "RHEL 8",           "systemd": 239},
+    {"id": "ubuntu2004",   "name": "Ubuntu 20.04",     "systemd": 245},
+    {"id": "debian11",     "name": "Debian 11",        "systemd": 247},
+    {"id": "ubuntu2204",   "name": "Ubuntu 22.04",     "systemd": 249},
+    {"id": "rhel9",        "name": "RHEL 9",           "systemd": 252},
+    {"id": "debian12",     "name": "Debian 12",        "systemd": 252},
+    {"id": "al2023",       "name": "Amazon Linux 2023","systemd": 252},
+    {"id": "ubuntu2404",   "name": "Ubuntu 24.04",     "systemd": 255},
+    {"id": "debian13",     "name": "Debian 13",        "systemd": 257},
+    {"id": "rhel10",       "name": "RHEL 10",          "systemd": 257}
+  ]
+}

@@ -1,0 +1,5 @@
+$ python3 identity/governance/inventory.py --scenario missing-fields --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-missing-fields.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-missing-fields.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-missing-fields.csv --quiet
+--- stdout ---
+FINDINGS scenario=missing-fields mode=pim exit=1
+--- stderr ---
+--- exit_code=1 expected=1 started_utc=2026-10-28T18:14:35Z duration_ms=27 ---

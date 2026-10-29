@@ -15,6 +15,8 @@ V=evidence/shared/validate_evidence.py
 FAILED=(); N=0
 step() { local name="$1"; shift; N=$((N+1)); echo "::: [$N] $name"; if "$@"; then echo "    ok"; else echo "    FAILED: $name"; FAILED+=("$name"); fi; }
 
+step "portfolio offline modules" bash scripts/ci/portfolio_checks.sh
+
 # --- PR #3 shared evidence tooling
 step "module registry"             python3 scripts/ci/check_modules.py
 step "tasks lint (no naked MET)"   python3 scripts/ci/merge_eligibility.py --lint-tasks

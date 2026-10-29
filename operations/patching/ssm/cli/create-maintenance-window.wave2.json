@@ -1,0 +1,13 @@
+{
+  "Name": "bank-lab-patch-wave2",
+  "Description": "EXAMPLE ONLY - wave2 ring maintenance window (aws ssm create-maintenance-window --cli-input-json)",
+  "Schedule": "cron(0 2 ? * TUE#3 *)",
+  "ScheduleTimezone": "America/New_York",
+  "Duration": 4,
+  "Cutoff": 1,
+  "AllowUnassociatedTargets": false,
+  "Tags": [
+    {"Key": "lab", "Value": "bank-it-operations-lab"},
+    {"Key": "example-data", "Value": "true"}
+  ]
+}

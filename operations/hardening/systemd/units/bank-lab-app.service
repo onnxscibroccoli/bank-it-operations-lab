@@ -1,0 +1,19 @@
+# EXAMPLE unit for bank-it-operations-lab hardening reviews.
+# A small HTTP service bound to localhost. Deliberately unhardened: protections come from the
+# drop-ins in ../dropins/ so each layer can be reviewed and rolled back on its own.
+# Never installed by this repository.
+[Unit]
+Description=bank-lab example HTTP service (EXAMPLE, not installed)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=bank-lab-app
+Group=bank-lab-app
+ExecStart=/usr/bin/python3 -m http.server 8080 --bind 127.0.0.1 --directory /usr/share/doc
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+{"bytes":1172,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"09ad879453c42fb9a3e12aa78dac00361074f7ec7b4f75967baa04e4a1e8018d","source":"observability/fixtures/unknown-status.json","ts":"2026-10-28T12:01:00Z"}
+{"component":"healthcheck","event":"health.decision","exit_code":1,"failed_checks":["probe:resolver-dns"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}

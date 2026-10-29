@@ -1,0 +1,15 @@
+{
+  "label": "ACTUAL_RECOVERY_STATUS",
+  "status": "NOT_EXECUTED",
+  "reason": "Static, credential-free lab. Nothing deployed; no AWS API calls; no backup, copy, restore, or restore-testing job has run.",
+  "aws_api_calls_made": false,
+  "items": [
+    { "id": "backup_job_primary", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null },
+    { "id": "copy_job_to_dr", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null },
+    { "id": "restore_primary_region_pitr", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null },
+    { "id": "restore_primary_region_snapshot", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null },
+    { "id": "restore_dr_region", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null },
+    { "id": "restore_testing_plan_run", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null },
+    { "id": "vault_lock_delete_denied_check", "status": "NOT_EXECUTED", "job_id": null, "completed_utc": null }
+  ]
+}

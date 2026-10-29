@@ -1,0 +1,42 @@
+# SIMULATION evidence log
+# step: governance_unit_tests (test)
+# cwd: $REPO
+# command: /usr/bin/python3 -m unittest discover -s governance/vendor-risk/tests -v
+# started_utc: 2026-10-28T18:15:49.818402+00:00
+
+--- stdout ---
+SIMULATION governance lint: PASS (0 findings)
+
+--- stderr ---
+test_assessment_example_has_no_vendor_numbers (test_check_governance.AssessmentVendorNumbers.test_assessment_example_has_no_vendor_numbers) ... ok
+test_injected_vendor_sla_in_assessment_flagged (test_check_governance.AssessmentVendorNumbers.test_injected_vendor_sla_in_assessment_flagged) ... ok
+test_committed_mock_never_names_real_vendor (test_check_governance.MockNaming.test_committed_mock_never_names_real_vendor) ... ok
+test_mock_readme_disclaimer_is_allowed (test_check_governance.MockNaming.test_mock_readme_disclaimer_is_allowed) ... ok
+test_real_vendor_in_mock_flagged (test_check_governance.MockNaming.test_real_vendor_in_mock_flagged) ... ok
+test_blank_template_fails (test_check_governance.RaciLint.test_blank_template_fails) ... ok
+test_example_raci_passes (test_check_governance.RaciLint.test_example_raci_passes) ... ok
+test_two_accountables_fail (test_check_governance.RaciLint.test_two_accountables_fail) ... ok
+test_banno_outside_context_section_flagged (test_check_governance.ScenarioLint.test_banno_outside_context_section_flagged) ... ok
+test_broken_relative_link_flagged (test_check_governance.ScenarioLint.test_broken_relative_link_flagged) ... ok
+test_committed_scenario_passes (test_check_governance.ScenarioLint.test_committed_scenario_passes) ... ok
+test_contacts_and_urls_flagged (test_check_governance.ScenarioLint.test_contacts_and_urls_flagged) ... ok
+test_context_section_statements_required (test_check_governance.ScenarioLint.test_context_section_statements_required) ... ok
+test_each_required_section_enforced (test_check_governance.ScenarioLint.test_each_required_section_enforced) ... ok
+test_jack_henry_outside_job_description_statement (test_check_governance.ScenarioLint.test_jack_henry_outside_job_description_statement) ... ok
+test_jack_henry_statement_required (test_check_governance.ScenarioLint.test_jack_henry_statement_required) ... ok
+test_missing_contract_placeholder (test_check_governance.ScenarioLint.test_missing_contract_placeholder) ... ok
+test_missing_simulation_label (test_check_governance.ScenarioLint.test_missing_simulation_label) ... ok
+test_mock_scenarios_parsed (test_check_governance.ScenarioLint.test_mock_scenarios_parsed) ... ok
+test_no_mock_analogue_flagged (test_check_governance.ScenarioLint.test_no_mock_analogue_flagged) ... ok
+test_placeholders_and_internal_numbers_not_flagged (test_check_governance.ScenarioLint.test_placeholders_and_internal_numbers_not_flagged) ... ok
+test_real_vendor_in_injects_flagged (test_check_governance.ScenarioLint.test_real_vendor_in_injects_flagged) ... ok
+test_unknown_mock_scenario_flagged (test_check_governance.ScenarioLint.test_unknown_mock_scenario_flagged) ... ok
+test_vendor_sla_like_commitments_flagged (test_check_governance.ScenarioLint.test_vendor_sla_like_commitments_flagged) ... ok
+test_whole_lint_passes (test_check_governance.ScenarioLint.test_whole_lint_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.253s
+
+OK
+
+--- exit_code: 0 (expected 0) -> PASS ---

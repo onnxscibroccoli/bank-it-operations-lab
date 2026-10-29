@@ -1,0 +1,27 @@
+$ python3 -m unittest discover -s operations/hardening/tests -v
+--- stdout ---
+--- stderr ---
+test_cli_exit_codes (test_score_units.FixtureCases.test_cli_exit_codes) ... ok
+test_every_fixture_file_is_used (test_score_units.FixtureCases.test_every_fixture_file_is_used) ... ok
+test_tool_never_touches_the_host (test_score_units.NoSideEffects.test_tool_never_touches_the_host) ... ok
+test_allow_lists_or_together (test_score_units.Semantics.test_allow_lists_or_together) ... ok
+test_deny_list_removes (test_score_units.Semantics.test_deny_list_removes) ... ok
+test_dropins_applied_in_filename_order (test_score_units.Semantics.test_dropins_applied_in_filename_order) ... ok
+test_empty_bounding_set_means_no_caps (test_score_units.Semantics.test_empty_bounding_set_means_no_caps) ... ok
+test_empty_scalar_resets (test_score_units.Semantics.test_empty_scalar_resets) ... ok
+test_tilde_alone_resets_to_full (test_score_units.Semantics.test_tilde_alone_resets_to_full) ... ok
+test_unsupported_value_level (test_score_units.Semantics.test_unsupported_value_level) ... ok
+test_baseline_header_claims_are_true (test_score_units.ShippedExamples.test_baseline_header_claims_are_true) ... ok
+test_compatibility_md_matches_compat_json (test_score_units.ShippedExamples.test_compatibility_md_matches_compat_json) ... ok
+test_layering_monotonically_improves (test_score_units.ShippedExamples.test_layering_monotonically_improves) ... ok
+test_legacy_dropin_fully_supported_on_219 (test_score_units.ShippedExamples.test_legacy_dropin_fully_supported_on_219) ... ok
+test_strict_header_claims_are_true (test_score_units.ShippedExamples.test_strict_header_claims_are_true) ... ok
+test_strict_stack_flags_rhel8_gaps (test_score_units.ShippedExamples.test_strict_stack_flags_rhel8_gaps) ... ok
+test_strict_stack_passes_on_modern_targets (test_score_units.ShippedExamples.test_strict_stack_passes_on_modern_targets) ... ok
+test_unhardened_app_is_exposed (test_score_units.ShippedExamples.test_unhardened_app_is_exposed) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.647s
+
+OK
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:53Z duration_ms=693 ---

@@ -1,0 +1,4 @@
+{
+  "Name": "bank-lab-al2023-security",
+  "Description": "EXAMPLE ONLY - AL2023 security+bugfix baseline with delayed auto-approval (aws ssm create-patch-baseline --cli-input-json)",
+  "OperatingSyste

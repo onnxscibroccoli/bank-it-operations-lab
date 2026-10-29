@@ -1,0 +1,24 @@
+{
+  "description": "429 Retry-After 5 forever. Expected exit 2 after the retry budget (4).",
+  "inherit": "baseline",
+  "routes": {
+    "/roleManagement/directory/roleAssignmentScheduleInstances": [
+      {
+        "body": {
+          "error": {
+            "code": "TooManyRequests",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-429-TooManyRequests"
+            },
+            "message": "Too many requests. (synthetic)"
+          }
+        },
+        "headers": {
+          "Retry-After": "5"
+        },
+        "status": 429
+      }
+    ]
+  }
+}

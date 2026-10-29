@@ -1,0 +1,10 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#groups(id,displayName,isAssignableToRole)",
+  "value": [
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000040",
+      "displayName": "grp-role-security-operators (synthetic)",
+      "isAssignableToRole": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "bank-it-lab/identity-governance-access-review/v1",
+  "offline": true,
+  "tenantStateClaimed": false,
+  "scenario": "baseline",
+  "exitCode": 1,
+  "overall": "FINDINGS",
+  "pages": 2,
+  "total": 5,
+  "decisions": {
+    "Approve": 2,
+    "Deny": 2,
+    "NotReviewed": 1,
+    "DontKnow": 0
+  },
+  "findings": [
+    {
+      "rule": "AR-002",
+      "severity": "HIGH",
+      "title": "Deny decision not applied (applyResult is not AppliedSuccessfully*)",
+      "decisionId": "b9a5e000-0000-4000-8000-000000000603",
+      "detail": "Devon Apps (synthetic) denied but applyResult=New"
+    },
+    {
+      "rule": "AR-003",
+      "severity": "HIGH",
+      "title": "Self-review: reviewer approved their own access",
+      "decisionId": "b9a5e000-0000-4000-8000-000000000605",
+      "detail": "Emery Identity (synthetic) approved own access"
+    },
+    {
+      "rule": "AR-001",
+      "severity": "MEDIUM",
+      "title": "Decision still NotReviewed (apply default-decision / escalate before instance end)",
+      "decisionId": "b9a5e000-0000-4000-8000-000000000604",
+      "detail": "Casey Helpdesk (synthetic) not reviewed (recommendation NoInfoAvailable)"
+    }
+  ]
+}

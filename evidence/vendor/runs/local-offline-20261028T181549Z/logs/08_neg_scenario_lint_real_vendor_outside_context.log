@@ -1,0 +1,13 @@
+# SIMULATION evidence log
+# step: neg_scenario_lint_real_vendor_outside_context (negative)
+# cwd: $REPO
+# command: /usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --scenario $TMP/scenario-real-vendor-outside-context-SIMULATION.md --link-base $REPO/governance/vendor-risk/scenarios
+# started_utc: 2026-10-28T18:15:50.180767+00:00
+
+--- stdout ---
+FINDING: scenario-real-vendor-outside-context-SIMULATION.md:77: Jack Henry/Banno mentioned outside the 'Real vendor vs fictional system' section
+SIMULATION governance lint: FAIL (1 findings)
+
+--- stderr ---
+
+--- exit_code: 1 (expected 1) -> PASS ---

@@ -1,0 +1,61 @@
+# SIMULATION evidence log
+# step: unit_tests (test)
+# cwd: $REPO/integrations/vendor-mock
+# command: /usr/bin/python3 -m unittest discover -s tests -t . -v
+# started_utc: 2026-10-28T18:09:14.508616+00:00
+
+--- stdout ---
+
+--- stderr ---
+test_expired_token_recovers (tests.test_client.AuthenticationFailure.test_expired_token_recovers) ... ok
+test_invalid_client_scenario (tests.test_client.AuthenticationFailure.test_invalid_client_scenario) ... ok
+test_secret_never_leaks_into_errors_or_repr (tests.test_client.AuthenticationFailure.test_secret_never_leaks_into_errors_or_repr) ... ok
+test_token_rejected_reauths_once_then_fails (tests.test_client.AuthenticationFailure.test_token_rejected_reauths_once_then_fails) ... ok
+test_unknown_client (tests.test_client.AuthenticationFailure.test_unknown_client) ... ok
+test_wrong_secret (tests.test_client.AuthenticationFailure.test_wrong_secret) ... ok
+test_empty_transactions (tests.test_client.HappyPath.test_empty_transactions) ... ok
+test_get_account (tests.test_client.HappyPath.test_get_account) ... ok
+test_health (tests.test_client.HappyPath.test_health) ... ok
+test_list_transactions_paginates (tests.test_client.HappyPath.test_list_transactions_paginates) ... ok
+test_not_found_and_forbidden (tests.test_client.HappyPath.test_not_found_and_forbidden) ... ok
+test_token_reused (tests.test_client.HappyPath.test_token_reused) ... ok
+test_every_malformed_scenario_fails_closed (tests.test_client.MalformedResponses.test_every_malformed_scenario_fails_closed) ... ok
+test_extra_pii_field_is_rejected_not_passed_through (tests.test_client.MalformedResponses.test_extra_pii_field_is_rejected_not_passed_through) ... ok
+test_sockets_are_blocked (tests.test_client.Offline.test_sockets_are_blocked) ... ok
+test_429_always_exhausts_retries (tests.test_client.RateLimiting.test_429_always_exhausts_retries) ... ok
+test_429_once_honours_retry_after_then_succeeds (tests.test_client.RateLimiting.test_429_once_honours_retry_after_then_succeeds) ... ok
+test_missing_retry_after_is_malformed (tests.test_client.RateLimiting.test_missing_retry_after_is_malformed) ... ok
+test_non_numeric_retry_after_is_malformed (tests.test_client.RateLimiting.test_non_numeric_retry_after_is_malformed) ... ok
+test_retry_after_above_cap_fails_fast_without_sleeping (tests.test_client.RateLimiting.test_retry_after_above_cap_fails_fast_without_sleeping) ... ok
+test_latency_above_client_timeout (tests.test_client.Timeout.test_latency_above_client_timeout) ... ok
+test_persistent_timeout_raises_after_bounded_retries (tests.test_client.Timeout.test_persistent_timeout_raises_after_bounded_retries) ... ok
+test_transient_timeout_recovers (tests.test_client.Timeout.test_transient_timeout_recovers) ... ok
+test_contract_is_labelled_simulation_and_disclaims_compatibility (tests.test_contract.ContractDocument.test_contract_is_labelled_simulation_and_disclaims_compatibility) ... ok
+test_every_declared_response_has_a_schema_and_all_refs_resolve (tests.test_contract.ContractDocument.test_every_declared_response_has_a_schema_and_all_refs_resolve) ... ok
+test_account_fixtures_match_schema (tests.test_contract.Fixtures.test_account_fixtures_match_schema) ... ok
+test_fixture_files_are_labelled_simulation (tests.test_contract.Fixtures.test_fixture_files_are_labelled_simulation) ... ok
+test_transaction_fixtures_match_schema (tests.test_contract.Fixtures.test_transaction_fixtures_match_schema) ... ok
+test_error_responses_valid (tests.test_contract.MockResponsesMatchContract.test_error_responses_valid) ... ok
+test_insufficient_scope_is_403 (tests.test_contract.MockResponsesMatchContract.test_insufficient_scope_is_403) ... ok
+test_normal_responses_valid (tests.test_contract.MockResponsesMatchContract.test_normal_responses_valid) ... ok
+test_rate_limit_responses_carry_valid_retry_after (tests.test_contract.MockResponsesMatchContract.test_rate_limit_responses_carry_valid_retry_after) ... ok
+test_unknown_scenario_rejected (tests.test_contract.MockResponsesMatchContract.test_unknown_scenario_rejected) ... ok
+test_additional_property (tests.test_contract.ValidatorNegatives.test_additional_property) ... ok
+test_bad_datetime (tests.test_contract.ValidatorNegatives.test_bad_datetime) ... ok
+test_bool_is_not_integer (tests.test_contract.ValidatorNegatives.test_bool_is_not_integer) ... ok
+test_enum (tests.test_contract.ValidatorNegatives.test_enum) ... ok
+test_float_is_not_integer (tests.test_contract.ValidatorNegatives.test_float_is_not_integer) ... ok
+test_missing_required (tests.test_contract.ValidatorNegatives.test_missing_required) ... ok
+test_pattern_unmasked_account_number (tests.test_contract.ValidatorNegatives.test_pattern_unmasked_account_number) ... ok
+test_raw_response_negatives (tests.test_contract.ValidatorNegatives.test_raw_response_negatives) ... ok
+test_simulation_label_required (tests.test_contract.ValidatorNegatives.test_simulation_label_required) ... ok
+test_token_bounds (tests.test_contract.ValidatorNegatives.test_token_bounds) ... ok
+test_unknown_path_and_method (tests.test_contract.ValidatorNegatives.test_unknown_path_and_method) ... ok
+test_wrong_type (tests.test_contract.ValidatorNegatives.test_wrong_type) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.016s
+
+OK
+
+--- exit_code: 0 (expected 0) -> PASS ---

@@ -1,0 +1,16 @@
+seq	step_id	kind	expected_exit	exit_code	result	started_utc	duration_ms	log	command
+1	python_version	env	0	0	PASS	2026-10-28T18:09:14.486707+00:00	1	logs/01_python_version.log	/usr/bin/python3 --version
+2	contract_json_parses	check	0	0	PASS	2026-10-28T18:09:14.487952+00:00	20	logs/02_contract_json_parses.log	/usr/bin/python3 -m json.tool contract/openapi.json
+3	unit_tests	test	0	0	PASS	2026-10-28T18:09:14.508616+00:00	89	logs/03_unit_tests.log	/usr/bin/python3 -m unittest discover -s tests -t . -v
+4	simulation_label_scan	check	0	0	PASS	2026-10-28T18:09:14.599033+00:00	38	logs/04_simulation_label_scan.log	/usr/bin/python3 -c import pathlib,sys
+bad=[str(p) for d in sys.argv[1:] for p in sorted(pathlib.Path(d).rglob('*'))
+     if p.is_file() and '__pycache__' not in p.parts and p.stat().st_size
+     and 'SIMULATION' not in p.read_text(encoding='utf-8')]
+print('files missing SIMULATION label:', bad or 'none'); sys.exit(1 if bad else 0) $REPO/integrations/vendor-mock $REPO/governance/vendor-risk
+5	governance_unit_tests	test	0	0	PASS	2026-10-28T18:09:14.637797+00:00	103	logs/05_governance_unit_tests.log	/usr/bin/python3 -m unittest discover -s governance/vendor-risk/tests -v
+6	governance_lint	check	0	0	PASS	2026-10-28T18:09:14.741717+00:00	26	logs/06_governance_lint.log	/usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py
+7	neg_scenario_lint_vendor_sla_commitment	negative	1	1	PASS	2026-10-28T18:09:14.767899+00:00	24	logs/07_neg_scenario_lint_vendor_sla_commitment.log	/usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --scenario $TMP/scenario-vendor-sla-SIMULATION.md
+8	neg_governance_lint_blank_raci_template	negative	1	1	PASS	2026-10-28T18:09:14.792307+00:00	24	logs/08_neg_governance_lint_blank_raci_template.log	/usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --raci $REPO/governance/vendor-risk/raci-matrix-template.md
+9	neg_governance_lint_two_accountable	negative	1	1	PASS	2026-10-28T18:09:14.816594+00:00	24	logs/09_neg_governance_lint_two_accountable.log	/usr/bin/python3 $REPO/governance/vendor-risk/check_governance.py --raci $TMP/raci-two-accountable-SIMULATION.md
+10	neg_mutation_validator_ignores_extra_fields	negative	1	1	PASS	2026-10-28T18:09:14.841193+00:00	67	logs/10_neg_mutation_validator_ignores_extra_fields.log	/usr/bin/python3 -m unittest discover -s tests -t .
+11	neg_mutation_client_ignores_retry_after_cap	negative	1	1	PASS	2026-10-28T18:09:14.908868+00:00	67	logs/11_neg_mutation_client_ignores_retry_after_cap.log	/usr/bin/python3 -m unittest discover -s tests -t .
