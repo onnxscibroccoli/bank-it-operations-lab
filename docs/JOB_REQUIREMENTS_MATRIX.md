@@ -162,3 +162,53 @@ Gaps a lab *cannot* close (answer from real history only): years of experience, 
 ## Maintenance
 
 Re-check the cited commits and runs whenever the draft PRs change. When a PR merges into `main`, update its paths to `main` permalinks.
+
+---
+
+## G. Addendum, 2026-10-28 about 20:30 EDT: modules added after this matrix was written
+
+*Appended by the reports agent (PR [#11](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/11)) on top of this file's latest head, [`31b69db`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/31b69db90838f59bfe28f8214dfc51a1c4ffd429) (PR [#12](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/12)). Sections A–F above are unchanged, byte for byte. The matrix owner decides whether to adopt the proposed coverage changes below. Nothing below changes a coverage count in section "Coverage counts".*
+
+### G1. Posting check
+
+- The posting text is **still not in the repository**. The only in-repo source of the requirements is this matrix (and [`portfolio/JOB_ALIGNMENT.md`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/7010d05a/portfolio/JOB_ALIGNMENT.md) in #8, which reuses these IDs).
+- The JobLeads page cited above was re-read on 2026-10-28 at about 20:20 EDT. It is live. Title, employer, location, salary range, the five "Key requirements" bullets, the RESPONSIBILITIES list, and the KSA list match rows A1–D4.
+- **Discrepancy:** the page's schema.org data says `datePosted` 2026-10-27 but `validThrough` 2026-10-22 (before the posting date). The page also shows a short "Qualifications/Tools" summary (for example "cloud cost control") that paraphrases the full description; this matrix follows the full description.
+
+### G2. Evidence labels used in this addendum
+
+- **EXECUTED**: the artifact ran. A CI run URL or an evidence hash is cited. Offline runs on synthetic data count as EXECUTED *for the tool*, never for a live system.
+- **SIMULATION**: it ran, but it models a fictional or simulated system (for example the incident demo or the vendor mock). Results are not operational evidence.
+- **NOT_EXECUTED**: reference material (runbook, design, IaC that was never deployed, documentation). Nothing ran against a real system.
+
+"Re-run here" means the reports agent re-ran the tests or verifier on its own machine at about 20:20 EDT against the cited head.
+
+### G3. New modules mapped to requirement IDs
+
+| PR @ head | Module | Label | Evidence | Requirement IDs touched | Proposed coverage effect (for the matrix owner) |
+|---|---|---|---|---|---|
+| [#20](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/20) @ `1b3c240` | M365 / endpoint offline scenarios (onboarding, offboarding, access, service health, break-glass) | **EXECUTED** (offline engine, synthetic tenant). Every M365 change is PLAN_ONLY: `executed: false`, `mutationsExecuted` 0. No tenant call | 29 unit tests re-run here: OK. Bundle `evidence/m365/runs/local-offline-20261028T181845Z/SHA256SUMS` (20 entries) re-checked: OK. Integrated into #7 and run in CI: integration-gate [run 40792426144](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144) jobs `m365-unit-tests`, `m365-scenario-evaluation`, `m365-evidence-verification`, `plan-only-assertions` all success | C6, B2, B11 | C6 stays **partial**, now with M365 and endpoint content (offline only). No live M365, Intune, or AD |
+| [#22](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/22) @ `9f21329` | Integrated incident demo: DB crash inject → detect → diagnose → restore → verify → timeline | **SIMULATION** | `timeline.py --verify` re-run here: `VERIFY PASS (SIMULATION run local-20261028T181818Z)`; 38 hashes OK. CI fresh run: `incident-fresh-run` success in [run 40792426144](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144). Author-reported MTTD 3.584 s, MTTR 8.593 s (simulated) | B13, B15b, B5, B8 | B13 and B15b: still **partial**. They now have a worked incident timeline and report, but a simulated one. Not a production incident |
+| [#10](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/10) @ `3e40e39` | Observability: stdlib host health collector, bounded synthetic probes, fail-closed decision | **EXECUTED** (local, offline; probes are synthetic) | 64 tests re-run here: OK. Bundle `local-offline-20261028T180832Z` (44 hashes) OK. No CI run | B5, C8 | B5 stays **partial**: collector and decision logic exist, but no alerting, dashboards or on-call |
+| [#9](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/9) @ `d6efb82` | Fictional banking-vendor API mock, contract tests, vendor-risk register, RACI | **SIMULATION** (fictional vendor) | 45 vendor-mock tests and 25 governance tests re-run here: OK. 3 run bundles (12, 14, 15 hashes) OK. No CI run | B6, B4 | B6 stays **missing / not lab-demonstrable**: real vendor relationships (including Jack Henry) cannot be simulated. The RACI and risk register are reference artifacts only |
+| [#17](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/17) @ `5605b78` | SSM patch rings, patch procedures, systemd hardening drop-ins, offline inspectors | **EXECUTED** (inspectors and tests, offline). Patching itself: **NOT_EXECUTED** | 9 patching and 18 hardening tests re-run here: OK. Bundle `local-offline-20261028T181252Z` (102 hashes) OK. No CI run | B12, C8, C5 | B12 could move **missing → partial** (static patch design plus executed inspectors). C8 gains hardening artifacts. No host was patched |
+| [#18](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/18) @ `f48e7e3` | Identity governance: offline Graph fixtures, privileged-role inventory, PIM/access-review references, Entra → IAM Identity Center federation design | **EXECUTED** (offline, synthetic Graph fixtures). PIM, access reviews and federation: **NOT_EXECUTED** | 65 tests re-run here: OK. Bundle `local-offline-20261028T181435Z` (49 hashes) OK. No CI run | C6, C9, B10 | C6 and C9 stay **partial**, strengthened on IAM governance. No tenant |
+| [#16](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/16) @ `3f82697` | FFIEC IT Handbook (AIO, June 2021) lab control mapping and validator | **EXECUTED** (validator). The mapping itself is a study reference, **not** an attestation | 10 validator tests re-run here: OK. No CI run | C9, B9 | Closes the "no banking-regulation mapping" limitation in C9 at study level only. C9 stays **partial** |
+| [#21](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/21) @ `10da54f` | AWS Backup DR reference (vault lock, cross-region copy) and cost/capacity model | **NOT_EXECUTED** for every recovery item (`RECOVERY_EXECUTION_STATUS.json`: all 7 items NOT_EXECUTED, `aws_api_calls_made: false`). The cost model is **EXECUTED** (offline estimate) | Cost-model tests re-run here: 8 OK. `evidence/backup/aws-backup-dr/SHA256SUMS` (72 entries, root-relative) OK. CDK Jest not re-run here | B15b, B12, C3 (cost management), B3 | B15b stays **partial** (DR design, no exercise). Cost management (C3, section E) could move **missing → static reference** (estimate worksheet, no AWS Budgets) |
+| [#19](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/19) @ `3397dac` | Windows Server, AD DS, DNS, GPO, hybrid identity runbooks and incident playbooks | **NOT_EXECUTED** (every runbook; `operations/hybrid/EXECUTION_STATUS.md`). The runbook linter is EXECUTED | Linter re-run here: "checked 12 files, 0 findings" | A2, B2, B11, C6, C7 | A2 stays **missing** (career history). B11 gains runbooks (reference). C7 gains Windows/AD *documentation* only |
+| [#13](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/13) @ `9dc8f1f` | Synthetic team model, on-call rotation, escalation matrix, change review, operational review templates | **NOT_EXECUTED** (documentation; synthetic team) | Not executable | B1, B11, B14, C2 | People-leadership rows (B1, B14, C2) stay **missing / not lab-demonstrable**. B11 gains an escalation matrix (reference) |
+| [#15](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/15) @ `39728db` | Twelve-week learning guide and repository ADRs | **NOT_EXECUTED** (documentation) | Not re-checked | B11, C10 | None |
+| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) candidate `5f159f1` | Integration gate over #3, #5, #4, #2, #20, #22 | **EXECUTED (CI)** | integration-gate [run 40792426144](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144): 18 of 19 jobs success; `merge-eligibility` fails by design (**NOT ELIGIBLE**: AC1 UNMET, AC2 PARTIAL, AC4 PARTIAL, AC5 UNMET). `scripts/validate-all.sh --python-only` re-run here at head `f3c5c46`: PASS (30 steps) | B4, B7, B9 | B4 and B9 stay **demonstrated**, now with a fail-closed merge-eligibility gate |
+| [#26](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26) @ `eb42b23` | Acceptance vertical slice | **EXECUTED (CI)** | acceptance [run 40776065038](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40776065038): `OVERALL=PASS required=44`, decision `REVIEW_PENDING` | B9 | None |
+
+### G4. Rows still not demonstrable by any lab artifact
+
+A2 (on-prem → cloud career path), A5/B1/C2 (leading 8–10 staff), A6 (banking tenure), B6 (vendor relationships including Jack Henry), B14 (staff meetings), B16 (required training), C11, C12, D1–D4. Answer these from real history only.
+
+### G5. Still NOT_EXECUTED across the lab
+
+- No AWS deployment of any stack (#1, #5, #6, #21). Everything stops at `cdk synth`, Jest and cdk-nag.
+- No Entra ID, Microsoft 365 or Graph tenant call (#4, #18, #20).
+- No backup, copy, restore or DR job in AWS (#21).
+- No Windows Server, AD DS, DNS or GPO environment (#19).
+- No live vendor (#9 is fictional) and no live incident (#22 is a simulation).
