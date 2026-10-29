@@ -7,6 +7,25 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Post-candidate coverage delta pt16u (2026-10-28 ~21:15 EDT): module coverage registry
+
+- **The review candidate is unchanged:** `b908a669b302ff37f2c2ca79ed828f65e5a9f432`. It was not re-frozen or replaced, and the Bank IT Lab PR Reviewer is reviewing it. The commits below sit on top of it on `overnight/integration`; they are not part of what is under review, and no approval of `b908a66` covers them.
+- **`51e404c`** applies Ian's `00-all.patch` unchanged:
+  - `coordination/modules.json` now lists **26 modules**, with `coverage.denominator_floor = 26`.
+  - Each module has a category (functional, documentation, review_record, superseded or blocked), an owner, a `delivery_location` and `required_checks {present, proposed}`.
+  - `orgs-security` moves from EXCLUDED to **BLOCKED** (B6-1: the trail access-logs bucket logs to itself; B6-2: the exempt-role SCP bypass), and still counts in the denominator.
+  - `bank-aws-001` (PR #1) becomes SUPERSEDED by `aws-cdk`.
+  - Three NOT_STARTED modules come from the job-matrix top gaps: `aws-network-edge`, `endpoint-windows-automation` and `inventory-diagrams`.
+  - `check_modules.py` gains fail-closed coverage checks, `user_actions.py` prints the coverage line and fails on invalid coverage, and there are 11 new tests in `scripts/ci/tests/test_module_coverage.py`.
+- **Integrator review fixes (next commit):**
+  1. `scripts/ci/tests` was never run by `validate-all.sh` or any Actions job. That includes the 18 binding regressions on `b908a66`, which so far had only run locally. A validate-all step `ci self-tests (scripts/ci/tests)` and a `module-registry` job step now run the suite.
+  2. `--coverage-json` without a file crashed; it now exits 2.
+  3. The module-registry job writes `--coverage-json`.
+
+  No checks were removed.
+- **Coverage:** `MODULE COVERAGE: 7/25 integrated (28.0%), functional 7/17; denominator 26 (BLOCKED=1, INTEGRATED=7, NOT_INTEGRATED=14, NOT_STARTED=3, SUPERSEDED=1)`.
+- **Effect on AC1–AC5 for `b908a66`:** none. Actions results for this HEAD are recorded on `evidence/acceptance`, not here.
+
 ## Checkpoint pt15u (2026-10-28 ~21:00 EDT): AC3 provenance, binding fix, AC4 docs
 
 - **What `771045e` is:** `771045ee413f7550cd0279db06915dddba548dfd` is GitHub's synthetic merge for PR #7 (`refs/pull/7/merge`), with parents `7f50348` (main) and `08cdf11` (head). Pull-request runs test that commit, so their `GITHUB_SHA` is `771045e` while the candidate is `08cdf11`.

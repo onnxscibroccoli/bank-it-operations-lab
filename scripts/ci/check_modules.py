@@ -112,7 +112,12 @@ def workflow_jobs():
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
-    cov_out = argv[argv.index("--coverage-json") + 1] if "--coverage-json" in argv else None
+    cov_out = None
+    if "--coverage-json" in argv:
+        i = argv.index("--coverage-json")
+        if i + 1 >= len(argv) or argv[i + 1].startswith("--"):
+            print("ERROR --coverage-json needs a FILE argument"); return 2
+        cov_out = argv[i + 1]
     errors = []
     reg = json.loads((ROOT / "coordination/modules.json").read_text())
     mods = reg.get("modules")
