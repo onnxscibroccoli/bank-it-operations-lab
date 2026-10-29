@@ -1,10 +1,10 @@
 # USER ACTIONS REQUIRED (Ian)
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 18:08 EDT): about 5 h 51 min.**
+> **Remaining window at commit time (2026-10-28 20:24 EDT): about 3 h 35 min.**
 > Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The acceptance vertical slice runs green in CI on a draft PR (#26). That is a working gate, not a merge. Nothing here claims completion that was not verified.
 
-Snapshot: 2026-10-28, about 18:08 EDT. The #7 integration head is `4f54a01`, and the acceptance slice #26 is at `eb42b23` (CI green, decision REVIEW_PENDING). This reports agent never merges, closes PRs or deploys. Since #7 @ `4f54a01` (C6), coordination policy allows *independently proven* automated merges. None has happened, and none is currently provable (UA-1, UA-2). Only the USER_ACTION_REQUIRED items need Ian; the AUTONOMOUS_FIX items belong to the lane owners. See `FINAL_REPORT.md` §2 for the merge policy (gates G1–G9) and the status of each PR.
+Snapshot: 2026-10-28, about 20:24 EDT. The #7 integration head is `f3c5c46` (candidate `5f159f1`: every technical CI job green, merge-eligibility NOT ELIGIBLE, review packet prepared but **not yet requested**, so UA-1 stands), and the acceptance slice #26 is at `eb42b23` (CI green, decision REVIEW_PENDING). This reports agent never merges, closes PRs or deploys. Since #7 @ `4f54a01` (C6), coordination policy allows *independently proven* automated merges. No merge into `main` has happened, and none is currently provable (UA-1, UA-2). The integrator did merge #20 @ `1b3c240` and #22 @ `9f21329` into the integration branch (#7), not into `main`. Only the USER_ACTION_REQUIRED items need Ian; the AUTONOMOUS_FIX items belong to the lane owners. See `FINAL_REPORT.md` §2 for the merge policy (gates G1–G9) and the status of each PR.
 
 ```
 USER ACTION REQUIRED: 6 — authenticated reviewer for exact-SHA approval; branch protection on main; EX-03/EX-04 sign-off; Entra baseline; #6 Terraform-vs-CDK; final portfolio acceptance

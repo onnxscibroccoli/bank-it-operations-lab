@@ -1,93 +1,93 @@
 {
- "schema": "bank-it-operations-lab/user-actions@1",
- "generated_at": "2026-10-28T18:08:00-04:00",
- "deadline": "2026-10-29T00:00:00-04:00",
- "top_line": "USER ACTION REQUIRED: 6 \u2014 authenticated reviewer for exact-SHA approval; branch protection on main; EX-03/EX-04 sign-off; Entra baseline; #6 Terraform-vs-CDK; final portfolio acceptance",
- "count": 6,
- "items": [
-  {
-   "id": "UA-1",
-   "action": "Decide how independent review is authenticated for exact-SHA approval",
-   "reason": "All 27 PRs are authored by the single account `onnxscibroccoli`, and GitHub does not let a PR author approve their own PR. An authenticated GitHub review therefore needs a second identity (a collaborator or bot account) or an explicit owner policy that names an alternative provenance (for example signed review commits on an audit branch).",
-   "error": "No GitHub review exists on any PR. Reviewer names in agent notes are unauthenticated strings (PR #27, C4).",
-   "permission": "Repo admin: add a reviewer collaborator or GitHub App, or record the policy decision",
-   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/access",
-   "blocks": "The G1 / AC1 gate for every merge to main",
-   "continuing": "All implementation, CI, integration and agent review",
-   "deadline": "YES: no merge can be gate-proven tonight without it",
-   "class": "USER_ACTION_REQUIRED",
-   "status": "OPEN"
-  },
-  {
-   "id": "UA-2",
-   "action": "Approve enabling a branch-protection rule or ruleset on main that requires the final acceptance gate",
-   "reason": "This is a repository-wide setting. The account has admin (verified through the API), but changing settings is outside this reports-only role and needs your explicit approval. #27 says to query first and never bypass.",
-   "error": "GET branches/main/protection returns 404 \"Branch not protected\"; rulesets: [] (checked 18:08 EDT)",
-   "permission": "Repo admin (the account already has it)",
-   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/branches",
-   "blocks": "#27 P0: wire the final decision into an actual merge gate",
-   "continuing": "Lanes A\u2013E",
-   "deadline": "Partly: merges can still be serialized manually, but they are not enforced",
-   "class": "USER_ACTION_REQUIRED",
-   "status": "OPEN"
-  },
-  {
-   "id": "UA-3",
-   "action": "Give the final risk sign-off on EX-03 (wildcard scope) and EX-04 (Backup role), and have EX-01/EX-02 recorded as approved in #5",
-   "reason": "This is a material risk decision outside delegated lab scope. The supporting verifications can be done autonomously; the sign-off cannot.",
-   "error": "EX-03 is OPEN and EX-04 is CONDITIONAL in the register. #14 lists B5-1 (suppressions applied before approval).",
-   "permission": "Owner decision",
-   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
-   "blocks": "#5, #7, #26 (they carry #5)",
-   "continuing": "The B5-2 KMS fix and the other lanes",
-   "deadline": "YES for #5, #7 and #26",
-   "class": "USER_ACTION_REQUIRED",
-   "status": "OPEN"
-  },
-  {
-   "id": "UA-4",
-   "action": "Confirm the #4 Entra baseline choices: risk policies report-only, device compliance for All users on All apps, the 12 privileged roles",
-   "reason": "This is a policy decision that belongs to the owner",
-   "error": "Marked unconfirmed in #4 and in #7 AC4",
-   "permission": "Owner decision",
-   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
-   "blocks": "#4 acceptance (C2 criterion)",
-   "continuing": "Everything else",
-   "deadline": "YES for #4",
-   "class": "USER_ACTION_REQUIRED",
-   "status": "OPEN"
-  },
-  {
-   "id": "UA-5",
-   "action": "Decide on #6: accept CDK, or require Terraform as the original plan asked",
-   "reason": "Scope decision (#14 B6-3)",
-   "error": "#6 delivers CDK. The Terraform items are MISSING and the deviation is undocumented.",
-   "permission": "Owner decision",
-   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6",
-   "blocks": "#6 only (it is already excluded from #7)",
-   "continuing": "Everything else",
-   "deadline": "YES for #6",
-   "class": "USER_ACTION_REQUIRED",
-   "status": "OPEN"
-  },
-  {
-   "id": "UA-6",
-   "action": "Final human portfolio acceptance (AC6) at the deadline",
-   "reason": "#7 tasks.json makes portfolio acceptance a separate human gate; technical eligibility is not acceptance",
-   "error": "n/a (this is a future step)",
-   "permission": "Owner decision",
-   "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/11",
-   "blocks": "Declaring the portfolio accepted",
-   "continuing": "All technical work",
-   "deadline": "It is the final step before midnight",
-   "class": "USER_ACTION_REQUIRED",
-   "status": "OPEN"
-  }
- ],
- "out_of_scope": [
-  "B1 AWS sandbox",
-  "B2 Entra tenant",
-  "B3 rclone client_id"
- ],
- "notification_delivery_claimed": false
+  "schema": "bank-it-operations-lab/user-actions@1",
+  "generated_at": "2026-10-28T20:24:00-04:00",
+  "deadline": "2026-10-29T00:00:00-04:00",
+  "top_line": "USER ACTION REQUIRED: 6 \u2014 authenticated reviewer for exact-SHA approval; branch protection on main; EX-03/EX-04 sign-off; Entra baseline; #6 Terraform-vs-CDK; final portfolio acceptance",
+  "count": 6,
+  "items": [
+    {
+      "id": "UA-1",
+      "action": "Decide how independent review is authenticated for exact-SHA approval",
+      "reason": "All 27 PRs are authored by the single account `onnxscibroccoli`, and GitHub does not let a PR author approve their own PR. An authenticated GitHub review therefore needs a second identity (a collaborator or bot account) or an explicit owner policy that names an alternative provenance (for example signed review commits on an audit branch).",
+      "error": "No GitHub review exists on any PR. Reviewer names in agent notes are unauthenticated strings (PR #27, C4).",
+      "permission": "Repo admin: add a reviewer collaborator or GitHub App, or record the policy decision",
+      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/access",
+      "blocks": "The G1 / AC1 gate for every merge to main",
+      "continuing": "All implementation, CI, integration and agent review",
+      "deadline": "YES: no merge can be gate-proven tonight without it",
+      "class": "USER_ACTION_REQUIRED",
+      "status": "OPEN"
+    },
+    {
+      "id": "UA-2",
+      "action": "Approve enabling a branch-protection rule or ruleset on main that requires the final acceptance gate",
+      "reason": "This is a repository-wide setting. The account has admin (verified through the API), but changing settings is outside this reports-only role and needs your explicit approval. #27 says to query first and never bypass.",
+      "error": "GET branches/main/protection returns 404 \"Branch not protected\"; rulesets: [] (checked 18:08 EDT)",
+      "permission": "Repo admin (the account already has it)",
+      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/branches",
+      "blocks": "#27 P0: wire the final decision into an actual merge gate",
+      "continuing": "Lanes A\u2013E",
+      "deadline": "Partly: merges can still be serialized manually, but they are not enforced",
+      "class": "USER_ACTION_REQUIRED",
+      "status": "OPEN"
+    },
+    {
+      "id": "UA-3",
+      "action": "Give the final risk sign-off on EX-03 (wildcard scope) and EX-04 (Backup role), and have EX-01/EX-02 recorded as approved in #5",
+      "reason": "This is a material risk decision outside delegated lab scope. The supporting verifications can be done autonomously; the sign-off cannot.",
+      "error": "EX-03 is OPEN and EX-04 is CONDITIONAL in the register. #14 lists B5-1 (suppressions applied before approval).",
+      "permission": "Owner decision",
+      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
+      "blocks": "#5, #7, #26 (they carry #5)",
+      "continuing": "The B5-2 KMS fix and the other lanes",
+      "deadline": "YES for #5, #7 and #26",
+      "class": "USER_ACTION_REQUIRED",
+      "status": "OPEN"
+    },
+    {
+      "id": "UA-4",
+      "action": "Confirm the #4 Entra baseline choices: risk policies report-only, device compliance for All users on All apps, the 12 privileged roles",
+      "reason": "This is a policy decision that belongs to the owner",
+      "error": "Marked unconfirmed in #4 and in #7 AC4",
+      "permission": "Owner decision",
+      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
+      "blocks": "#4 acceptance (C2 criterion)",
+      "continuing": "Everything else",
+      "deadline": "YES for #4",
+      "class": "USER_ACTION_REQUIRED",
+      "status": "OPEN"
+    },
+    {
+      "id": "UA-5",
+      "action": "Decide on #6: accept CDK, or require Terraform as the original plan asked",
+      "reason": "Scope decision (#14 B6-3)",
+      "error": "#6 delivers CDK. The Terraform items are MISSING and the deviation is undocumented.",
+      "permission": "Owner decision",
+      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6",
+      "blocks": "#6 only (it is already excluded from #7)",
+      "continuing": "Everything else",
+      "deadline": "YES for #6",
+      "class": "USER_ACTION_REQUIRED",
+      "status": "OPEN"
+    },
+    {
+      "id": "UA-6",
+      "action": "Final human portfolio acceptance (AC6) at the deadline",
+      "reason": "#7 tasks.json makes portfolio acceptance a separate human gate; technical eligibility is not acceptance",
+      "error": "n/a (this is a future step)",
+      "permission": "Owner decision",
+      "link": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/11",
+      "blocks": "Declaring the portfolio accepted",
+      "continuing": "All technical work",
+      "deadline": "It is the final step before midnight",
+      "class": "USER_ACTION_REQUIRED",
+      "status": "OPEN"
+    }
+  ],
+  "out_of_scope": [
+    "B1 AWS sandbox",
+    "B2 Entra tenant",
+    "B3 rclone client_id"
+  ],
+  "notification_delivery_claimed": false
 }

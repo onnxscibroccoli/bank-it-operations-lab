@@ -1,11 +1,11 @@
 # FINAL REPORT: bank-it-operations-lab
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 18:08 EDT): about 5 h 51 min.**
-> Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The acceptance vertical slice runs green in CI on a draft PR (#26). That is a working gate, not a merge. Nothing here claims completion that was not verified.
+> **Remaining window at commit time (2026-10-28 20:24 EDT): about 3 h 35 min.**
+> Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The integration candidate #7 @ `5f159f1` (with #20 and #22 now integrated) runs every technical job green in CI, and its own merge-eligibility check reports NOT ELIGIBLE. That is a working gate, not a merge. Nothing here claims completion that was not verified.
 
 - Repo: https://github.com/onnxscibroccoli/bank-it-operations-lab
-- Snapshot: 2026-10-28, about 18:08 EDT (UTC-4). Current heads are listed in §0c. Older sections are kept as history and name the SHA they checked. `main` @ [`7f50348`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/7f50348bf1370381615eaed91c02607fe41de2f5) holds only `README.md` and has not changed since the repo was created.
+- Snapshot: 2026-10-28, about 20:24 EDT (UTC-4). Current heads are listed in §0c. Older sections are kept as history and name the SHA they checked. `main` @ [`7f50348`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/7f50348bf1370381615eaed91c02607fe41de2f5) holds only `README.md` and has not changed since the repo was created.
 - **Nothing is merged into `main`. Nothing is deployed. No AWS, Entra or Graph credentials were used.** All 27 PRs (#1–#27) are open drafts, and none has a GitHub review (an approval or request for changes).
 - **Evidence labels:**
   - **[re-run]**: re-executed on the box for this report.
@@ -14,7 +14,57 @@
   - **[PR body]**: taken from the PR text only.
   - **UNVERIFIED**: not checked.
 - **Rule: a passing scanner is not enough.** Zero cdk-nag errors, a passing `cfn-s3-selflog` or a passing `sha256sum -c` shows only that a tool ran. Acceptance also needs review of the exact SHA, adjudicated exceptions, docs that match the code, and no blocking findings. #5 is the example: both cdk-nag packs report 0 unsuppressed errors, yet #14 found a KMS privilege-escalation path that the scanner and the repo's own guard (`guards.ts#kmsWildcards`) both miss.
-- Companion files: [`USER_ACTIONS_REQUIRED.md`](USER_ACTIONS_REQUIRED.md) and [`EVIDENCE_MANIFEST.md`](EVIDENCE_MANIFEST.md).
+- Companion files: [`USER_ACTIONS_REQUIRED.md`](USER_ACTIONS_REQUIRED.md) and [`EVIDENCE_MANIFEST.md`](EVIDENCE_MANIFEST.md). Hiring-manager entry points: root [`README.md`](../README.md), [`docs/DEMO_WALKTHROUGH_15MIN.md`](../docs/DEMO_WALKTHROUGH_15MIN.md), and the job-matrix addendum on branch `docs/job-matrix-addendum` @ [`9fb49fa`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d/docs/JOB_REQUIREMENTS_MATRIX.md).
+
+## P. Final portfolio sprint (about 20:24 EDT): evidence classification of every artifact
+
+Labels, used throughout the portfolio docs:
+- **EXECUTED**: it ran; a CI run URL or an evidence hash is cited. Offline runs on synthetic data are EXECUTED for the tool, never for a live system.
+- **SIMULATION**: it ran against a simulated or fictional system (#22 incident demo, #9 vendor mock).
+- **NOT_EXECUTED**: reference only (runbooks, designs, undeployed IaC, documentation).
+
+"Re-run" = re-executed on the box at about 20:20–20:25 EDT against the cited head (unit tests, verifiers, `sha256sum -c`).
+
+### P1. Integration candidate #7
+
+- #7 has moved to `f3c5c46`. Since `4f54a01` it added the integration gate (`82ab7e6`), required M365 checks (`02ac2de`), merges of **#20 at exact SHA `1b3c240`** (`c6c1061`) and **#22 at exact SHA `9f21329`** (`0964281`), required checks for both (`5f159f1`), and a record commit (`f3c5c46`). These are merges into the integration branch, **not into `main`**.
+- **Candidate `5f159f1`: EXECUTED (CI).** integration-gate [run 40792426144](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144): 18 of 19 jobs success; `merge-eligibility` failure = **NOT ELIGIBLE** (by design). aws-cdk [40792426294](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426294), postgres [40792426140](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426140), offline-validation [40792426193](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426193), offline-validation push [40792418146](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418146): success.
+- **Head `f3c5c46`:** integration-gate [run 40793001918](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793001918) again 18/19, `merge-eligibility` NOT ELIGIBLE with notices `AC1: UNMET`, `AC2: PARTIAL`, `AC3: MET for 5f159f1…, not this SHA`, `AC4: PARTIAL`, `AC5: UNMET`. aws-cdk [40793001811](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793001811), postgres [40793001796](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793001796), offline-validation [40793001807](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793001807): success.
+- **Re-run:** `scripts/validate-all.sh --python-only` PASS (30 steps) at both `5f159f1` and `f3c5c46` (needs a git work tree; a plain tarball fails the module-registry step). The two trees differ only in `coordination/` and `reports/INTEGRATION.md`.
+- **Discrepancy:** #7's own review packet (`coordination/review-requests/PR-7-candidate-5f159f1.md`) says the review is **NOT YET REQUESTED**. No independent review of `5f159f1` exists, so AC1 is unmet.
+- Earlier candidate `02ac2de` had a **failing** offline-validation ([40791325340](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325340)); it was superseded by `5f159f1`, which passes.
+
+### P2. Per-artifact classification
+
+| PR @ head | Artifact | Label | Evidence (checked here unless noted) |
+|---|---|---|---|
+| #2 @ `e7399fb` | Postgres backup/restore harness v2 | **EXECUTED (CI)**, real PostgreSQL | [run 40741329107](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40741329107); `verify_evidence.py ci-service-40741329107-1` re-run: VERIFIED, problems=0; integrated CI [40792426140](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426140) |
+| #5 @ `099479e` | AWS CDK VPC + RDS + nag | **EXECUTED (CI)** synth/Jest/nag; deployment **NOT_EXECUTED** | [40792426294](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426294); open B5-1, B5-2 |
+| #4 @ `d302c99` | Entra CA validator | **EXECUTED** offline; tenant **NOT_EXECUTED** | bundle 46 hashes OK; `ca_validator.py` re-run `overall=PASS` |
+| #3 @ `fb36341` | Shared evidence validator | **EXECUTED (CI)** | offline-validation runs above |
+| #20 @ `1b3c240` | M365 / endpoint scenarios | **EXECUTED** offline, PLAN_ONLY (`mutationsExecuted=0`) | 29 tests re-run OK; bundle 20 hashes OK; `m365_ops.py` re-run 13/13; CI m365 jobs success in 40792426144. **Resolves the earlier UNVERIFIED note on #20** |
+| #22 @ `9f21329` | Incident demo | **SIMULATION** | `timeline.py --verify` re-run PASS; 38 hashes OK; `incident-fresh-run` success in 40792426144. Head moved `3f13622` → `9f21329` (labels + notes only) |
+| #26 @ `eb42b23` | Acceptance vertical slice | **EXECUTED (CI)** | §0b |
+| #23, #24, #25 | Acceptance contract / runner / adapters | **EXECUTED (CI)**, not re-run | [40747710616](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40747710616), [40747893103](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40747893103), [40748526680](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40748526680) |
+| #10 @ `3e40e39` | Observability collector | **EXECUTED** local offline, no CI | 64 tests re-run OK; bundle 44 hashes OK |
+| #9 @ `d6efb82` | Vendor API mock, vendor risk, RACI | **SIMULATION** (fictional vendor), no CI | 45 + 25 tests re-run OK (vendor-mock needs `-t .` from its own dir, per its README); 3 bundles OK |
+| #17 @ `5605b78` | Patch rings, hardening | **EXECUTED** inspectors; patching **NOT_EXECUTED**; no CI | 9 + 18 tests re-run OK; bundle 102 hashes OK |
+| #18 @ `f48e7e3` | Identity governance | **EXECUTED** offline; PIM/federation **NOT_EXECUTED**; no CI | 65 tests re-run OK; bundle 49 hashes OK |
+| #16 @ `3f82697` | FFIEC AIO mapping | **EXECUTED** validator; mapping is a study reference | 10 tests re-run OK |
+| #21 @ `10da54f` | AWS Backup DR + cost model | **NOT_EXECUTED** (all 7 recovery items); cost model EXECUTED offline | `RECOVERY_EXECUTION_STATUS.json`; 8 cost tests OK; 72 hashes OK; CDK Jest not re-run |
+| #19 @ `3397dac` | Hybrid Windows/AD/DNS/GPO runbooks | **NOT_EXECUTED** | `EXECUTION_STATUS.md` all rows; lint re-run 0 findings |
+| #6 @ `e5e7f46` | Organizations / SCP / GuardDuty / Security Hub | **NOT_EXECUTED** reference, blocked B6-1/B6-2 | local static evidence only |
+| #13, #15, #8, #12 | Team model; learning guide; case studies; job matrix | **NOT_EXECUTED** (documentation) | n/a |
+| #14, #27 | Independent review notes | review documents, not GitHub reviews | n/a |
+
+### P3. Job posting alignment
+
+- The posting text is **not in the repo**. The only in-repo source is the matrix (#12 @ `31b69db`), which cites the JobLeads page. That page was re-read at about 20:20 EDT: live, and consistent with matrix rows A1–D4. **Discrepancy:** schema.org `validThrough` (2026-10-22) is earlier than `datePosted` (2026-10-27).
+- The newer modules are mapped to requirement IDs in the **matrix addendum (section G)** on branch `docs/job-matrix-addendum` @ [`9fb49fa`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d/docs/JOB_REQUIREMENTS_MATRIX.md). It is built on #12's head, appends only, and leaves sections A–F and the coverage counts to the matrix owner.
+
+### P4. Documentation handoff for the integrator
+
+Files: `README.md` (root), `docs/DEMO_WALKTHROUGH_15MIN.md`, `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md`, `reports/user-actions.json`, `reports/EVIDENCE_MANIFEST.md` on `reports/final-report`; `docs/JOB_REQUIREMENTS_MATRIX.md` on `docs/job-matrix-addendum` (parent `31b69db`). None of it changes code, workflows, or another module's files.
 
 ## 0a. Accelerated completion plan ([#27](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27) @ `72aa8b7`, ChatGPT independent review): per-item verified status
 Source: `reports/independent/chatgpt/accelerated-completion-plan-20261028.md` (snapshot about 17:57 EDT) and `acceptance-181bcdd-review.md`. This report only records status. Implementation belongs to the lane owners #27 names.
@@ -55,7 +105,7 @@ The repairs are in #26: `85c66cf` (invariants), `17cfaea` ("repair C1-C4 from in
 | **C5** Action tags, 30-day retention, head-only testing | **OPEN (VERIFIED as not fixed)** | `acceptance.yml` @ `eb42b23` |
 | **C6** Obsolete coordination constraints | **DONE in #7 @ `4f54a01`** (VERIFIED in `tasks.json`) | see §0a |
 
-## 0c. Current heads of all PRs and branches (GitHub API, about 18:08 EDT)
+## 0c. Current heads of all PRs and branches (GitHub API, about 18:08 EDT; #7, #11, #22 refreshed at about 20:24 EDT)
 `main` = `7f50348` (unchanged). All 27 PRs are open drafts, none merged, all authored by `onnxscibroccoli`.
 
 | PR | Branch | Head |
@@ -66,11 +116,11 @@ The repairs are in #26: `85c66cf` (invariants), `17cfaea` ("repair C1-C4 from in
 | [#4](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4) | `entra-ca-offline` | `d302c99d` |
 | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) | `aws-remediation-vpc-rds` | `099479e6` |
 | [#6](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6) | `orgs-security-refs` | `e5e7f460` |
-| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) | `overnight/integration` | `4f54a016` |
+| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) | `overnight/integration` | `f3c5c46` (was `4f54a016`; see §P1) |
 | [#8](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/8) | `portfolio-cases` | `7010d05a` |
 | [#9](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/9) | `vendor-mock` | `d6efb825` |
 | [#10](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/10) | `observability` | `3e40e39d` |
-| [#11](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/11) | `reports/final-report` | `4e536719` |
+| [#11](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/11) | `reports/final-report` | this commit (parent `e31cce9`) |
 | [#12](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/12) | `job-requirements-matrix` | `31b69db9` |
 | [#13](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/13) | `team-management` | `9dc8f1f5` |
 | [#14](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/14) | `review/pr3-pr6` | `eb8d2595` |
@@ -81,7 +131,7 @@ The repairs are in #26: `85c66cf` (invariants), `17cfaea` ("repair C1-C4 from in
 | [#19](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/19) | `hybrid-operations` | `3397dac9` |
 | [#20](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/20) | `m365-endpoint` | `1b3c2403` |
 | [#21](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/21) | `backup-dr-aws` | `10da54f8` |
-| [#22](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/22) | `incident-demo` | `3f136225` |
+| [#22](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/22) | `incident-demo` | `9f21329` (was `3f136225`; see §P2) |
 | [#23](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/23) | `acceptance-contract` | `6a28847b` |
 | [#24](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/24) | `acceptance-runner` | `838d537a` |
 | [#25](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/25) | `acceptance-adapters` | `ce395047` |
@@ -93,7 +143,7 @@ Heads that **moved since the last verification** in this report, and were not re
 - #8 `7010d05`
 - #9 `d6efb82`
 - #15 `39728db`
-- #20 `1b3c240`: #27 says it now includes runbooks, tests and evidence. **UNVERIFIED here**, because the download attempt was not completed; the §1 row for #20 is stale
+- #20 `1b3c240`: **now verified** (§P2): 29 tests, evidence hashes, and CI inside #7
 - #26 `eb42b23`: verified, §0b
 
 ## 0. Update at about 17:43 EDT: three claims from Ian, each verified before recording
