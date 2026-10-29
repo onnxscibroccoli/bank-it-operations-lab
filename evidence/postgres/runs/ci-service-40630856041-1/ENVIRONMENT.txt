@@ -1,0 +1,12 @@
+run_label=ci-service-40630856041-1
+mode=service
+date_utc=2026-10-28T04:11:08Z
+uname=Linux 7.0.0-1017-azure x86_64
+pg_bin=/usr/lib/postgresql/18/bin
+pg_dump=pg_dump (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg26.04+2)
+pg_restore=pg_restore (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg26.04+2)
+psql=psql (PostgreSQL) 18.6 (Ubuntu 18.6-1.pgdg26.04+2)
+git_sha=daf8d82e23d41cf59335bcbc4f025d2c1e64fd4f
+github_run_id=40630856041
+github_run_attempt=1
+pghost_kind=localhost

@@ -1,0 +1,15 @@
+{
+  "status": "CURRENT",
+  "harness": "tests/integration/postgres/lib.sh (reason-asserting, v2)",
+  "run_label": "local-selftest-v2-20261028T180208Z-A",
+  "mode": "selftest",
+  "overall": "FAIL",
+  "expected_cases": 12,
+  "rows": 14,
+  "passed": 2,
+  "failed": 5,
+  "errors": 5,
+  "not_run": 2,
+  "negative_faults_detected": 1,
+  "finished_utc": "2026-10-28T18:02:13Z"
+}

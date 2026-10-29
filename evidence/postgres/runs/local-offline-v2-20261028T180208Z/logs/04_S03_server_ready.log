@@ -1,0 +1,7 @@
+# step=S03_server_ready kind=setup expect=zero started=2026-10-28T18:02:10Z
+# reason_regex: accepting connections
+# cmd: pg_isready -t 30
+# --- output ---
+/tmp/tmp.AhuvgL8Zn2/sock:54329 - accepting connections
+# --- end output ---
+# exit_code=0 duration_ms=21

@@ -1,0 +1,37 @@
+artifacts: NOT CHECKED (artifacts/ not present; dumps live in the CI artifact)
+ERROR S04_client_server_major_match: result ERROR/version_mismatch
+ERROR S05_reset_databases: result NOT_RUN/dependency_failed:S04_client_server_major_match
+ERROR S06_create_source: result NOT_RUN/dependency_failed:S05_reset_databases
+ERROR S07_seed_source: result NOT_RUN/dependency_failed:S06_create_source
+ERROR S08_fingerprint_source: result NOT_RUN/dependency_failed:S07_seed_source
+ERROR S09_fingerprint_source_sanity: result NOT_RUN/dependency_failed:S08_fingerprint_source
+ERROR P01_pg_dump_custom: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR P02_pg_restore_list: result NOT_RUN/dependency_failed:P01_pg_dump_custom
+ERROR P03_createdb_target: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR P04_pg_restore: result NOT_RUN/dependency_failed:P01_pg_dump_custom
+ERROR P05_fingerprint_restored: result NOT_RUN/dependency_failed:P04_pg_restore
+ERROR P06_compare_restored: result NOT_RUN/dependency_failed:P05_fingerprint_restored
+ERROR P07_pg_dump_plain: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR P08_createdb_plain: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR P09_psql_restore_plain: result NOT_RUN/dependency_failed:P07_pg_dump_plain
+ERROR P10_fingerprint_plain: result NOT_RUN/dependency_failed:P09_psql_restore_plain
+ERROR P11_compare_plain: result NOT_RUN/dependency_failed:P10_fingerprint_plain
+ERROR S_N01_createdb: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR S_N01_make_truncated_dump: result NOT_RUN/dependency_failed:P01_pg_dump_custom
+ERROR N01_restore_truncated_dump: result NOT_RUN/dependency_failed:S_N01_createdb
+ERROR S_N02_make_garbage_file: result NOT_RUN/dependency_failed:S04_client_server_major_match
+ERROR N02_list_garbage_archive: result NOT_RUN/dependency_failed:S_N02_make_garbage_file
+ERROR S_N03_assert_database_absent: result NOT_RUN/dependency_failed:S04_client_server_major_match
+ERROR N03_restore_missing_database: result NOT_RUN/dependency_failed:S_N03_assert_database_absent
+ERROR S_N04_precondition: result NOT_RUN/dependency_failed:P06_compare_restored
+ERROR N04_fk_enforced_after_restore: result NOT_RUN/dependency_failed:S_N04_precondition
+ERROR S_N05_createdb: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR S_N05_first_restore: result NOT_RUN/dependency_failed:S_N05_createdb
+ERROR N05_restore_over_existing_objects: result NOT_RUN/dependency_failed:S_N05_first_restore
+ERROR S_N06_createdb: result NOT_RUN/dependency_failed:S09_fingerprint_source_sanity
+ERROR S_N06_restore: result NOT_RUN/dependency_failed:S_N06_createdb
+ERROR S_N06_tamper_row: result NOT_RUN/dependency_failed:S_N06_restore
+ERROR S_N06_fingerprint_tampered: result NOT_RUN/dependency_failed:S_N06_tamper_row
+ERROR N06_tamper_detected: result NOT_RUN/dependency_failed:S_N06_fingerprint_tampered
+ERROR SUMMARY.json overall=FAIL
+evidence/postgres/runs/ci-mismatch-control-40741329107-1: cases=36 positive=11 negative=6 rows=36 problems=35 -> REJECTED
