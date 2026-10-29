@@ -2,13 +2,17 @@
 """Publish USER ACTION REQUIRED items from coordination/tasks.json (the machine-readable source of truth).
 
 Usage: user_actions.py [--summary FILE] [--annotations] [--out FILE]
-Exit 0 when the file is valid, whether or not actions are open. Exit 1 when tasks.json is malformed.
+Exit 0 when the file is valid, whether or not actions are open. Exit 1 when tasks.json is malformed, or when
+coordination/modules.json coverage is invalid (e.g. a functional module without a delivery_location, or the
+portfolio denominator dropped below coverage.denominator_floor). The module coverage line is always printed.
 Values are treated as data: escaped, never executed.
 """
 import argparse, json, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_modules import coverage, coverage_line  # noqa: E402  (pure function; no tree access)
 REQUIRED = ["id", "task_id", "classification", "status", "action", "reason", "observed",
             "smallest_permission", "instructions", "blocks", "continuing", "deadline_impact"]
 CLASSES = {"USER_ACTION_REQUIRED", "AUTONOMOUS_FIX", "OUT_OF_SCOPE"}
@@ -85,14 +89,29 @@ def main(argv=None):
     ap.add_argument("--summary")
     ap.add_argument("--out")
     ap.add_argument("--annotations", action="store_true")
+    ap.add_argument("--modules", default=str(ROOT / "coordination/modules.json"))
     a = ap.parse_args(argv)
     d, items, errs = load(a.tasks)
+    try:
+        cov, cerrs = coverage(json.loads(Path(a.modules).read_text()))
+    except (OSError, ValueError) as e:
+        cov, cerrs = None, [f"modules.json unreadable: {e}"]
+    errs = errs + ["module coverage: " + e for e in cerrs]
     if errs:
         for e in errs:
             print(("::error title=user-actions::" + esc_cmd(e)) if a.annotations else ("ERROR " + e))
         return 1
     top, open_items, later, ab, md = render(d, items)
+    cl = coverage_line(cov)
+    md += ["", "### Portfolio module coverage (coordination/modules.json)", "", cl, "",
+           "| category | " + " | ".join(sorted(cov["by_status"])) + " |", "|---|" + "---|" * len(cov["by_status"])]
+    for cat in sorted(cov["by_category"]):
+        md.append(f"| {cat} | " + " | ".join(str(cov["by_category"][cat].get(st, 0)) for st in sorted(cov["by_status"])) + " |")
+    md += ["", "Incomplete: " + esc_md(", ".join(cov["incomplete"]) or "none")]
     print(top)
+    print(cl)
+    if a.annotations:
+        print("::notice title=MODULE COVERAGE::" + esc_cmd(cl))
     if a.annotations:
         for i in open_items:
             msg = i["action"] + " Where: " + i["instructions"]
@@ -101,7 +120,7 @@ def main(argv=None):
         with open(a.summary, "a") as f:
             f.write("\n".join(md) + "\n")
     if a.out:
-        out = {"top_line": top, "open": open_items, "not_yet_actionable": later, "autonomous_blockers": ab}
+        out = {"top_line": top, "open": open_items, "not_yet_actionable": later, "autonomous_blockers": ab, "module_coverage": cov}
         Path(a.out).write_text(json.dumps(out, indent=2) + "\n")
     return 0
 

@@ -1,6 +1,6 @@
 {
  "schema": "bank-it-operations-lab/coordination/modules@1",
- "description": "Registry of every lab module. Source of truth for scripts/ci/check_modules.py. Statuses: INTEGRATED (on this branch, with executable checks), EXCLUDED (reviewed, deliberately left out), NOT_INTEGRATED (open PR, not on this branch). INTEGRATED module paths must exist and must be covered by validate-all steps or CI jobs. EXCLUDED/NOT_INTEGRATED paths must NOT exist on this branch. Every top-level path in the tree must belong to a module.",
+ "description": "Registry of every lab module. Source of truth for scripts/ci/check_modules.py. Statuses: INTEGRATED (on this branch, with executable checks), NOT_INTEGRATED (open PR, not on this branch), BLOCKED (planned, open PR, technical blocker recorded), SUPERSEDED (replaced by another module; superseded_by required), NOT_STARTED (planned, no PR yet; proposed delivery_location), EXCLUDED (legacy; still counted in the denominator). INTEGRATED module paths must exist and must be covered by validate-all steps or CI jobs. EXCLUDED/NOT_INTEGRATED paths must NOT exist on this branch. Every top-level path in the tree must belong to a module. Every module counts in the portfolio denominator; nothing is removed to make coverage look complete (coverage.denominator_floor). Functional modules must declare a delivery_location inside their paths.",
  "evidence_classes": [
   "EXECUTED_LOCAL",
   "EXECUTED_CI",
@@ -36,7 +36,32 @@
     "integration-gate.yml:module-registry",
     "integration-gate.yml:final-summary",
     "integration-gate.yml:merge-eligibility"
-   ]
+   ],
+   "category": "functional",
+   "delivery_location": [
+    ".github/workflows",
+    "scripts/ci",
+    "scripts/validate-all.sh",
+    "coordination"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab Integrator",
+    "pr_author": "onnxscibroccoli",
+    "branch": "overnight/integration"
+   },
+   "plan_sources": [
+    "ACP:DoD-3",
+    "ACP:Lane-B"
+   ],
+   "required_checks": {
+    "present": [
+     "integration-gate.yml:user-actions",
+     "integration-gate.yml:module-registry",
+     "integration-gate.yml:final-summary",
+     "integration-gate.yml:merge-eligibility"
+    ],
+    "proposed": []
+   }
   },
   {
    "id": "shared-evidence-validator",
@@ -58,7 +83,26 @@
    ],
    "ci_jobs": [
     "offline-validation.yml:validate"
-   ]
+   ],
+   "category": "functional",
+   "delivery_location": [
+    "evidence/shared"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab PR Reviewer",
+    "pr_author": "Bank IT Lab Review",
+    "branch": "review/pr1-pr2-evidence-audit"
+   },
+   "plan_sources": [
+    "INT:PR#3",
+    "JRM:B9"
+   ],
+   "required_checks": {
+    "present": [
+     "offline-validation.yml:validate"
+    ],
+    "proposed": []
+   }
   },
   {
    "id": "entra-offline",
@@ -85,7 +129,27 @@
    "ci_jobs": [
     "offline-validation.yml:validate"
    ],
-   "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-3)."
+   "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-3).",
+   "category": "functional",
+   "delivery_location": [
+    "identity/entra",
+    "tests/entra"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "Bank IT Lab Entra CA",
+    "branch": "entra-ca-offline"
+   },
+   "plan_sources": [
+    "ACP:DoD-1",
+    "JRM:C6,C9"
+   ],
+   "required_checks": {
+    "present": [
+     "offline-validation.yml:validate"
+    ],
+    "proposed": []
+   }
   },
   {
    "id": "aws-cdk",
@@ -117,7 +181,26 @@
    "ci_jobs": [
     "aws-cdk.yml:synth-and-test"
    ],
-   "limitations": "Static synth only; nothing deployed. Exceptions EX-01..EX-04 unapproved (UA-1). PR #14 B5-1/B5-2 open."
+   "limitations": "Static synth only; nothing deployed. Exceptions EX-01..EX-04 unapproved (UA-1). PR #14 B5-1/B5-2 open.",
+   "category": "functional",
+   "delivery_location": [
+    "infra/aws-cdk"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab AWS Remediation",
+    "pr_author": "Bank IT Lab AWS CDK",
+    "branch": "aws-remediation-vpc-rds"
+   },
+   "plan_sources": [
+    "ACP:DoD-1",
+    "JRM:A1,A3,B3,C3"
+   ],
+   "required_checks": {
+    "present": [
+     "aws-cdk.yml:synth-and-test"
+    ],
+    "proposed": []
+   }
   },
   {
    "id": "postgres-recovery",
@@ -144,11 +227,34 @@
     "postgres-restore-evidence.yml:restore-exercise-service",
     "postgres-restore-evidence.yml:restore-exercise-offline",
     "postgres-restore-evidence.yml:version-mismatch-control"
-   ]
+   ],
+   "category": "functional",
+   "delivery_location": [
+    "tests/integration",
+    "evidence/postgres"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab Backup DR",
+    "pr_author": "Ian Cossette",
+    "branch": "ci-evidence-postgres"
+   },
+   "plan_sources": [
+    "ACP:DoD-1",
+    "JRM:B15a"
+   ],
+   "required_checks": {
+    "present": [
+     "postgres-restore-evidence.yml:harness-selftest",
+     "postgres-restore-evidence.yml:restore-exercise-service",
+     "postgres-restore-evidence.yml:restore-exercise-offline",
+     "postgres-restore-evidence.yml:version-mismatch-control"
+    ],
+    "proposed": []
+   }
   },
   {
    "id": "orgs-security",
-   "status": "EXCLUDED",
+   "status": "BLOCKED",
    "prs": [
     6
    ],
@@ -156,7 +262,39 @@
     "infra/orgs",
     "evidence/orgs"
    ],
-   "reason": "B6-1 TrailAccessLogsBucket logs to itself (cfn-s3-selflog ERROR); B6-2 exempt-role SCP bypass (PR #14)."
+   "reason": "BLOCKED, not excluded: counted in the portfolio denominator. B6-1: infra/orgs/lib/org-cloudtrail-stack.ts TrailAccessLogsBucket sets serverAccessLogsPrefix without serverAccessLogsBucket, so it logs to itself (evidence/shared cfn-s3-selflog ERROR; same defect that superseded PR #1). B6-2: exempt-role SCP bypass (PR #14). Verified at PR #6 head e5e7f4604597c7e6e35e69bf0607fe0535d4cdab, 2026-10-28 21:10 EDT.",
+   "category": "blocked",
+   "delivery_location": [
+    "infra/orgs"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab AWS Remediation",
+    "pr_author": "Bank IT Lab AWS CDK",
+    "branch": "orgs-security-refs"
+   },
+   "plan_sources": [
+    "ACP:Lane-C(orgs)",
+    "JRM:A4,C9,gap-6"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "infra/orgs: npm ci && npx tsc --noEmit && npx jest",
+     "infra/orgs: cdk synth --no-lookups + scripts/nag-gate.sh",
+     "evidence/shared cfn-s3-selflog on infra/orgs cdk.out (must be 0 ERROR; fails today: B6-1)",
+     "infra/orgs scripts/lint-policies.ts",
+     "evidence/orgs SHA256SUMS"
+    ]
+   },
+   "blocker": {
+    "ids": [
+     "B6-1",
+     "B6-2"
+    ],
+    "source": "PR #14 eb8d259 + PR #3 cfn-s3-selflog",
+    "head_sha": "e5e7f4604597c7e6e35e69bf0607fe0535d4cdab",
+    "unblock": "Give TrailAccessLogsBucket no server access logging (or a separate dedicated log bucket) with a cdk-nag suppression recorded as an exception; remove the exempt-role SCP bypass; re-run cfn-s3-selflog = 0 ERROR."
+   }
   },
   {
    "id": "acceptance",
@@ -175,20 +313,71 @@
     "tests/acceptance-contract",
     "reports/ACCEPTANCE.md"
    ],
-   "reason": "PR #27 CHANGES REQUIRED (C1-C5) at 181bcdd; PR #26 head moved to eb42b23 (C1-C4 repairs reported at 17cfaea), pending exact-SHA re-review."
+   "reason": "PR #27 CHANGES REQUIRED (C1-C5) at 181bcdd; PR #26 head moved to eb42b23 (C1-C4 repairs reported at 17cfaea), pending exact-SHA re-review. PR #23 (6a28847) and #24 (838d537) are ancestors of #26 (superseded into it). PR #25 (ce39504) diverged: #26 drops acceptance/modules/emit_shared.py and its test; needs a disposition.",
+   "category": "functional",
+   "delivery_location": [
+    "scripts/acceptance",
+    "acceptance",
+    "tools/acceptance",
+    "schemas/acceptance"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "onnxscibroccoli (Worker D)",
+    "branch": "acceptance/vertical-slice"
+   },
+   "plan_sources": [
+    "ACP:DoD-3",
+    "ACP:Lane-A"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "python3 -m unittest discover -s scripts/acceptance/tests",
+     "acceptance/modules tests",
+     "tests/acceptance-contract",
+     "acceptance run: OVERALL=PASS, decision != naked APPROVED without bound review"
+    ]
+   },
+   "superseded_prs": [
+    23,
+    24
+   ],
+   "head": {
+    "pr": 26,
+    "sha": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+    "base": "overnight/integration@49122f2 (stale; 14 commits not in integration)"
+   }
   },
   {
    "id": "review-notes",
    "status": "NOT_INTEGRATED",
    "prs": [
     14,
-    27
+    27,
+    28,
+    29
    ],
    "paths": [
     "reports/review-pr3-pr6.md",
-    "reports/independent"
+    "reports/independent",
+    "reports/review-candidate-08cdf11.md",
+    "reports/review-acceptance-vertical-slice.md"
    ],
-   "reason": "Review records; kept on their own branches as audit records (plan: do not commit reviews onto the candidate)."
+   "reason": "Review records; kept on their own branches as audit records (plan: do not commit reviews onto the candidate).",
+   "category": "review_record",
+   "owner": {
+    "agent": "Bank IT Lab PR Reviewer",
+    "pr_author": "onnxscibroccoli",
+    "branch": "review/pr3-pr6, review/chatgpt-acceptance-181bcdd, review/candidate-08cdf11, review/acceptance-vertical-slice"
+   },
+   "plan_sources": [
+    "ACP:Lane-E"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": []
+   }
   },
   {
    "id": "portfolio-cases",
@@ -199,7 +388,20 @@
    "paths": [
     "portfolio"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "documentation",
+   "owner": {
+    "agent": "Bank IT Lab Portfolio Cases",
+    "pr_author": "onnxscibroccoli",
+    "branch": "portfolio-cases"
+   },
+   "plan_sources": [
+    "ACP:DoD-5"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": []
+   }
   },
   {
    "id": "vendor-mock",
@@ -212,7 +414,31 @@
     "evidence/vendor",
     "governance/vendor-risk"
    ],
-   "reason": "Not yet reviewed for integration (SIMULATION)."
+   "reason": "Not yet reviewed for integration (SIMULATION).",
+   "category": "functional",
+   "delivery_location": [
+    "integrations/vendor-mock",
+    "governance/vendor-risk"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "Bank IT Lab Host Ops",
+    "branch": "vendor-mock"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(vendors)",
+    "JRM:B6,B4"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "python3 -m unittest discover -s integrations/vendor-mock/tests",
+     "python3 -m unittest discover -s governance/vendor-risk/tests",
+     "governance/vendor-risk/check_governance.py",
+     "SIMULATION label check (scripts/ci/check_labels.py)",
+     "evidence/vendor run SHA256SUMS"
+    ]
+   }
   },
   {
    "id": "observability",
@@ -224,7 +450,28 @@
     "observability",
     "evidence/observability"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "functional",
+   "delivery_location": [
+    "observability"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "observability"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(monitoring)",
+    "JRM:B5,C8"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "python3 -m unittest discover -s observability/tests",
+     "observability/run_healthcheck.py fail-closed negative",
+     "evidence/observability SHA256SUMS"
+    ]
+   }
   },
   {
    "id": "final-report",
@@ -235,9 +482,31 @@
    "paths": [
     "reports/FINAL_REPORT.md",
     "reports/EVIDENCE_MANIFEST.md",
-    "reports/USER_ACTIONS_REQUIRED.md"
+    "reports/USER_ACTIONS_REQUIRED.md",
+    "reports/user-actions.json",
+    "docs/DEMO_WALKTHROUGH_15MIN.md"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration. PR #11 also rewrites README.md (claimed by integration-infra) and adds the 15-minute demo walkthrough (ACP DoD-5): integrator must reconcile README.",
+   "category": "documentation",
+   "owner": {
+    "agent": "Bank IT Lab Final Report",
+    "pr_author": "Ian Cossette",
+    "branch": "reports/final-report"
+   },
+   "plan_sources": [
+    "ACP:DoD-3,DoD-5(demo)",
+    "ACP:Lane-D"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "reports/user-actions.json consistent with coordination/tasks.json user_actions",
+     "EVIDENCE_MANIFEST hashes verify"
+    ]
+   },
+   "shared_paths": [
+    "README.md"
+   ]
   },
   {
    "id": "job-requirements-matrix",
@@ -248,7 +517,28 @@
    "paths": [
     "docs/JOB_REQUIREMENTS_MATRIX.md"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration. Addendum G (modules #9-#26 mapped to requirement IDs) exists only on branch docs/job-matrix-addendum @ 9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d with no PR; integrate the addendum head, not 31b69db.",
+   "category": "documentation",
+   "owner": {
+    "agent": "Bank IT Lab Job Matrix",
+    "pr_author": "onnxscibroccoli",
+    "branch": "job-requirements-matrix (+ docs/job-matrix-addendum 9fb49fa, no PR)"
+   },
+   "plan_sources": [
+    "ACP:DoD-5",
+    "JRM"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "link/permalink check: every cited SHA reachable, every row labelled EXECUTED/SIMULATION/NOT_EXECUTED"
+    ]
+   },
+   "head": {
+    "pr": 12,
+    "sha": "31b69db90838f59bfe28f8214dfc51a1c4ffd429",
+    "addendum_sha": "9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d"
+   }
   },
   {
    "id": "team-management",
@@ -260,7 +550,23 @@
     "docs/management",
     "operations/team"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "documentation",
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "team-management"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(management)",
+    "JRM:B1,B11,B14,C2"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "SYNTHETIC label check"
+    ]
+   }
   },
   {
    "id": "learning-guide",
@@ -272,7 +578,24 @@
     "learning",
     "docs/adr"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "documentation",
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "learning-guide"
+   },
+   "plan_sources": [
+    "ACP:DoD-5(learning continues later)",
+    "JRM:B11,C10"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "learning/exercises/check-citations.py",
+     "learning/exercises/no-aws-env.sh"
+    ]
+   }
   },
   {
    "id": "control-mapping",
@@ -284,7 +607,27 @@
     "governance/controls",
     "evidence/control-review"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "functional",
+   "delivery_location": [
+    "governance/controls"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "control-mapping"
+   },
+   "plan_sources": [
+    "JRM:C9,B9,gap-7"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "python3 -m unittest discover -s governance/controls/tests",
+     "governance/controls/validate_mapping.py (exit 0)",
+     "'study mapping, not attestation' label check"
+    ]
+   }
   },
   {
    "id": "patch-hardening",
@@ -297,7 +640,30 @@
     "operations/patching",
     "evidence/host-operations"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "functional",
+   "delivery_location": [
+    "operations/patching",
+    "operations/hardening"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "Bank IT Lab Host Ops",
+    "branch": "patch-hardening"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(patching)",
+    "JRM:B12,C8,gap-8"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "python3 -m unittest/pytest operations/patching + operations/hardening tests",
+     "evidence/host-operations/check_examples.py",
+     "evidence/host-operations SHA256SUMS",
+     "NOT_EXECUTED label on patching"
+    ]
+   }
   },
   {
    "id": "identity-governance",
@@ -310,7 +676,28 @@
     "docs/federation",
     "evidence/identity-governance"
    ],
-   "reason": "Not yet reviewed for integration."
+   "reason": "Not yet reviewed for integration.",
+   "category": "functional",
+   "delivery_location": [
+    "identity/governance"
+   ],
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "Bank IT Lab Identity Governance",
+    "branch": "identity-governance"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(identity governance)",
+    "JRM:C6,C9,B10"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "python3 -m unittest discover -s identity/governance/tests",
+     "evidence/identity-governance SHA256SUMS",
+     "NOT_EXECUTED label on PIM/access-review/federation"
+    ]
+   }
   },
   {
    "id": "hybrid-operations",
@@ -319,12 +706,27 @@
     19
    ],
    "paths": [
-    "operations/hybrid"
+    "operations/hybrid",
+    "docs/runbooks/hybrid"
    ],
-   "shared_paths": [
-    "docs/runbooks"
+   "reason": "Not yet reviewed for integration (NOT_EXECUTED runbooks).",
+   "category": "documentation",
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "hybrid-operations"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(hybrid operations)",
+    "JRM:A2,B2,B11,C6,C7,gap-3"
    ],
-   "reason": "Not yet reviewed for integration (NOT_EXECUTED runbooks)."
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "operations/hybrid/checks/check_hybrid_runbooks.py (+ its unit tests)",
+     "NOT_EXECUTED label check"
+    ]
+   }
   },
   {
    "id": "m365-endpoint",
@@ -367,6 +769,28 @@
     "findings": "28 findings across the 13 scenarios",
     "unit_tests": "29 unittest cases in identity/m365/tests",
     "evidence_commands": "15 recorded commands in the committed run (python version, unit tests, evaluation, 9 malformed + 3 mismatch negative fixtures), all with the expected exit code"
+   },
+   "category": "functional",
+   "delivery_location": [
+    "identity/m365"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab Integrator (integrated exact SHA); author unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "m365-endpoint"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(M365)",
+    "JRM:C6,B2,B11"
+   ],
+   "required_checks": {
+    "present": [
+     "integration-gate.yml:m365-scenario-evaluation",
+     "integration-gate.yml:m365-unit-tests",
+     "integration-gate.yml:m365-evidence-verification",
+     "integration-gate.yml:plan-only-assertions"
+    ],
+    "proposed": []
    }
   },
   {
@@ -377,12 +801,34 @@
    ],
    "paths": [
     "backup",
-    "evidence/backup"
+    "evidence/backup",
+    "docs/runbooks/aws-backup"
    ],
-   "shared_paths": [
-    "docs/runbooks"
+   "reason": "Not yet reviewed for integration (static, NOT_EXECUTED).",
+   "category": "functional",
+   "delivery_location": [
+    "backup",
+    "docs/runbooks/aws-backup/cost-capacity"
    ],
-   "reason": "Not yet reviewed for integration (static, NOT_EXECUTED)."
+   "owner": {
+    "agent": "Bank IT Lab Backup DR",
+    "pr_author": "Bank IT Lab AWS Backup",
+    "branch": "backup-dr-aws"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(backup references)",
+    "JRM:B15b,B12,C3,gap-5"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "backup/aws: npm ci && tsc && jest (incl. negative-controls)",
+     "backup/aws scripts/validate-config.ts",
+     "docs/runbooks/aws-backup/cost-capacity test_cost_model.py",
+     "evidence/backup SHA256SUMS",
+     "RECOVERY_EXECUTION_STATUS.json all NOT_EXECUTED, aws_api_calls_made=false"
+    ]
+   }
   },
   {
    "id": "incident-demo",
@@ -429,6 +875,144 @@
    "runs": {
     "local-20261028T181818Z": "original (PR #22), preserved unmodified",
     "local-20261029T000545Z": "fresh integrator run 2026-10-28 20:05 EDT, PostgreSQL 16.15, added alongside"
+   },
+   "category": "functional",
+   "delivery_location": [
+    "scenarios"
+   ],
+   "owner": {
+    "agent": "Bank IT Lab Integrator (integrated exact SHA); author unassigned",
+    "pr_author": "onnxscibroccoli",
+    "branch": "incident-demo"
+   },
+   "plan_sources": [
+    "ACP:DoD-2(incident response)",
+    "ACP:Job alignment priorities",
+    "JRM:B13,B15b,B5,B8"
+   ],
+   "required_checks": {
+    "present": [
+     "integration-gate.yml:incident-committed-runs",
+     "integration-gate.yml:incident-fresh-run",
+     "integration-gate.yml:incident-not-executed-negative",
+     "integration-gate.yml:labeling-markers"
+    ],
+    "proposed": []
+   }
+  },
+  {
+   "id": "bank-aws-001",
+   "status": "SUPERSEDED",
+   "category": "superseded",
+   "prs": [
+    1
+   ],
+   "paths": [
+    "reports/MORNING_REPORT.md",
+    "infra/aws-cdk/lib/evidence-validator.ts",
+    "infra/aws-cdk/scripts/validate-evidence.ts"
+   ],
+   "superseded_by": "aws-cdk",
+   "reason": "PR #1 @ e494bcfc3986c2d21a4cf92453857f69dbf69ce3: first planned module (BANK-AWS-001). infra/aws-cdk superseded by PR #5 (S3 self-logging fixed there); CI workflow adapted into aws-cdk.yml; listed paths are the parts NOT carried. Close only on owner decision (UA-4).",
+   "owner": {
+    "agent": "Bank IT Lab AWS Remediation",
+    "pr_author": "Bank IT Lab AWS CDK",
+    "branch": "bank-aws-001"
+   },
+   "plan_sources": [
+    "INT:PR#1",
+    "JRM:A3,A4"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": []
+   }
+  },
+  {
+   "id": "aws-network-edge",
+   "status": "NOT_STARTED",
+   "category": "functional",
+   "prs": [],
+   "paths": [
+    "infra/aws-network"
+   ],
+   "delivery_location": [
+    "infra/aws-network"
+   ],
+   "reason": "JRM 'Top gaps' #2: ALB + EC2/ASG (SSM-managed, no SSH), Route 53 private zone, Site-to-Site VPN reference, AWS Budgets + tagging policy; static first with nag gates. No PR. Cost model partly covered by backup-dr-aws.",
+   "owner": {
+    "agent": "Bank IT Lab AWS Remediation (proposed)",
+    "pr_author": null,
+    "branch": null
+   },
+   "plan_sources": [
+    "JRM:C3,section E,gap-2"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "tsc + jest",
+     "cdk synth --no-lookups + nag gate",
+     "cfn-s3-selflog"
+    ]
+   }
+  },
+  {
+   "id": "endpoint-windows-automation",
+   "status": "NOT_STARTED",
+   "category": "functional",
+   "prs": [],
+   "paths": [
+    "operations/endpoint"
+   ],
+   "delivery_location": [
+    "operations/endpoint"
+   ],
+   "reason": "JRM 'Top gaps' #3: PowerShell scripts with Pester tests (AD/Entra user lifecycle, CA export diff), Intune compliance baseline validated offline, firewall rule-set reference + linter. No PR; #19 (runbooks) and #20 (M365 PLAN_ONLY) cover adjacent docs/scenarios only.",
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": null,
+    "branch": null
+   },
+   "plan_sources": [
+    "JRM:A2,B2,C6,C7,gap-3"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "Pester tests (pwsh on ubuntu runner)",
+     "offline Intune baseline validator",
+     "firewall rule-set linter + negative fixtures"
+    ]
+   }
+  },
+  {
+   "id": "inventory-diagrams",
+   "status": "NOT_STARTED",
+   "category": "functional",
+   "prs": [],
+   "paths": [
+    "inventory"
+   ],
+   "delivery_location": [
+    "inventory"
+   ],
+   "reason": "JRM 'Top gaps' #4: landing-zone/network diagram generated from the CDK code and an asset/service inventory. No PR.",
+   "owner": {
+    "agent": "unassigned",
+    "pr_author": null,
+    "branch": null
+   },
+   "plan_sources": [
+    "JRM:B11,C10,gap-4"
+   ],
+   "required_checks": {
+    "present": [],
+    "proposed": [
+     "diagram generator test against cdk.out",
+     "inventory schema validation",
+     "drift check vs infra/"
+    ]
    }
   }
  ],
@@ -458,5 +1042,26 @@
    "simulation"
   ]
  },
- "required_gate_outputs_note": "Each output must be exactly PASS. NOT_EXECUTED (e.g. no PostgreSQL binaries), FAIL, empty or missing fail final-summary and merge-eligibility."
+ "required_gate_outputs_note": "Each output must be exactly PASS. NOT_EXECUTED (e.g. no PostgreSQL binaries), FAIL, empty or missing fail final-summary and merge-eligibility.",
+ "categories": {
+  "functional": "Executable code or IaC with tests/validators; must have delivery_location and, once INTEGRATED, required_checks.present.",
+  "documentation": "Runbooks, guides, reports, matrices; may have doc linters.",
+  "review_record": "Independent review notes; kept on audit branches, not committed onto the candidate.",
+  "superseded": "Replaced by another module (superseded_by); counted in the denominator, resolved by its successor.",
+  "blocked": "Planned module with a recorded technical blocker; counted in the denominator."
+ },
+ "plan_sources": {
+  "ACP": "reports/independent/chatgpt/accelerated-completion-plan-20261028.md @ PR #27 72aa8b7 (Definition of done 1-5; Lane C module list)",
+  "JRM": "docs/JOB_REQUIREMENTS_MATRIX.md @ PR #12 31b69db (sections A-F, 'Top gaps and suggested lab work' 1-8) + addendum G @ docs/job-matrix-addendum 9fb49fa",
+  "INT": "coordination/tasks.json + reports/INTEGRATION.md on overnight/integration",
+  "PR": "PR descriptions #1-#29"
+ },
+ "coverage": {
+  "denominator_floor": 26,
+  "denominator_rule": "Every planned module counts. Completion = INTEGRATED / (all modules - SUPERSEDED). SUPERSEDED modules stay listed and count as resolved by superseded_by. BLOCKED, NOT_INTEGRATED and NOT_STARTED count as incomplete. check_modules.py fails if the module count drops below denominator_floor; lowering the floor needs an owner decision recorded in tasks.json.",
+  "out_of_scope_by_plan": [
+   "Live AWS deployment / Entra or Graph tenant calls (ACP: 'Live AWS/Entra validation is intentionally out of scope'; JRM gap-1 requires owner decision and spend)",
+   "Non-lab-demonstrable job rows A2,A5,A6,B1,B6,B14,B16,C2,C11,C12,D1-D4 (JRM G4) - answered from real history, not modules"
+  ]
+ }
 }
