@@ -12,7 +12,7 @@ name: integration-gate
 # 5. final-summary (always runs): aggregates every job result; fails if any required job is missing, skipped or failed.
 # 6. merge-eligibility (always runs): PR #27 C6 policy check for this run's identity (candidate, base == current main,
 #    tested merge from scripts/ci/provenance.py). AC1 (reviews API, non-author APPROVED on the exact SHA) and AC3 are
-#    computed at runtime, and AC2/AC4/AC5 come from authenticated decision comments bound to the exact SHA (PR #31 F6/F7).
+#    computed at runtime, and AC2/AC4/AC5 come from login-bound attestation comments (never the PR author) bound to the exact SHA (PR #31 F6/F7, PR #32 D1/D2); the gate pin must be independently reviewed (D3).
 #    The gate code and allow-list come BY SHA from a trusted manifest (main or evidence/acceptance) and are hash-verified;
 #    the candidate's verifier files must match it (R6). The decision is uploaded as an artifact, never committed.
 #    Residual: on pull_request the workflow file itself comes from the candidate merge; only branch protection /
@@ -304,6 +304,17 @@ jobs:
       - name: Run identity (candidate, base == current main, tested merge) for AC3 provenance
         if: always() && steps.verify.outcome == 'success'
         run: python3 "$GATE/scripts/ci/provenance.py" --out "$RUNNER_TEMP/run-identity.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: Gate pin independence (D3; TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE)
+        if: always() && steps.verify.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cand=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("candidate_sha") or "")' "$RUNNER_TEMP/run-identity.json")
+          python3 "$GATE/scripts/ci/verify_trusted_gate.py" --check-pin --manifest "$MANIFEST" --gate-dir "$GATE" \
+            --candidate-sha "$cand" --out "$RUNNER_TEMP/gate-trust.json"
+          st=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["status"])' "$RUNNER_TEMP/gate-trust.json")
+          { echo "| gate pin | $st (independently reviewed pin required; never the candidate) |"; } >> "$GITHUB_STEP_SUMMARY"
       - name: Runtime evidence from GitHub (reviews, attestations, runs, permissions; read-only GITHUB_TOKEN)
         if: always() && steps.verify.outcome == 'success'
         env:
@@ -323,6 +334,7 @@ jobs:
           --config "$GATE/.github/acceptance/trusted-config.json"
           --identity "$RUNNER_TEMP/run-identity.json" --reviews "$RUNNER_TEMP/reviews.json"
           --exceptions "$RUNNER_TEMP/security-exceptions.json"
+          --gate-trust "$RUNNER_TEMP/gate-trust.json"
           --decision-out "$RUNNER_TEMP/acceptance-decision.json" --summary "$GITHUB_STEP_SUMMARY"
       - name: Upload the decision and all runtime evidence (outside the candidate tree)
         if: always()
@@ -332,6 +344,7 @@ jobs:
           path: |
             ${{ runner.temp }}/gate-manifest.json
             ${{ runner.temp }}/gate-verification.json
+            ${{ runner.temp }}/gate-trust.json
             ${{ runner.temp }}/run-identity.json
             ${{ runner.temp }}/reviews.json
             ${{ runner.temp }}/security-exceptions.json

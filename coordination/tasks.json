@@ -169,7 +169,7 @@
       "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
      }
     ],
-    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: for every applied exception, the latest ACCEPTANCE-ATTESTATION v2 'criterion: EXCEPTION' comment on PR #7 by a trusted owner login with admin permission (GitHub API) must be APPROVED, or APPROVED_WITH_CONDITIONS followed by a CONDITIONS_VERIFIED attestation; bound to exception id, scope (rule + applied resources), evidence refs, candidate SHA, main SHA, tested merge SHA and an Actions run of the candidate. States: PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED. The register's status text and tasks.json are candidate-produced and never approve (Ian 21:50 P3). In-tree MET is rejected."
+    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: for every applied exception, the latest ACCEPTANCE-ATTESTATION v2 'criterion: EXCEPTION' comment on PR #7 by a trusted owner LOGIN with admin permission (GitHub API) that is NOT the PR author: owner-login-bound, NOT owner-authenticated (PR #32 D2); decisions from the PR author / shared account are INSUFFICIENT_INDEPENDENCE until O-5 (UA-6) must be APPROVED, or APPROVED_WITH_CONDITIONS followed by a CONDITIONS_VERIFIED attestation; bound to exception id, scope (rule + applied resources), evidence refs, candidate SHA, main SHA, tested merge SHA and an Actions run of the candidate. States: PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED. The register's status text and tasks.json are candidate-produced and never approve (Ian 21:50 P3). In-tree MET is rejected."
    },
    {
     "id": "AC3",
@@ -225,7 +225,7 @@
       "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
      }
     ],
-    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: latest ACCEPTANCE-ATTESTATION v2 'criterion: AC4' comment on PR #7 with decision ACCEPT, by the trusted owner (admin) or an allow-listed non-author reviewer (write+), bound to candidate, main, tested merge, workflow run (verified via API: run.head_sha == candidate), evidence refs; author and timestamp authenticated by GitHub; edited comments ignored (Ian 21:50 P2). In-tree MET is rejected."
+    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: latest ACCEPTANCE-ATTESTATION v2 'criterion: AC4' comment on PR #7 with decision ACCEPT, by the trusted owner login (admin) or an allow-listed reviewer (write+), never the PR author (PR #32 D1), bound to candidate, main, tested merge, workflow run (verified via API: integration-gate name+path, completed, head_sha = candidate or attested tested merge, every job green except the fail-closed merge-eligibility, PR #32 D1), evidence refs; GitHub vouches for the login and timestamp (login-bound, not person-authenticated); edited comments ignored (Ian 21:50 P2). In-tree MET is rejected."
    },
    {
     "id": "AC5",
@@ -397,8 +397,8 @@
    "action": "Decide EX-01..EX-04 for the exact candidate SHA: one owner ACCEPTANCE-ATTESTATION v2 comment per exception on PR #7 (format in instructions).",
    "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
    "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded. | 2026-10-28 21:25 EDT: scripts/ci/check_exceptions.py reports 5 applied suppressions tied to PROPOSED EX-01..EX-04 as a BLOCKING USER ACTION; merge-eligibility keeps AC2/AC5 UNMET until this is decided.",
-   "smallest_permission": "Owner decision recorded as a GitHub-authenticated comment on PR #7 by onnxscibroccoli (admin). Editing SECURITY_EXCEPTIONS.md never approves.",
-   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. For EACH applied exception post ONE new (never edited) comment on PR #7 from the owner account in the trusted config (onnxscibroccoli, admin), body exactly:\nACCEPTANCE-ATTESTATION v2\ncandidate: <exact 40-hex candidate SHA>\nmain: <exact 40-hex main SHA>\ntested_merge: <PR merge SHA> <candidate/main-validation merge SHA>\nworkflow_run: <Actions run id of the candidate's integration-gate run>\ncriterion: EXCEPTION\ndecision: APPROVED | REJECTED | APPROVED_WITH_CONDITIONS | SUPERSEDED\nexception: EX-NN\nscope: <rule> <applied resource logical ids, sorted, exactly as in the gate's decision artifact>\nconditions: <text>   (only with APPROVED_WITH_CONDITIONS; effective only after a later CONDITIONS_VERIFIED attestation)\nevidence: <one or more refs, e.g. the run URL and SECURITY_EXCEPTIONS.md#EX-NN>\nApplied scopes on this tree: EX-01: 'NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689'; EX-02: 'NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50'; EX-03: 'AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC'; EX-04: 'AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF'. The gate verifies author, admin permission, exact SHAs, the run, and the scope at runtime. The integrator never posts this.",
+   "smallest_permission": "Owner decision recorded as a login-bound comment on PR #7 by an owner login distinct from the PR author (O-5 / UA-6). Editing SECURITY_EXCEPTIONS.md never approves.",
+   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. For EACH applied exception post ONE new (never edited) comment on PR #7 from the SEPARATE owner login in the trusted config (after UA-6; onnxscibroccoli is the PR author / shared agent account and its decisions are INSUFFICIENT_INDEPENDENCE), body exactly:\nACCEPTANCE-ATTESTATION v2\ncandidate: <exact 40-hex candidate SHA>\nmain: <exact 40-hex main SHA>\ntested_merge: <PR merge SHA> <candidate/main-validation merge SHA>\nworkflow_run: <Actions run id of the candidate's integration-gate run>\ncriterion: EXCEPTION\ndecision: APPROVED | REJECTED | APPROVED_WITH_CONDITIONS | SUPERSEDED\nexception: EX-NN\nscope: <rule> <applied resource logical ids, sorted, exactly as in the gate's decision artifact>\nconditions: <text>   (only with APPROVED_WITH_CONDITIONS; effective only after a later CONDITIONS_VERIFIED attestation)\nevidence: <one or more refs, e.g. the run URL and SECURITY_EXCEPTIONS.md#EX-NN>\nApplied scopes on this tree: EX-01: 'NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689'; EX-02: 'NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50'; EX-03: 'AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC'; EX-04: 'AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF'. The gate verifies author, admin permission, exact SHAs, the run, and the scope at runtime. The integrator never posts this.",
    "blocks": [
     "AC2",
     "merge of PR #7 into main"
@@ -427,11 +427,11 @@
    "task_id": "REPO/branch-protection",
    "classification": "USER_ACTION_REQUIRED",
    "status": "OPEN",
-   "action": "Protect main so the gate is enforced and cannot be weakened by a candidate (R6 full closure).",
+   "action": "Protect main AND evidence/acceptance so the gate and its manifest cannot be weakened by a candidate or the shared account (R6/D3 full closure).",
    "reason": "main is unprotected (branch protection API returns 404). Repository settings changes were not delegated to this agent.",
    "observed": "Branch not protected (HTTP 404). The owner account has admin permission, so this is a decision, not a permission gap. | 2026-10-28 22:00 EDT: still unprotected (0 rulesets). R6 within the repo is hardened (manifest-pinned, hash-verified gate), but the gate job definition is in the candidate's workflow until this is done.",
    "smallest_permission": "Repository admin (already held by the owner account).",
-   "instructions": "Settings > Rules > Rulesets > New branch ruleset (https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/rules), or Settings > Branches > Add classic branch protection rule. Exact recommended settings: Target: default branch (main); Enforcement: Active; Bypass list: empty (do not add the owner); Restrict deletions: on; Block force pushes: on; Require linear history: optional; Require a pull request before merging: on, Required approvals: 1, Dismiss stale pull request approvals when new commits are pushed: on, Require approval of the most recent reviewable push: on, Require review from Code Owners: on (after adding a CODEOWNERS file on main naming the independent reviewer for .github/ and scripts/ci/), Require conversation resolution: on; Require status checks to pass: on, Require branches to be up to date: on, required checks: 'integration-gate / final-summary' and 'integration-gate / merge-eligibility' (source: GitHub Actions); classic rule only: Do not allow bypassing the above settings (include administrators): on. Then, for full R6 closure, land the gate on main (.github/workflows/integration-gate.yml, scripts/ci, .github/acceptance/trusted-config.json and .github/acceptance/gate-manifest.json) through that protected PR flow, so the manifest and allow-list are read from main. Also add the independent reviewer as a collaborator with Write and add their login to reviewer_allowlist on main.",
+   "instructions": "Settings > Rules > Rulesets > New branch ruleset (https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/rules), or Settings > Branches > Add classic branch protection rule. Exact recommended settings: Target: default branch (main); Enforcement: Active; Bypass list: empty (do not add the owner); Restrict deletions: on; Block force pushes: on; Require linear history: optional; Require a pull request before merging: on, Required approvals: 1, Dismiss stale pull request approvals when new commits are pushed: on, Require approval of the most recent reviewable push: on, Require review from Code Owners: on (after adding a CODEOWNERS file on main naming the independent reviewer for .github/ and scripts/ci/), Require conversation resolution: on; Require status checks to pass: on, Require branches to be up to date: on, required checks: 'integration-gate / final-summary' and 'integration-gate / merge-eligibility' (source: GitHub Actions); classic rule only: Do not allow bypassing the above settings (include administrators): on. Then, for full R6 closure, land the gate on main (.github/workflows/integration-gate.yml, scripts/ci, .github/acceptance/trusted-config.json and .github/acceptance/gate-manifest.json) through that protected PR flow, so the manifest and allow-list are read from main. Also add the independent reviewer as a collaborator with Write and add their login to reviewer_allowlist on main. ALSO (PR #32 D3) protect evidence/acceptance with a second ruleset: target branch evidence/acceptance; Enforcement Active; Bypass list empty; Restrict deletions on; Block force pushes on; Require a pull request before merging on with 1 approval from the independent reviewer (Code Owners for trusted-gate/); Restrict updates so the shared agent account cannot push directly. Then have the independent reviewer approve the gate commit and re-pin trusted-gate/gate-manifest.json with independent_review {pr, review_id}.",
    "blocks": [],
    "continuing": "The gate runs and reports regardless; without protection it is advisory.",
    "deadline_impact": "None for testing; affects whether the gate is enforced."
@@ -467,6 +467,25 @@
    ],
    "continuing": "Everything else.",
    "deadline_impact": "Required for portfolio acceptance, not for technical merge eligibility."
+  },
+  {
+   "id": "UA-6",
+   "alias": "O-5",
+   "task_id": "PR-7/AC2,AC4,AC5",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Create an owner identity that agents cannot use (a separate Ian-only GitHub account, or a signing key the agents do not hold) and put it in owner_logins of the trusted config (re-reviewed and re-pinned).",
+   "reason": "onnxscibroccoli is the PR author and the shared account every agent lane pushes and comments with; a comment from it proves the login, not Ian (PR #32 D2). Owner decisions from it are INSUFFICIENT_INDEPENDENCE.",
+   "observed": "2026-10-28 ~22:30 EDT: trusted-config owner_logins = [onnxscibroccoli] = PR #7 author; repository collaborators: onnxscibroccoli only.",
+   "smallest_permission": "Owner creates/invites a second account (admin for the owner identity) and edits the trusted config through the protected flow (UA-3).",
+   "instructions": "1) Create or choose an Ian-only GitHub account whose credentials no agent holds. 2) Invite it as collaborator with Admin. 3) Through the protected flow, set owner_logins to that login only (remove onnxscibroccoli) in .github/acceptance/trusted-config.json, have the independent reviewer approve the gate commit, and re-pin the manifest. 4) Post the UA-1 EXCEPTION and AC4/AC5 attestations from that account.",
+   "blocks": [
+    "AC2",
+    "AC5",
+    "merge of PR #7 into main"
+   ],
+   "continuing": "All other lanes continue.",
+   "deadline_impact": "Blocks a merge before 2026-10-29T00:00-04:00 if not done."
   }
  ],
  "autonomous_blockers": [
@@ -1000,6 +1019,21 @@
    "residual": [
     "R6: until UA-3 the merge-eligibility job definition lives in the candidate's workflow file (a candidate could delete the verify step); the manifest makes any verifier change visible and the gate rejects it when the step runs",
     "F7: the owner login onnxscibroccoli is also the PR author and the account the agents push with; the decision comment proves the account, not the person. Ian should post decisions himself; a dedicated owner/reviewer account removes this ambiguity"
+   ]
+  },
+  "round9_pr32_repairs": {
+   "requested": "relayed 22:06 EDT: PR #32 CHANGES REQUIRED on 5a75d9c (D1/D2/D3 + nits)",
+   "D1": "PR author excluded from all attestations; workflow_run must be a completed integration-gate run (name+path) of candidate/attested tested merge, all jobs green except fail-closed merge-eligibility, final-summary green",
+   "D2": "owner-login-bound, NOT owner-authenticated; author/shared-account owner decisions = INSUFFICIENT_INDEPENDENCE (blocking); O-5 recorded as UA-6",
+   "D3": "pin must be an independently reviewed gate commit != candidate (verify_trusted_gate --check-pin, API-verified review); otherwise TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE; evidence/acceptance protection added to UA-3",
+   "pin_state": "manifest pins the gate commit (parent of the candidate), independent_review null -> UNVERIFIED by construction until a qualifying review exists",
+   "path_to_eligible": [
+    "UA-3 (main + evidence/acceptance protected)",
+    "UA-6/O-5 separate owner identity in owner_logins",
+    "independent reviewer (Write, allow-listed) approves the gate commit; manifest re-pinned with independent_review",
+    "that reviewer approves PR #7 at the exact candidate",
+    "separate owner posts EXCEPTION attestations EX-01..EX-04 (EX-04 unresolved today); owner or reviewer posts AC4/AC5",
+    "re-run integration-gate"
    ]
   }
  },

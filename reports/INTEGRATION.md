@@ -7,7 +7,16 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
-## Round 8 (2026-10-28 ~22:15 EDT): Ian's 21:50 execution alignment (P1-P5)
+## Round 9 (2026-10-28 ~22:30 EDT): repairs for PR #32 (CHANGES REQUIRED on `5a75d9c`)
+
+| Finding | Fix |
+|---|---|
+| **D1**: AC4/AC5 accepted from the PR author; `workflow_run` checked only by head SHA | No attestation from the PR author counts, for any criterion: AC4, AC5, EXCEPTION or CONDITIONS_VERIFIED. An unknown PR author fails closed. `workflow_run` must be an `integration-gate` run (name and `.github/workflows/integration-gate.yml` path), completed, with head SHA = the candidate or an attested tested merge. Every job must have succeeded except the fail-closed `merge-eligibility` job, which by design fails while NOT ELIGIBLE, so a run's conclusion cannot be `success` before acceptance. `final-summary` must be green. |
+| **D2**: "owner-authenticated" was only a login check on the shared account | Relabelled **owner-login-bound, not owner-authenticated** in code, docs and `tasks.json`. Exception decisions from the PR author / shared account are `INSUFFICIENT_INDEPENDENCE` (blocking). The trusted config's only owner login is `onnxscibroccoli`, who is also the PR author, so AC2 stays blocked until Ian has a separate identity: **O-5, recorded as UA-6** |
+| **D3**: the manifest self-pinned the candidate on an unprotected branch | `verify_trusted_gate.py --check-pin` makes the gate TRUSTED only when two things hold. First, `gate_sha` is not the candidate. Second, the manifest's `independent_review` names a GitHub review, fetched at runtime, that is APPROVED on `gate_sha` by a non-author, allow-listed, write+ account. Otherwise the result is **TRUSTED GATE UNVERIFIED** and merge-eligibility is NOT ELIGIBLE. The manifest now pins the gate commit (not the candidate) with `independent_review: null`, so this candidate is UNVERIFIED by construction. UA-3 now also protects `evidence/acceptance` |
+| Nits | The Round 8 time is corrected to 21:56 EDT, and the `5a75d9c` re-pin row is added to `trusted-gate/README.md` |
+
+## Round 8 (2026-10-28 21:56 EDT): Ian's 21:50 execution alignment (P1-P5)
 
 - `e9310f3` was frozen before the 21:50 alignment. **It is not the review candidate**: its decision comments did not bind main, tested merge, workflow run or exception scope, and it had no exception states.
 - **P1 (AC1):** design unchanged (non-author; write+ via `GET /collaborators/{login}/permission`; trusted `reviewer_allowlist` outside the candidate; APPROVED with `commit_id` = exact 40-hex SHA; latest decisive review per account; any undismissed CHANGES_REQUESTED fails closed). New regressions: superseded by a later CHANGES_REQUESTED, dismissed, wrong / 12-char / 39-char SHA, author on the allow-list.
