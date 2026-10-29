@@ -36,3 +36,9 @@ For logged, credential-free runs use `../../evidence/aws/aws-remediation-vpc-rds
 
 ## Known gaps
 Default `BootstrapVersion` parameter/rule; cdk-nag 2.x pin; proposed exceptions EX-01..EX-04; hosted rotation uses a SAR application.
+
+## Deployment blocker: Backup trust context (EX-04)
+
+The narrowed DbBackupRole/DbBackupPolicy is statically checked only. The configured vault `aws:SourceArn` and account context during `backup.amazonaws.com` service-role AssumeRole have not been established by service-role-specific documentation or a sandbox run. AWS's Backup confused-deputy page describes vault context for SNS publishing and storage KMS policies; it is not evidence that this exact role assumption supplies those keys. Retain the restrictive draft and mark deployment blocked pending that evidence, rather than presenting a passing template assertion as proof it can run. No owner exception approval or live backup success is claimed.
+
+Source: https://docs.aws.amazon.com/aws-backup/latest/devguide/cross-service-confused-deputy-prevention.html

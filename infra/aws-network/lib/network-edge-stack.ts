@@ -204,6 +204,30 @@ export class NetworkEdgeStack extends Stack {
       description: 'CMK for application volumes',
       viaServices: ['ec2'],
     });
+    // The Auto Scaling service-linked role needs direct CMK permissions;
+    // kms:ViaService=ec2 alone does not authorize its encrypted-volume launches.
+    const autoScalingRole = new iam.CfnServiceLinkedRole(this, 'AutoScalingServiceRole', {
+      awsServiceName: 'autoscaling.amazonaws.com',
+      customSuffix: 'BankItLabEdge',
+    });
+    const autoScalingRoleArn = this.formatArn({
+      service: 'iam', region: '', resource: 'role',
+      resourceName: `aws-service-role/autoscaling.amazonaws.com/${autoScalingRole.ref}`,
+    });
+    const scalingPrincipal = new iam.ArnPrincipal(autoScalingRoleArn);
+    ebsKey.addToResourcePolicy(new iam.PolicyStatement({
+      sid: 'AutoScalingEbsCrypto',
+      principals: [scalingPrincipal],
+      actions: ['kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*', 'kms:DescribeKey'],
+      resources: ['*'],
+    }));
+    ebsKey.addToResourcePolicy(new iam.PolicyStatement({
+      sid: 'AutoScalingEbsGrants',
+      principals: [scalingPrincipal],
+      actions: ['kms:CreateGrant'],
+      resources: ['*'],
+      conditions: { Bool: { 'kms:GrantIsForAWSResource': 'true' } },
+    }));
     const launchTemplate = new ec2.CfnLaunchTemplate(this, 'LaunchTemplate', {
       launchTemplateData: {
         imageId: amiId.valueAsString,
@@ -221,6 +245,7 @@ export class NetworkEdgeStack extends Stack {
 
     const topic = new sns.Topic(this, 'AsgTopic', { masterKey: snsKey });
     const asg = new autoscaling.CfnAutoScalingGroup(this, 'AppAsg', {
+      serviceLinkedRoleArn: autoScalingRoleArn,
       minSize: '1',
       maxSize: '2',
       desiredCapacity: '1',

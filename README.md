@@ -19,7 +19,7 @@ git rev-parse HEAD  # record the exact version you demonstrate
 bash scripts/validate-all.sh --python-only
 ```
 
-The offline suite needs Python 3.10+, Git and Bash. No pip packages or credentials are needed. Full PostgreSQL simulation and Node/CDK checks run in GitHub Actions; local full validation additionally needs Node 20+, npm and PostgreSQL server binaries. PostgreSQL cluster initialization must run as a non-root user.
+The offline suite needs Python 3.10+, OpenSSL 3.x, Git and Bash. No pip packages or credentials are needed. Full PostgreSQL simulation and Node/CDK checks run in GitHub Actions; local full validation additionally needs Node 20+, npm and PostgreSQL server binaries. PostgreSQL cluster initialization must run as a non-root user.
 
 ## Evidence labels
 

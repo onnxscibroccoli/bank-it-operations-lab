@@ -245,8 +245,10 @@ export class NetworkDatabaseStack extends Stack {
 
 /**
  * Customer-managed backup role. Trust is limited to backup.amazonaws.com in this account,
- * and only when the source is this vault (confused-deputy conditions AWS Backup documents
- * for the service role). The policy is this instance and awsbackup-* snapshots, not the
+ * and only when the source is this vault. DEPLOYMENT BLOCKED: the availability of
+ * that SourceArn context during service-role AssumeRole is NOT VERIFIED. AWS vault
+ * examples for SNS/KMS do not establish this behavior. The policy is this instance
+ * and awsbackup-* snapshots, not the
  * AWS-managed AWSBackupServiceRolePolicyForBackup (that policy was EX-04).
  *
  * Snapshot names are chosen by AWS Backup at job time, so the snapshot ARN has a prefix
