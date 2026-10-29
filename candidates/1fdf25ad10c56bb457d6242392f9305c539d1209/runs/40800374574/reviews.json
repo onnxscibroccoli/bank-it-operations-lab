@@ -1,0 +1,11 @@
+{
+  "schema": "bank-lab/pr-reviews/v1",
+  "repository": "onnxscibroccoli/bank-it-operations-lab",
+  "candidate_sha": "1fdf25ad10c56bb457d6242392f9305c539d1209",
+  "ok": true,
+  "pr": 7,
+  "pr_author": "onnxscibroccoli",
+  "head_sha": "1fdf25ad10c56bb457d6242392f9305c539d1209",
+  "base_ref": "main",
+  "reviews": []
+}

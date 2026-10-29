@@ -1,0 +1,105 @@
+{
+  "schema": "bank-lab/merge-eligibility-decision/v1",
+  "identity": {
+    "schema": "bank-lab/run-identity/v1",
+    "event": "pull_request",
+    "ref_name": "7/merge",
+    "repository": "onnxscibroccoli/bank-it-operations-lab",
+    "run_id": "40800364073",
+    "run_attempt": "1",
+    "tested_sha": "07eea1cefdc15873af2a579d3795af402961edd6",
+    "kind": "merge",
+    "pr": 7,
+    "candidate_sha": "1fdf25ad10c56bb457d6242392f9305c539d1209",
+    "base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "event_base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "main_sha_at_runtime": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "valid": true,
+    "errors": []
+  },
+  "verdict": "NOT ELIGIBLE",
+  "acceptance": {
+    "AC1": {
+      "status": "UNMET",
+      "detail": [
+        "no APPROVED review on exact candidate 1fdf25ad10c56bb457d6242392f9305c539d1209 by an account other than the PR author onnxscibroccoli"
+      ]
+    },
+    "AC2": {
+      "status": "UNMET",
+      "detail": [
+        "AC2: PARTIAL",
+        "BLOCKING USER ACTION UA-1: 5 applied cdk-nag suppression(s) tied to non-APPROVED exception(s) EX-01, EX-02, EX-03, EX-04"
+      ]
+    },
+    "AC3": {
+      "status": "MET_AT_RUNTIME",
+      "detail": [
+        "candidate 1fdf25ad10c56bb457d6242392f9305c539d1209 merged into base 7f50348bf1370381615eaed91c02607fe41de2f5 as 07eea1cefdc15873af2a579d3795af402961edd6; run 40800364073 attempt 1"
+      ]
+    },
+    "AC4": {
+      "status": "UNMET",
+      "detail": [
+        "AC4: PARTIAL"
+      ]
+    },
+    "AC5": {
+      "status": "UNMET",
+      "detail": [
+        "AC5: UNMET",
+        "BLOCKING USER ACTION UA-1: 5 applied cdk-nag suppression(s) tied to non-APPROVED exception(s) EX-01, EX-02, EX-03, EX-04"
+      ]
+    }
+  },
+  "AC6": "UNMET",
+  "required_check_problems": [],
+  "problems": [
+    "AC1: no APPROVED review on exact candidate 1fdf25ad10c56bb457d6242392f9305c539d1209 by an account other than the PR author onnxscibroccoli",
+    "AC2: PARTIAL",
+    "BLOCKING USER ACTION UA-1: 5 applied cdk-nag suppression(s) tied to non-APPROVED exception(s) EX-01, EX-02, EX-03, EX-04",
+    "AC4: PARTIAL",
+    "AC5: UNMET",
+    "BLOCKING USER ACTION UA-1: 5 applied cdk-nag suppression(s) tied to non-APPROVED exception(s) EX-01, EX-02, EX-03, EX-04"
+  ],
+  "gate_code": {
+    "source": "pinned",
+    "sha": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "data_root": "/home/runner/work/bank-it-operations-lab/bank-it-operations-lab"
+  },
+  "reviews": {
+    "ok": true,
+    "pr": 7,
+    "pr_author": "onnxscibroccoli",
+    "head_sha": "1fdf25ad10c56bb457d6242392f9305c539d1209",
+    "error": null
+  },
+  "security_exceptions": {
+    "applied": 5,
+    "unapproved": [
+      "EX-01",
+      "EX-02",
+      "EX-03",
+      "EX-04"
+    ],
+    "errors": [],
+    "blocking_user_action": true
+  },
+  "required_jobs": {
+    "user-actions": "success",
+    "module-registry": "success",
+    "offline-validation": "success",
+    "aws-cdk": "success",
+    "postgres": "success",
+    "m365-scenario-evaluation": "success",
+    "m365-unit-tests": "success",
+    "m365-evidence-verification": "success",
+    "plan-only-assertions": "success",
+    "incident-committed-runs": "success",
+    "incident-fresh-run": "success",
+    "incident-not-executed-negative": "success",
+    "labeling-markers": "success",
+    "final-summary": "success"
+  },
+  "policy": "PR #27 C6"
+}

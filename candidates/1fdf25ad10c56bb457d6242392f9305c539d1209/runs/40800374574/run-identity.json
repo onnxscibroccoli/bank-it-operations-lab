@@ -1,0 +1,15 @@
+{
+  "schema": "bank-lab/run-identity/v1",
+  "event": "push",
+  "ref_name": "candidate/main-validation-1fdf25a",
+  "repository": "onnxscibroccoli/bank-it-operations-lab",
+  "run_id": "40800374574",
+  "run_attempt": "1",
+  "tested_sha": "85063e80c6240fdc417460334408d998141043bd",
+  "kind": "merge",
+  "candidate_sha": "1fdf25ad10c56bb457d6242392f9305c539d1209",
+  "base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+  "main_sha_at_runtime": "7f50348bf1370381615eaed91c02607fe41de2f5",
+  "valid": true,
+  "errors": []
+}
