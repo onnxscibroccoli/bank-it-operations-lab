@@ -1,0 +1,9 @@
+# step=N04_fk_enforced_after_restore kind=negative expect=nonzero started=2026-10-28T18:02:13Z
+# reason_regex: 23503: insert or update on table "ledger_entries" violates foreign key constraint "ledger_entries_account_id_fkey"
+# cmd: replay /workspace/bank-it-operations-lab-ci/evidence/postgres/runs/ci-service-40630856041-1/logs/26_N04_fk_enforced_after_restore.log 1
+# --- output ---
+ERROR:  relation "lab.ledger_entries" does not exist
+LINE 1: insert into lab.ledger_entries(entry_id, account_id, amount_...
+                    ^
+# --- end output ---
+# exit_code=1 duration_ms=2

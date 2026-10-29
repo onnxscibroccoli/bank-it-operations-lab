@@ -1,0 +1,4 @@
+# step=server_version kind=setup expect=zero started=2026-10-28T04:11:08Z
+# cmd: psql -X -v ON_ERROR_STOP=1 -q -d postgres -Atc select\ version\(\) 
+PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+# exit_code=0 duration_ms=13

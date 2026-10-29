@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/onnxscibroccoli/bank-it-operations-lab/evidence/shared/evidence-manifest.schema.json",
+  "title": "Shared evidence bundle manifest",
+  "description": "Optional per-bundle manifest (evidence/<area>/[runs/<label>/]MANIFEST.json) that states, in one place, which files carry hashes and exit codes, which files are deliberately NOT covered by those hashes, and which external anchors (CI run, commit) the bundle can be checked against. Checked by evidence/shared/validate_evidence.py. Static lab evidence only; a valid manifest is not an audit or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "bundle", "producer", "hashes", "commands", "exclusions", "anchors"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "root", "kind"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+        "root": { "type": "string", "pattern": "^evidence/[A-Za-z0-9._/-]+$", "description": "Bundle directory, relative to the repo root." },
+        "kind": { "enum": ["static-synth", "integration-run", "ci-record", "review"] }
+      }
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script", "source_commit"],
+      "properties": {
+        "script": { "type": "string", "description": "Repo-relative path of the script that produced the bundle." },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$|^uncommitted$",
+          "description": "Commit containing the producer script exactly as run. Use 'uncommitted' when the script was not yet committed; never the base commit."
+        },
+        "script_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "sha256 of the producer script as run; required when source_commit is 'uncommitted'." }
+      },
+      "if": { "properties": { "source_commit": { "const": "uncommitted" } } },
+      "then": { "required": ["script_sha256"] }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "base", "algorithm"],
+      "properties": {
+        "file": { "type": "string", "description": "sha256sum(1)-format file, relative to the bundle root." },
+        "base": { "enum": ["repo", "bundle"], "description": "Whether hashed paths are relative to the repo root or the bundle root." },
+        "algorithm": { "const": "sha256" }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "format"],
+      "properties": {
+        "file": { "type": "string" },
+        "format": { "enum": ["aws-3col", "postgres-10col"] },
+        "rows_written_by": { "enum": ["wrapper", "producer-script", "manual"], "description": "How rows got into the TSV. 'manual' must be disclosed, never implied to be automatic." }
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "description": "Files in the bundle that the hashes file does not cover, each with a reason. The hashes file itself must be listed here; any other uncovered file without an entry is an error.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "reason"],
+        "properties": {
+          "path": { "type": "string" },
+          "reason": { "enum": ["self-reference", "added-after-run", "gitignored-artifact", "regenerated-by-tests"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "anchors": {
+      "type": "array",
+      "description": "Independent things a reviewer can check the bundle against (a later CI run, a commit, a Drive file id). A bundle whose only anchors are its own files is self-attesting.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "ref"],
+        "properties": {
+          "type": { "enum": ["github-actions-run", "git-commit", "drive-file", "artifact-upload"] },
+          "ref": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "retention_days": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "negative_expectations": {
+      "type": "string",
+      "description": "Path (repo-relative) to a negative-expectations JSON file; see evidence/shared/negative-expectations.postgres.json."
+    }
+  }
+}

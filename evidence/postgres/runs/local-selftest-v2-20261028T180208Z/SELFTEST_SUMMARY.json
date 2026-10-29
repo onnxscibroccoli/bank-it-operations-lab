@@ -1,0 +1,8 @@
+{
+  "status": "CURRENT",
+  "run_label": "local-selftest-v2-20261028T180208Z",
+  "assertions": 26,
+  "failed_assertions": 0,
+  "overall": "PASS",
+  "note": "PASS means the harness correctly reported FAIL/ERROR/NOT_RUN for every deliberately bad case."
+}

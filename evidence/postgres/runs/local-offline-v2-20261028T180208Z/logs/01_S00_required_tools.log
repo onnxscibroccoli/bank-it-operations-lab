@@ -1,0 +1,17 @@
+# step=S00_required_tools kind=setup expect=zero started=2026-10-28T18:02:08Z
+# reason_regex: <none>
+# cmd: required_tools
+# --- output ---
+found psql: /tmp/pgenv/bin/psql
+found pg_dump: /tmp/pgenv/bin/pg_dump
+found pg_restore: /tmp/pgenv/bin/pg_restore
+found createdb: /tmp/pgenv/bin/createdb
+found dropdb: /tmp/pgenv/bin/dropdb
+found pg_isready: /tmp/pgenv/bin/pg_isready
+found diff: /usr/bin/diff
+found sha256sum: /usr/bin/sha256sum
+found awk: /usr/bin/awk
+found initdb: /tmp/pgenv/bin/initdb
+found pg_ctl: /tmp/pgenv/bin/pg_ctl
+# --- end output ---
+# exit_code=0 duration_ms=37

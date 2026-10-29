@@ -1,0 +1,281 @@
+name: postgres-restore-evidence
+
+on:
+  push:
+    branches: [main, ci-evidence-postgres]
+    paths:
+      - ".github/workflows/postgres-restore-evidence.yml"
+      - "evidence/postgres/**"
+      - "tests/integration/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/postgres-restore-evidence.yml"
+      - "evidence/postgres/**"
+      - "tests/integration/**"
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # No cloud credentials are used anywhere in this workflow.
+  AWS_ACCESS_KEY_ID: ""
+  AWS_SECRET_ACCESS_KEY: ""
+  AWS_SESSION_TOKEN: ""
+  AWS_EC2_METADATA_DISABLED: "true"
+
+jobs:
+  harness-selftest:
+    name: harness self-test (deliberate unexpected-success / wrong-reason cases must FAIL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      RUN_LABEL: ci-selftest-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Run harness self-test (pipeline exit code via PIPESTATUS)
+        id: selftest
+        run: |
+          set +e
+          bash tests/integration/postgres/selftest_harness.sh 2>&1 | tee selftest-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "selftest exit code: $rc"
+      - name: Upload self-test evidence (always)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: postgres-evidence-selftest-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            evidence/postgres/runs/${{ env.RUN_LABEL }}/
+            selftest-console.log
+          if-no-files-found: error
+          retention-days: 90
+      - name: Gate
+        if: always()
+        run: test "${{ steps.selftest.outputs.rc }}" = "0"
+
+  restore-exercise-service:
+    name: restore exercise (postgres:18 service container)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18 # must match the runner's preinstalled client major (pg_dump 18 on ubuntu-latest)
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres # ephemeral CI-only container, not a secret
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      RUN_LABEL: ci-service-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Run scenario (exit code via PIPESTATUS)
+        id: scenario
+        run: |
+          set +e
+          bash tests/integration/postgres/run_restore_scenario.sh service 2>&1 | tee scenario-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "scenario exit code: $rc"
+      - name: Independent verification (re-derives every verdict from logs)
+        id: verify
+        if: always()
+        run: |
+          set +e
+          python3 tests/integration/postgres/verify_evidence.py "evidence/postgres/runs/$RUN_LABEL" --require-artifacts 2>&1 | tee verify-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Job summary
+        if: always()
+        run: |
+          f="evidence/postgres/runs/$RUN_LABEL/SUMMARY.md"
+          if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; else echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"; fi
+      - name: Upload evidence (always, including failures)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: postgres-evidence-service-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            evidence/postgres/runs/${{ env.RUN_LABEL }}/
+            scenario-console.log
+            verify-console.log
+          if-no-files-found: error
+          retention-days: 90
+      - name: Gate (scenario AND verifier must both exit 0)
+        if: always()
+        run: |
+          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }}"
+          test "${{ steps.scenario.outputs.rc }}" = "0" && test "${{ steps.verify.outputs.rc }}" = "0"
+
+  restore-exercise-offline:
+    name: restore exercise (offline, unix-socket-only cluster)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RUN_LABEL: ci-offline-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Run scenario offline (exit code via PIPESTATUS)
+        id: scenario
+        run: |
+          set +e
+          unset PGHOST PGPORT PGUSER PGPASSWORD
+          bash tests/integration/postgres/run_restore_scenario.sh offline 2>&1 | tee scenario-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "scenario exit code: $rc"
+      - name: Independent verification
+        id: verify
+        if: always()
+        run: |
+          set +e
+          python3 tests/integration/postgres/verify_evidence.py "evidence/postgres/runs/$RUN_LABEL" --require-artifacts 2>&1 | tee verify-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Job summary
+        if: always()
+        run: |
+          f="evidence/postgres/runs/$RUN_LABEL/SUMMARY.md"
+          if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; else echo "no SUMMARY.md produced" >> "$GITHUB_STEP_SUMMARY"; fi
+      - name: Upload evidence (always, including failures)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: postgres-evidence-offline-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            evidence/postgres/runs/${{ env.RUN_LABEL }}/
+            scenario-console.log
+            verify-console.log
+          if-no-files-found: error
+          retention-days: 90
+      - name: Gate (scenario AND verifier must both exit 0)
+        if: always()
+        run: |
+          echo "scenario rc=${{ steps.scenario.outputs.rc }} verify rc=${{ steps.verify.outputs.rc }}"
+          test "${{ steps.scenario.outputs.rc }}" = "0" && test "${{ steps.verify.outputs.rc }}" = "0"
+
+  version-mismatch-control:
+    name: negative control - pg_dump 18 vs postgres:16 must be reported as version_mismatch, never PASS
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16 # deliberately older than the runner's pg_dump (reproduces run 40630856041)
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres # ephemeral CI-only container, not a secret
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      RUN_LABEL: ci-mismatch-control-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Run scenario against mismatched server (expected to fail)
+        id: scenario
+        run: |
+          set +e
+          bash tests/integration/postgres/run_restore_scenario.sh service 2>&1 | tee scenario-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "scenario exit code (expected non-zero): $rc"
+      - name: Assert the harness refused to pass
+        id: assert
+        if: always()
+        run: |
+          d="evidence/postgres/runs/$RUN_LABEL"
+          cat "$d/SUMMARY.json"
+          row=$(awk -F'\t' '$2=="S04_client_server_major_match" {print $6 "/" $7}' "$d/COMMANDS.tsv")
+          neg=$(awk -F'\t' 'NR>1 && $3=="negative" && $6=="PASS"' "$d/COMMANDS.tsv" | wc -l)
+          echo "S04=$row negative_PASS=$neg scenario_rc=${{ steps.scenario.outputs.rc }}"
+          ok=1
+          [ "${{ steps.scenario.outputs.rc }}" != "0" ] || { echo "::error::scenario exited 0 on a version mismatch"; ok=0; }
+          [ "$row" = "ERROR/version_mismatch" ] || { echo "::error::S04 not classified version_mismatch"; ok=0; }
+          [ "$neg" -eq 0 ] || { echo "::error::negative tests reported PASS despite version mismatch"; ok=0; }
+          grep -q '"overall": "FAIL"' "$d/SUMMARY.json" || { echo "::error::overall not FAIL"; ok=0; }
+          python3 tests/integration/postgres/verify_evidence.py "$d" > verify-console.log 2>&1 && { echo "::error::verifier accepted a mismatched run"; ok=0; }
+          cat verify-console.log | tail -3
+          [ "$ok" = 1 ]
+      - name: Upload evidence (always)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: postgres-evidence-mismatch-control-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            evidence/postgres/runs/${{ env.RUN_LABEL }}/
+            scenario-console.log
+            verify-console.log
+          if-no-files-found: error
+          retention-days: 90
+
+  cdk-synth:
+    name: CDK synth (only if CDK app present; pinned local CLI, no credentials, no lookups)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Detect CDK apps
+        id: detect
+        run: |
+          apps=$(git ls-files '*cdk.json' | grep -v node_modules | xargs -r -n1 dirname | sort -u | tr '\n' ' ')
+          echo "apps=$apps" >> "$GITHUB_OUTPUT"
+          if [ -z "$apps" ]; then echo "No cdk.json found; CDK synth skipped (not counted as a pass)." | tee -a "$GITHUB_STEP_SUMMARY"
+          else echo "CDK apps: $apps" | tee -a "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        if: steps.detect.outputs.apps != ''
+        with:
+          node-version: "20"
+      - name: cdk synth (npm ci --ignore-scripts, local pinned aws-cdk only)
+        if: steps.detect.outputs.apps != ''
+        run: |
+          mkdir -p cdk-evidence
+          status=0
+          for app in ${{ steps.detect.outputs.apps }}; do
+            log="cdk-evidence/$(echo "$app" | tr '/' '_').log"
+            set +e
+            ( cd "$app" && test -f package-lock.json && npm ci --ignore-scripts && npx --no-install cdk synth --no-lookups --quiet ) > "$log" 2>&1
+            rc=$?
+            set -e
+            printf '%s\t%s\n' "$app" "$rc" >> cdk-evidence/COMMANDS.tsv
+            [ $rc -eq 0 ] || status=1
+          done
+          (cd cdk-evidence && sha256sum -- * > SHA256SUMS)
+          exit $status
+      - name: Upload CDK synth evidence
+        if: always() && steps.detect.outputs.apps != ''
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: cdk-synth-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: cdk-evidence/
+          if-no-files-found: warn

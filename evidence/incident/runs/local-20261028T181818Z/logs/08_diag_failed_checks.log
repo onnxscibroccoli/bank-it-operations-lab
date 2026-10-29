@@ -1,0 +1,2 @@
+probe:core-ledger-db-tcp FAIL ERROR (tcp) ConnectionRefusedError
+endpoint_decision {'http_status': 503, 'serve': False}

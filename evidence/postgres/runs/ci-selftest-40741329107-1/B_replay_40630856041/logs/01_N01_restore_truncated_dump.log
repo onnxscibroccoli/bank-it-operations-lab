@@ -1,0 +1,8 @@
+# step=N01_restore_truncated_dump kind=negative expect=nonzero started=2026-10-28T18:02:18Z
+# reason_regex: could not read from input file|unexpected end of file
+# cmd: replay /home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-service-40630856041-1/logs/23_N01_restore_truncated_dump.log 1
+# --- output ---
+pg_restore: error: could not execute query: ERROR:  unrecognized configuration parameter "transaction_timeout"
+Command was: SET transaction_timeout = 0;
+# --- end output ---
+# exit_code=1 duration_ms=5

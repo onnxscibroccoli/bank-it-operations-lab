@@ -1,0 +1,21 @@
+{
+  "failed_steps": [],
+  "metrics": {
+    "db_unavailable_s": 3.878,
+    "detect_to_restore_s": 5.009,
+    "first_healthy_poll_after_seq": 3,
+    "first_unhealthy_poll_seq": 2,
+    "mttd_s": 3.584,
+    "mttr_s": 8.593,
+    "poll_cross_check": true,
+    "polls_total": 3,
+    "polls_unhealthy": 1,
+    "time_to_diagnose_s": 0.178
+  },
+  "missing_events": [],
+  "run_id": "local-20261028T181818Z",
+  "simulation": "SIMULATION",
+  "status": "PASS",
+  "steps_total": 19,
+  "timezone_reported": "America/New_York"
+}

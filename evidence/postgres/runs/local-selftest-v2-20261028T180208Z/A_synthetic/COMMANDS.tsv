@@ -1,0 +1,15 @@
+seq	step_id	kind	expected	exit_code	result	class	started_utc	duration_ms	log	reason_regex	command
+1	ST01_control_expected_fault	negative	nonzero	3	PASS	expected_fault_detected	2026-10-28T18:02:13Z	1	logs/01_ST01_control_expected_fault.log	^injected fault: disk full$	fault
+2	ST02_unexpected_success	negative	nonzero	0	FAIL	unexpected_success	2026-10-28T18:02:13Z	8	logs/02_ST02_unexpected_success.log	^injected fault: disk full$	ok
+3	ST03_wrong_reason	negative	nonzero	1	FAIL	wrong_reason	2026-10-28T18:02:13Z	8	logs/03_ST03_wrong_reason.log	^injected fault: disk full$	unrelated
+4	ST04_version_mismatch_masquerade	negative	nonzero	1	ERROR	version_mismatch	2026-10-28T18:02:13Z	7	logs/04_ST04_version_mismatch_masquerade.log	^injected fault: disk full$	versionerr
+5	ST05_missing_executable	negative	nonzero	127	ERROR	missing_executable	2026-10-28T18:02:13Z	1	logs/05_ST05_missing_executable.log	^injected fault: disk full$	definitely-not-installed-pg-tool --version
+6	ST06_setup_failure	setup	zero	1	ERROR	setup_failure	2026-10-28T18:02:13Z	4	logs/06_ST06_setup_failure.log	-	false
+7	ST07_dependent_on_failed_setup	negative	nonzero	-	NOT_RUN	dependency_failed:ST06_setup_failure	2026-10-28T18:02:13Z	0	logs/07_ST07_dependent_on_failed_setup.log	^injected fault: disk full$	fault
+8	ST08_pipeline_failure_hidden_by_tail	positive	zero	1	FAIL	positive_failed	2026-10-28T18:02:13Z	5	logs/08_ST08_pipeline_failure_hidden_by_tail.log	-	masked_pipe
+9	ST09_positive_wrong_output	positive	zero	0	FAIL	output_mismatch	2026-10-28T18:02:13Z	2	logs/09_ST09_positive_wrong_output.log	^rows=1000$	wrong_rows
+10	ST11_run_twice	positive	zero	0	PASS	positive_ok	2026-10-28T18:02:13Z	1	logs/10_ST11_run_twice.log	-	ok
+11	ST11_run_twice	positive	zero	-	FAIL	duplicate_test	2026-10-28T18:02:13Z	0	logs/11_ST11_run_twice.log	-	ok
+12	ST12_version_gate	setup	zero	1	ERROR	version_mismatch	2026-10-28T18:02:13Z	1	logs/12_ST12_version_gate.log	^client_major=[0-9]+ server_major=[0-9]+ match$	mismatch
+13	ST99_undeclared	undeclared	-	-	ERROR	undeclared_test	2026-10-28T18:02:13Z	0	logs/13_ST99_undeclared.log	-	ok
+14	ST10_declared_but_never_run	negative	nonzero	-	NOT_RUN	missing_test	2026-10-28T18:02:13Z	0	-	^injected fault: disk full$	-

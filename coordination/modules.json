@@ -1,0 +1,462 @@
+{
+ "schema": "bank-it-operations-lab/coordination/modules@1",
+ "description": "Registry of every lab module. Source of truth for scripts/ci/check_modules.py. Statuses: INTEGRATED (on this branch, with executable checks), EXCLUDED (reviewed, deliberately left out), NOT_INTEGRATED (open PR, not on this branch). INTEGRATED module paths must exist and must be covered by validate-all steps or CI jobs. EXCLUDED/NOT_INTEGRATED paths must NOT exist on this branch. Every top-level path in the tree must belong to a module.",
+ "evidence_classes": [
+  "EXECUTED_LOCAL",
+  "EXECUTED_CI",
+  "STATIC_VALIDATED",
+  "SIMULATION",
+  "PLAN_ONLY",
+  "NOT_EXECUTED"
+ ],
+ "modules": [
+  {
+   "id": "integration-infra",
+   "status": "INTEGRATED",
+   "prs": [
+    7
+   ],
+   "paths": [
+    ".github/workflows",
+    "scripts/validate-all.sh",
+    "scripts/ci",
+    "coordination",
+    "reports/INTEGRATION.md",
+    "README.md",
+    ".gitignore"
+   ],
+   "evidence_class": [
+    "EXECUTED_CI"
+   ],
+   "validate_all_steps": [
+    "module registry"
+   ],
+   "ci_jobs": [
+    "integration-gate.yml:user-actions",
+    "integration-gate.yml:module-registry",
+    "integration-gate.yml:final-summary",
+    "integration-gate.yml:merge-eligibility"
+   ]
+  },
+  {
+   "id": "shared-evidence-validator",
+   "status": "INTEGRATED",
+   "prs": [
+    3
+   ],
+   "paths": [
+    "evidence/shared",
+    "reports/review-pr1-pr2.md"
+   ],
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI"
+   ],
+   "validate_all_steps": [
+    "shared validator unit tests",
+    "shared postgres-negatives"
+   ],
+   "ci_jobs": [
+    "offline-validation.yml:validate"
+   ]
+  },
+  {
+   "id": "entra-offline",
+   "status": "INTEGRATED",
+   "prs": [
+    4
+   ],
+   "paths": [
+    "identity/entra",
+    "tests/entra",
+    "evidence/entra"
+   ],
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "STATIC_VALIDATED"
+   ],
+   "validate_all_steps": [
+    "entra unit tests",
+    "entra validator on baseline",
+    "entra fixture drift",
+    "entra evidence verify"
+   ],
+   "ci_jobs": [
+    "offline-validation.yml:validate"
+   ],
+   "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-3)."
+  },
+  {
+   "id": "aws-cdk",
+   "status": "INTEGRATED",
+   "prs": [
+    5
+   ],
+   "superseded_prs": [
+    1
+   ],
+   "paths": [
+    "infra/aws-cdk",
+    "evidence/aws"
+   ],
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "STATIC_VALIDATED"
+   ],
+   "validate_all_steps": [
+    "aws-cdk tsc",
+    "aws-cdk jest",
+    "aws-cdk synth",
+    "aws-cdk nag gate",
+    "s3 self-logging",
+    "synth drift",
+    "aws evidence SHA256SUMS"
+   ],
+   "ci_jobs": [
+    "aws-cdk.yml:synth-and-test"
+   ],
+   "limitations": "Static synth only; nothing deployed. Exceptions EX-01..EX-04 unapproved (UA-1). PR #14 B5-1/B5-2 open."
+  },
+  {
+   "id": "postgres-recovery",
+   "status": "INTEGRATED",
+   "prs": [
+    2
+   ],
+   "paths": [
+    "tests/integration",
+    "evidence/postgres"
+   ],
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI"
+   ],
+   "validate_all_steps": [
+    "postgres v2 verify",
+    "postgres harness self-test",
+    "postgres restore exercise v2 (offline)",
+    "postgres fresh-run v2 verifier"
+   ],
+   "ci_jobs": [
+    "postgres-restore-evidence.yml:harness-selftest",
+    "postgres-restore-evidence.yml:restore-exercise-service",
+    "postgres-restore-evidence.yml:restore-exercise-offline",
+    "postgres-restore-evidence.yml:version-mismatch-control"
+   ]
+  },
+  {
+   "id": "orgs-security",
+   "status": "EXCLUDED",
+   "prs": [
+    6
+   ],
+   "paths": [
+    "infra/orgs",
+    "evidence/orgs"
+   ],
+   "reason": "B6-1 TrailAccessLogsBucket logs to itself (cfn-s3-selflog ERROR); B6-2 exempt-role SCP bypass (PR #14)."
+  },
+  {
+   "id": "acceptance",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    23,
+    24,
+    25,
+    26
+   ],
+   "paths": [
+    "scripts/acceptance",
+    "schemas/acceptance",
+    "tools/acceptance",
+    "acceptance",
+    "tests/acceptance-contract",
+    "reports/ACCEPTANCE.md"
+   ],
+   "reason": "PR #27 CHANGES REQUIRED (C1-C5) at 181bcdd; PR #26 head moved to eb42b23 (C1-C4 repairs reported at 17cfaea), pending exact-SHA re-review."
+  },
+  {
+   "id": "review-notes",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    14,
+    27
+   ],
+   "paths": [
+    "reports/review-pr3-pr6.md",
+    "reports/independent"
+   ],
+   "reason": "Review records; kept on their own branches as audit records (plan: do not commit reviews onto the candidate)."
+  },
+  {
+   "id": "portfolio-cases",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    8
+   ],
+   "paths": [
+    "portfolio"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "vendor-mock",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    9
+   ],
+   "paths": [
+    "integrations",
+    "evidence/vendor",
+    "governance/vendor-risk"
+   ],
+   "reason": "Not yet reviewed for integration (SIMULATION)."
+  },
+  {
+   "id": "observability",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    10
+   ],
+   "paths": [
+    "observability",
+    "evidence/observability"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "final-report",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    11
+   ],
+   "paths": [
+    "reports/FINAL_REPORT.md",
+    "reports/EVIDENCE_MANIFEST.md",
+    "reports/USER_ACTIONS_REQUIRED.md"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "job-requirements-matrix",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    12
+   ],
+   "paths": [
+    "docs/JOB_REQUIREMENTS_MATRIX.md"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "team-management",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    13
+   ],
+   "paths": [
+    "docs/management",
+    "operations/team"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "learning-guide",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    15
+   ],
+   "paths": [
+    "learning",
+    "docs/adr"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "control-mapping",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    16
+   ],
+   "paths": [
+    "governance/controls",
+    "evidence/control-review"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "patch-hardening",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    17
+   ],
+   "paths": [
+    "operations/hardening",
+    "operations/patching",
+    "evidence/host-operations"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "identity-governance",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    18
+   ],
+   "paths": [
+    "identity/governance",
+    "docs/federation",
+    "evidence/identity-governance"
+   ],
+   "reason": "Not yet reviewed for integration."
+  },
+  {
+   "id": "hybrid-operations",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    19
+   ],
+   "paths": [
+    "operations/hybrid"
+   ],
+   "shared_paths": [
+    "docs/runbooks"
+   ],
+   "reason": "Not yet reviewed for integration (NOT_EXECUTED runbooks)."
+  },
+  {
+   "id": "m365-endpoint",
+   "status": "INTEGRATED",
+   "prs": [
+    20
+   ],
+   "paths": [
+    "identity/m365",
+    "evidence/m365"
+   ],
+   "reason": "Integrated at the exact SHA on Ian's instruction (20:03 EDT). PR #20 itself is still a draft with 0 reviews; independent review of the combined candidate is pending (AC1).",
+   "required": true,
+   "source": {
+    "pr": 20,
+    "exact_sha": "1b3c240374285d7b0760b946e861dee15197dcf3",
+    "merge": "--no-ff merge of the exact commit (not the branch tip), per Ian 20:03 EDT"
+   },
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "PLAN_ONLY"
+   ],
+   "validate_all_steps": [
+    "m365 scenario evaluation",
+    "m365 unit tests",
+    "m365 evidence verification",
+    "plan-only negative tests"
+   ],
+   "ci_jobs": [
+    "integration-gate.yml:m365-scenario-evaluation",
+    "integration-gate.yml:m365-unit-tests",
+    "integration-gate.yml:m365-evidence-verification",
+    "integration-gate.yml:plan-only-assertions"
+   ],
+   "plan_only_assertions": "scripts/ci/check_plan_only.py: every plan step mode PLAN_ONLY and executed false; every executed key false; mutationsExecuted integer 0; at least one plan step. Negative tests: scripts/ci/tests/test_check_plan_only.py (14).",
+   "counts": {
+    "scenarios": "13 scenario files evaluated; each must match its recorded expected verdict AND expected finding codes (totals.passed=13)",
+    "plan_steps": "43 = total PLAN_ONLY remediation plan steps emitted across the 13 scenarios (totals.plannedSteps), each executed:false; these are NOT assertions or tests",
+    "findings": "28 findings across the 13 scenarios",
+    "unit_tests": "29 unittest cases in identity/m365/tests",
+    "evidence_commands": "15 recorded commands in the committed run (python version, unit tests, evaluation, 9 malformed + 3 mismatch negative fixtures), all with the expected exit code"
+   }
+  },
+  {
+   "id": "backup-dr-aws",
+   "status": "NOT_INTEGRATED",
+   "prs": [
+    21
+   ],
+   "paths": [
+    "backup",
+    "evidence/backup"
+   ],
+   "shared_paths": [
+    "docs/runbooks"
+   ],
+   "reason": "Not yet reviewed for integration (static, NOT_EXECUTED)."
+  },
+  {
+   "id": "incident-demo",
+   "status": "INTEGRATED",
+   "prs": [
+    22
+   ],
+   "paths": [
+    "scenarios",
+    "evidence/incident"
+   ],
+   "reason": "Integrated at the exact SHA on Ian's instruction (20:03 EDT). PR #22 has no reviews; independent review of the combined candidate is pending (AC1).",
+   "required": true,
+   "source": {
+    "pr": 22,
+    "exact_sha": "9f21329f0e796362c4498d49687fd0f99ce3a042",
+    "merge": "--no-ff merge of the exact commit (not the branch tip), per Ian 20:03 EDT"
+   },
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "SIMULATION"
+   ],
+   "validate_all_steps": [
+    "incident committed runs",
+    "incident NOT_EXECUTED negative",
+    "labeling markers",
+    "incident fresh run"
+   ],
+   "ci_jobs": [
+    "integration-gate.yml:incident-committed-runs",
+    "integration-gate.yml:incident-fresh-run",
+    "integration-gate.yml:incident-not-executed-negative",
+    "integration-gate.yml:labeling-markers"
+   ],
+   "requirements": [
+    "injection",
+    "detection",
+    "diagnosis",
+    "recovery",
+    "timeline",
+    "simulation"
+   ],
+   "runs": {
+    "local-20261028T181818Z": "original (PR #22), preserved unmodified",
+    "local-20261029T000545Z": "fresh integrator run 2026-10-28 20:05 EDT, PostgreSQL 16.15, added alongside"
+   }
+  }
+ ],
+ "required_gate_jobs": [
+  "user-actions",
+  "module-registry",
+  "offline-validation",
+  "aws-cdk",
+  "postgres",
+  "m365-scenario-evaluation",
+  "m365-unit-tests",
+  "m365-evidence-verification",
+  "plan-only-assertions",
+  "incident-committed-runs",
+  "incident-fresh-run",
+  "incident-not-executed-negative",
+  "labeling-markers"
+ ],
+ "required_gate_jobs_note": "final-summary and merge-eligibility fail if any of these jobs is missing from the run, skipped, cancelled or failed. A clean merge without these checks is not acceptance.",
+ "required_gate_outputs": {
+  "incident-fresh-run": [
+   "injection",
+   "detection",
+   "diagnosis",
+   "recovery",
+   "timeline",
+   "simulation"
+  ]
+ },
+ "required_gate_outputs_note": "Each output must be exactly PASS. NOT_EXECUTED (e.g. no PostgreSQL binaries), FAIL, empty or missing fail final-summary and merge-eligibility."
+}

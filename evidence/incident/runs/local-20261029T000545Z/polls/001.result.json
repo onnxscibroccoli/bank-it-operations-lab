@@ -1,0 +1,106 @@
+{
+  "checks": [
+    {
+      "check": "freshness:payload",
+      "detail": "age 0s",
+      "status": "PASS"
+    },
+    {
+      "check": "freshness:host",
+      "detail": "age 0s",
+      "status": "PASS"
+    },
+    {
+      "check": "host:metrics_present",
+      "detail": "all metrics present",
+      "status": "PASS"
+    },
+    {
+      "check": "host:collection_errors",
+      "detail": "none",
+      "status": "PASS"
+    },
+    {
+      "check": "host:disk_free_ratio",
+      "detail": "0.9041 (min 0.1)",
+      "status": "PASS"
+    },
+    {
+      "check": "host:load_per_cpu",
+      "detail": "0.041 (max 2.0)",
+      "status": "PASS"
+    },
+    {
+      "check": "host:mem_available_ratio",
+      "detail": "0.8765 (min 0.1)",
+      "status": "PASS"
+    },
+    {
+      "check": "probes:expected_declared",
+      "detail": "3 expected",
+      "status": "PASS"
+    },
+    {
+      "check": "probe:vendor-api-http",
+      "detail": "OK (http) HTTP 200",
+      "status": "PASS"
+    },
+    {
+      "check": "probe:vendor-api-http:latency",
+      "detail": "3.0ms (max 5000)",
+      "status": "PASS"
+    },
+    {
+      "check": "freshness:probe:vendor-api-http",
+      "detail": "age 0s",
+      "status": "PASS"
+    },
+    {
+      "check": "probe:core-ledger-db-tcp",
+      "detail": "OK (tcp) connected",
+      "status": "PASS"
+    },
+    {
+      "check": "probe:core-ledger-db-tcp:latency",
+      "detail": "0.5ms (max 5000)",
+      "status": "PASS"
+    },
+    {
+      "check": "freshness:probe:core-ledger-db-tcp",
+      "detail": "age 0s",
+      "status": "PASS"
+    },
+    {
+      "check": "probe:resolver-dns",
+      "detail": "OK (dns) 2 answers",
+      "status": "PASS"
+    },
+    {
+      "check": "probe:resolver-dns:latency",
+      "detail": "0.8ms (max 5000)",
+      "status": "PASS"
+    },
+    {
+      "check": "freshness:probe:resolver-dns",
+      "detail": "age 0s",
+      "status": "PASS"
+    }
+  ],
+  "endpoint_decision": {
+    "http_status": 200,
+    "serve": true
+  },
+  "evaluated_at": "2026-10-29T00:05:46.649853Z",
+  "exit_code": 0,
+  "overall": "HEALTHY",
+  "policy": {
+    "max_age_s": 300,
+    "max_future_skew_s": 30,
+    "max_load_per_cpu": 2.0,
+    "max_probe_latency_ms": 5000,
+    "min_disk_free_ratio": 0.1,
+    "min_mem_available_ratio": 0.1
+  },
+  "reasons": [],
+  "schema": "bank-it-lab/observability/health-result/v1"
+}
