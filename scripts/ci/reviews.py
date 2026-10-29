@@ -15,8 +15,13 @@ AC1 (ac1_from_reviews) is MET_AT_RUNTIME only when ALL hold:
     review blocking until it is dismissed).
   A random account approving (public repo) or a same-account review can never satisfy AC1. Any fetch error -> UNMET.
 
-AC2 / AC4 / AC5 (decisions_from_comments): INDEPENDENT ACCEPTANCE lives outside the candidate, as GitHub-authenticated
-  attestation comments on the trusted decision_pr (author and timestamp are authenticated by the GitHub API):
+AC2 / AC4 / AC5 (decisions_from_comments): INDEPENDENT ACCEPTANCE lives outside the candidate, as attestation comments
+  on the trusted decision_pr. GitHub vouches for the comment's LOGIN and timestamp, not for the person: decisions are
+  owner-LOGIN-bound / reviewer-login-bound, not owner-authenticated (D2). Attestations from the PR author (the shared
+  account all agents use) never count (D1); exception decisions from it are reported INSUFFICIENT_INDEPENDENCE
+  (blocking) until a separate owner identity exists (O-5 / UA-6). workflow_run must be a completed integration-gate
+  run (name + path) of the candidate or an attested tested merge whose jobs all succeeded except the fail-closed
+  merge-eligibility job (D1):
 
     ACCEPTANCE-ATTESTATION v2
     candidate: <40-hex candidate SHA>
@@ -162,13 +167,48 @@ def exception_scopes(exc):
     return {k: f"{v['rule']} " + " ".join(sorted(v["res"])) for k, v in sc.items()}
 
 
+GATE_WORKFLOW_PATH = ".github/workflows/integration-gate.yml"
+GATE_WORKFLOW_NAME = "integration-gate"
+FAIL_CLOSED_JOB = "merge-eligibility"
+
+
+def run_problem(run, cand, tested_list):
+    """None if `run` (from GET /actions/runs/{id} + /jobs) is a completed, successful integration-gate run of the candidate
+    or of one of its attested tested merges; else the reason. 'Successful' = conclusion success, or every job succeeded
+    except the fail-closed merge-eligibility job (which fails by design while NOT ELIGIBLE), with final-summary success."""
+    if not isinstance(run, dict) or not run:
+        return "run not fetched"
+    if run.get("error"):
+        return run["error"]
+    path = (run.get("path") or "").split("@")[0]
+    if path != GATE_WORKFLOW_PATH or run.get("name") != GATE_WORKFLOW_NAME:
+        return f"not an {GATE_WORKFLOW_NAME} run (workflow {run.get('name')!r}, path {run.get('path')!r})"
+    if norm(run.get("head_sha")) not in {cand, *tested_list}:
+        return f"head_sha {run.get('head_sha')} is neither the candidate nor an attested tested merge"
+    if run.get("status") != "completed":
+        return f"run status {run.get('status')!r}, not completed"
+    if run.get("conclusion") == "success":
+        return None
+    jobs = run.get("jobs")
+    if not isinstance(jobs, list) or not jobs:
+        return f"conclusion {run.get('conclusion')!r} and job results unavailable"
+    bad = [j.get("name") for j in jobs if j.get("name") != FAIL_CLOSED_JOB and j.get("conclusion") != "success"]
+    if bad:
+        return f"conclusion {run.get('conclusion')!r}; jobs not successful: {', '.join(map(str, bad))}"
+    if not any(j.get("name") == "final-summary" and j.get("conclusion") == "success" for j in jobs):
+        return "final-summary job missing or not successful"
+    return None
+
+
 def attestations(rv, ident, cfg):
-    """Authenticated, independent attestations bound to this exact run identity. Returns (accepted list, notes)."""
+    """Attestations bound to this exact run identity, from accounts the trusted config authorizes, EXCLUDING the PR
+    author (D1/D2). Returns (accepted list, notes, author_attestations)."""
     cand = norm((ident or {}).get("candidate_sha")); main = norm((ident or {}).get("base_sha")); tested = norm((ident or {}).get("tested_sha"))
     owners = {_l(x) for x in (cfg or {}).get("owner_logins") or []}
     reviewers = {_l(x) for x in (cfg or {}).get("reviewer_allowlist") or []}
     runs = rv.get("runs") or {}
-    out, notes = [], []
+    author = _l(rv.get("pr_author"))
+    out, notes, by_author = [], [], []
     for c in sorted(rv.get("comments") or [], key=lambda c: (c.get("created_at") or "", c.get("id") or 0)):
         if not (c.get("body") or "").lstrip().startswith(ATT_HEADER):
             continue
@@ -184,19 +224,24 @@ def attestations(rv, ident, cfg):
             notes.append(f"attestation {cid} ignored: main {a['main'][:12]} is not this run's base/main {main}"); continue
         if tested not in a["tested_merge"]:
             notes.append(f"attestation {cid} ignored: this run's tested merge {tested} is not attested"); continue
-        run = runs.get(a["workflow_run"]) or {}
-        if norm(run.get("head_sha")) != cand:
-            notes.append(f"attestation {cid} ignored: workflow run {a['workflow_run']} is not a run of candidate {cand} ({run.get('error') or run.get('head_sha')})"); continue
+        rp = run_problem(runs.get(a["workflow_run"]), cand, a["tested_merge"])
+        if rp:
+            notes.append(f"attestation {cid} ignored: workflow run {a['workflow_run']}: {rp}"); continue
+        if not author or login == author:
+            # D1/D2: the PR author (here the shared account all agents use) can never supply independent acceptance.
+            by_author.append(dict(a, by=login, comment=cid, at=c.get("created_at")))
+            notes.append(f"attestation {cid} by {login} ignored: INSUFFICIENT INDEPENDENCE (PR author / shared account"
+                         + ("; PR author unknown" if not author else "") + ")"); continue
         is_owner = login in owners and has_perm(rv, login, (cfg or {}).get("owner_required_permission") or ["admin"])
-        is_rev = login in reviewers and login != _l(rv.get("pr_author")) and has_perm(rv, login, (cfg or {}).get("reviewer_required_permission") or ["admin", "maintain", "write"])
+        is_rev = login in reviewers and has_perm(rv, login, (cfg or {}).get("reviewer_required_permission") or ["admin", "maintain", "write"])
         if a["criterion"] == "EXCEPTION" and a["decision"] != "CONDITIONS_VERIFIED":
-            ok = is_owner                      # F7: exception decisions are the owner's
+            ok = is_owner                      # F7: exception decisions are the owner-LOGIN's (owner-login-bound, not owner-authenticated)
         else:
             ok = is_owner or is_rev            # AC4/AC5 and verification of conditions: owner or allow-listed reviewer
         if not ok:
             notes.append(f"attestation {cid} by {login} ignored: not authorized by the trusted config / runtime permission"); continue
         out.append(dict(a, by=login, comment=cid, at=c.get("created_at")))
-    return out, notes
+    return out, notes, by_author
 
 
 def decisions_from_comments(rv, ident, cfg, exc):
@@ -206,7 +251,13 @@ def decisions_from_comments(rv, ident, cfg, exc):
         return {k: ("UNMET", why) for k in ("AC2", "AC4", "AC5")} | {"exceptions": {}}
     if not isinstance(cfg, dict):
         return {k: ("UNMET", ["trusted config not available"]) for k in ("AC2", "AC4", "AC5")} | {"exceptions": {}}
-    atts, notes = attestations(rv, ident, cfg)
+    atts, notes, by_author = attestations(rv, ident, cfg)
+    author = _l(rv.get("pr_author"))
+    owners = {_l(x) for x in cfg.get("owner_logins") or []}
+    shared = sorted(owners & {author}) if author else sorted(owners)
+    if shared:
+        notes = notes + [f"owner login(s) {', '.join(shared)} = the PR author / shared account: owner decisions are owner-login-bound, "
+                         "NOT owner-authenticated, and are insufficient-independence until a separate owner identity exists (O-5 / UA-6)"]
     cand = norm((ident or {}).get("candidate_sha"))
     res = {}
     scopes = exception_scopes(exc)
@@ -216,7 +267,12 @@ def decisions_from_comments(rv, ident, cfg, exc):
         decs = [a for a in mine if a["decision"] != "CONDITIONS_VERIFIED"]
         last = decs[-1] if decs else None
         if last is None:
-            state[ex] = "PROPOSED"; why2.append(f"{ex}: PROPOSED (no owner decision on {cand})"); continue
+            if any(a["criterion"] == "EXCEPTION" and a["exception"] == ex for a in by_author):
+                state[ex] = "INSUFFICIENT_INDEPENDENCE"
+                why2.append(f"{ex}: INSUFFICIENT_INDEPENDENCE (decision posted by the PR author / shared account; blocking until O-5 / UA-6)")
+            else:
+                state[ex] = "PROPOSED"; why2.append(f"{ex}: PROPOSED (no owner-login-bound decision on {cand})")
+            continue
         if " ".join(last["scope"].split()) != scopes[ex]:
             state[ex] = "PROPOSED"; why2.append(f"{ex}: owner decision scope '{last['scope']}' != applied '{scopes[ex]}'"); continue
         d = last["decision"]
@@ -232,7 +288,7 @@ def decisions_from_comments(rv, ident, cfg, exc):
     if (exc or {}).get("errors") or not isinstance((exc or {}).get("applied"), list):
         res["AC2"] = ("UNMET", ["security exception register inconsistent or not checked"])
     elif set(scopes) - effective:
-        res["AC2"] = ("UNMET", notes + why2 + [f"BLOCKING USER ACTION UA-1: applied exceptions without an effective owner approval: {' '.join(sorted(set(scopes) - effective))}"])
+        res["AC2"] = ("UNMET", notes + why2 + [f"BLOCKING USER ACTION UA-1: applied exceptions without an effective owner-login-bound approval from an account distinct from the PR author: {' '.join(sorted(set(scopes) - effective))}"])
     else:
         res["AC2"] = ("MET_AT_RUNTIME", why2 or ["no cdk-nag suppression is applied"])
     for ac in ("AC4", "AC5"):
@@ -307,7 +363,10 @@ def fetch(ident, env, cfg=None):
                 try:
                     r = api(f"/repos/{repo}/actions/runs/{m.group(1)}", token, base)
                     runs[m.group(1)] = {"head_sha": r.get("head_sha"), "event": r.get("event"), "name": r.get("name"),
+                                        "path": r.get("path"), "status": r.get("status"),
                                         "conclusion": r.get("conclusion"), "html_url": r.get("html_url")}
+                    js = api(f"/repos/{repo}/actions/runs/{m.group(1)}/jobs?per_page=100", token, base)
+                    runs[m.group(1)]["jobs"] = [{"name": j.get("name"), "conclusion": j.get("conclusion")} for j in (js or {}).get("jobs") or []]
                 except Exception as e:
                     runs[m.group(1)] = {"error": f"{type(e).__name__}: {e}"}
         out["runs"] = runs

@@ -20,7 +20,7 @@ AC status values in coordination/tasks.json (PR #31 F6: every technical AC is de
       AC4: "criterion: AC4 / decision: ACCEPT" attestation by the owner or an allow-listed reviewer, same binding.
       AC5: likewise for AC5, AND AC2 met (B5-1).
       Attestation format (ACCEPTANCE-ATTESTATION v2) and rules: scripts/ci/reviews.py. The decision artifact separates
-      "candidate_produced" evidence (never sufficient) from "independent_acceptance" (GitHub-authenticated records). The decision is written to --decision-out (run
+      "candidate_produced" evidence (never sufficient) from "independent_acceptance" (login-bound GitHub records, never from the PR author). The decision is written to --decision-out (run
       artifact) and mirrored on evidence/acceptance; nothing is stored as MET in the candidate tree.
   "MET" (in-tree): never accepted for AC1-AC5; its met_for binding problems are still reported.
   anything else: not satisfied.
@@ -29,6 +29,8 @@ AC status values in coordination/tasks.json (PR #31 F6: every technical AC is de
 --root DIR: the tree whose data (coordination/tasks.json, coordination/modules.json, the exception register and
   synthesized templates) is evaluated. In CI this is the candidate checkout, while the gate CODE runs from a trusted
   checkout (main if it carries the gate, else a pinned SHA). Trusted required_gate_jobs cannot be dropped by --root data.
+--gate-trust FILE: verify_trusted_gate.py --check-pin output (D3). Anything but status VERIFIED (independently reviewed
+  pin that is not the candidate) adds "TRUSTED GATE UNVERIFIED" and the verdict is NOT ELIGIBLE.
 --lint-tasks: fail if tasks.json carries MET for any of AC1-AC5, or a MET without a complete met_for binding.
 Exit 0 = eligible (or lint clean), 1 = not eligible (expected while conditions are open) or lint violations.
 """
@@ -101,6 +103,7 @@ def main(argv=None):
     ap.add_argument("--summary")
     ap.add_argument("--identity", default=os.environ.get("RUN_IDENTITY"))
     ap.add_argument("--decision-out")
+    ap.add_argument("--gate-trust", help="D3: verify_trusted_gate.py --check-pin output; anything but VERIFIED -> NOT ELIGIBLE")
     ap.add_argument("--lint-tasks", action="store_true")
     ap.add_argument("--root", default=str(user_actions.ROOT), help="data root (candidate checkout)")
     ap.add_argument("--tasks")
@@ -193,11 +196,20 @@ def main(argv=None):
             problems += why if any(w.startswith(ac) for w in why) else [f"{ac}: {'; '.join(why)}"]
 
     ac6 = (conds.get("AC6") or {}).get("status", "missing")
+    # D3: a hash-consistent gate is not a trusted gate. Only an independently reviewed pin (not the candidate) counts.
+    try:
+        gate_trust = json.loads(Path(a.gate_trust).read_text()) if a.gate_trust else None
+    except (OSError, ValueError):
+        gate_trust = None
+    if not isinstance(gate_trust, dict) or gate_trust.get("status") != "VERIFIED":
+        why = (gate_trust or {}).get("reasons") if isinstance(gate_trust, dict) else ["no gate-trust result (--gate-trust)"]
+        problems.append("TRUSTED GATE UNVERIFIED: " + "; ".join(why or ["status not VERIFIED"]))
     verdict = "ELIGIBLE" if not problems else "NOT ELIGIBLE"
     label = (ident or {}).get("tested_sha") or "local"
     print(f"merge-eligibility for tested {label} (candidate {(ident or {}).get('candidate_sha')}): {verdict}")
     for ac, (st, why) in ac_results.items():
         print(f"  {ac}: {st}" + (f" ({'; '.join(why)})" if why else ""))
+    print("  TRUSTED GATE: " + ((gate_trust or {}).get("status") or "UNVERIFIED") if isinstance(gate_trust, dict) else "  TRUSTED GATE: UNVERIFIED")
     for p in problems:
         print("::notice title=merge-eligibility::" + user_actions.esc_cmd(p))
     if a.decision_out:
@@ -219,6 +231,7 @@ def main(argv=None):
             "independent_acceptance": {"source": "GitHub API: PR reviews and ACCEPTANCE-ATTESTATION v2 comments on the trusted decision_pr",
                                        "exception_states": dec.get("exceptions") if isinstance(dec, dict) else None,
                                        "AC1": ac_results["AC1"][0], "AC2": dec["AC2"][0], "AC4": dec["AC4"][0], "AC5": dec["AC5"][0]},
+            "gate_trust": gate_trust,
             "policy": "PR #27 C6"}, indent=2) + "\n")
     if a.summary:
         md = [f"### Merge eligibility: **{verdict}**", "",

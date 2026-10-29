@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_exceptions, reviews  # noqa: E402
 import merge_eligibility as me  # noqa: E402
-from test_merge_eligibility_binding import (APPROVED_REVIEWS, AUTHOR, BASE, CAND, CLEAN_EXC, CONFIG, IDENT, MERGE, REVIEWER,  # noqa: E402
+from test_merge_eligibility_binding import (APPROVED_REVIEWS, AUTHOR, OWNER, gate_run, BASE, CAND, CLEAN_EXC, CONFIG, IDENT, MERGE, REVIEWER,  # noqa: E402
                                             attestation, decision_comment, met, run, tasks)
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -23,7 +23,7 @@ EXC = check_exceptions.evaluate(ROOT)  # the real tree: 5 applied suppressions, 
 SCOPES = reviews.exception_scopes(EXC)
 
 
-def exc_att(ex, decision="APPROVED", login=AUTHOR, cid=None, at="2026-10-28T23:20:00Z", scope=None, extra=(), **kw):
+def exc_att(ex, decision="APPROVED", login=OWNER, cid=None, at="2026-10-28T23:20:00Z", scope=None, extra=(), **kw):
     return attestation(login, "EXCEPTION", decision, cid=cid or 200 + int(ex[-2:]), at=at,
                        extra=(f"exception: {ex}", f"scope: {scope or SCOPES[ex]}", *extra), **kw)
 
@@ -132,7 +132,7 @@ class P2ExternalAttestations(unittest.TestCase):
                decision_comment(AUTHOR, ["AC4: ACCEPT"])]                                # legacy v1 format
         for c in bad:
             with self.subTest(body=c["body"][:120]):
-                self.assertEqual(self.dec([c], runs={"40800364073": {"head_sha": CAND}, "40799999999": {"head_sha": OTHER}})["AC4"][0], "UNMET")
+                self.assertEqual(self.dec([c], runs={"40800364073": gate_run(), "40799999999": gate_run(head=OTHER)})["AC4"][0], "UNMET")
         self.assertEqual(self.dec([attestation(REVIEWER, "AC4", "ACCEPT", tested=(OTHER, MERGE))])["AC4"][0], "MET_AT_RUNTIME")
 
     def test_malformed_attestations_are_ignored(self):
@@ -143,7 +143,7 @@ class P2ExternalAttestations(unittest.TestCase):
                 self.assertEqual(self.dec([dict(good, body=body)])["AC4"][0], "UNMET")
 
     def test_latest_reject_wins_for_ac4(self):
-        d = self.dec([attestation(REVIEWER, "AC4", "ACCEPT", cid=1), attestation(AUTHOR, "AC4", "REJECT", cid=2, at="2026-10-28T23:30:00Z")])
+        d = self.dec([attestation(REVIEWER, "AC4", "ACCEPT", cid=1), attestation(OWNER, "AC4", "REJECT", cid=2, at="2026-10-28T23:30:00Z")])
         self.assertEqual(d["AC4"][0], "UNMET")
 
     def test_ac5_needs_ac2(self):
@@ -187,7 +187,7 @@ class P3ExceptionStates(unittest.TestCase):
     def test_exception_decisions_only_from_owner_with_admin(self):
         base = [exc_att(ex) for ex in ("EX-01", "EX-02", "EX-03")]
         self.assertEqual(self.dec(base + [exc_att("EX-04", login=REVIEWER)])["AC2"][0], "UNMET")
-        r = rv(comments=OWNER_OK); r["permissions"][AUTHOR] = {"permission": "write", "role_name": "write"}
+        r = rv(comments=OWNER_OK); r["permissions"][OWNER] = {"permission": "write", "role_name": "write"}
         self.assertEqual(reviews.decisions_from_comments(r, IDENT, CONFIG, EXC)["AC2"][0], "UNMET")
 
     def test_latest_owner_decision_wins(self):

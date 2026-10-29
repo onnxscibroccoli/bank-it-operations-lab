@@ -36,11 +36,23 @@ def met(binding=BIND, evidence="https://example.invalid/run/1", **extra):
 
 AUTHOR = "onnxscibroccoli"
 REVIEWER = "independent-reviewer"
-CONFIG = {"owner_logins": [AUTHOR], "owner_required_permission": ["admin"], "reviewer_allowlist": [REVIEWER],
-          "reviewer_required_permission": ["admin", "maintain", "write"], "decision_pr": 7, "decision_header": "ACCEPTANCE-DECISION v1"}
+OWNER = "ian-separate-owner"   # O-5: an owner identity distinct from the PR author / shared account
+CONFIG = {"owner_logins": [OWNER], "owner_required_permission": ["admin"], "reviewer_allowlist": [REVIEWER],
+          "reviewer_required_permission": ["admin", "maintain", "write"], "decision_pr": 7, "decision_header": "ACCEPTANCE-ATTESTATION v2"}
 
 
 RUN = "40800364073"
+GATE_JOBS = [{"name": n, "conclusion": "success"} for n in ("module-registry", "aws-cdk / synth-and-test", "final-summary")]
+
+
+def gate_run(head=CAND, name="integration-gate", path=".github/workflows/integration-gate.yml", status="completed",
+             conclusion="failure", jobs=None):
+    """An integration-gate run as fetched: everything green, merge-eligibility failed closed (NOT ELIGIBLE)."""
+    return {"head_sha": head, "name": name, "path": path, "status": status, "conclusion": conclusion,
+            "jobs": GATE_JOBS + [{"name": "merge-eligibility", "conclusion": "failure"}] if jobs is None else jobs}
+
+
+GATE_TRUST_OK = {"status": "VERIFIED", "reasons": []}
 
 
 def attestation(login, criterion, decision, cand=CAND, main=BASE, tested=(MERGE,), run=RUN, cid=100,
@@ -61,8 +73,8 @@ APPROVED_REVIEWS = {"ok": True, "pr": 7, "pr_author": AUTHOR, "head_sha": CAND, 
                                  "submitted_at": "2026-10-28T23:00:00Z"}],
                     "comments_ok": True,
                     "comments": [attestation(REVIEWER, "AC4", "ACCEPT", cid=101), attestation(REVIEWER, "AC5", "ACCEPT", cid=102)],
-                    "runs": {RUN: {"head_sha": CAND}},
-                    "permissions": {AUTHOR: {"permission": "admin", "role_name": "admin"}, REVIEWER: {"permission": "write", "role_name": "write"}}}
+                    "runs": {RUN: gate_run()},
+                    "permissions": {AUTHOR: {"permission": "admin", "role_name": "admin"}, OWNER: {"permission": "admin", "role_name": "admin"}, REVIEWER: {"permission": "write", "role_name": "write"}}}
 CLEAN_EXC = {"applied": [], "unapproved": [], "errors": [], "blocking_user_action": False}
 
 
@@ -72,7 +84,7 @@ def tasks(ac_over):
     return {"acceptance_conditions_for_main": {"conditions": conds}}
 
 
-def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC, config=CONFIG):
+def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC, config=CONFIG, gate_trust=GATE_TRUST_OK):
     with tempfile.TemporaryDirectory() as d:
         tp = Path(d) / "tasks.json"
         tp.write_text(json.dumps(tasks(ac_over or {})))
@@ -81,6 +93,8 @@ def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEW
             (Path(d) / "rv.json").write_text(json.dumps(reviews)); args += ["--reviews", str(Path(d) / "rv.json")]
         if config is not None:
             (Path(d) / "cfg.json").write_text(json.dumps(config)); args += ["--config", str(Path(d) / "cfg.json")]
+        if gate_trust is not None:
+            (Path(d) / "gt.json").write_text(json.dumps(gate_trust)); args += ["--gate-trust", str(Path(d) / "gt.json")]
         if exc is not None:
             (Path(d) / "exc.json").write_text(json.dumps(exc)); args += ["--exceptions", str(Path(d) / "exc.json")]
         if ident is not None:
