@@ -1,0 +1,17 @@
+{
+  "schema": "bank-lab/run-identity/v1",
+  "event": "pull_request",
+  "ref_name": "7/merge",
+  "repository": "onnxscibroccoli/bank-it-operations-lab",
+  "run_id": "40803398543",
+  "run_attempt": "1",
+  "tested_sha": "decbb08813e3780d048d98fd7c6a8c596eee2dc0",
+  "kind": "merge",
+  "pr": 7,
+  "candidate_sha": "5a75d9ca742e28d8f0a18b590b1bfecb5f7b2b03",
+  "base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+  "event_base_sha": "7f50348bf1370381615eaed91c02607fe41de2f5",
+  "main_sha_at_runtime": "7f50348bf1370381615eaed91c02607fe41de2f5",
+  "valid": true,
+  "errors": []
+}
