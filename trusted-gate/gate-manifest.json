@@ -1,9 +1,10 @@
 {
- "schema": "bank-lab/gate-manifest/v1",
- "gate_sha": "48660b725dbf51b51a38d71fcd0150de56214496",
+ "schema": "bank-lab/gate-manifest/v2",
+ "gate_sha": "af49a27d6cef040478edafe8324d83b919ea9ffb",
+ "hash_source": "git show af49a27d6cef040478edafe8324d83b919ea9ffb:<path>",
  "files": {
   ".github/acceptance/trusted-config.json": "8ee6d89e234842f4b556fa74a149596f4128d25a52254d44f12d4275f2a05325",
-  ".github/workflows/integration-gate.yml": "1b5f8953fb29c2f5424da2971c46be0e3cdce00d55ec7788d9d22e29cb05122f",
+  ".github/workflows/integration-gate.yml": "d031430acdc49237d25f538b9129cf3d01966634dec9663ee3b8a2c722325dc4",
   "scripts/ci/check_exceptions.py": "e6e0d4394ea88a6666317d83bd75c18c9ee7a00b6ce943b8e32babd416ba87e6",
   "scripts/ci/check_incident_run.py": "b2d22f498eb27f3051b904d7bb0723b80b5fd60b91b8f20b0c73e94540d95105",
   "scripts/ci/check_labels.py": "235254bdbbd6ed4db5849e8a04f24e055bceb746ac2df2c4f9ba51f71d82a82b",
@@ -12,24 +13,25 @@
   "scripts/ci/final_summary.py": "e4af382e0f9e7fb68889148ef414788d1ac7124fadf1ab4bd3fa5f1559d83476",
   "scripts/ci/incident_checks.sh": "a7ea0fb30906d07fb99c39335ff35d0dfe1eb4a38612453b6989c951b1f2b83e",
   "scripts/ci/m365_checks.sh": "a92a7b2076bd79e1b8d5d06b14a15d0103df32fde500f9bc52c3d9a8a15a1838",
-  "scripts/ci/merge_eligibility.py": "fb34b7fd070660fc0f1b3566e34daae9c2c3e62be0faa0f8de6e2c816876fdc7",
+  "scripts/ci/merge_eligibility.py": "37411f06d452269891a7c05023f8ffaaa2ab0bb4bfd902836fab5e83e4a14083",
   "scripts/ci/provenance.py": "6ae2fe7e12b3fa23b3a7c8f98ed2b79ca616b03b6ada594d387ac84983c31530",
-  "scripts/ci/reviews.py": "c27f4436e07568ad4ff90634a39371e18e6aaa00769e9ffe5c0b6f1d014dc226",
+  "scripts/ci/reviews.py": "6c1e5e5db9cf00d5928db08cd48be830926feef9b8c62e816c2a933320f9b26a",
   "scripts/ci/tests/test_ac_repairs_b908a66.py": "06123f9a0a970794409f4aa941faff8e243953de27e06a4c8dee23c6e749f445",
-  "scripts/ci/tests/test_ac_runtime_pr31.py": "fd94fe224f7278214efed3d4299b37e597d7d9697180632583edf437027b5026",
+  "scripts/ci/tests/test_ac_runtime_pr31.py": "589db4713c50bd4eb09ec192533c3aa7ec2167f0bc8ef862dea24f011a414576",
   "scripts/ci/tests/test_check_labels.py": "4c1e2aa9adbe09919c0e084b52833c642acdf0eb3ef146d5060a439163e59903",
   "scripts/ci/tests/test_check_plan_only.py": "ec93a3c68220b6a51e2c0572a25e1791c87d5d735f9a79c17e7ccaf2c2393320",
   "scripts/ci/tests/test_fresh_run_wiring.py": "9b2192fb0cff761e4ef51fc59a8ff59b59ac32b8373c9a419ae2b04f9835acd6",
   "scripts/ci/tests/test_gate_required.py": "c3c169ef690fbadf516c22e2730006390f4b3b26f5c64f636a0cbc6e0a2dfb15",
   "scripts/ci/tests/test_incident_requirements.py": "22805bea237e4aed27fd9ea87341a92bd841c16048ef6f21a852142ffb760e5d",
-  "scripts/ci/tests/test_merge_eligibility_binding.py": "6b31594c39cfb737f8825975dccad8f92a88db1724b8ca55ea6e611a3ebe9dd1",
+  "scripts/ci/tests/test_merge_eligibility_binding.py": "8ae9575d425e54085884c4eda8bad949e9301ee3e18c81095c50a7577a152120",
   "scripts/ci/tests/test_module_coverage.py": "c7f641a7eb09a9a6eda2d8e669491e918172937ce94ca514437a7e9e39f3f547",
   "scripts/ci/tests/test_pr32_independence.py": "00bcc69d8e9575adff6ab4abdcf3af338c57fee8991edf86b182462a7a2949c9",
+  "scripts/ci/tests/test_pr33_pin_binding.py": "7ef19b1fa47df5a7e2b2cb76ea6b0954e118940ce4d16cf236dd0077071cd1f1",
   "scripts/ci/tests/test_provenance_base.py": "f472b33f0f636de5c2cf9bc474911a468d0007d2ea406fe950b07b9cf1c64262",
-  "scripts/ci/tests/test_verify_trusted_gate.py": "ae59a7952e7ee71b0c28660193da4fed6e1c92455286a9b5001e4816c93b170e",
+  "scripts/ci/tests/test_verify_trusted_gate.py": "1f33d3a84186c4ab03ffeaf54c170025e111030a547cf50596f7f7e7d777eee6",
   "scripts/ci/user_actions.py": "22debdae0a88ed4f1d683b7c490e5c10db54f4fbb1f228c78d75b1e4d0a0d59b",
-  "scripts/ci/verify_trusted_gate.py": "2fb92aa5947555bb475dce1936493b158d1012836002246da705bed53d396a30"
+  "scripts/ci/verify_trusted_gate.py": "e3057ccd4d845d9292348209296d29ba84d73ab40dc6b11e6ff88f093d09390f"
  },
  "independent_review": null,
- "note": "gate_sha is the gate commit 48660b725dbf51b51a38d71fcd0150de56214496 (ancestor of candidate 2e3041a6f5c3f56dad460e9c431f0f42799beec2; the candidate adds only the workflow and records), NOT the candidate. It has NO independent review, so --check-pin reports TRUSTED GATE UNVERIFIED and every run is NOT ELIGIBLE (PR #32 D3) until an allow-listed, write-permitted non-author approves 48660b725dbf51b51a38d71fcd0150de56214496 and this manifest records independent_review {pr, review_id}."
+ "note": "gate_sha af49a27d6cef040478edafe8324d83b919ea9ffb is the gate commit (parent of candidate a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45, which adds records only; scripts/ci, trusted config and integration-gate.yml are byte-identical). Hashes are from git show af49a27d6cef040478edafe8324d83b919ea9ffb:<path>. No independent review -> TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE until an allow-listed, write-permitted non-author approves af49a27d6cef040478edafe8324d83b919ea9ffb and independent_review {pr, review_id} is recorded (PR #32 D3 / PR #33 D3-a)."
 }
