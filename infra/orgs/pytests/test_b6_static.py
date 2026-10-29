@@ -40,6 +40,11 @@ class OrganizationsStatic(unittest.TestCase):
         self.assertIn("trail_access_logs", target)
         self.assertNotIn("aws_s3_bucket.trail.id", target)
 
+    def test_bucket_key_option_is_not_a_bucket_resource_attribute(self):
+        resources = json.loads((TF / "cloudtrail_logging.tf.json").read_text())["resource"]
+        for resource in resources["aws_s3_bucket"].values():
+            self.assertNotIn("bucket_key_enabled", resource)
+
     def test_cdk_source_has_no_self_log_prefix_on_the_sink(self):
         text = (ROOT / "infra" / "orgs" / "lib" / "org-cloudtrail-stack.ts").read_text()
         sink, _, trail = text.partition("const bucket = new s3.Bucket")

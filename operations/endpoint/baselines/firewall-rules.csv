@@ -1,4 +1,3 @@
 name,direction,action,protocol,local_port,remote_address,comment
-deny-inbound-any,inbound,block,any,any,any,default deny; evaluated last by the linter only as a required rule
 allow-https-from-vnet,inbound,allow,tcp,443,10.42.0.0/16,internal application listener only
 deny-ssh,inbound,block,tcp,22,any,SSH is not an operations path

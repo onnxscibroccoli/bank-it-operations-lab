@@ -34,7 +34,7 @@ class EndpointStatic(unittest.TestCase):
     def test_firewall_default_deny_and_no_ssh_allow(self):
         with FIREWALL.open(newline="") as handle:
             rows = list(csv.DictReader(handle))
-        self.assertTrue(any(r["name"] == "deny-inbound-any" and r["action"] == "block" for r in rows))
+        self.assertEqual(json.loads((ROOT / "baselines/firewall-policy.json").read_text())["defaultInboundAction"], "block")
         ssh_allows = [r for r in rows if r["local_port"] == "22" and r["action"] == "allow"]
         self.assertEqual(ssh_allows, [])
         any_allow = [r for r in rows if r["remote_address"] == "any" and r["action"] == "allow"]

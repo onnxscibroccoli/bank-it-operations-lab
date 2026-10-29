@@ -114,8 +114,36 @@ jobs:
           name: endpoint-pester-${{ github.sha }}
           path: testResults.xml
           retention-days: 7
+  base-aws:
+    uses: ./.github/workflows/aws-cdk.yml
+  postgres:
+    uses: ./.github/workflows/postgres-restore-evidence.yml
+  terraform-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: infra/orgs/terraform
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_version: '1.9.8'
+          terraform_wrapper: false
+      - run: terraform init -backend=false -input=false
+      - name: Validate against the provider schema without cloud calls
+        run: terraform validate -no-color
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: terraform-provider-lock-${{ github.sha }}
+          path: infra/orgs/terraform/.terraform.lock.hcl
+          include-hidden-files: true
+          retention-days: 7
   package:
-    needs: [offline, backup-static, orgs-static, network-edge, endpoint-pester]
+    needs: [offline, backup-static, orgs-static, network-edge, endpoint-pester, base-aws, postgres, terraform-static]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

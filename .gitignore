@@ -4,3 +4,7 @@ __pycache__/
 node_modules/
 cdk.out/
 dist/
+
+.terraform/
+*.tfstate
+*.tfstate.*

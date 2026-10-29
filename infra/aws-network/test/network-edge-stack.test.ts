@@ -37,6 +37,25 @@ describe('NetworkEdgeStack', () => {
     template.hasResourceProperties('AWS::Budgets::Budget', { Budget: { BudgetLimit: { Amount: 25, Unit: 'USD' } } });
   });
 
+  test('Auto Scaling service-linked role can use the EBS key and create resource grants', () => {
+    const keys = Object.values(template.findResources('AWS::KMS::Key')) as any[];
+    const statements = keys.flatMap(k => k.Properties.KeyPolicy.Statement);
+    const crypto = statements.find(s => s.Sid === 'AutoScalingEbsCrypto');
+    const grants = statements.find(s => s.Sid === 'AutoScalingEbsGrants');
+    expect(crypto).toBeDefined();
+    expect(grants).toBeDefined();
+    expect(crypto.Principal).toEqual(grants.Principal);
+    expect(JSON.stringify(crypto.Principal)).toContain('AutoScalingServiceRole');
+    expect(crypto.Action).toContain('kms:Decrypt');
+    expect(crypto.Action).not.toContain('kms:*');
+    expect(JSON.stringify(crypto.Condition || {})).not.toContain('kms:ViaService');
+    expect(grants.Action).toBe('kms:CreateGrant');
+    expect(grants.Condition).toEqual({ Bool: { 'kms:GrantIsForAWSResource': 'true' } });
+    template.resourceCountIs('AWS::IAM::ServiceLinkedRole', 1);
+    const asgs = Object.values(template.findResources('AWS::AutoScaling::AutoScalingGroup')) as any[];
+    expect(asgs[0].Properties.ServiceLinkedRoleARN).toEqual(crypto.Principal.AWS);
+  });
+
   test('required tags are on the stack', () => {
     const tags = template.toJSON().Resources;
     const alb = Object.values(tags).find((r) => (r as { Type: string }).Type === 'AWS::ElasticLoadBalancingV2::LoadBalancer') as {

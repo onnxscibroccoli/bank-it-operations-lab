@@ -1,12 +1,8 @@
 {
   "resource": {
     "aws_s3_bucket": {
-      "trail_access_logs": {
-        "bucket_key_enabled": false
-      },
-      "trail": {
-        "bucket_key_enabled": true
-      }
+      "trail_access_logs": {},
+      "trail": {}
     },
     "aws_s3_bucket_logging": {
       "trail": {
@@ -21,7 +17,8 @@
         "rule": {
           "apply_server_side_encryption_by_default": {
             "sse_algorithm": "AES256"
-          }
+          },
+          "bucket_key_enabled": false
         }
       }
     }

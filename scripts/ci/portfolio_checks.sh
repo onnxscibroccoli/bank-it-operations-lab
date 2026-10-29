@@ -24,4 +24,5 @@ check python3 inventory/generate.py --check
 check python3 -m unittest discover -s infra/orgs/pytests
 check python3 -m unittest discover -s operations/endpoint/tests
 check python3 -m unittest discover -s governance/owner-auth/tests
+check python3 operations/endpoint/validate_baseline.py
 exit "$failed"
