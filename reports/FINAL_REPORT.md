@@ -1,11 +1,11 @@
 # FINAL REPORT: bank-it-operations-lab
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 21:47 EDT): about 2 h 12 min.**
-> Status: **not complete.** Nothing is merged into `main` (`7f50348`, unchanged). The live integration candidate is PR #7 @ `1fdf25a`. It integrates **7 of 25 active modules**: 26 registered, 1 superseded. Every technical CI job is green, and its merge-eligibility check reports **NOT ELIGIBLE** (AC1, AC2, AC4 and AC5 UNMET; AC3 MET at runtime). No non-author review exists on any PR. Nothing here claims completion that was not verified.
+> **Remaining window at commit time (2026-10-28 21:54 EDT): about 2 h 5 min.**
+> Status: **not complete.** Nothing is merged into `main` (`7f50348`, unchanged). The live integration candidate is PR #7 @ `e9310f3`. It integrates **7 of 25 active modules**: 26 registered, 1 superseded. Every technical CI job is green, and its merge-eligibility check reports **NOT ELIGIBLE** (AC1, AC2, AC4 and AC5 UNMET; AC3 MET at runtime). No non-author review exists on any PR. Nothing here claims completion that was not verified.
 
 - Repo: https://github.com/onnxscibroccoli/bank-it-operations-lab
-- Snapshot: 2026-10-28, about 21:47 EDT (UTC-4). The live candidate is in §L; other current heads are in §0c. Older sections are kept as history and name the SHA they checked. `main` @ [`7f50348`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/7f50348bf1370381615eaed91c02607fe41de2f5) holds only `README.md` and has not changed since the repo was created.
+- Snapshot: 2026-10-28, about 21:54 EDT (UTC-4). The live candidate is in §L; other current heads are in §0c. Older sections are kept as history and name the SHA they checked. `main` @ [`7f50348`](https://github.com/onnxscibroccoli/bank-it-operations-lab/commit/7f50348bf1370381615eaed91c02607fe41de2f5) holds only `README.md` and has not changed since the repo was created.
 - **Nothing is merged into `main`. Nothing is deployed. No AWS, Entra or Graph credentials were used.** All 31 PRs (#1–#31) are open. None has an APPROVED GitHub review from an account other than the PR author. Review notes #14 and #27–#31 come from the author account `onnxscibroccoli`.
 - **Evidence labels:**
   - **[re-run]**: re-executed on the box for this report.
@@ -16,40 +16,33 @@
 - **Rule: a passing scanner is not enough.** Zero cdk-nag errors, a passing `cfn-s3-selflog` or a passing `sha256sum -c` shows only that a tool ran. Acceptance also needs review of the exact SHA, adjudicated exceptions, docs that match the code, and no blocking findings. #5 is the example: both cdk-nag packs report 0 unsuppressed errors, yet #14 found a KMS privilege-escalation path that the scanner and the repo's own guard (`guards.ts#kmsWildcards`) both miss.
 - Companion files: [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md) (per-module job row, authoritative source, falsifiable acceptance requirement, evidence, review disposition), [`USER_ACTIONS_REQUIRED.md`](USER_ACTIONS_REQUIRED.md) and [`EVIDENCE_MANIFEST.md`](EVIDENCE_MANIFEST.md). Hiring-manager entry points: root [`README.md`](../README.md), [`docs/DEMO_WALKTHROUGH_15MIN.md`](../docs/DEMO_WALKTHROUGH_15MIN.md), and the job-matrix addendum on branch `docs/job-matrix-addendum` @ [`9fb49fa`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d/docs/JOB_REQUIREMENTS_MATRIX.md).
 
-## L. Live candidate: PR #7 @ `1fdf25a` (checked about 21:40 EDT)
+## L. Live candidate: PR #7 @ `e9310f3` (checked about 21:52 EDT)
 
-- **#7 head:** `1fdf25ad10c56bb457d6242392f9305c539d1209` (pushed 21:25 EDT; confirmed with `gh pr view 7` at 21:42 EDT). **main:** `7f50348bf1370381615eaed91c02607fe41de2f5`, unchanged; the gate confirmed `main_sha_at_runtime` equals the base.
-- **New since `7fe6d72`:** `b908a66` (AC3 provenance, root README), `51e404c` (module registry, 26 modules), `a29f4d9`, `80f01d6` (**B5-2 fix**: least-privilege KMS key admin), `4e6fef4` (trusted gate: AC1 from the reviews API, exception register blocks AC2/AC5) and `1fdf25a`. That is 7 commits and 45 files.
-- **CI at `1fdf25a`:**
-  - integration-gate [40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073) (pull_request) and [40800359209](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800359209) (push): 18/19 success.
-  - main-validation [40800374574](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800374574) (merge `85063e8`): 18/19.
+- **#7 head:** `e9310f3a94162a5dae31ee1cca9e35452de033ed` (pushed 21:47 EDT; confirmed with `gh pr view 7` at about 21:48 EDT. It replaced `1fdf25a`, pushed 21:25 EDT, during this update). **main:** `7f50348bf1370381615eaed91c02607fe41de2f5`, unchanged; the gate confirmed `main_sha_at_runtime` equals the base.
+- **New since `7fe6d72`:** `b908a66` (AC3 provenance, root README), `51e404c` (module registry, 26 modules), `a29f4d9`, `80f01d6` (**B5-2 fix**: least-privilege KMS key admin), `4e6fef4` (trusted gate, first version), `1fdf25a`, then `ce69f84` (**gate v3**: reviewer allow-list; AC2/AC4/AC5 from owner decision comments; hash-verified trusted gate) and `e9310f3` (gate read from a manifest, by SHA).
+- **CI at `e9310f3`:**
+  - integration-gate [40802567048](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567048) (pull_request) and [40802561953](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802561953) (push): 18/19 success.
+  - main-validation [40802573622](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802573622) (merge `92f52fc`): 18/19.
   - In all three, the only failing job is `merge-eligibility`, which fails by design while criteria are unmet.
-  - aws-cdk [40800363940](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800363940): Jest 36/36.
-  - postgres-restore-evidence [40800363954](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800363954) and offline-validation [40800364076](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364076): success.
-- **merge-eligibility (run 40800364073, gate code pinned at `4e6fef4`):** `NOT ELIGIBLE`.
-  - `AC1: UNMET` (no APPROVED review by a non-author account).
-  - `AC2: UNMET` (UA-1: 5 applied suppressions tied to non-APPROVED EX-01..EX-04).
-  - `AC3: MET_AT_RUNTIME` (`07eea1c`).
-  - `AC4: UNMET (PARTIAL)`.
-  - `AC5: UNMET` (UA-1).
-- **Re-run here at `1fdf25a`:**
+  - aws-cdk [40802567002](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567002): Jest 36/36.
+  - postgres-restore-evidence [40802567000](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567000) and offline-validation [40802567034](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567034): success.
+- **merge-eligibility (run 40802567048, gate code `ce69f84` from the manifest on `evidence/acceptance` @ `1901342`):** `NOT ELIGIBLE`. `AC1: UNMET` ("trusted reviewer_allowlist is empty; no APPROVED review on exact candidate … by an allow-listed, write-permitted account other than the PR author"); `AC2: UNMET` ("BLOCKING USER ACTION UA-1: no owner decision on candidate … for applied exceptions EX-01 EX-02 EX-03 EX-04"); `AC3: MET_AT_RUNTIME` (merge `9ff24a4`); `AC4: UNMET` ("no authorized AC4 decision on candidate …"); `AC5: UNMET` ("no authorized AC5 decision on candidate …").
+- **Re-run here at `e9310f3`:**
   - `validate-all.sh --python-only` PASS (33 steps)
-  - `scripts/ci/tests` 93 OK
+  - `scripts/ci/tests` 114 OK
   - shared validator 16, Entra 25, M365 29 OK
   - Postgres VERIFIED
   - AWS `SHA256SUMS` 44/44 OK
   - `check_modules.py`: `MODULE COVERAGE: 7/25 integrated (28.0%)`
-- **Reviews of the live candidate:** [#31](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/31) @ `eccac83` says **CHANGES REQUIRED** on `1fdf25a`. It confirms B5-2, F1, N1 and B5-3 fixed. It lists as still open:
-  - B5-1 (UA-1)
-  - F4: AC1 accepts an approval from any GitHub account on this public repo
-  - F6: AC2/AC4/AC5 can only reach MET via self-referential in-tree `met_for`
-  - R6: the pin is candidate-controlled
-  - F7: approval is a text edit
+- **Reviews:** [#31](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/31) @ `eccac83` reviewed the **previous** head `1fdf25a`: CHANGES REQUIRED. It found F4 (any account could approve), F6 (self-referential `met_for`), R6 (candidate-controlled gate) and F7 (approval was a text edit). The new head claims repairs in `ce69f84` ("gate v3") and `e9310f3`:
+- an AC1 reviewer allow-list with write permission;
+- AC2/AC4/AC5 decided from authenticated owner decision comments bound to the exact SHA;
+- the gate code checked out by SHA from a manifest on `evidence/acceptance` and hash-verified.
 
-  It was written from the author account, so it is not an AC1 approval. F4, F6, R6 and F7 are **as reported, not re-verified here**. [#30](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/30) gave the same verdict on `b908a66`.
-- **Superseded:** final candidate `7fe6d72` (§P, history) and `b908a66`. The README and demo walkthrough are re-pinned to `1fdf25a`.
+**`e9310f3` has not been reviewed.** This report re-ran its 114 CI self-tests (OK), but did not audit the repair logic. Every review note is from the author account, so none is AC1.
+- **Superseded:** final candidate `7fe6d72` (§P, history), `b908a66` and `1fdf25a`. The README and demo walkthrough are re-pinned to `e9310f3`.
 
-## M. Module coverage and revised ETA (about 21:47 EDT)
+## M. Module coverage and revised ETA (about 21:54 EDT)
 
 Full map: [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md). Source classes:
 - **supervisory:** FFIEC IT Handbook; OCC Bulletin 2023-17, the OCC/FRB/FDIC interagency third-party guidance.
@@ -59,44 +52,88 @@ Full map: [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md). Source class
 
 **No regulatory source** (statute or regulation text) is mapped. Everything is "mapped to"; no certification or compliance is claimed.
 
-| Active modules (denominator) | Integrated in `1fdf25a` | Verified (re-run or CI at exact SHA) | Independently accepted |
+| Active modules (denominator) | Integrated in `e9310f3` | Verified (re-run or CI at exact SHA) | Independently accepted |
 |---|---|---|---|
 | **25** (26 registered − 1 SUPERSEDED) | **7** (28.0%) | 14; plus 1 partial (#21) and 1 unverified (#6) | **0** |
 
 The earlier figure of 22 planned modules was wrong. It left out the 3 NOT_STARTED registry modules.
 
+#### Status class per module (exactly one each; 25 active)
+
+Rule: each active module gets exactly one class, the highest that applies.
+1. **independently accepted:** a non-author, allow-listed APPROVED review on the exact SHA. None yet.
+2. **integrated:** in #7 @ `e9310f3`, with registry status INTEGRATED.
+3. **verified:** not integrated, but its checks were re-run green at its head.
+4. **blocked:** open or recorded blocker, or not verifiable as built. This covers the registry's BLOCKED module, partial verification, and documentation or review modules with no executable check. For those, the missing check and review is the blocker.
+5. **not-started:** registry NOT_STARTED.
+
+The 7 integrated modules were also re-verified at `e9310f3`. "Verified" in this table means verified **but not integrated**, so the earlier non-exclusive figure "verified 14" equals integrated 7 + verified 7.
+
+**integrated 7 · verified 7 · independently accepted 0 · blocked 8 · not-started 3 = 25**
+
+| # | Registry module | PR | Status class | Basis |
+|---|---|---|---|---|
+| 1 | `integration-infra` | #7 | **integrated** | in `e9310f3`; CI 18/19 (merge-eligibility NOT ELIGIBLE by design) |
+| 2 | `shared-evidence-validator` | #3 | **integrated** | 16 tests re-run at `e9310f3` |
+| 3 | `entra-offline` | #4 | **integrated** | 25 tests and validator PASS at `e9310f3` |
+| 4 | `aws-cdk` | #5 | **integrated** | CI Jest 36/36; EX-01..EX-04 undecided (UA-1) |
+| 5 | `postgres-recovery` | #2 | **integrated** | evidence VERIFIED at `e9310f3` |
+| 6 | `m365-endpoint` | #20 | **integrated** | 13/13 scenarios, 29 tests at `e9310f3` |
+| 7 | `incident-demo` | #22 | **integrated** | timeline VERIFY PASS (SIMULATION) |
+| 8 | `acceptance` | #23–#26 | **verified** | 32 tests and CI at `eb42b23`; #27 CHANGES REQUIRED |
+| 9 | `vendor-mock` | #9 | **verified** | 70 tests at `d6efb82` (SIMULATION) |
+| 10 | `observability` | #10 | **verified** | 64 tests at `3e40e39` |
+| 11 | `control-mapping` | #16 | **verified** | 10 tests at `3f82697` |
+| 12 | `patch-hardening` | #17 | **verified** | 27 tests at `5605b78` |
+| 13 | `identity-governance` | #18 | **verified** | 65 tests at `f48e7e3` |
+| 14 | `hybrid-operations` | #19 | **verified** | runbook linter, 0 findings at `3397dac` (runbooks NOT_EXECUTED) |
+| 15 | `orgs-security` | #6 | **blocked** | registry BLOCKED: B6-1, B6-2 open; not re-run |
+| 16 | `backup-dr-aws` | #21 | **blocked** | only partly verified (cost tests 8 OK; CDK Jest not run); recovery needs AWS (B1) |
+| 17 | `review-notes` | #14, #27–#31 | **blocked** | no executable check; review records only (not acceptance) |
+| 18 | `portfolio-cases` | #8 | **blocked** | no executable check; no review |
+| 19 | `final-report` | #11 | **blocked** | no executable check; no review (this report) |
+| 20 | `job-requirements-matrix` | #12 | **blocked** | no executable check; no review |
+| 21 | `team-management` | #13 | **blocked** | no executable check; no review |
+| 22 | `learning-guide` | #15 | **blocked** | no executable check; no review |
+| 23 | `aws-network-edge` | — | **not-started** | registry NOT_STARTED |
+| 24 | `endpoint-windows-automation` | — | **not-started** | registry NOT_STARTED |
+| 25 | `inventory-diagrams` | — | **not-started** | registry NOT_STARTED |
+
+
+
 **Revised ETA** (map §4):
-- **Earliest:** about 01:30–03:00 EDT Thursday.
-- **Likely:** Thursday daytime or later.
-- **Main uncertainty:** AC1 needs an approving account other than `onnxscibroccoli`, and none has been identified. #31's F6 gate-design fix is also needed.
-- **Critical-path owner:** the integrator, with Ian (UA-1, UA-2, AC6) and an unidentified independent reviewer on the path.
+- **Earliest:** about 01:00–02:30 EDT Thursday.
+- **Likely:** Thursday daytime.
+- **Main uncertainty:** `reviewer_allowlist` is empty, so no independent reviewer account exists for AC1. Gate v3 (`ce69f84`/`e9310f3`) is also unreviewed.
+- **Critical-path owner:** the integrator. Ian is on the path for UA-1 (decision comment), UA-2, UA-3, the reviewer account and AC6.
 
 **No merge meeting AC1–AC5 is achievable by midnight on current evidence.**
 
-## R. User-action reconciliation (re-done about 21:47 EDT against `1fdf25a`)
+## R. User-action reconciliation (re-done about 21:54 EDT against `e9310f3`)
 
-CI prints, in run [40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073), `user-actions` job:
+CI prints, in run [40802567048](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567048), `user-actions` job:
 ```
 USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4
 MODULE COVERAGE: 7/25 integrated (28.0%), functional 7/17; denominator 26 (BLOCKED=1, INTEGRATED=7, NOT_INTEGRATED=14, NOT_STARTED=3, SUPERSEDED=1)
 ```
-and, in `merge-eligibility`, five `BLOCKING USER ACTION (UA-1): suppression … is applied while EX-0N is PROPOSED` lines.
+`offline-validation` prints five `BLOCKING USER ACTION (UA-1): suppression … is applied while EX-0N is PROPOSED` lines, and `merge-eligibility` prints `AC2: UNMET (BLOCKING USER ACTION UA-1: no owner decision on candidate e9310f3… for applied exceptions EX-01 EX-02 EX-03 EX-04)`.
 
-Reconciled top line: **`USER ACTION REQUIRED: 2 — UA-1 EX-01..EX-04 decisions to record in the register (EX-04 role-review gap); UA-2 Entra CA baseline choices`**.
+Reconciled top line: **`USER ACTION REQUIRED: 4 — UA-1 owner decision comment for EX-01..EX-04/AC4/AC5 (EX-04 role-review gap); UA-2 Entra CA baseline; UA-3 protect main (now on the path to ELIGIBLE); AC1 independent reviewer account (allow-list empty)`**. UA-4 (close #1) is housekeeping.
 
-**Correction:** this report's 21:04 EDT reconciliation marked EX-01 and EX-03 "RESOLVED_BY_RECORD" and narrowed UA-1 to EX-04. That was too strong. Ian's decisions on EX-01, EX-03 and EX-04 are **conditional**. None is recorded as `APPROVED` in the register. The live gate's `check_exceptions.py` counts only the exact word `APPROVED`, so **UA-1 covers all four exceptions** until the register is updated. Per-exception detail is in §3.
+**Correction:** this report's 21:04 EDT reconciliation marked EX-01 and EX-03 "RESOLVED_BY_RECORD" and narrowed UA-1 to EX-04. That was too strong. Ian's decisions on EX-01, EX-03 and EX-04 are **conditional**. None is recorded as `APPROVED` in the register. At `e9310f3` the gate takes UA-1 only from an `ACCEPTANCE-DECISION v1` comment that Ian posts on PR #7 for the exact SHA. So **UA-1 covers all four exceptions**, and the decisions Ian has relayed are not enough to post `APPROVE EX-01 EX-02 EX-03 EX-04` (see §3). Per-exception detail is in §3.
 
 | ID | CI item | Reconciled class | Evidence |
 |---|---|---|---|
-| UA-1 | Approve or reject EX-01..EX-04 and the applied cdk-nag suppressions | **USER_ACTION_REQUIRED**, blocking AC2/AC5 | Register @ `1fdf25a`: "Status of every entry: **PROPOSED, pending owner approval.**" `check_exceptions.py` reports 5 suppressions tied to PROPOSED entries. Decisions relayed by Ian are in §3. None is an unconditional approval except EX-02 |
-| UA-2 | Confirm the Entra CA baseline choices | **USER_ACTION_REQUIRED** | `evidence/entra/BASELINE-CHOICES-PENDING.md` @ `1fdf25a` records them as PENDING. No decision is recorded |
-| UA-3 | Branch protection on `main` | **OWNER_DECISION, non-blocking** | `GET …/branches/main/protection` → 404 "Branch not protected" (unset, not 403). Admin is held. `blocks: []` |
+| UA-1 | Approve or reject EX-01..EX-04 and the applied cdk-nag suppressions | **USER_ACTION_REQUIRED**, blocking AC2/AC5 | Register @ `e9310f3`: "Status of every entry: **PROPOSED, pending owner approval.**" `check_exceptions.py` reports 5 suppressions tied to PROPOSED entries. Decisions relayed by Ian are in §3. None is an unconditional approval except EX-02 |
+| UA-2 | Confirm the Entra CA baseline choices | **USER_ACTION_REQUIRED** | `evidence/entra/BASELINE-CHOICES-PENDING.md` @ `e9310f3` records them as PENDING. No decision is recorded |
+| UA-3 | Protect `main` (exact settings in the CI text) | **USER_ACTION_REQUIRED for ELIGIBLE** (it was non-blocking before `e9310f3`) | It is still `blocks: []`, but `tasks.json` `path_to_eligible` step 1 requires it, so the gate cannot be landed on `main` without it. `main` is still unprotected: 404, 0 rulesets, admin held |
+| AC1 reviewer | Add an independent reviewer account (Write) and allow-list it | **USER_ACTION_REQUIRED** (owner picks the person and account); the integrator edits the config | `reviewer_allowlist: []` in `.github/acceptance/trusted-config.json` @ `e9310f3` |
 | UA-4 | Close PR #1 as superseded | **HOUSEKEEPING** | `bank-aws-001` is SUPERSEDED in `modules.json`. AC4 notes PR #1's body is stale |
 | UA-5 | AC6 final acceptance | **NOT_YET_ACTIONABLE** | Applies only after AC1–AC5 are MET for one SHA |
 
 Not user actions:
 - **AC1 is a GATE.** It needs a non-author APPROVED review on the exact SHA.
-- **#31's F4, F6 and R6 are AUTONOMOUS_FIX items for the integrator.**
+- **#31's F4, F6, R6 and F7:** repairs are claimed in `ce69f84`/`e9310f3`. They are unreviewed.
 - **B5-2 is FIXED**, per `tasks.json` and #31.
 
 This report does not edit `coordination/tasks.json` or the register; both belong to other owners. The full history of the earlier reconciliation at `08cdf11` and `7fe6d72` is in git history at commit `29969b4`.
@@ -149,7 +186,7 @@ Labels, used throughout the portfolio docs:
 
 ### P4. Documentation handoff for the integrator
 
-Files: `README.md` (root; **conflicts with the root README that #7 has carried since `b908a66`**, still present at `1fdf25a`, which `modules.json` assigns to integration-infra; the integrator chooses: keep #7's and link to this hub, or move this hub to `docs/`), `docs/DEMO_WALKTHROUGH_15MIN.md`, `reports/MODULE_REQUIREMENT_MAP.md`, `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md`, `reports/user-actions.json`, `reports/EVIDENCE_MANIFEST.md` on `reports/final-report`; `docs/JOB_REQUIREMENTS_MATRIX.md` on `docs/job-matrix-addendum` (parent `31b69db`). None of it changes code, workflows, or another module's files.
+Files: `README.md` (root; **conflicts with the root README that #7 has carried since `b908a66`**, still present at `e9310f3`, which `modules.json` assigns to integration-infra; the integrator chooses: keep #7's and link to this hub, or move this hub to `docs/`), `docs/DEMO_WALKTHROUGH_15MIN.md`, `reports/MODULE_REQUIREMENT_MAP.md`, `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md`, `reports/user-actions.json`, `reports/EVIDENCE_MANIFEST.md` on `reports/final-report`; `docs/JOB_REQUIREMENTS_MATRIX.md` on `docs/job-matrix-addendum` (parent `31b69db`). None of it changes code, workflows, or another module's files.
 
 ## 0a. Accelerated completion plan ([#27](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27) @ `72aa8b7`, ChatGPT independent review): per-item verified status
 Source: `reports/independent/chatgpt/accelerated-completion-plan-20261028.md` (snapshot about 17:57 EDT) and `acceptance-181bcdd-review.md`. This report only records status. Implementation belongs to the lane owners #27 names.
@@ -201,7 +238,7 @@ The repairs are in #26: `85c66cf` (invariants), `17cfaea` ("repair C1-C4 from in
 | [#4](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4) | `entra-ca-offline` | `d302c99d` |
 | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) | `aws-remediation-vpc-rds` | `099479e6` |
 | [#6](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6) | `orgs-security-refs` | `e5e7f460` |
-| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) | `overnight/integration` | `1fdf25a` (live candidate; see §L) |
+| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) | `overnight/integration` | `e9310f3` (live candidate; see §L) |
 | [#8](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/8) | `portfolio-cases` | `7010d05a` |
 | [#9](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/9) | `vendor-mock` | `d6efb825` |
 | [#10](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/10) | `observability` | `3e40e39d` |
@@ -253,7 +290,7 @@ Key: ✅ met · ⚠️ partial or conditional · ❌ not met · — not applicab
 | Postgres backup/restore ([#2](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/2) @ `e7399fb`) | ⚠️ [#14 review] checkpoint 2 at `2aac93c`/`e7399fb`: false-PASS fix **remediated** (agent notes; no human GitHub review) | — | ✅ [CI 40741546543](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40741546543) and [40741536430](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40741536430). [re-run] self-test 26/26; verifier VERIFIED on 3 current runs, REJECTED on the control, HISTORICAL on the v1 runs | ✅ PR body updated | ✅ No blocking items. Non-blocking hardening: regex ordering, self-attested EXPECTATIONS.tsv, cdk-synth green-on-skip | **Conditional:** needs a human review of `e7399fb` |
 | Evidence audit and shared validator ([#3](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/3) @ `fb36341`) | ⚠️ [#14 review]: **Approve** at exact SHA | — | ✅ [re-run] 13/13. No CI of its own; runs in #7 CI | ✅ | ✅ none blocking | **Conditional:** needs a human GitHub review |
 | Entra CA offline ([#4](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4) @ `d302c99`) | ⚠️ [#14 review]: **Approve with comments** at exact SHA | ⚠️ Baseline choices unconfirmed (risk policies report-only, device scope, 12 roles) | ✅ [re-run] 25/25, validator exit 0, evidence verify OK | ✅ | ✅ Non-blocking follow-ups: CA007 baseline rule, failing rule IDs in logs, CI | **Conditional:** owner confirms the baseline and a human reviews |
-| AWS remediation VPC+RDS ([#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) @ `099479e`) | ⚠️ [#14 review]: **Request changes** at exact SHA | ⚠️ EX-01..EX-04: Ian's decisions relayed (EX-02 accepted; EX-01, EX-03 and EX-04 conditional). The register @ `1fdf25a` is still PROPOSED, so UA-1 is open (§3) | ✅ [re-run] hashes 32/32, tsc OK, Jest 33/33, synth OK, `cfn-s3-selflog` OK. Also runs in #7 CI | ❌ The "least-privilege CMK" claim is contradicted by B5-2. "One rule, one resource" is wrong (EX-02 covers 2 resources). The register still says PROPOSED | ❌ **B5-2**: unconditioned `kms:Create*`/`kms:Put*` for account root on 3 CMKs allows CreateGrant/PutKeyPolicy escalation. **B5-1**: suppressions were applied before approval. **B5-3**: conflicts with #1 | **No** |
+| AWS remediation VPC+RDS ([#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) @ `099479e`) | ⚠️ [#14 review]: **Request changes** at exact SHA | ⚠️ EX-01..EX-04: Ian's decisions relayed (EX-02 accepted; EX-01, EX-03 and EX-04 conditional). The register @ `e9310f3` is still PROPOSED, so UA-1 is open (§3) | ✅ [re-run] hashes 32/32, tsc OK, Jest 33/33, synth OK, `cfn-s3-selflog` OK. Also runs in #7 CI | ❌ The "least-privilege CMK" claim is contradicted by B5-2. "One rule, one resource" is wrong (EX-02 covers 2 resources). The register still says PROPOSED | ❌ **B5-2**: unconditioned `kms:Create*`/`kms:Put*` for account root on 3 CMKs allows CreateGrant/PutKeyPolicy escalation. **B5-1**: suppressions were applied before approval. **B5-3**: conflicts with #1 | **No** |
 | Organizations reference ([#6](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6) @ `e5e7f46`) | ⚠️ [#14 review]: **Request changes** at exact SHA | ⚠️ 2 parliament allowlist entries, not adjudicated | ✅ [re-run] hashes 66/66, Jest 49/49, synth OK. **No CI** | ❌ The "hardened S3" README claim is false. The Terraform-to-CDK deviation is undocumented | ❌ **B6-1** S3 self-logging ([re-run] ERROR). **B6-2** exempt-role-name SCP bypass. **B6-3** Terraform plan deviation | **No** |
 | Integration ([#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) @ `49122f2`) | ❌ No human review of `49122f2`. #14 reviewed only its postgres harness portion | ⚠️ Inherits #5 | ✅ [CI] at `49122f2`, all success: aws-cdk [40743606730](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743606730); offline-validation [40743606409](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743606409) and [40743592407](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743592407); postgres [40743606483](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743606483). Also exercised inside #26's acceptance run (base). Earlier head `afb41278`: CI green, `validate-all.sh --python-only` 20/20 [re-run] | ⚠️ Its own AC4 is PARTIAL | ❌ It integrates #5 with unresolved **B5-2**, while #7's AC5 says MET (not re-read at `49122f2`) | **No** |
 | Portfolio case studies ([#8](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/8) @ `6c25c05`) | ❌ None | — | ⚠️ [re-run] citation check (§4): 130/130 GitHub links resolve, all blob/tree/commit links are SHA-pinned, and the 5 cited Actions runs match conclusion and SHA | ⚠️ Prose claims not checked beyond the links | ✅ none found | **No:** needs review |
@@ -304,7 +341,7 @@ Key: ✅ met · ⚠️ partial or conditional · ❌ not met · — not applicab
 
 G6 note: `main` is still `7f50348`, and GitHub reports every PR as MERGEABLE. #1 and #5 conflict with each other on `infra/aws-cdk/**` (per [#14 review], via `git merge-tree`). G6 has to be redone after any merge.
 
-## 3. Security exception register: EX-01..EX-04 (#5), reconciled at `1fdf25a`
+## 3. Security exception register: EX-01..EX-04 (#5), reconciled at `e9310f3`
 
 **Decisions recorded here are only those Ian relayed.** On 2026-10-28 at 21:41 EDT (recovery directive), consistent with the 14:10 EDT relay:
 - EX-01: **accepted, pending policy verification**.
@@ -312,20 +349,20 @@ G6 note: `main` is still `7f50348`, and GitHub reports every PR as MERGEABLE. #1
 - EX-03: **conditional on scope verification**.
 - EX-04: **conditional on role review**.
 
-No approval beyond these was given. The register file `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` @ `1fdf25a` still reads "**PROPOSED, pending owner approval**" for every entry. The live gate unblocks an entry only on an exact `EX-NN status: APPROVED` line (`scripts/ci/check_exceptions.py` lines 12–13). This report has **not** written any such line. It would also be wrong to write `APPROVED` for a conditional decision before Ian confirms the condition.
+No approval beyond these was given. The register file `evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md` @ `e9310f3` still reads "**PROPOSED, pending owner approval**" for every entry. At `e9310f3`, AC2 needs an `ACCEPTANCE-DECISION v1` comment that Ian posts on PR #7 for the exact SHA, with `UA-1: APPROVE` or `REJECT` naming exactly EX-01 EX-02 EX-03 EX-04. `check_exceptions.py` in validate-all still reads the register's `PROPOSED`. This report has **not** posted or drafted an approval on Ian's behalf. On the relayed decisions, only EX-02 is an unconditional acceptance. The gate's format lists all four IDs in one APPROVE or REJECT line, so Ian must settle the EX-01, EX-03 and EX-04 conditions before posting.
 
-Facts below were checked in the synth templates @ `1fdf25a`:
+Facts below were checked in the synth templates @ `e9310f3`:
 - `BankItLabSecureStorage.template.json` sha256 `9ba9be1d627acb4b…`
 - `BankItLabNetworkDatabase.template.json` sha256 `c3dd0a0ce47e4708…`
 
 Both are listed in the bundle's `SHA256SUMS`, which re-checked 44/44 OK. They are templates only and were never deployed.
 
-| ID | Rule / resource | Ian's decision (relayed) | Register @ `1fdf25a` | Condition | Verification evidence | Reconciled status |
+| ID | Rule / resource | Ian's decision (relayed) | Register @ `e9310f3` | Condition | Verification evidence | Reconciled status |
 |---|---|---|---|---|---|---|
 | EX-01 | NIST.800.53.R5-S3DefaultEncryptionKMS / AccessLogsBucket | Accepted, pending policy verification | PROPOSED | Bucket-policy verification | **Bucket:** `AccessLogsBucket83982689` has SSE-S3 (`AES256`), all 4 Block Public Access flags, versioning Enabled and `BucketOwnerEnforced`.<br>**Policy:** `AccessLogsBucketPolicy7F77476F` denies `s3:*` when `aws:SecureTransport=false`. It allows `s3:PutObject` only to `logging.s3.amazonaws.com` on `/data-bucket/*`, with `aws:SourceArn` = DataBucket and `aws:SourceAccount` = this account.<br>**Product source:** the AWS S3 docs ([server access logging](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html), re-read 21:42 EDT): "The destination bucket must use Amazon S3 managed keys (SSE-S3)" | **CONDITIONALLY ACCEPTED.** The condition evidence is verified by this report. It is **not APPROVED** until Ian confirms the verification and the register is updated |
 | EX-02 | NIST.800.53.R5-S3BucketReplicationEnabled / AccessLogsBucket and DataBucket | Accepted as a limitation | PROPOSED | None | Both buckets have versioning Enabled and `DeletionPolicy: Retain`, and no `ReplicationConfiguration`. The register's "Why" still says "not expressible in an env-agnostic, never-deployed lab stack". The 14:10 relay rejected that wording, so a docs fix by the #5 owner is still open | **ACCEPTED (limitation), per Ian.** It is not yet recorded in the register, so the gate still counts it PROPOSED |
 | EX-03 | AwsSolutions-IAM5 / RdsMonitoringPolicy | Conditional on scope verification | PROPOSED | Exact wildcard scope | **Policy:** `RdsMonitoringPolicy5DA8ACAC` statement 1 grants `logs:CreateLogGroup` and `PutRetentionPolicy` on `…:<region>:<account>:log-group:RDSOSMetrics`, with no wildcard. Statement 2 grants `CreateLogStream`, `PutLogEvents`, `DescribeLogStreams` and `GetLogEvents` on `…:log-group:RDSOSMetrics:log-stream:*` only.<br>**Role:** `RdsMonitoringRole696C9BB4` trusts `monitoring.rds.amazonaws.com` with `aws:SourceAccount` | **CONDITIONAL.** The scope evidence is verified by this report and matches the register's claim. It is **not APPROVED** until Ian confirms |
-| EX-04 | AwsSolutions-IAM4 / BackupPlanPostgresRole (`AWSBackupServiceRolePolicyForBackup`) | Conditional on role review | PROPOSED | Role review | **Trust:** `BackupPlanPostgresRole2A2CEBDF` trusts `backup.amazonaws.com` with **no `aws:SourceAccount` condition** (unchanged at `1fdf25a`, unlike the monitoring role).<br>**Managed policy:** the AWS docs ([AWS Backup service roles](https://docs.aws.amazon.com/aws-backup/latest/devguide/iam-service-roles.html), re-read 21:42 EDT) document `AWSBackupServiceRolePolicyForBackup` as the default backup service-role policy.<br>**Vault:** #14 notes the vault has no access policy or Vault Lock | **CONDITIONAL; the role review finds a gap.** Ian chooses: (a) accept as is, or (b) require the #5 owner to add `aws:SourceAccount` and then re-review |
+| EX-04 | AwsSolutions-IAM4 / BackupPlanPostgresRole (`AWSBackupServiceRolePolicyForBackup`) | Conditional on role review | PROPOSED | Role review | **Trust:** `BackupPlanPostgresRole2A2CEBDF` trusts `backup.amazonaws.com` with **no `aws:SourceAccount` condition** (unchanged at `e9310f3`, unlike the monitoring role).<br>**Managed policy:** the AWS docs ([AWS Backup service roles](https://docs.aws.amazon.com/aws-backup/latest/devguide/iam-service-roles.html), re-read 21:42 EDT) document `AWSBackupServiceRolePolicyForBackup` as the default backup service-role policy.<br>**Vault:** #14 notes the vault has no access policy or Vault Lock | **CONDITIONAL; the role review finds a gap.** Ian chooses: (a) accept as is, or (b) require the #5 owner to add `aws:SourceAccount` and then re-review |
 
 Separately, **B5-2** (KMS key-admin escalation) is recorded as fixed in `80f01d6`, and #31 confirms it. This report did not audit the new key policy.
 

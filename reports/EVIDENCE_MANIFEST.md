@@ -1,48 +1,48 @@
 # EVIDENCE MANIFEST
 
-Snapshot: 2026-10-28, about 21:45 EDT for the live-candidate section; the per-branch history below is from about 14:25 EDT. The "verify" column shows the result of `sha256sum -c` re-run on the box for this report. The "hash of SHA256SUMS" column holds the first 16 hex characters of the SHA-256 of the SHA256SUMS file at the listed commit.
+Snapshot: 2026-10-28, about 21:52 EDT for the live-candidate section; the per-branch history below is from about 14:25 EDT. The "verify" column shows the result of `sha256sum -c` re-run on the box for this report. The "hash of SHA256SUMS" column holds the first 16 hex characters of the SHA-256 of the SHA256SUMS file at the listed commit.
 
-## Live candidate: PR #7 @ `1fdf25a` (re-verified about 21:45 EDT)
+## Live candidate: PR #7 @ `e9310f3` (re-verified about 21:52 EDT; the evidence tree is unchanged from `1fdf25a`)
 
-`1fdf25ad10c56bb457d6242392f9305c539d1209`, base and `main` `7f50348`. Every bundle in the tree was checked with `sha256sum -c` on the box: **20 of 20 OK**. This table supersedes the per-branch rows below for the 7 integrated modules. Those rows are kept as history.
+`e9310f3a94162a5dae31ee1cca9e35452de033ed`, base and `main` `7f50348`. Every bundle in the tree was checked with `sha256sum -c` on the box: **20 of 20 OK**. This table supersedes the per-branch rows below for the 7 integrated modules. Those rows are kept as history.
 
 | Commit | Bundle | Entries | Hash of SHA256SUMS (16 hex) | Verify |
 |---|---|---|---|---|
-| `1fdf25a` | `evidence/aws/aws-remediation-vpc-rds` | 44 | `b55711100bf75946` | OK (B5-2 pass 4; pre-fix copy under `superseded/pass3-pre-B5-2/`) |
-| `1fdf25a` | `evidence/entra/runs/local-offline-20261028T150359Z` | 46 | `ae111bd9f2677a1c` | OK |
-| `1fdf25a` | `evidence/m365/runs/local-offline-20261028T181845Z` | 20 | `52f3872346ef7113` | OK (PLAN_ONLY) |
-| `1fdf25a` | `evidence/incident/runs/local-20261028T181818Z` | 38 | `c5c381dc092e7ded` | OK (SIMULATION) |
-| `1fdf25a` | `evidence/incident/runs/local-20261029T000545Z` | 38 | `03ef3d46e530f75e` | OK (SIMULATION) |
-| `1fdf25a` | `evidence/postgres/runs/ci-service-40741329107-1` | 46 | `35b754a72a0e2e46` | OK; `verify_evidence.py` VERIFIED |
-| `1fdf25a` | `evidence/postgres/runs/ci-offline-40741329107-1` | 48 | `8d70475a19e69a61` | OK |
-| `1fdf25a` | `evidence/postgres/runs/ci-mismatch-control-40741329107-1` | 41 | `35c1acef322b92ae` | OK (negative control; REJECTED as expected) |
-| `1fdf25a` | `evidence/postgres/runs/ci-selftest-40741329107-1 (+ A/B/C subdirs 17/10/17)` | 48 | `cb6f29645d3c60d0` | OK |
-| `1fdf25a` | `evidence/postgres/runs/local-offline-v2-20261028T180208Z` | 48 | `b1a24138219376f0` | OK |
-| `1fdf25a` | `evidence/postgres/runs/local-selftest-v2-20261028T180208Z (+ A/B/C subdirs)` | 48 | `c625d6502091f985` | OK |
-| `1fdf25a` | `evidence/postgres/runs/ci-service-40630856041-1` | 36 | `598d028da03ec1d9` | OK, HISTORICAL (v1; results invalid) |
-| `1fdf25a` | `evidence/postgres/runs/local-offline-20261028T041038Z` | 39 | `a068097599f7b23e` | OK, HISTORICAL |
-| `1fdf25a` | `evidence/postgres/runs/integration-offline-20261028T180134Z` | 48 | `3faf0997635c4ab6` | OK, HISTORICAL (present again at `1fdf25a`; reported HISTORICAL by validate-all step 27) |
+| `e9310f3` | `evidence/aws/aws-remediation-vpc-rds` | 44 | `b55711100bf75946` | OK (B5-2 pass 4; pre-fix copy under `superseded/pass3-pre-B5-2/`) |
+| `e9310f3` | `evidence/entra/runs/local-offline-20261028T150359Z` | 46 | `ae111bd9f2677a1c` | OK |
+| `e9310f3` | `evidence/m365/runs/local-offline-20261028T181845Z` | 20 | `52f3872346ef7113` | OK (PLAN_ONLY) |
+| `e9310f3` | `evidence/incident/runs/local-20261028T181818Z` | 38 | `c5c381dc092e7ded` | OK (SIMULATION) |
+| `e9310f3` | `evidence/incident/runs/local-20261029T000545Z` | 38 | `03ef3d46e530f75e` | OK (SIMULATION) |
+| `e9310f3` | `evidence/postgres/runs/ci-service-40741329107-1` | 46 | `35b754a72a0e2e46` | OK; `verify_evidence.py` VERIFIED |
+| `e9310f3` | `evidence/postgres/runs/ci-offline-40741329107-1` | 48 | `8d70475a19e69a61` | OK |
+| `e9310f3` | `evidence/postgres/runs/ci-mismatch-control-40741329107-1` | 41 | `35c1acef322b92ae` | OK (negative control; REJECTED as expected) |
+| `e9310f3` | `evidence/postgres/runs/ci-selftest-40741329107-1 (+ A/B/C subdirs 17/10/17)` | 48 | `cb6f29645d3c60d0` | OK |
+| `e9310f3` | `evidence/postgres/runs/local-offline-v2-20261028T180208Z` | 48 | `b1a24138219376f0` | OK |
+| `e9310f3` | `evidence/postgres/runs/local-selftest-v2-20261028T180208Z (+ A/B/C subdirs)` | 48 | `c625d6502091f985` | OK |
+| `e9310f3` | `evidence/postgres/runs/ci-service-40630856041-1` | 36 | `598d028da03ec1d9` | OK, HISTORICAL (v1; results invalid) |
+| `e9310f3` | `evidence/postgres/runs/local-offline-20261028T041038Z` | 39 | `a068097599f7b23e` | OK, HISTORICAL |
+| `e9310f3` | `evidence/postgres/runs/integration-offline-20261028T180134Z` | 48 | `3faf0997635c4ab6` | OK, HISTORICAL (present again at `e9310f3`; reported HISTORICAL by validate-all step 27) |
 
-Actions artifacts of integration-gate [40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073) (sha256 digest from the Actions API, first 16 hex; expiry in UTC):
+Actions artifacts of integration-gate [40802567048](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567048) (sha256 digest from the Actions API, first 16 hex; expiry in UTC):
 
 | Artifact | Bytes | Digest | Expires |
 |---|---|---|---|
-| `acceptance-decision-07eea1c…` | 3061 | `9efc8b129d26ce32` | 2027-01-27 |
-| `user-actions-07eea1c…` | 2766 | `973494cc90938030` | 2026-11-05 |
-| `incident-fresh-run-07eea1c…` | 23758 | `2ca13f778e8b26af` | 2026-11-05 |
-| `cdk-out` | 35025 | `5f781c20f1d45486` | 2026-11-05 |
-| `cdk-synth-evidence-40800364073-1` | 1041 | `4b8e566f7a756e90` | 2027-01-27 |
-| `postgres-evidence-service-40800364073-1` | 61599 | `536736904e23f9c5` | 2027-01-27 |
-| `postgres-evidence-offline-40800364073-1` | 63059 | `a582c8dca8e34614` | 2027-01-27 |
-| `postgres-evidence-mismatch-control-40800364073-1` | 22577 | `122ad7b7def412bf` | 2027-01-27 |
-| `postgres-evidence-selftest-40800364073-1` | 34053 | `f4a603d975990881` | 2027-01-27 |
+| `acceptance-decision-9ff24a4…` | 5691 | `b0fd250e65f87c44` | 2027-01-27 |
+| `user-actions-9ff24a4…` | 3610 | `ef75c71ec56c7255` | 2026-11-05 |
+| `incident-fresh-run-9ff24a4…` | 23731 | `d29320e66dd5df35` | 2026-11-05 |
+| `cdk-out` | 35025 | `193e0528f72037ad` | 2026-11-05 |
+| `cdk-synth-evidence-40802567048-1` | 1041 | `8e00c5360d4158bd` | 2027-01-27 |
+| `postgres-evidence-service-40802567048-1` | 61658 | `3c341083708f08b1` | 2027-01-27 |
+| `postgres-evidence-offline-40802567048-1` | 63064 | `575e9c6d1c3a6ff4` | 2027-01-27 |
+| `postgres-evidence-mismatch-control-40802567048-1` | 22583 | `4506b5c4acd9c72c` | 2027-01-27 |
+| `postgres-evidence-selftest-40802567048-1` | 34025 | `bc03d88a0beafd31` | 2027-01-27 |
 
-CI runs at `1fdf25a`:
-- integration-gate [40800364073](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364073) (PR) and [40800359209](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800359209) (push)
-- main-validation [40800374574](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800374574)
-- aws-cdk [40800363940](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800363940) / [40800359350](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800359350)
-- postgres-restore-evidence [40800363954](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800363954)
-- offline-validation [40800364076](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800364076) / [40800359259](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40800359259)
+CI runs at `e9310f3`:
+- integration-gate [40802567048](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567048) (PR) and [40802561953](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802561953) (push)
+- main-validation [40802573622](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802573622)
+- aws-cdk [40802567002](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567002) / [40802561755](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802561755)
+- postgres-restore-evidence [40802567000](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567000)
+- offline-validation [40802567034](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802567034) / [40802561784](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40802561784)
 
 Each integration-gate run has 18/19 jobs succeeding; `merge-eligibility` fails, NOT ELIGIBLE.
 
