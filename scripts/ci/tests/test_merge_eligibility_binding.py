@@ -35,26 +35,40 @@ def met(binding=BIND, evidence="https://example.invalid/run/1", **extra):
 
 
 AUTHOR = "onnxscibroccoli"
+REVIEWER = "independent-reviewer"
+CONFIG = {"owner_logins": [AUTHOR], "owner_required_permission": ["admin"], "reviewer_allowlist": [REVIEWER],
+          "reviewer_required_permission": ["admin", "maintain", "write"], "decision_pr": 7, "decision_header": "ACCEPTANCE-DECISION v1"}
+
+
+def decision_comment(login, lines, cand=CAND, cid=100, at="2026-10-28T23:10:00Z", edited=False):
+    return {"id": cid, "user": {"login": login}, "created_at": at, "updated_at": "2026-10-28T23:59:00Z" if edited else at,
+            "body": "ACCEPTANCE-DECISION v1\ncandidate: " + cand + "\n" + "\n".join(lines)}
+
+
 APPROVED_REVIEWS = {"ok": True, "pr": 7, "pr_author": AUTHOR, "head_sha": CAND, "base_ref": "main",
-                    "reviews": [{"id": 1, "user": {"login": "independent-reviewer"}, "state": "APPROVED", "commit_id": CAND,
-                                 "submitted_at": "2026-10-28T23:00:00Z"}]}
+                    "reviews": [{"id": 1, "user": {"login": REVIEWER}, "state": "APPROVED", "commit_id": CAND,
+                                 "submitted_at": "2026-10-28T23:00:00Z"}],
+                    "comments_ok": True,
+                    "comments": [decision_comment(REVIEWER, ["AC4: ACCEPT", "AC5: ACCEPT"])],
+                    "permissions": {AUTHOR: {"permission": "admin", "role_name": "admin"}, REVIEWER: {"permission": "write", "role_name": "write"}}}
 CLEAN_EXC = {"applied": [], "unapproved": [], "errors": [], "blocking_user_action": False}
 
 
 def tasks(ac_over):
-    conds = [dict({"id": ac}, **met()) for ac in ("AC2", "AC4", "AC5")]
-    conds += [{"id": "AC1", "status": "COMPUTED_AT_RUNTIME"}, {"id": "AC3", "status": "COMPUTED_AT_RUNTIME"}, {"id": "AC6", "status": "UNMET"}]
+    conds = [{"id": ac, "status": "COMPUTED_AT_RUNTIME"} for ac in ("AC1", "AC2", "AC3", "AC4", "AC5")] + [{"id": "AC6", "status": "UNMET"}]
     conds = [dict({"id": c["id"]}, **ac_over[c["id"]]) if c["id"] in ac_over else c for c in conds]
     return {"acceptance_conditions_for_main": {"conditions": conds}}
 
 
-def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC):
+def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC, config=CONFIG):
     with tempfile.TemporaryDirectory() as d:
         tp = Path(d) / "tasks.json"
         tp.write_text(json.dumps(tasks(ac_over or {})))
         args = ["--tasks", str(tp), *extra]
         if reviews is not None:
             (Path(d) / "rv.json").write_text(json.dumps(reviews)); args += ["--reviews", str(Path(d) / "rv.json")]
+        if config is not None:
+            (Path(d) / "cfg.json").write_text(json.dumps(config)); args += ["--config", str(Path(d) / "cfg.json")]
         if exc is not None:
             (Path(d) / "exc.json").write_text(json.dumps(exc)); args += ["--exceptions", str(Path(d) / "exc.json")]
         if ident is not None:
@@ -105,8 +119,11 @@ class Binding(unittest.TestCase):
                 self.assertEqual(rc, 1)
 
     def test_uppercase_is_normalized_not_rejected(self):
+        # in-tree MET is never accepted any more (PR #31 F6); the binding itself must still normalize case
+        self.assertEqual(me.binding_problems("AC4", met({k: v.upper() for k, v in BIND.items()}), IDENT), [])
         rc, out = run({"AC4": met({k: v.upper() for k, v in BIND.items()})})
-        self.assertEqual(rc, 0, out)
+        self.assertEqual(rc, 1)
+        self.assertIn("AC4: MET in tasks.json is self-asserted", out)
 
     def test_wrong_sha_is_not_eligible(self):
         rc, out = run({"AC5": met(dict(BIND, candidate_sha="7fe6d7281316190d9b39e35a448fb9fb81b92d50"))})
@@ -122,10 +139,11 @@ class Binding(unittest.TestCase):
         rc, out = run({"AC2": met(evidence="")})
         self.assertEqual(rc, 1)
 
-    def test_runtime_status_only_for_ac3(self):
-        rc, out = run({"AC2": {"status": "COMPUTED_AT_RUNTIME"}})
+    def test_runtime_status_needs_runtime_evidence(self):
+        # COMPUTED_AT_RUNTIME is allowed for AC1-AC5 now, but without runtime evidence nothing is met
+        rc, out = run({"AC2": {"status": "COMPUTED_AT_RUNTIME"}}, reviews=None)
         self.assertEqual(rc, 1)
-        self.assertIn("not allowed for AC2", out)
+        self.assertIn("runtime evidence not fetched", out)
 
     def test_ac3_runtime_needs_merge_identity(self):
         rc, out = run(ident=dict(IDENT, kind="direct", tested_sha=CAND, base_sha=None))

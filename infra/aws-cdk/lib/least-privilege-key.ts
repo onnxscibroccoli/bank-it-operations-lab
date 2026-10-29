@@ -5,7 +5,11 @@ import { Construct } from 'constructs';
 
 /**
  * Key administration only (B5-2). Explicit actions, no `kms:Create*` / `kms:Put*` wildcards:
- *  - no kms:CreateGrant here (grants are only possible through the conditioned GrantsForAwsResources... statement),
+ *  - no kms:CreateGrant here. Account principals get CreateGrant only from conditioned statements: the
+ *    GrantsForAwsResourcesViaApprovedServicesOnly statement below (GrantIsForAWSResource + CallerAccount + ViaService) and,
+ *    on DatabaseKey only, the statement the CDK Secret construct adds (CreateGrant/DescribeKey for the account root,
+ *    conditioned ONLY on kms:ViaService = secretsmanager.<region>; no GrantIsForAWSResource / CallerAccount). That one is
+ *    callable only through Secrets Manager; see SECURITY_EXCEPTIONS.md "Noted, not an exception" (PR #31 M1),
  *  - no kms:Encrypt/Decrypt/GenerateDataKey/ReEncrypt and no `kms:*`,
  *  - kms:PutKeyPolicy stays (so the key remains manageable) but only without BypassPolicyLockoutSafetyCheck.
  */

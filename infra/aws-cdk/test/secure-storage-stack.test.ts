@@ -87,7 +87,8 @@ describe('SecureStorageStack (remediated)', () => {
     expect(arns).toContain(':role/BankItLabKmsKeyAdmin');
     expect(arns).toContain(':root');
     expect(admin.Condition.BoolIfExists['kms:BypassPolicyLockoutSafetyCheck']).toBe('false');
-    // the only CreateGrant allowed for account principals is the conditioned AWS-resource grant statement
+    // every CreateGrant for account principals must be conditioned (AWS-resource grant statement here; on DatabaseKey the
+    // CDK Secret statement is conditioned on kms:ViaService=secretsmanager only, PR #31 M1)
     for (const s of stmts.filter((x) => ([] as string[]).concat(x.Action).includes('kms:CreateGrant'))) {
       expect(s.Condition?.Bool?.['kms:GrantIsForAWSResource'] ?? s.Condition?.StringEquals?.['kms:ViaService']).toBeDefined();
     }

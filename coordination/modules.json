@@ -18,6 +18,7 @@
    ],
    "paths": [
     ".github/workflows",
+    ".github/acceptance",
     "scripts/validate-all.sh",
     "scripts/ci",
     "coordination",
@@ -294,11 +295,12 @@
    "blocker": {
     "ids": [
      "B6-1",
-     "B6-2"
+     "B6-2",
+     "B6-3"
     ],
     "source": "PR #14 eb8d259 + PR #3 cfn-s3-selflog",
     "head_sha": "e5e7f4604597c7e6e35e69bf0607fe0535d4cdab",
-    "unblock": "Give TrailAccessLogsBucket no server access logging (or a separate dedicated log bucket) with a cdk-nag suppression recorded as an exception; remove the exempt-role SCP bypass; re-run cfn-s3-selflog = 0 ERROR."
+    "unblock": "Give TrailAccessLogsBucket no server access logging (or a separate dedicated log bucket) with a cdk-nag suppression recorded as an exception; remove the exempt-role SCP bypass; re-run cfn-s3-selflog = 0 ERROR. B6-3: deliver the requested Terraform track for the Organizations/SCP/CloudTrail references (with static checks equivalent to the CDK ones), or get an explicit owner decision descoping Terraform, recorded in tasks.json."
    },
    "blockers": [
     "B6-1",

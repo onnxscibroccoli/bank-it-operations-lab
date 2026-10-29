@@ -1,0 +1,34 @@
+{
+ "schema": "bank-lab/acceptance-trusted-config/v1",
+ "repository": "onnxscibroccoli/bank-it-operations-lab",
+ "note": "Read by the merge-eligibility gate ONLY from the trusted checkout (main when main carries it, else the pinned TRUSTED_GATE_SHA). The candidate's copy of this file is never read. Changing who may approve requires changing this file on main (UA-3) or re-pinning, both visible in review.",
+ "owner_logins": [
+  "onnxscibroccoli"
+ ],
+ "owner_required_permission": [
+  "admin"
+ ],
+ "reviewer_allowlist": [],
+ "reviewer_required_permission": [
+  "admin",
+  "maintain",
+  "write"
+ ],
+ "decision_pr": 7,
+ "decision_header": "ACCEPTANCE-DECISION v1",
+ "required_gate_jobs": [
+  "user-actions",
+  "module-registry",
+  "offline-validation",
+  "aws-cdk",
+  "postgres",
+  "m365-scenario-evaluation",
+  "m365-unit-tests",
+  "m365-evidence-verification",
+  "plan-only-assertions",
+  "incident-committed-runs",
+  "incident-fresh-run",
+  "incident-not-executed-negative",
+  "labeling-markers"
+ ]
+}

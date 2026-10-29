@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_exceptions, reviews  # noqa: E402
 import merge_eligibility as me  # noqa: E402
-from test_merge_eligibility_binding import APPROVED_REVIEWS, AUTHOR, CAND, CLEAN_EXC, IDENT, run, met  # noqa: E402
+from test_merge_eligibility_binding import APPROVED_REVIEWS, AUTHOR, CAND, CLEAN_EXC, CONFIG, IDENT, REVIEWER, decision_comment, run, met  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 OTHER = "b908a669b302ff37f2c2ca79ed828f65e5a9f432"
@@ -29,32 +29,32 @@ class AC1FromReviews(unittest.TestCase):
         self.assertIn("AC1: MET_AT_RUNTIME", out)
 
     def test_same_account_approval_never_counts(self):
-        st, why = reviews.ac1_from_reviews(rv(review(AUTHOR, "APPROVED")), IDENT)
+        st, why = reviews.ac1_from_reviews(rv(review(AUTHOR, "APPROVED")), IDENT, CONFIG)
         self.assertEqual(st, "UNMET")
         self.assertIn("same-account", " ".join(why))
-        st, _ = reviews.ac1_from_reviews(rv(review(AUTHOR.upper(), "APPROVED")), IDENT)
+        st, _ = reviews.ac1_from_reviews(rv(review(AUTHOR.upper(), "APPROVED")), IDENT, CONFIG)
         self.assertEqual(st, "UNMET")
 
     def test_approval_of_another_commit_does_not_count(self):
-        st, _ = reviews.ac1_from_reviews(rv(review("rev", "APPROVED", commit=OTHER)), IDENT)
+        st, _ = reviews.ac1_from_reviews(rv(review("rev", "APPROVED", commit=OTHER)), IDENT, CONFIG)
         self.assertEqual(st, "UNMET")
-        st, _ = reviews.ac1_from_reviews(rv(review("rev", "APPROVED", commit=CAND[:7])), IDENT)
+        st, _ = reviews.ac1_from_reviews(rv(review("rev", "APPROVED", commit=CAND[:7])), IDENT, CONFIG)
         self.assertEqual(st, "UNMET")
 
     def test_pr_head_moved_past_candidate(self):
-        st, why = reviews.ac1_from_reviews(rv(review("rev", "APPROVED"), head_sha=OTHER), IDENT)
+        st, why = reviews.ac1_from_reviews(rv(review("rev", "APPROVED"), head_sha=OTHER), IDENT, CONFIG)
         self.assertEqual(st, "UNMET")
         self.assertIn("is not the candidate", " ".join(why))
 
     def test_commented_only_or_dismissed_or_later_changes_requested(self):
-        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "COMMENTED")), IDENT)[0], "UNMET")
-        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "APPROVED", rid=1), review("rev", "DISMISSED", at="2026-10-28T23:30:00Z", rid=2)), IDENT)[0], "UNMET")
-        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "APPROVED", rid=1), review("rev2", "CHANGES_REQUESTED", rid=2)), IDENT)[0], "UNMET")
+        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "COMMENTED")), IDENT, CONFIG)[0], "UNMET")
+        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "APPROVED", rid=1), review("rev", "DISMISSED", at="2026-10-28T23:30:00Z", rid=2)), IDENT, CONFIG)[0], "UNMET")
+        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "APPROVED", rid=1), review("rev2", "CHANGES_REQUESTED", rid=2)), IDENT, CONFIG)[0], "UNMET")
         # a later approval by the same reviewer supersedes its earlier changes-requested
-        self.assertEqual(reviews.ac1_from_reviews(rv(review("rev", "CHANGES_REQUESTED", rid=1), review("rev", "APPROVED", at="2026-10-28T23:30:00Z", rid=2)), IDENT)[0], "MET_AT_RUNTIME")
+        self.assertEqual(reviews.ac1_from_reviews(rv(review(REVIEWER, "CHANGES_REQUESTED", rid=1), review(REVIEWER, "APPROVED", at="2026-10-28T23:30:00Z", rid=2)), IDENT, CONFIG)[0], "MET_AT_RUNTIME")
 
     def test_fetch_failure_or_missing_reviews_fails_closed(self):
-        self.assertEqual(reviews.ac1_from_reviews({"ok": False, "error": "HTTPError 403"}, IDENT)[0], "UNMET")
+        self.assertEqual(reviews.ac1_from_reviews({"ok": False, "error": "HTTPError 403"}, IDENT, CONFIG)[0], "UNMET")
         rc, out = run(reviews=None)
         self.assertEqual(rc, 1)
         self.assertIn("reviews not fetched", out)
