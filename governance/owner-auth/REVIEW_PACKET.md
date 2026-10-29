@@ -6,7 +6,10 @@ This packet is for the delivery branch. It is not an approval and it does not ma
 |---|---|
 | main | `7f50348bf1370381615eaed91c02607fe41de2f5` |
 | PR #7 candidate, left unchanged | `a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45` |
-| Delivery head | the commit that adds this file on `delivery/portfolio` |
+| Delivery head when this packet was first added | `a5b60edcc886e9f389d814701b24d9d71a76df99` |
+| Actions on that head | orgs-static, network-edge, backup-static, and the aws-cdk synth passed. The offline suite failed: the static inventory had not been regenerated after the backup-role change, and three coverage tests still assumed `orgs-security` was BLOCKED. |
+
+Attestations, if any are later made, must name the exact final SHA. `a5b60ed` is not that SHA once this packet is amended. PR #1 was already closed before this amendment; closing it is not an acceptance of the replacement stack.
 
 Last known integration-gate on the PR #7 candidate failed merge-eligibility. Execution jobs on earlier candidates were green. That result is not reused for this delivery head.
 

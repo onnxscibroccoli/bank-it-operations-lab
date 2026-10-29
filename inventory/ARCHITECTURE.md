@@ -16,7 +16,7 @@ STATIC_REFERENCE — NOT_DEPLOYED. Arrows show template references/dependencies,
 | BankItLabNetworkDatabase | AWS::EC2::SubnetRouteTableAssociation | 4 |
 | BankItLabNetworkDatabase | AWS::EC2::VPC | 1 |
 | BankItLabNetworkDatabase | AWS::EC2::VPCEndpoint | 1 |
-| BankItLabNetworkDatabase | AWS::IAM::ManagedPolicy | 2 |
+| BankItLabNetworkDatabase | AWS::IAM::ManagedPolicy | 3 |
 | BankItLabNetworkDatabase | AWS::IAM::Role | 4 |
 | BankItLabNetworkDatabase | AWS::KMS::Key | 2 |
 | BankItLabNetworkDatabase | AWS::Lambda::Function | 1 |
@@ -61,19 +61,6 @@ flowchart TD
   source["BackupPlanA8F64793"]
   n0["BackupVault3A9C5852"]
   source --> n0
-```
-
-### BackupPlanPostgres674ACA1E (BankItLabNetworkDatabase)
-
-```mermaid
-flowchart TD
-  source["BackupPlanPostgres674ACA1E"]
-  n0["BackupPlanA8F64793"]
-  source --> n0
-  n1["BackupPlanPostgresRole2A2CEBDF"]
-  source --> n1
-  n2["Postgres9DC8BB04"]
-  source --> n2
 ```
 
 ### BackupVault3A9C5852 (BankItLabNetworkDatabase)
@@ -144,6 +131,30 @@ flowchart TD
   n0["DatabaseSecurityGroup7319C0F6"]
   source --> n0
   n1["RotationSecurityGroup8276CF62"]
+  source --> n1
+```
+
+### DbBackupPolicy43A4FBCE (BankItLabNetworkDatabase)
+
+```mermaid
+flowchart TD
+  source["DbBackupPolicy43A4FBCE"]
+  n0["BackupVault3A9C5852"]
+  source --> n0
+  n1["DatabaseKey7576F140"]
+  source --> n1
+  n2["Postgres9DC8BB04"]
+  source --> n2
+```
+
+### DbBackupRoleB234430F (BankItLabNetworkDatabase)
+
+```mermaid
+flowchart TD
+  source["DbBackupRoleB234430F"]
+  n0["BackupVault3A9C5852"]
+  source --> n0
+  n1["DbBackupPolicy43A4FBCE"]
   source --> n1
 ```
 
@@ -291,6 +302,19 @@ flowchart TD
   source --> n2
   n3["PostgresSecretAttachment75CD6F6F"]
   source --> n3
+```
+
+### PostgresSelection (BankItLabNetworkDatabase)
+
+```mermaid
+flowchart TD
+  source["PostgresSelection"]
+  n0["BackupPlanA8F64793"]
+  source --> n0
+  n1["DbBackupRoleB234430F"]
+  source --> n1
+  n2["Postgres9DC8BB04"]
+  source --> n2
 ```
 
 ### PostgresSubnetGroup9F8A4D6E (BankItLabNetworkDatabase)

@@ -1036,6 +1036,12 @@
     "re-run integration-gate"
    ]
   },
+  "delivery_a5b60ed_ci_repair": {
+    "at": "2026-10-29T00:25:00-04:00",
+    "head_repaired": "a5b60edcc886e9f389d814701b24d9d71a76df99",
+    "what": "portfolio-validation offline failed on a5b60ed. inventory/assets.json and ARCHITECTURE.md were regenerated from the EX-04 network-database template (DbBackupRole, DbBackupPolicy, PostgresSelection; template sha256 2e2d47d35668b8274ddcbd40470672d3a39df81bab5e243b249edb62b6d0a145). Coverage tests no longer require the live orgs-security status to be BLOCKED; BLOCKED reason and category are tested on a fixture copy. denominator_floor raised 26 to 27 because owner-authentication was added. The floor was not lowered.",
+    "unchanged": "AC1 AC2 AC4 AC5 remain unmet. EX-01 through EX-04 remain PROPOSED. BKP-EX-01 and BKP-EX-02 remain AWS-managed backup policies on the tag-selected plan. No reviewer was invented. No key was enrolled. PR #7 was not updated in git. PR #1 was already closed."
+  },
   "round10_pr33_repairs": {
    "requested": "relayed 22:23 EDT: PR #33 CHANGES REQUIRED on 2e3041a (D3-a + nits)",
    "D3-a": "gate trust is computed inside merge_eligibility.py (never read from a workflow-written file): for every manifest file the expected sha256 is git show <gate_sha>:path hashed at runtime; it must equal the manifest value and the executing copy (running scripts/ci modules, the --config read, integration-gate.yml at GITHUB_WORKFLOW_SHA); any mismatch -> TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE",

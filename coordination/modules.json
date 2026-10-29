@@ -1196,8 +1196,8 @@
     "PR": "PR descriptions #1-#29"
   },
   "coverage": {
-    "denominator_floor": 26,
-    "denominator_rule": "Every planned module counts. Completion = INTEGRATED / (all modules - SUPERSEDED). SUPERSEDED modules stay listed and count as resolved by superseded_by. BLOCKED, NOT_INTEGRATED and NOT_STARTED count as incomplete. check_modules.py fails if the module count drops below denominator_floor; lowering the floor needs an owner decision recorded in tasks.json.",
+    "denominator_floor": 27,
+    "denominator_rule": "Every planned module counts. Completion = INTEGRATED / (all modules - SUPERSEDED). SUPERSEDED modules stay listed and count as resolved by superseded_by. BLOCKED, NOT_INTEGRATED and NOT_STARTED count as incomplete. check_modules.py fails if the module count drops below denominator_floor; lowering the floor needs an owner decision recorded in tasks.json. The floor was raised from 26 to 27 when owner-authentication was added. It has not been lowered.",
     "out_of_scope_by_plan": [
       "Live AWS deployment / Entra or Graph tenant calls (ACP: 'Live AWS/Entra validation is intentionally out of scope'; JRM gap-1 requires owner decision and spend)",
       "Non-lab-demonstrable job rows A2,A5,A6,B1,B6,B14,B16,C2,C11,C12,D1-D4 (JRM G4) - answered from real history, not modules"

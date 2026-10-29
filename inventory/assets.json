@@ -4,7 +4,7 @@
   "sources": [
     {
       "template": "BankItLabNetworkDatabase.template.json",
-      "sha256": "c3dd0a0ce47e47089facd932674574eb69aa86979a7ef68cad121c62b63efb6b"
+      "sha256": "2e2d47d35668b8274ddcbd40470672d3a39df81bab5e243b249edb62b6d0a145"
     },
     {
       "template": "BankItLabSecureStorage.template.json",
@@ -31,20 +31,6 @@
       "stack": "BankItLabNetworkDatabase",
       "logical_id": "BackupPlanA8F64793",
       "type": "AWS::Backup::BackupPlan",
-      "status": "STATIC_REFERENCE"
-    },
-    {
-      "id": "BankItLabNetworkDatabase:BackupPlanPostgres674ACA1E",
-      "stack": "BankItLabNetworkDatabase",
-      "logical_id": "BackupPlanPostgres674ACA1E",
-      "type": "AWS::Backup::BackupSelection",
-      "status": "STATIC_REFERENCE"
-    },
-    {
-      "id": "BankItLabNetworkDatabase:BackupPlanPostgresRole2A2CEBDF",
-      "stack": "BankItLabNetworkDatabase",
-      "logical_id": "BackupPlanPostgresRole2A2CEBDF",
-      "type": "AWS::IAM::Role",
       "status": "STATIC_REFERENCE"
     },
     {
@@ -101,6 +87,20 @@
       "stack": "BankItLabNetworkDatabase",
       "logical_id": "DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1",
       "type": "AWS::EC2::SecurityGroupIngress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DbBackupPolicy43A4FBCE",
+      "type": "AWS::IAM::ManagedPolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DbBackupRoleB234430F",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DbBackupRoleB234430F",
+      "type": "AWS::IAM::Role",
       "status": "STATIC_REFERENCE"
     },
     {
@@ -185,6 +185,13 @@
       "stack": "BankItLabNetworkDatabase",
       "logical_id": "PostgresSecretAttachmentRotationScheduleBF85CA02",
       "type": "AWS::SecretsManager::RotationSchedule",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresSelection",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresSelection",
+      "type": "AWS::Backup::BackupSelection",
       "status": "STATIC_REFERENCE"
     },
     {
@@ -409,18 +416,6 @@
       "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
     },
     {
-      "from": "BankItLabNetworkDatabase:BackupPlanPostgres674ACA1E",
-      "to": "BankItLabNetworkDatabase:BackupPlanA8F64793"
-    },
-    {
-      "from": "BankItLabNetworkDatabase:BackupPlanPostgres674ACA1E",
-      "to": "BankItLabNetworkDatabase:BackupPlanPostgresRole2A2CEBDF"
-    },
-    {
-      "from": "BankItLabNetworkDatabase:BackupPlanPostgres674ACA1E",
-      "to": "BankItLabNetworkDatabase:Postgres9DC8BB04"
-    },
-    {
       "from": "BankItLabNetworkDatabase:BackupVault3A9C5852",
       "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
     },
@@ -463,6 +458,26 @@
     {
       "from": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1",
       "to": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:Postgres9DC8BB04"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupRoleB234430F",
+      "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupRoleB234430F",
+      "to": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE"
     },
     {
       "from": "BankItLabNetworkDatabase:FlowLogGroup3E25AA51",
@@ -587,6 +602,18 @@
     {
       "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentRotationScheduleBF85CA02",
       "to": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSelection",
+      "to": "BankItLabNetworkDatabase:BackupPlanA8F64793"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSelection",
+      "to": "BankItLabNetworkDatabase:DbBackupRoleB234430F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSelection",
+      "to": "BankItLabNetworkDatabase:Postgres9DC8BB04"
     },
     {
       "from": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E",

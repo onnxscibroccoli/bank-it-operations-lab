@@ -23,8 +23,25 @@ class Coverage(unittest.TestCase):
     def test_denominator_counts_every_status(self):
         c, _ = check_modules.coverage(REG)
         self.assertEqual(c["denominator"], len(REG["modules"]))
+        self.assertGreaterEqual(c["denominator"], REG["coverage"]["denominator_floor"])
         self.assertEqual(c["completion_denominator"], c["denominator"] - c["by_status"].get("SUPERSEDED", 0))
-        self.assertIn("orgs-security(BLOCKED)", c["incomplete"])
+        expected = sorted(
+            f"{m['id']}({m['status']})"
+            for m in REG["modules"]
+            if m["status"] not in ("INTEGRATED", "SUPERSEDED")
+        )
+        self.assertEqual(c["incomplete"], expected)
+        self.assertEqual(c["incomplete"], ["acceptance(NOT_INTEGRATED)", "review-notes(NOT_INTEGRATED)"])
+        # BLOCKED stays in the denominator and is incomplete. The fixture is a copy; orgs-security is INTEGRATED.
+        r = copy.deepcopy(REG)
+        blocked = mod(r, "orgs-security")
+        blocked["status"] = "BLOCKED"
+        blocked["category"] = "blocked"
+        blocked["reason"] = "fixture only; not the live registry"
+        c2, e2 = check_modules.coverage(r)
+        self.assertEqual(e2, [])
+        self.assertIn("orgs-security(BLOCKED)", c2["incomplete"])
+        self.assertEqual(c2["denominator"], c["denominator"])
 
     def test_functional_without_delivery_location_fails(self):
         for mid in ("aws-cdk", "observability", "aws-network-edge"):
@@ -38,7 +55,12 @@ class Coverage(unittest.TestCase):
         self.assertTrue(any("not inside the module's paths" in e for e in errs(r)))
 
     def test_dropping_a_module_below_floor_fails(self):
-        r = copy.deepcopy(REG); r["modules"] = [m for m in r["modules"] if m["id"] != "orgs-security"]
+        r = copy.deepcopy(REG)
+        floor = r["coverage"]["denominator_floor"]
+        self.assertGreaterEqual(len(r["modules"]), floor)
+        while len(r["modules"]) >= floor:
+            r["modules"].pop()
+        self.assertLess(len(r["modules"]), floor)
         self.assertTrue(any("denominator narrowed" in e for e in errs(r)))
 
     def test_missing_floor_fails(self):
@@ -46,9 +68,17 @@ class Coverage(unittest.TestCase):
         self.assertTrue(any("denominator_floor" in e for e in errs(r)))
 
     def test_blocked_needs_reason_and_category(self):
-        r = copy.deepcopy(REG); mod(r, "orgs-security")["reason"] = ""
+        r = copy.deepcopy(REG)
+        blocked = mod(r, "orgs-security")
+        blocked["status"] = "BLOCKED"
+        blocked["category"] = "blocked"
+        blocked["reason"] = ""
         self.assertTrue(any("BLOCKED needs a reason" in e for e in errs(r)))
-        r = copy.deepcopy(REG); mod(r, "orgs-security")["category"] = "functional"
+        r = copy.deepcopy(REG)
+        blocked = mod(r, "orgs-security")
+        blocked["status"] = "BLOCKED"
+        blocked["category"] = "functional"
+        blocked["reason"] = "fixture only; not the live registry"
         self.assertTrue(any("must go together" in e for e in errs(r)))
 
     def test_superseded_needs_successor(self):
