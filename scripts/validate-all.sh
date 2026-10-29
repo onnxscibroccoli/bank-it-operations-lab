@@ -17,6 +17,7 @@ step() { local name="$1"; shift; N=$((N+1)); echo "::: [$N] $name"; if "$@"; the
 
 # --- PR #3 shared evidence tooling
 step "module registry"             python3 scripts/ci/check_modules.py
+step "tasks lint (no naked MET)"   python3 scripts/ci/merge_eligibility.py --lint-tasks
 step "user-actions report"         python3 scripts/ci/user_actions.py --out /dev/null
 step "shared validator unit tests" python3 -m unittest discover -s evidence/shared/tests
 # --- PR #4 Entra CA (offline, synthetic)

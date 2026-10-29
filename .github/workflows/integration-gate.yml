@@ -10,7 +10,9 @@ name: integration-gate
 #    a separate labeling-markers job (SIMULATION / PLAN_ONLY).
 #    They fail closed when the module is absent: a clean merge without these checks is not acceptance.
 # 5. final-summary (always runs): aggregates every job result; fails if any required job is missing, skipped or failed.
-# 6. merge-eligibility (always runs): PR #27 C6 policy check. Expected to FAIL while AC1-AC5 are open.
+# 6. merge-eligibility (always runs): PR #27 C6 policy check for this run's identity (candidate, base, tested merge from
+#    scripts/ci/provenance.py). AC3 is computed at runtime here; the decision is uploaded as an artifact, never committed.
+#    Expected to FAIL while AC1, AC2, AC4 or AC5 are open.
 # No secrets, no cloud credentials, nothing is deployed, nothing is merged.
 on:
   push:
@@ -235,10 +237,23 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
-          sparse-checkout: |
-            coordination
-            scripts/ci
-      - name: AC1-AC5 for this exact SHA (PR #27 C6) and every required check succeeded
+          fetch-depth: 2   # the tested commit and its parents (PR synthetic merge / main-validation merge)
+      - name: Run identity (candidate, base, tested merge) for AC3 provenance
+        run: python3 scripts/ci/provenance.py --out "$RUNNER_TEMP/run-identity.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: AC1-AC5 for this exact identity (PR #27 C6) and every required check succeeded
+        if: always()
         env:
           NEEDS_JSON: ${{ toJSON(needs) }}
-        run: python3 scripts/ci/merge_eligibility.py --sha "$GITHUB_SHA" --summary "$GITHUB_STEP_SUMMARY"
+        run: >-
+          python3 scripts/ci/merge_eligibility.py --identity "$RUNNER_TEMP/run-identity.json"
+          --decision-out "$RUNNER_TEMP/acceptance-decision.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: Upload the decision and identity (evidence outside the candidate tree)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: acceptance-decision-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/run-identity.json
+            ${{ runner.temp }}/acceptance-decision.json
+          retention-days: 90
+          if-no-files-found: error

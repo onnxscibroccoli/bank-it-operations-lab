@@ -49,7 +49,7 @@ class Gate(unittest.TestCase):
                     n["incident-fresh-run"]["outputs"][k] = bad
                 with self.subTest(output=k, value=bad):
                     self.assertEqual(run(final_summary, n)[0], 1)
-                    rc, out = run(merge_eligibility, n, ["--sha", "abc"])
+                    rc, out = run(merge_eligibility, n, [])
                     self.assertEqual(rc, 1)
                     self.assertIn("required check incident-fresh-run." + k, out)
 
@@ -81,7 +81,7 @@ class Gate(unittest.TestCase):
                 if j != "final-summary":
                     n["final-summary"] = {"result": "success"}
                 with self.subTest(job=j, result=bad):
-                    rc, out = run(merge_eligibility, n, ["--sha", "abc"])
+                    rc, out = run(merge_eligibility, n, [])
                     self.assertEqual(rc, 1)
                     self.assertIn("required check " + j, out)
 

@@ -32,6 +32,7 @@ For logged, credential-free runs use `../../evidence/aws/aws-remediation-vpc-rds
 - `lib/least-privilege-key.ts`: CMK factory with explicit key policy. `lib/guards.ts`: static template guards.
 - `lib/lab-context.ts`: feature flags shared with tests. `test/`: Jest tests incl. `negative-controls.test.ts`. `docs/adr/`: ADR-0001..0004.
 - CI: `.github/workflows/aws-cdk.yml` (added at integration; adapted from PR #1's `bank-aws-001-cdk.yml`).
+- PR #1 (`bank-aws-001`) is **superseded** by PR #5. Its S3 self-logging design was removed (ADR-0004), and only its CI workflow was carried over. PR #1 is still open; closing it is user action UA-4.
 
 ## Known gaps
 Default `BootstrapVersion` parameter/rule; cdk-nag 2.x pin; proposed exceptions EX-01..EX-04; hosted rotation uses a SAR application.

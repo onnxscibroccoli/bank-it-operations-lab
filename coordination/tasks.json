@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T20:26:00-04:00",
-    "remaining": "3h34m",
+    "as_of": "2026-10-28T21:02:00-04:00",
+    "remaining": "2h58m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T20:26:00-04:00",
+  "updated": "2026-10-28T21:02:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -158,43 +158,50 @@
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "MET",
-        "detail": "Every required job succeeded for the final candidate 7fe6d72 (runs 40793219129, 40793225624) and its main-validation merge 770cf33 (run 40793236453), with all six incident outputs PASS; validate-all PASS (43 steps). Earlier SHAs (5f159f1, 82ab7e6, ...) are history only.",
-        "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
-        "runs": {
-          "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
-          "postgres-restore-evidence (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023651",
-          "offline-validation (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023533",
-          "offline-validation (push)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743011205"
-        },
-        "jobs": {
-          "aws-cdk": [
-            "synth-and-test: success"
-          ],
-          "postgres-restore-evidence": [
-            "harness self-test: success",
-            "restore exercise (postgres:18 service container): success",
-            "restore exercise (offline, unix-socket-only cluster): success",
-            "negative control pg_dump 18 vs postgres:16: success",
-            "CDK synth: success"
-          ],
-          "offline-validation": [
-            "validate (pull_request): success",
-            "validate (push): success"
-          ]
-        },
-        "not_triggered": [
-          "aws-cdk push (path filter not matched by that push)",
-          "postgres-restore-evidence push (overnight/integration is not in its push branches)"
-        ],
-        "history_note": "Was MET for 82ab7e6 (history only; it does not transfer).",
-        "met_for_sha": "7fe6d7281316190d9b39e35a448fb9fb81b92d50"
+        "status": "COMPUTED_AT_RUNTIME",
+        "binding": "Evaluated by merge-eligibility in each integration-gate run for that run's identity tuple (candidate_sha, base_sha, tested_sha) from scripts/ci/provenance.py. It holds only for a valid kind=merge identity (PR synthetic merge or candidate/main-validation-<sha> push) whose required jobs and outputs all succeeded in that run. The decision and identity are uploaded as the run artifact acceptance-decision-<tested_sha>, and mirrored on the evidence/acceptance branch, outside the candidate tree. This file never carries MET for AC3.",
+        "history": [
+          {
+            "status": "MET",
+            "detail": "Every required job succeeded for the final candidate 7fe6d72 (runs 40793219129, 40793225624) and its main-validation merge 770cf33 (run 40793236453), with all six incident outputs PASS; validate-all PASS (43 steps). Earlier SHAs (5f159f1, 82ab7e6, ...) are history only.",
+            "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
+            "runs": {
+              "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
+              "postgres-restore-evidence (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023651",
+              "offline-validation (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023533",
+              "offline-validation (push)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743011205"
+            },
+            "jobs": {
+              "aws-cdk": [
+                "synth-and-test: success"
+              ],
+              "postgres-restore-evidence": [
+                "harness self-test: success",
+                "restore exercise (postgres:18 service container): success",
+                "restore exercise (offline, unix-socket-only cluster): success",
+                "negative control pg_dump 18 vs postgres:16: success",
+                "CDK synth: success"
+              ],
+              "offline-validation": [
+                "validate (pull_request): success",
+                "validate (push): success"
+              ]
+            },
+            "not_triggered": [
+              "aws-cdk push (path filter not matched by that push)",
+              "postgres-restore-evidence push (overnight/integration is not in its push branches)"
+            ],
+            "history_note": "Was MET for 82ab7e6 (history only; it does not transfer).",
+            "met_for_sha": "7fe6d7281316190d9b39e35a448fb9fb81b92d50",
+            "note": "Earlier AC3 records (bare met_for_sha, superseded by the runtime binding per pt15u). They are history only and do not count."
+          }
+        ]
       },
       {
         "id": "AC4",
         "condition": "Docs match the code: READMEs, PR bodies, INTEGRATION.md and tasks.json",
         "status": "PARTIAL",
-        "detail": "Fixed: infra/aws-cdk/README.md, evidence/shared/README.md, ci-service NOTE.md (owner v2), PR #2 body (owner updated). Open: PR #1 is still open and describes the superseded self-logging design. PR #4 baseline choices are unconfirmed. PR #6 is excluded."
+        "detail": "In-tree docs now match the code (pt15u). Root README covers the integrated modules, M365 and incident modules and the gate behaviour; evidence/entra/BASELINE-CHOICES-PENDING.md documents the PR #4 baseline choices as PENDING owner confirmation (not identity/entra/README.md, which is a hash-pinned evidence input); infra/aws-cdk/README.md records PR #1 as superseded. Still open, outside the tree: PR #1 is still open and its description shows the superseded design (UA-4), the PR #4 baseline choices are unconfirmed (UA-2; no confirmation is claimed), and PR #7's description predates the M365, incident and gate changes. Editing PR descriptions was not authorized."
       },
       {
         "id": "AC5",
@@ -209,7 +216,17 @@
         "detail": "Not requested yet. It applies after AC1-AC5 are met."
       }
     ],
-    "merge_policy": "Automated merge into main is allowed only when AC1-AC5 are all MET for the exact same SHA. AC6 (human portfolio acceptance) remains a separate final gate. This agent does not perform the merge."
+    "merge_policy": "Automated merge into main is allowed only when AC1-AC5 are all MET for the exact same SHA. AC6 (human portfolio acceptance) remains a separate final gate. This agent does not perform the merge.",
+    "ac3_design": {
+      "source": "pt15u (ChatGPT checkpoint relayed by Ian, 20:57 EDT)",
+      "chosen": "runtime computation in the gate + run artifact + evidence/acceptance branch",
+      "why": "A MET written into tasks.json changes the SHA it describes (self-referential loop), and a bare met_for_sha did not bind the base or the tested merge. Computing AC3 inside the run that executed the checks binds it to GitHub's own record of that run (run id, attempt, event, head and merge SHAs). It needs no write permission (the workflow keeps contents: read), and no extra credential.",
+      "rejected": {
+        "commit status / check-run": "needs statuses:write or checks:write on GITHUB_TOKEN; not needed for correctness",
+        "annotated tag per decision": "would work, but adds refs per run; the evidence branch covers human-readable mirroring",
+        "query older runs via API": "would let one run vouch for another; the current run's needs are authoritative"
+      }
+    }
   },
   "history": [
     {
@@ -770,6 +787,14 @@
           "note": "No independent review exists for this exact SHA. Earlier reviews or approvals (eb42b23, 82ab7e6, 02ac2de, 5f159f1, PR #14, PR #27, anything else) do not transfer."
         }
       }
+    },
+    "round5_pt15u": {
+      "requested": "2026-10-28T20:57:00-04:00 (ChatGPT checkpoint relayed by Ian, pt15u)",
+      "started_from_head": "08cdf11aecfdae56867f21cbec33e7505c8ce8a9",
+      "what_771045e_is": "771045ee413f7550cd0279db06915dddba548dfd is GitHub's synthetic merge commit for PR #7 (refs/pull/7/merge), with parents 7f50348 (main) and 08cdf11 (PR head). It is the GITHUB_SHA of pull_request runs; the head SHA is 08cdf11.",
+      "ac3": "COMPUTED_AT_RUNTIME; see acceptance_conditions_for_main.ac3_design. Run identity comes from scripts/ci/provenance.py; the decision is in run artifact acceptance-decision-<tested_sha> (90 days) and is mirrored to branch evidence/acceptance after the run. Nothing is written back into the candidate.",
+      "merge_eligibility_fix": "MET now needs met_for {candidate_sha, base_sha, tested_sha}, each full 40-hex (case-normalized), equal to this run's identity, plus evidence. A bare met_for_sha, missing, abbreviated, non-hex or wrong SHAs, and candidate/merge mixups are NOT eligible. --lint-tasks rejects a naked MET (validate-all step 'tasks lint (no naked MET)'). Regression tests: scripts/ci/tests/test_merge_eligibility_binding.py (18). No check removed.",
+      "post_freeze_records": "To avoid the self-referential loop, nothing is committed to overnight/integration after this candidate is frozen. CI results and the decision go to branch evidence/acceptance (an orphan branch, normal push)."
     }
   },
   "checkpoints": [

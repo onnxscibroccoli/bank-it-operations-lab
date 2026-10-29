@@ -7,6 +7,31 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Checkpoint pt15u (2026-10-28 ~21:00 EDT): AC3 provenance, binding fix, AC4 docs
+
+- **What `771045e` is:** `771045ee413f7550cd0279db06915dddba548dfd` is GitHub's synthetic merge for PR #7 (`refs/pull/7/merge`), with parents `7f50348` (main) and `08cdf11` (head). Pull-request runs test that commit, so their `GITHUB_SHA` is `771045e` while the candidate is `08cdf11`.
+- **AC3 provenance design: computed at runtime, with evidence kept outside the tree.**
+  1. `scripts/ci/provenance.py` builds the run identity: `candidate_sha`, `base_sha`, `tested_sha`, `kind`, run id/attempt and event.
+     - For a PR, it requires the tested commit's second parent to equal `pull_request.head.sha`, and records the first parent as the base.
+     - For `candidate/main-validation-<sha>`, it requires a `--no-ff` merge whose second parent matches the branch suffix.
+     - Any other push is `kind: direct` and **cannot** satisfy AC3, because it is not a test against main.
+  2. `merge-eligibility` evaluates AC3 (`COMPUTED_AT_RUNTIME`) inside that same run. It holds only for a valid merge identity whose required jobs and outputs all succeeded in that run.
+  3. The identity and decision are uploaded as run artifact `acceptance-decision-<tested_sha>` (90 days) and mirrored afterwards to the **`evidence/acceptance`** branch.
+  4. Nothing is committed back into the candidate, which breaks the loop of results changing the SHA they describe. `tasks.json` never carries MET for AC3.
+  5. This needs only the workflow's read-only `GITHUB_TOKEN` (`contents: read`).
+  6. Rejected options: commit status or check-run, because they need write scopes; per-run tags, because they add clutter; vouching for a run from another run's API record.
+- **`merge_eligibility.py` fix:** a MET condition must carry `met_for {candidate_sha, base_sha, tested_sha}`, plus evidence.
+  - Each SHA must be full 40-hex (case-normalized) and equal to this run's identity.
+  - Missing, legacy bare `met_for_sha`, abbreviated, non-hex or wrong SHAs, and candidate-vs-merge mixups are all **not eligible**.
+  - `--lint-tasks` rejects any naked MET; it is the new validate-all step "tasks lint (no naked MET)".
+  - The regression tests are in `scripts/ci/tests/test_merge_eligibility_binding.py`. No check was removed.
+- **AC4 docs:**
+  - The root `README.md` now covers the modules, the M365 and incident modules (including what 13 and 43 count), the gate behaviour, and PR #1 being superseded.
+  - `evidence/entra/BASELINE-CHOICES-PENDING.md` lists the PR #4 baseline choices (it lives outside `identity/entra/` because those files are hash-pinned inputs of the committed Entra evidence run) as **pending owner confirmation (UA-2)**. No confirmation is claimed.
+  - `infra/aws-cdk/README.md` carries the PR #1 superseded note.
+  - AC4 stays **PARTIAL** for reasons outside the tree: PR #1 is still open (UA-4), the PR #4 choices are unconfirmed (UA-2), and the PR #7 description is out of date. I wasn't authorized to edit PR descriptions.
+- **Records after freezing:** none are committed to `overnight/integration`. Results for the frozen candidate are on branch `evidence/acceptance`.
+
 ## Final candidate (2026-10-28 ~20:18 EDT, Ian 20:16 EDT final sprint)
 
 - **M365:** stays at `1b3c240374285d7b0760b946e861dee15197dcf3`. At ~20:18 EDT that was still the head of `m365-endpoint` and PR #20, which has 0 reviews, so no newer reviewed head existed to refresh to.
@@ -247,8 +272,8 @@ Evaluated at the PR #7 head pushed with this report. Under the merge policy abov
 |---|---|---|---|
 | AC1 | An independent review (human or independent reviewer, e.g. ChatGPT) approves the **exact** candidate SHA. Provenance must be bound to that SHA, and author or agent self-review does not count. *Reworded per PR #27 C6.* | **UNMET** | No approval for any PR #7 head. PR #14 @ `eb8d259` counts only for PR #2's harness v2, and it requests changes on integrated #5. PR #27 reviewed #26, not #7. |
 | AC2 | Security exceptions recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded and test-enforced, but not approved. PR #14 B5-1: the suppressions are already applied. |
-| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **MET for the FINAL candidate `7fe6d72`**: every required job succeeded and all six incident outputs passed (runs 40793219129, 40793225624, main-validation 40793236453). Earlier SHAs are history only. | Local validate-all PASSED 43/43. |
-| AC4 | Docs match the code. | **PARTIAL** | PR #1 is still open with the superseded design; #4 baseline choices are unconfirmed. |
+| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **COMPUTED_AT_RUNTIME** by merge-eligibility for each run's identity (candidate, base, tested merge); the decision is in run artifact `acceptance-decision-<tested_sha>` and on branch `evidence/acceptance`. Earlier MET records (82ab7e6, 5f159f1, 7fe6d72) are history only. | See checkpoint pt15u. |
+| AC4 | Docs match the code (READMEs, PR bodies, INTEGRATION.md, tasks.json). | **PARTIAL**: in-tree docs updated (pt15u). Open: PR #1 still open (UA-4), PR #4 baseline choices unconfirmed (UA-2; none claimed), PR #7 description out of date. | See checkpoint pt15u. |
 | AC5 | No unresolved blocking findings in integrated code. | **UNMET** | PR #14 B5-1/B5-2 on integrated #5. Fixed in this commit: the shared `postgres-negatives` reported OK on all-NOT_RUN runs. |
 | AC6 | Final human portfolio acceptance (Ian). Separate gate. | **UNMET** | Not requested; it follows AC1–AC5. |
 
