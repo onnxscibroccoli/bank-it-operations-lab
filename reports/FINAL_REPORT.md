@@ -1,7 +1,7 @@
 # FINAL REPORT: bank-it-operations-lab
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 21:04 EDT): about 2 h 55 min.**
+> **Remaining window at commit time (2026-10-28 21:13 EDT): about 2 h 46 min.**
 > Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The integration candidate #7 @ `5f159f1` (with #20 and #22 now integrated) runs every technical job green in CI, and its own merge-eligibility check reports NOT ELIGIBLE. That is a working gate, not a merge. Nothing here claims completion that was not verified.
 
 - Repo: https://github.com/onnxscibroccoli/bank-it-operations-lab
@@ -14,7 +14,31 @@
   - **[PR body]**: taken from the PR text only.
   - **UNVERIFIED**: not checked.
 - **Rule: a passing scanner is not enough.** Zero cdk-nag errors, a passing `cfn-s3-selflog` or a passing `sha256sum -c` shows only that a tool ran. Acceptance also needs review of the exact SHA, adjudicated exceptions, docs that match the code, and no blocking findings. #5 is the example: both cdk-nag packs report 0 unsuppressed errors, yet #14 found a KMS privilege-escalation path that the scanner and the repo's own guard (`guards.ts#kmsWildcards`) both miss.
-- Companion files: [`USER_ACTIONS_REQUIRED.md`](USER_ACTIONS_REQUIRED.md) and [`EVIDENCE_MANIFEST.md`](EVIDENCE_MANIFEST.md). Hiring-manager entry points: root [`README.md`](../README.md), [`docs/DEMO_WALKTHROUGH_15MIN.md`](../docs/DEMO_WALKTHROUGH_15MIN.md), and the job-matrix addendum on branch `docs/job-matrix-addendum` @ [`9fb49fa`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d/docs/JOB_REQUIREMENTS_MATRIX.md).
+- Companion files: [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md) (per-module job row, authoritative source, falsifiable acceptance requirement, evidence, review disposition), [`USER_ACTIONS_REQUIRED.md`](USER_ACTIONS_REQUIRED.md) and [`EVIDENCE_MANIFEST.md`](EVIDENCE_MANIFEST.md). Hiring-manager entry points: root [`README.md`](../README.md), [`docs/DEMO_WALKTHROUGH_15MIN.md`](../docs/DEMO_WALKTHROUGH_15MIN.md), and the job-matrix addendum on branch `docs/job-matrix-addendum` @ [`9fb49fa`](https://github.com/onnxscibroccoli/bank-it-operations-lab/blob/9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d/docs/JOB_REQUIREMENTS_MATRIX.md).
+
+## M. Module coverage and revised ETA (about 21:13 EDT)
+
+Full map: [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md). Modules are **mapped to** FFIEC (supervisory), OCC/FRB/FDIC interagency third-party guidance (supervisory), NIST SP 800-53/61/34/40/137 (industry), and AWS, Microsoft, PostgreSQL, systemd and GitHub documentation (product). Every URL and section was fetched and checked between 21:00 and 21:10 EDT. **No regulatory source** (statute or regulation text) is mapped. No certification or compliance is claimed.
+
+| Planned | Integrated (#7 final candidate `7fe6d72`) | Verified (re-run here or CI at exact SHA) | Independently accepted (exact SHA) |
+|---|---|---|---|
+| 22 (16 executable, 6 documentation) | 7 | 14 of 16 executable; 1 partial (#21); 1 unverified (#6) | **0** |
+
+- **Re-verified at `7fe6d72`:**
+  - `validate-all.sh --python-only` PASS (30 steps)
+  - `scripts/ci/tests` 43 OK
+  - Entra 25 OK, shared validator 16 OK, M365 29 OK
+  - Postgres evidence VERIFIED
+  - incident timeline PASS and self-test 0 failures
+  - CI at `7fe6d72`: integration-gate [40793225624](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225624) 18/19 (merge-eligibility NOT ELIGIBLE), aws-cdk [40793225339](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225339), postgres [40793225365](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225365), offline-validation [40793225341](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225341)
+  - README and the demo walkthrough are re-pinned from `5f159f1` to `7fe6d72`.
+- **#7 moved again after the final candidate:** head `b908a66` (21:04 EDT) changes `merge_eligibility.py`, `provenance.py`, the gate workflow, and adds a root `README.md` and `evidence/entra/BASELINE-CHOICES-PENDING.md`. Its integration-gate [40798145700](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40798145700) is again NOT ELIGIBLE (`AC1: UNMET`, `AC2: PARTIAL`, `AC4: PARTIAL`, `AC5: UNMET`) and still prints `USER ACTION REQUIRED: 4`. `b908a66` was **not** re-run here.
+- **Revised ETA for a merge into `main` meeting AC1–AC5:**
+  - **Earliest:** about 00:30–01:30 EDT Thursday 2026-10-29.
+  - **Likely:** Thursday 2026-10-29, during the day.
+  - **Main uncertainty:** the independent-review turnaround (no request sent for any #7 candidate) and the B5-2 KMS fix (a new candidate is required).
+  - **Critical-path owner:** the integrator (#7). On the path: the aws-cdk owner (B5-2), lane E (review), and Ian (UA-1 EX-04, UA-2 Entra baseline, AC6).
+  - Details are in the map, §4. **No merge meeting AC1–AC5 is achievable by midnight on current evidence.**
 
 ## R. User-action reconciliation with the Actions log (about 21:04 EDT)
 
@@ -97,7 +121,7 @@ Labels, used throughout the portfolio docs:
 
 ### P4. Documentation handoff for the integrator
 
-Files: `README.md` (root), `docs/DEMO_WALKTHROUGH_15MIN.md`, `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md`, `reports/user-actions.json`, `reports/EVIDENCE_MANIFEST.md` on `reports/final-report`; `docs/JOB_REQUIREMENTS_MATRIX.md` on `docs/job-matrix-addendum` (parent `31b69db`). None of it changes code, workflows, or another module's files.
+Files: `README.md` (root; **conflicts with the root README that #7 added at `b908a66`**, which `modules.json` assigns to integration-infra; the integrator chooses: keep #7's and link to this hub, or move this hub to `docs/`), `docs/DEMO_WALKTHROUGH_15MIN.md`, `reports/MODULE_REQUIREMENT_MAP.md`, `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md`, `reports/user-actions.json`, `reports/EVIDENCE_MANIFEST.md` on `reports/final-report`; `docs/JOB_REQUIREMENTS_MATRIX.md` on `docs/job-matrix-addendum` (parent `31b69db`). None of it changes code, workflows, or another module's files.
 
 ## 0a. Accelerated completion plan ([#27](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27) @ `72aa8b7`, ChatGPT independent review): per-item verified status
 Source: `reports/independent/chatgpt/accelerated-completion-plan-20261028.md` (snapshot about 17:57 EDT) and `acceptance-181bcdd-review.md`. This report only records status. Implementation belongs to the lane owners #27 names.
@@ -149,7 +173,7 @@ The repairs are in #26: `85c66cf` (invariants), `17cfaea` ("repair C1-C4 from in
 | [#4](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4) | `entra-ca-offline` | `d302c99d` |
 | [#5](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5) | `aws-remediation-vpc-rds` | `099479e6` |
 | [#6](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/6) | `orgs-security-refs` | `e5e7f460` |
-| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) | `overnight/integration` | `08cdf11` (final candidate `7fe6d72`; see §R, §P1) |
+| [#7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) | `overnight/integration` | `b908a66` (final candidate `7fe6d72`; see §M, §R) |
 | [#8](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/8) | `portfolio-cases` | `7010d05a` |
 | [#9](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/9) | `vendor-mock` | `d6efb825` |
 | [#10](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/10) | `observability` | `3e40e39d` |

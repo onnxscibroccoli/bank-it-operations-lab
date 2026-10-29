@@ -1,7 +1,7 @@
 # USER ACTIONS REQUIRED (Ian)
 
 > **DEADLINE: midnight ET (00:00 EDT, Thursday 2026-10-29), the end of Wednesday 2026-10-28.**
-> **Remaining window at commit time (2026-10-28 21:04 EDT): about 2 h 55 min.**
+> **Remaining window at commit time (2026-10-28 21:13 EDT): about 2 h 46 min.**
 > Status: **not complete.** Nothing is merged into `main`, and no workstream meets every acceptance criterion: no human GitHub review exists anywhere. The acceptance vertical slice runs green in CI on a draft PR (#26). That is a working gate, not a merge. Nothing here claims completion that was not verified.
 
 Snapshot: 2026-10-28, about 21:04 EDT. The #7 integration head is `08cdf11` (final candidate `7fe6d72`: every technical CI job green, merge-eligibility NOT ELIGIBLE, review packet prepared but **not yet requested**, so the AC1 gate is unmet), and the acceptance slice #26 is at `eb42b23` (CI green, decision REVIEW_PENDING). This reports agent never merges, closes PRs or deploys. Since #7 @ `4f54a01` (C6), coordination policy allows *independently proven* automated merges. No merge into `main` has happened, and none is currently provable (AC1 gate unmet; `main` unprotected). The integrator did merge #20 @ `1b3c240` and #22 @ `9f21329` into the integration branch (#7), not into `main`. Only the USER_ACTION_REQUIRED items need Ian; the AUTONOMOUS_FIX items belong to the lane owners. See `FINAL_REPORT.md` §2 for the merge policy (gates G1–G9) and the status of each PR.
@@ -60,6 +60,10 @@ The same top line also appears in that run's `offline-validation / validate` and
 **Why this differs from the CI count (intentional):** CI prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4` from `coordination/tasks.json` `user_actions` on #7. Its UA-1 text says "Register lists EX-01..EX-04 as PROPOSED … no approval is recorded", which is stale: Ian's decisions were recorded in this report at 14:10 EDT, and the committed #5 templates verify EX-01 and EX-03. Its UA-3 is a decision with no permission failure and `blocks: []`, and its UA-4 is housekeeping. Net: **4 printed → 2 user blockers** (UA-1 narrowed to EX-04, UA-2 unchanged). This report does not edit `coordination/tasks.json` (integrator-owned). Proposed change for the integrator: set UA-1 `observed` to the recorded decisions and narrow its action to EX-04; reclassify UA-3 as non-blocking owner decision and UA-4 as housekeeping (`classification` ≠ `USER_ACTION_REQUIRED`), so the CI top line becomes `USER ACTION REQUIRED: 2 — UA-1; UA-2`.
 
 **"NONE" relay:** no Actions run printed `USER ACTION REQUIRED: NONE`. All 72 runs created since 21:00 UTC (17:00 EDT) were scanned; every integration-gate and #7 offline-validation run since `82ab7e6` (first run 22:18 UTC = 18:18 EDT) prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4`; the others (aws-cdk, postgres, #26 acceptance) print no top line. The NONE relay was wrong.
+
+**Re-checked about 21:13 EDT:** #7 head `b908a66` still prints `USER ACTION REQUIRED: 4 — UA-1; UA-2; UA-3; UA-4` in integration-gate [run 40798145700](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40798145700). Its `tasks.json` user_actions are unchanged, so the reconciliation above still applies. `b908a66` adds `evidence/entra/BASELINE-CHOICES-PENDING.md`, which documents UA-2 as pending. It does not record a decision.
+
+**ETA dependency:** UA-1 (EX-04) and UA-2 (Entra baseline) are on the critical path for AC2 and AC4. The earliest possible merge is about 00:30–01:30 EDT Thursday, and only if both are decided now and the B5-2 fix and an independent review also land. See [`MODULE_REQUIREMENT_MAP.md`](MODULE_REQUIREMENT_MAP.md) §4.
 
 ### Gates and deferred items (not counted as user actions)
 | Item | Class | Evidence |
