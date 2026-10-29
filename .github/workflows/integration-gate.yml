@@ -5,8 +5,10 @@ name: integration-gate
 #    coordination/tasks.json to the job summary and as annotations.
 # 2. module-registry: coordination/modules.json must match the tree, validate-all.sh and CI jobs.
 # 3. The component workflows run as reusable workflows for this exact SHA.
-# 4. final-summary (always runs): aggregates every job result; fails unless all succeeded.
-# 5. merge-eligibility (always runs): PR #27 C6 policy check. Expected to FAIL while AC1-AC5 are open.
+# 4. Required M365 checks (scenario evaluation, unit tests, evidence verification) and PLAN_ONLY negative tests.
+#    They fail closed when the module is absent: a clean merge without these checks is not acceptance.
+# 5. final-summary (always runs): aggregates every job result; fails if any required job is missing, skipped or failed.
+# 6. merge-eligibility (always runs): PR #27 C6 policy check. Expected to FAIL while AC1-AC5 are open.
 # No secrets, no cloud credentials, nothing is deployed, nothing is merged.
 on:
   push:
@@ -61,9 +63,50 @@ jobs:
   postgres:
     uses: ./.github/workflows/postgres-restore-evidence.yml
 
+  # --- REQUIRED M365 checks (PR #20 module). Fail closed: they FAIL when identity/m365 or evidence/m365 is absent.
+  m365-scenario-evaluation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Evaluate every scenario; assert PLAN_ONLY, executed=false, mutationsExecuted=0
+        run: bash scripts/ci/m365_checks.sh evaluate
+
+  m365-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: identity/m365 unittest suite
+        run: bash scripts/ci/m365_checks.sh unit
+
+  m365-evidence-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Verify committed evidence runs; assert PLAN_ONLY, executed=false, mutationsExecuted=0
+        run: bash scripts/ci/m365_checks.sh evidence
+
+  plan-only-assertions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Negative tests - every PLAN_ONLY violation, and every missing/skipped/failed required check, must fail
+        run: bash scripts/ci/m365_checks.sh plan-only-negatives
+
   final-summary:
     if: always()
-    needs: [user-actions, module-registry, offline-validation, aws-cdk, postgres]
+    needs: [user-actions, module-registry, offline-validation, aws-cdk, postgres, m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification, plan-only-assertions]
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -80,7 +123,7 @@ jobs:
 
   merge-eligibility:
     if: always()
-    needs: [final-summary]
+    needs: [final-summary, user-actions, module-registry, offline-validation, aws-cdk, postgres, m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification, plan-only-assertions]
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -90,5 +133,7 @@ jobs:
           sparse-checkout: |
             coordination
             scripts/ci
-      - name: AC1-AC5 for this exact SHA (PR #27 C6)
+      - name: AC1-AC5 for this exact SHA (PR #27 C6) and every required check succeeded
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
         run: python3 scripts/ci/merge_eligibility.py --sha "$GITHUB_SHA" --summary "$GITHUB_STEP_SUMMARY"

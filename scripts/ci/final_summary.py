@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Aggregate job results for the integration gate. Reads NEEDS_JSON (toJSON(needs)) from the environment,
 plus the user-action list from coordination/tasks.json. Writes Markdown to --summary.
-Exit 1 if any required job is not 'success' (failure, cancelled or skipped all count as not passed)."""
+Exit 1 if any job is not 'success' (failure, cancelled and skipped all count as not passed) or if any job in
+coordination/modules.json required_gate_jobs is missing from the run."""
 import argparse, json, os, sys
 from pathlib import Path
 
@@ -19,11 +20,19 @@ def main(argv=None):
         print("::error title=final-summary::NEEDS_JSON missing or empty")
         return 1
     rows, bad = [], []
+    reg = json.loads((user_actions.ROOT / "coordination/modules.json").read_text())
+    required = reg.get("required_gate_jobs") or []
+    if not required:
+        bad.append("required_gate_jobs missing from coordination/modules.json")
+    for job in required:
+        if job not in needs:
+            rows.append(f"| {user_actions.esc_md(job)} | MISSING (required) |")
+            bad.append(job + " (missing)")
     for job in sorted(needs):
         res = str((needs[job] or {}).get("result", "unknown"))
         rows.append(f"| {user_actions.esc_md(job)} | {user_actions.esc_md(res)} |")
         if res != "success":
-            bad.append(job)
+            bad.append(job + (" (required)" if job in required else ""))
     counts = {}
     for job in needs:
         r = str((needs[job] or {}).get("result", "unknown"))

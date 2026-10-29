@@ -60,6 +60,15 @@ def main():
         for p in paths:
             if p in seen_paths: errors.append(f"{mid}: path {p} already claimed by {seen_paths[p]}")
             seen_paths[p] = mid
+        if m.get("required") is True:
+            rs, rj = m.get("validate_all_steps") or [], m.get("ci_jobs") or []
+            if not rs or not rj:
+                errors.append(f"{mid}: required module must list validate_all_steps and ci_jobs")
+            for s_ in rs:
+                if f'"{s_}' not in va: errors.append(f"{mid}: required validate-all step not found: {s_!r}")
+            for j in rj:
+                wf, _, job = j.partition(":")
+                if job not in wjobs.get(wf, set()): errors.append(f"{mid}: required CI job not found: {j}")
         present = [p for p in paths if any(claims(f, [p]) for f in files)]
         if st == "INTEGRATED":
             integrated_prefixes += paths
@@ -76,6 +85,24 @@ def main():
             if not isinstance(m.get("reason"), str) or not m["reason"]:
                 errors.append(f"{mid}: {st} module needs a 'reason'")
             for p in present: errors.append(f"{mid}: {st} module path is present on this branch: {p} (register it as INTEGRATED with checks, or remove it)")
+    gate = reg.get("required_gate_jobs")
+    if not isinstance(gate, list) or not gate or not all(isinstance(j, str) for j in gate):
+        errors.append("modules.json: 'required_gate_jobs' must be a non-empty list of integration-gate.yml job ids")
+        gate = []
+    gjobs = wjobs.get("integration-gate.yml", set())
+    for m in mods:
+        if m.get("required") is True:
+            for j in m.get("ci_jobs") or []:
+                wf, _, job = j.partition(":")
+                if wf == "integration-gate.yml" and job not in gate:
+                    errors.append(f"{m.get('id')}: required job {job} is not in required_gate_jobs")
+    gtext = (ROOT / ".github/workflows/integration-gate.yml").read_text() if (ROOT / ".github/workflows/integration-gate.yml").exists() else ""
+    for need_of in ("final-summary", "merge-eligibility"):
+        mm = re.search(r"^  " + need_of + r":\n(?:    .*\n)*?    needs: \[([^\]]*)\]", gtext, re.M)
+        listed = {x.strip() for x in mm.group(1).split(",")} if mm else set()
+        for j in gate:
+            if j not in gjobs: errors.append(f"required gate job not defined in integration-gate.yml: {j}")
+            if j not in listed: errors.append(f"required gate job {j} is not in {need_of}.needs")
     for f in files:
         if not claims(f, integrated_prefixes):
             top = f.split("/")[0] if f.split("/")[0] not in NESTED or "/" not in f else "/".join(f.split("/")[:2])

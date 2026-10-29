@@ -24,6 +24,11 @@ step "entra unit tests"            python3 -m unittest discover -s tests/entra
 step "entra validator on baseline" python3 identity/entra/ca_validator.py --quiet
 step "entra fixture drift"         python3 tests/entra/make_fixtures.py --check
 for r in evidence/entra/runs/*/; do step "entra evidence verify $r" python3 evidence/entra/generate_evidence.py --verify "${r%/}"; done
+# --- PR #20 M365 scenario module: REQUIRED checks, fail closed when the module is absent (scripts/ci/m365_checks.sh)
+step "m365 scenario evaluation"     bash scripts/ci/m365_checks.sh evaluate
+step "m365 unit tests"              bash scripts/ci/m365_checks.sh unit
+step "m365 evidence verification"   bash scripts/ci/m365_checks.sh evidence
+step "plan-only negative tests"     bash scripts/ci/m365_checks.sh plan-only-negatives
 # --- PR #5 AWS evidence bundle (static)
 step "aws evidence SHA256SUMS" bash -c 'cd evidence/aws/aws-remediation-vpc-rds && sha256sum -c SHA256SUMS --quiet'
 for t in evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do step "s3 self-logging $t" python3 "$V" cfn-s3-selflog "$t"; done

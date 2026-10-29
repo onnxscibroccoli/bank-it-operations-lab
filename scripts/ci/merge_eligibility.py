@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Merge-eligibility check (PR #27 C6 policy): main may be merged automatically only when AC1-AC5 are MET
-for the exact SHA under test; AC6 (human portfolio acceptance) is a separate gate and is reported, not checked.
+for the exact SHA under test and every required check job
+(coordination/modules.json required_gate_jobs, plus final-summary) succeeded in this run; AC6 (human portfolio acceptance) is a separate gate and is reported, not checked.
 Exit 0 = eligible, 1 = not eligible (expected while conditions are open). Never merges anything."""
 import argparse, json, os, sys
 from pathlib import Path
@@ -30,6 +31,20 @@ def main(argv=None):
         elif a.sha and c.get("met_for_sha") and not a.sha.startswith(str(c.get("met_for_sha"))) \
                 and not str(c.get("met_for_sha")).startswith(a.sha):
             problems.append(f"{ac}: MET for {c.get('met_for_sha')}, not this SHA")
+    # Required checks for this exact run: missing, skipped, cancelled or failed all make the SHA ineligible.
+    reg = json.loads((user_actions.ROOT / "coordination/modules.json").read_text())
+    required = reg.get("required_gate_jobs") or []
+    if not required:
+        problems.append("required_gate_jobs missing from coordination/modules.json")
+    raw = os.environ.get("NEEDS_JSON")
+    needs = json.loads(raw) if raw else None
+    if not isinstance(needs, dict):
+        problems.append("required check results not available (NEEDS_JSON unset): not verified for this SHA")
+    else:
+        for job in required + ["final-summary"]:
+            res = (needs.get(job) or {}).get("result", "missing") if job in needs else "missing"
+            if res != "success":
+                problems.append(f"required check {job}: {res}")
     ac6 = (conds.get("AC6") or {}).get("status", "missing")
     verdict = "ELIGIBLE" if not problems else "NOT ELIGIBLE"
     print(f"merge-eligibility for {a.sha or 'local'}: {verdict}")

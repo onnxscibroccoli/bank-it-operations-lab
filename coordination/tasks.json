@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T18:27:00-04:00",
-    "remaining": "5h33m",
+    "as_of": "2026-10-28T20:01:00-04:00",
+    "remaining": "3h59m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T18:27:00-04:00",
+  "updated": "2026-10-28T20:01:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -156,8 +156,8 @@
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "MET",
-        "detail": "All technical checks success on 82ab7e6 (runs 40778886245/40778896261 gate jobs except merge-eligibility, 40778896275, 40778896256, 40778886053, 40778896220, 40778886069) and validate-all PASS (35 steps). Earlier SHAs are history only.",
+        "status": "UNMET",
+        "detail": "Required M365 checks fail closed on the current tree because PR #20 is not integrated; see accelerated_plan.round2.",
         "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
         "runs": {
           "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
@@ -185,7 +185,7 @@
           "aws-cdk push (path filter not matched by that push)",
           "postgres-restore-evidence push (overnight/integration is not in its push branches)"
         ],
-        "met_for_sha": "82ab7e6bbec1d20e034494c987253f3a81f3296c"
+        "history_note": "Was MET for 82ab7e6 (history only; it does not transfer)."
       },
       {
         "id": "AC4",
@@ -430,6 +430,13 @@
       "item": "PR #6 self-logging and exempt-role SCP bypass",
       "classification": "AUTONOMOUS_FIX",
       "owner": "orgs module owner"
+    },
+    {
+      "id": "AB-5",
+      "source": "pt12u / PR #20",
+      "classification": "AUTONOMOUS_FIX",
+      "owner": "lane E (independent review) then integrator",
+      "item": "M365 scenario module (PR #20 @ 1b3c240, draft, 0 reviews, no CI) is not reviewed, so not integrated. Its required checks (m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification) are wired and FAIL CLOSED until it is reviewed and integrated; a local trial merge passed them all."
     }
   ],
   "accelerated_plan": {
@@ -533,6 +540,47 @@
           "conclusion": "success"
         }
       }
+    },
+    "round2": {
+      "requested": "2026-10-28T19:55:00-04:00 (pt12u)",
+      "started_from_head": "1a3cea07a688ac7dad4b4a6f15b4167fc212d896",
+      "reconcile": "Remote overnight/integration was still 82ab7e6; local 1a3cea0 was a fast-forward and was pushed normally at ~19:58 EDT (no rebase needed, no force).",
+      "m365_module": {
+        "found": "PR #20, branch m365-endpoint @ 1b3c240374285d7b0760b946e861dee15197dcf3 (identity/m365, evidence/m365). Draft, mergeable, 0 reviews, 0 comments, no check runs.",
+        "decision": "NOT_INTEGRATED (unreviewed). Registered in coordination/modules.json as required: true.",
+        "required_checks": {
+          "validate-all.sh": [
+            "m365 scenario evaluation",
+            "m365 unit tests",
+            "m365 evidence verification",
+            "plan-only negative tests"
+          ],
+          "integration-gate.yml": [
+            "m365-scenario-evaluation",
+            "m365-unit-tests",
+            "m365-evidence-verification",
+            "plan-only-assertions"
+          ]
+        },
+        "fail_closed": "scripts/ci/m365_checks.sh fails when identity/m365 or evidence/m365 is absent; final-summary and merge-eligibility fail if any job in modules.json required_gate_jobs is missing, skipped, cancelled or failed (tests: scripts/ci/tests/test_gate_required.py).",
+        "plan_only_assertions": "scripts/ci/check_plan_only.py on the fresh engine report and on every committed run (validation-report.json and SUMMARY.json): plan steps mode PLAN_ONLY and executed false, every executed key false, mutationsExecuted integer 0, at least one plan step. 14 negative tests in scripts/ci/tests/test_check_plan_only.py.",
+        "local_trial": "Scratch worktree = this branch + --no-ff merge of 1b3c240 (not committed, not pushed): evaluate OK (13/13 scenarios, 43 PLAN_ONLY steps, mutationsExecuted 0), unit OK (29 tests), evidence OK (verify + PLAN_ONLY), negatives OK; a run with one plan step tampered to executed:true was rejected (exit 1).",
+        "applicability": "Only the M365 module emits PLAN_ONLY/executed/mutationsExecuted records in this tree or in PR #20; no integrated module produces such records."
+      },
+      "acceptance_workflow": "No acceptance workflow exists on overnight/integration (acceptance.yml exists only on PR #26's branch, which is not integrated and was not modified). The required checks live in integration-gate.yml.",
+      "expected_gate_result": "FAIL (fail closed) until PR #20 is reviewed and integrated."
     }
-  }
+  },
+  "checkpoints": [
+    {
+      "tag": "checkpoint/eb42b23",
+      "tag_object": "8535ec9fba045ec4461d8fefee53093c4ccd4f10",
+      "commit": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+      "branch": "acceptance/vertical-slice",
+      "pr": 26,
+      "created": "2026-10-28T20:00:00-04:00",
+      "pushed": true,
+      "meaning": "Bounded checkpoint of PR #26's head (C1-C4 repairs 17cfaea, assurance report 35674c4, timestamp fix eb42b23). Annotated tag; it records a point in history only. It is not a review, not an approval and not integrated. Do not move or rewrite it."
+    }
+  ]
 }

@@ -7,6 +7,39 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Round 2 (2026-10-28 ~20:00 EDT, request pt12u): M365 required checks, checkpoint, new candidate
+
+- **Reconcile:** remote `overnight/integration` was still at `82ab7e6`. Local `1a3cea0` was a fast-forward, so I pushed it normally (no rebase, no force).
+- **Checkpoint:** annotated tag `checkpoint/eb42b23` → `eb42b23747d5b686d9540c93e445a713b4e56c5d` (PR #26 head), pushed. It marks a point in history only. It is not a review or an approval and is not integrated. Do not move or rewrite it.
+- **M365 module:** found in PR #20, branch `m365-endpoint` @ `1b3c240`. It is a draft with no reviews and no CI, so it is **not integrated**. It is registered in `coordination/modules.json` as `required: true`.
+- **Required checks:** wired in both `validate-all.sh` and `integration-gate.yml`, and they **fail closed**:
+
+  | Check | validate-all.sh step | integration-gate.yml job | What it does |
+  |---|---|---|---|
+  | Scenario evaluation | `m365 scenario evaluation` | `m365-scenario-evaluation` | Runs every scenario. Every expectation must match and every scenario file must be covered. PLAN_ONLY assertion on the fresh report |
+  | Unit tests | `m365 unit tests` | `m365-unit-tests` | `identity/m365/tests` |
+  | Evidence verification | `m365 evidence verification` | `m365-evidence-verification` | `generate_evidence.py --verify` on every committed run, plus the PLAN_ONLY assertion |
+  | Negative tests | `plan-only negative tests` | `plan-only-assertions` | 14 PLAN_ONLY violation tests and 4 required-check tests (missing, skipped, cancelled and failed must each fail) |
+
+- **PLAN_ONLY assertions** (`scripts/ci/check_plan_only.py`):
+  - every plan step has mode `PLAN_ONLY` and `executed: false`
+  - every `executed` key is `false`
+  - `mutationsExecuted` is the integer 0
+  - at least one plan step exists
+
+  Only the M365 module produces such records.
+- **Fail-closed gate:** `final-summary` and `merge-eligibility` fail if any job in `required_gate_jobs` is missing, skipped, cancelled or failed. `check_modules.py` fails if a required job is undefined or missing from either job's `needs`. **A clean merge without these checks is not acceptance.**
+- **Local trial (not committed, not pushed):** this branch plus a `--no-ff` merge of `1b3c240` passed all four checks:
+  - 13/13 scenarios
+  - 29 unit tests
+  - evidence verify OK
+  - 43 PLAN_ONLY steps
+  - `mutationsExecuted` 0
+
+  A run copy with one step set to `executed: true` was rejected.
+- **Acceptance workflow:** there is none on this branch. `acceptance.yml` exists only on PR #26's branch, which was not modified.
+- **Expected result:** on this branch the M365 jobs, `offline-validation` (its `--python-only` suite includes the M365 steps), `final-summary` and `merge-eligibility` **fail by design** until PR #20 is reviewed and integrated. AC3 is therefore UNMET for the new candidate. AC3 was MET for `82ab7e6`, but that is history only and does not transfer.
+
 ## Accelerated completion plan (PR #27 @ 72aa8b7, lane B): progress as of 2026-10-28 18:27 EDT
 
 Deadline 2026-10-29 00:00 EDT. Remaining window at commit time: about 5h33m. This commit started from `4f54a016`.
@@ -129,7 +162,7 @@ Evaluated at the PR #7 head pushed with this report. Under the merge policy abov
 |---|---|---|---|
 | AC1 | An independent review (human or independent reviewer, e.g. ChatGPT) approves the **exact** candidate SHA. Provenance must be bound to that SHA, and author or agent self-review does not count. *Reworded per PR #27 C6.* | **UNMET** | No approval for any PR #7 head. PR #14 @ `eb8d259` counts only for PR #2's harness v2, and it requests changes on integrated #5. PR #27 reviewed #26, not #7. |
 | AC2 | Security exceptions recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded and test-enforced, but not approved. PR #14 B5-1: the suppressions are already applied. |
-| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **Met for candidate `82ab7e6`** (all technical jobs succeeded; earlier SHAs are history only) | Local `validate-all` PASSED 35/35 on the candidate and on the main-validation merge. |
+| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **UNMET for the round-2 candidate**: the required M365 checks fail closed (PR #20 not integrated). It was MET for `82ab7e6`; that is history only and does not transfer. | See Round 2. |
 | AC4 | Docs match the code. | **PARTIAL** | PR #1 is still open with the superseded design; #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings in integrated code. | **UNMET** | PR #14 B5-1/B5-2 on integrated #5. Fixed in this commit: the shared `postgres-negatives` reported OK on all-NOT_RUN runs. |
 | AC6 | Final human portfolio acceptance (Ian). Separate gate. | **UNMET** | Not requested; it follows AC1–AC5. |
