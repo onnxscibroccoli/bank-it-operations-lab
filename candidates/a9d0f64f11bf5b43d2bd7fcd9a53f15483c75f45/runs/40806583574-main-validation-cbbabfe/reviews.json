@@ -1,0 +1,93 @@
+{
+  "schema": "bank-lab/pr-reviews/v2",
+  "repository": "onnxscibroccoli/bank-it-operations-lab",
+  "candidate_sha": "a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45",
+  "ok": true,
+  "comments_ok": true,
+  "pr": 7,
+  "pr_author": "onnxscibroccoli",
+  "head_sha": "a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45",
+  "base_ref": "main",
+  "reviews": [],
+  "decision_pr": 7,
+  "comments": [
+    {
+      "id": 6484847003,
+      "user": {
+        "login": "onnxscibroccoli"
+      },
+      "created_at": "2026-10-29T00:55:53Z",
+      "updated_at": "2026-10-29T00:55:53Z",
+      "body": null
+    },
+    {
+      "id": 6484929892,
+      "user": {
+        "login": "onnxscibroccoli"
+      },
+      "created_at": "2026-10-29T01:01:29Z",
+      "updated_at": "2026-10-29T01:01:29Z",
+      "body": null
+    },
+    {
+      "id": 6484969899,
+      "user": {
+        "login": "onnxscibroccoli"
+      },
+      "created_at": "2026-10-29T01:04:09Z",
+      "updated_at": "2026-10-29T01:04:09Z",
+      "body": null
+    },
+    {
+      "id": 6485162641,
+      "user": {
+        "login": "onnxscibroccoli"
+      },
+      "created_at": "2026-10-29T01:16:41Z",
+      "updated_at": "2026-10-29T01:16:41Z",
+      "body": null
+    }
+  ],
+  "runs": {},
+  "commits": {},
+  "permissions": {
+    "onnxscibroccoli": {
+      "permission": "admin",
+      "role_name": "admin"
+    }
+  },
+  "trusted_config": {
+    "schema": "bank-lab/acceptance-trusted-config/v1",
+    "repository": "onnxscibroccoli/bank-it-operations-lab",
+    "note": "Read by the merge-eligibility gate ONLY from the trusted checkout (main when main carries it, else the pinned TRUSTED_GATE_SHA). The candidate's copy of this file is never read. Changing who may approve requires changing this file on main (UA-3) or re-pinning, both visible in review.",
+    "owner_logins": [
+      "onnxscibroccoli"
+    ],
+    "owner_required_permission": [
+      "admin"
+    ],
+    "reviewer_allowlist": [],
+    "reviewer_required_permission": [
+      "admin",
+      "maintain",
+      "write"
+    ],
+    "decision_pr": 7,
+    "decision_header": "ACCEPTANCE-ATTESTATION v2",
+    "required_gate_jobs": [
+      "user-actions",
+      "module-registry",
+      "offline-validation",
+      "aws-cdk",
+      "postgres",
+      "m365-scenario-evaluation",
+      "m365-unit-tests",
+      "m365-evidence-verification",
+      "plan-only-assertions",
+      "incident-committed-runs",
+      "incident-fresh-run",
+      "incident-not-executed-negative",
+      "labeling-markers"
+    ]
+  }
+}

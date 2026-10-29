@@ -1,0 +1,11 @@
+{
+  "schema": "bank-lab/gate-trust/v2",
+  "status": "UNVERIFIED",
+  "reasons": [
+    "no independently reviewed gate pin: the manifest records no qualifying review of gate_sha af49a27d6cef040478edafe8324d83b919ea9ffb"
+  ],
+  "gate_sha": "af49a27d6cef040478edafe8324d83b919ea9ffb",
+  "candidate_sha": "a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45",
+  "workflow_sha": "172e392b7dee7523d044ef485ed9d46594b3a414",
+  "independent_review": null
+}
