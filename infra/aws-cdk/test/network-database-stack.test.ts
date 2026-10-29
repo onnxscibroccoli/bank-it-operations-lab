@@ -83,6 +83,15 @@ describe('NetworkDatabaseStack', () => {
     expect(kmsWildcards(json)).toEqual([]);
   });
 
+  test('B5-2: every CMK admin statement is scoped to the key-admin role / root user with no Create*/Put* or CreateGrant', () => {
+    for (const k of Object.values(template.findResources('AWS::KMS::Key'))) {
+      const admin = (k.Properties.KeyPolicy.Statement as any[]).find((s) => s.Sid === 'KeyAdministrationByKeyAdminRoleOnly');
+      expect(admin).toBeDefined();
+      expect((admin.Action as string[]).filter((a) => a.includes('*') || a === 'kms:CreateGrant')).toEqual([]);
+      expect(admin.Condition.ArnEquals['aws:PrincipalArn']).toHaveLength(2);
+    }
+  });
+
   test('IAM: no inline policies attached to roles defined here', () => {
     template.resourceCountIs('AWS::IAM::Policy', 0);
   });

@@ -96,6 +96,19 @@ describe('negative: KMS key policy with wildcard principal / kms:* is caught', (
   });
 });
 
+describe('negative (B5-2): unconditioned root kms:Create* / kms:Put* key admin is caught', () => {
+  const { json } = fixture((s) => {
+    const k = new kms.Key(s, 'OldAdminKey', { policy: new iam.PolicyDocument({ statements: [] }) });
+    k.addToResourcePolicy(new iam.PolicyStatement({ principals: [new iam.AccountRootPrincipal()], actions: ['kms:Create*', 'kms:Put*', 'kms:Describe*'], resources: ['*'] }));
+    k.addToResourcePolicy(new iam.PolicyStatement({ principals: [new iam.AccountRootPrincipal()], actions: ['kms:CreateGrant'], resources: ['*'] }));
+  });
+  test('guard flags the pre-B5-2 admin statement and an unconditioned CreateGrant', () => {
+    const rules = kmsWildcards(json).map((v) => v.rule);
+    expect(rules).toEqual(expect.arrayContaining(['KMS_UNCONDITIONED_ADMIN', 'KMS_ADMIN_WILDCARD']));
+    expect(rules.filter((r) => r === 'KMS_UNCONDITIONED_ADMIN')).toHaveLength(2);
+  });
+});
+
 describe('negative: SG open to the internet is caught', () => {
   const { json } = fixture((s) => {
     const vpc = new ec2.Vpc(s, 'Vpc', { maxAzs: 1, natGateways: 0 });

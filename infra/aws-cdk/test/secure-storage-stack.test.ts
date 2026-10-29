@@ -68,9 +68,29 @@ describe('SecureStorageStack (remediated)', () => {
     const key = Object.values(template.findResources('AWS::KMS::Key'))[0];
     const crypto = (key.Properties.KeyPolicy.Statement as any[]).find((s) => s.Sid === 'CryptoViaApprovedServicesOnly');
     expect(JSON.stringify(crypto.Condition.StringEquals['kms:ViaService'])).toContain('"s3."');
-    const admin = (key.Properties.KeyPolicy.Statement as any[]).find((s) => s.Sid === 'KeyAdministrationByAccountRoot');
+    const admin = (key.Properties.KeyPolicy.Statement as any[]).find((s) => s.Sid === 'KeyAdministrationByKeyAdminRoleOnly');
     expect(admin.Action).not.toContain('kms:Decrypt');
     expect(admin.Action).not.toContain('kms:Encrypt');
+  });
+
+  test('B5-2: key admin is least-privilege: no Create*/Put* wildcards, no CreateGrant, scoped principal, still manageable', () => {
+    const key = Object.values(template.findResources('AWS::KMS::Key'))[0];
+    const stmts = key.Properties.KeyPolicy.Statement as any[];
+    expect(stmts.find((s) => s.Sid === 'KeyAdministrationByAccountRoot')).toBeUndefined();
+    const admin = stmts.find((s) => s.Sid === 'KeyAdministrationByKeyAdminRoleOnly');
+    expect(admin.Action).not.toContain('kms:Create*');
+    expect(admin.Action).not.toContain('kms:Put*');
+    expect(admin.Action).not.toContain('kms:CreateGrant');
+    expect((admin.Action as string[]).filter((a) => a.includes('*'))).toEqual([]);
+    expect(admin.Action).toEqual(expect.arrayContaining(['kms:PutKeyPolicy', 'kms:ScheduleKeyDeletion', 'kms:CancelKeyDeletion', 'kms:EnableKey']));
+    const arns = JSON.stringify(admin.Condition.ArnEquals['aws:PrincipalArn']);
+    expect(arns).toContain(':role/BankItLabKmsKeyAdmin');
+    expect(arns).toContain(':root');
+    expect(admin.Condition.BoolIfExists['kms:BypassPolicyLockoutSafetyCheck']).toBe('false');
+    // the only CreateGrant allowed for account principals is the conditioned AWS-resource grant statement
+    for (const s of stmts.filter((x) => ([] as string[]).concat(x.Action).includes('kms:CreateGrant'))) {
+      expect(s.Condition?.Bool?.['kms:GrantIsForAWSResource'] ?? s.Condition?.StringEquals?.['kms:ViaService']).toBeDefined();
+    }
   });
 
   test.each(NAG_PACKS)('cdk-nag %s: zero unsuppressed errors and warnings', (pack) => {

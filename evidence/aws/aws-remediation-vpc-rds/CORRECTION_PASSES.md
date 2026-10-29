@@ -11,3 +11,13 @@ Note: before the logged pass-3 Jest run, an unlogged development run of the new 
 test-authoring defects (a CDK cyclic-dependency error in the two-bucket loop fixture; an over-broad EX-04 suppression
 that also landed on the BackupSelection). Both were fixed (raw-template loop fixture; suppression scoped to the role).
 No control was weakened to make anything pass.
+
+## Pass 4 (post-review fix B5-2, 2026-10-28 ~21:30 EDT, integration branch)
+
+This pass comes after the original 3-pass limit. It is a fix for independent-review finding B5-2 (PR #30 on candidate `b908a66`), not a nag-driven retry.
+
+| Pass | Trigger | Change | Result |
+|------|---------|--------|--------|
+| 4 | B5-2: `KeyAdministrationByAccountRoot` granted every account principal `kms:Create*` (which includes `CreateGrant`, so it bypassed the conditioned grant statement) and `kms:Put*` (which includes `PutKeyPolicy`), with no condition | The statement is now `KeyAdministrationByKeyAdminRoleOnly`:<br>• explicit admin actions with no `Create*`/`Put*` wildcard and no `CreateGrant`<br>• `PutKeyPolicy` kept, so the key stays manageable<br>• `ArnEquals aws:PrincipalArn` limited to role `BankItLabKmsKeyAdmin` and the account root user (break-glass)<br>• `BoolIfExists kms:BypassPolicyLockoutSafetyCheck=false`<br><br>A new guard, `KMS_UNCONDITIONED_ADMIN`/`KMS_ADMIN_WILDCARD`, has a negative control plus 2 positive tests | tsc 0, jest 36/36, synth 0, 0 unsuppressed Non-Compliant (logs/11..13) |
+
+The pass-3 outputs it replaces are kept unmodified in `superseded/pass3-pre-B5-2/` (synth, cdk-nag, jest-results.json).

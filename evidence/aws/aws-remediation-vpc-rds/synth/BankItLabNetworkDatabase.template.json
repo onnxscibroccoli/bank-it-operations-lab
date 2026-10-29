@@ -11,21 +11,67 @@
      "Statement": [
       {
        "Action": [
-        "kms:Create*",
-        "kms:Describe*",
-        "kms:Enable*",
-        "kms:List*",
-        "kms:Put*",
-        "kms:Update*",
-        "kms:Revoke*",
-        "kms:Disable*",
-        "kms:Get*",
-        "kms:Delete*",
+        "kms:CreateAlias",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:ListAliases",
+        "kms:ListKeyPolicies",
+        "kms:ListResourceTags",
+        "kms:PutKeyPolicy",
+        "kms:UpdateAlias",
+        "kms:UpdateKeyDescription",
+        "kms:EnableKey",
+        "kms:EnableKeyRotation",
+        "kms:DisableKey",
+        "kms:DisableKeyRotation",
+        "kms:DeleteAlias",
         "kms:TagResource",
         "kms:UntagResource",
         "kms:ScheduleKeyDeletion",
         "kms:CancelKeyDeletion"
        ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":role/BankItLabKmsKeyAdmin"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":root"
+            ]
+           ]
+          }
+         ]
+        },
+        "BoolIfExists": {
+         "kms:BypassPolicyLockoutSafetyCheck": "false"
+        }
+       },
        "Effect": "Allow",
        "Principal": {
         "AWS": {
@@ -46,7 +92,7 @@
         }
        },
        "Resource": "*",
-       "Sid": "KeyAdministrationByAccountRoot"
+       "Sid": "KeyAdministrationByKeyAdminRoleOnly"
       },
       {
        "Action": [
@@ -218,21 +264,67 @@
      "Statement": [
       {
        "Action": [
-        "kms:Create*",
-        "kms:Describe*",
-        "kms:Enable*",
-        "kms:List*",
-        "kms:Put*",
-        "kms:Update*",
-        "kms:Revoke*",
-        "kms:Disable*",
-        "kms:Get*",
-        "kms:Delete*",
+        "kms:CreateAlias",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:ListAliases",
+        "kms:ListKeyPolicies",
+        "kms:ListResourceTags",
+        "kms:PutKeyPolicy",
+        "kms:UpdateAlias",
+        "kms:UpdateKeyDescription",
+        "kms:EnableKey",
+        "kms:EnableKeyRotation",
+        "kms:DisableKey",
+        "kms:DisableKeyRotation",
+        "kms:DeleteAlias",
         "kms:TagResource",
         "kms:UntagResource",
         "kms:ScheduleKeyDeletion",
         "kms:CancelKeyDeletion"
        ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":role/BankItLabKmsKeyAdmin"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":root"
+            ]
+           ]
+          }
+         ]
+        },
+        "BoolIfExists": {
+         "kms:BypassPolicyLockoutSafetyCheck": "false"
+        }
+       },
        "Effect": "Allow",
        "Principal": {
         "AWS": {
@@ -253,7 +345,7 @@
         }
        },
        "Resource": "*",
-       "Sid": "KeyAdministrationByAccountRoot"
+       "Sid": "KeyAdministrationByKeyAdminRoleOnly"
       },
       {
        "Action": [

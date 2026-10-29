@@ -3,23 +3,36 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
 
-/** Key administration only. Deliberately excludes Encrypt/Decrypt/GenerateDataKey/ReEncrypt and `kms:*`. */
+/**
+ * Key administration only (B5-2). Explicit actions, no `kms:Create*` / `kms:Put*` wildcards:
+ *  - no kms:CreateGrant here (grants are only possible through the conditioned GrantsForAwsResources... statement),
+ *  - no kms:Encrypt/Decrypt/GenerateDataKey/ReEncrypt and no `kms:*`,
+ *  - kms:PutKeyPolicy stays (so the key remains manageable) but only without BypassPolicyLockoutSafetyCheck.
+ */
 export const KEY_ADMIN_ACTIONS = [
-  'kms:Create*',
-  'kms:Describe*',
-  'kms:Enable*',
-  'kms:List*',
-  'kms:Put*',
-  'kms:Update*',
-  'kms:Revoke*',
-  'kms:Disable*',
-  'kms:Get*',
-  'kms:Delete*',
+  'kms:CreateAlias',
+  'kms:DescribeKey',
+  'kms:GetKeyPolicy',
+  'kms:GetKeyRotationStatus',
+  'kms:ListAliases',
+  'kms:ListKeyPolicies',
+  'kms:ListResourceTags',
+  'kms:PutKeyPolicy',
+  'kms:UpdateAlias',
+  'kms:UpdateKeyDescription',
+  'kms:EnableKey',
+  'kms:EnableKeyRotation',
+  'kms:DisableKey',
+  'kms:DisableKeyRotation',
+  'kms:DeleteAlias',
   'kms:TagResource',
   'kms:UntagResource',
   'kms:ScheduleKeyDeletion',
   'kms:CancelKeyDeletion',
 ];
+
+/** Default IAM role name of the key administrator (a dedicated role; created outside this lab, never by the stack). */
+export const DEFAULT_KEY_ADMIN_ROLE_NAME = 'BankItLabKmsKeyAdmin';
 
 export const KEY_USAGE_ACTIONS = [
   'kms:Encrypt',
@@ -35,11 +48,15 @@ export interface LeastPrivilegeKeyProps {
   readonly viaServices: string[];
   /** Allow the CloudWatch Logs service principal to use the key, scoped to log groups in this account/region. */
   readonly allowCloudWatchLogs?: boolean;
+  /** IAM role name allowed to administer the key (in addition to the account root user as break-glass). */
+  readonly keyAdminRoleName?: string;
 }
 
 /**
  * Customer-managed KMS key with an explicit, least-privilege key policy:
- *  - account root may administer the key (no cryptographic use, no kms:*), so the key can never become unmanageable;
+ *  - only the dedicated key-admin role (and the account root user as break-glass) may administer the key, using an
+ *    explicit action list with no CreateGrant and no lockout-safety bypass (aws:PrincipalArn condition), so the key
+ *    stays manageable without giving every account principal wildcard Create or Put actions;
  *  - account principals may use the key for crypto only through the named AWS services (kms:ViaService) in this
  *    account (kms:CallerAccount);
  *  - optionally, logs.<region>.amazonaws.com may use it only for log groups in this account/region.
@@ -49,10 +66,19 @@ export function leastPrivilegeKey(scope: Construct, id: string, props: LeastPriv
   const stack = Stack.of(scope);
   const statements: iam.PolicyStatement[] = [
     new iam.PolicyStatement({
-      sid: 'KeyAdministrationByAccountRoot',
+      sid: 'KeyAdministrationByKeyAdminRoleOnly',
       principals: [new iam.AccountRootPrincipal()],
       actions: KEY_ADMIN_ACTIONS,
       resources: ['*'],
+      conditions: {
+        ArnEquals: {
+          'aws:PrincipalArn': [
+            `arn:${stack.partition}:iam::${stack.account}:role/${props.keyAdminRoleName ?? DEFAULT_KEY_ADMIN_ROLE_NAME}`,
+            `arn:${stack.partition}:iam::${stack.account}:root`,
+          ],
+        },
+        BoolIfExists: { 'kms:BypassPolicyLockoutSafetyCheck': 'false' },
+      },
     }),
     new iam.PolicyStatement({
       sid: 'CryptoViaApprovedServicesOnly',

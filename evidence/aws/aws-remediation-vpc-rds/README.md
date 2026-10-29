@@ -7,7 +7,8 @@ present (run-cmd.sh unsets them and points AWS config/credential files at /dev/n
 - `logs/`: full output of each command. `pass0-nag/`, `pass1-nag/`: nag reports from the failing passes.
 - `synth/`: final synthesized templates + manifest (`cdk synth --no-lookups`, env-agnostic).
 - `cdk-nag/`: final AwsSolutions + NIST 800-53 R5 reports and validation-report.json.
-- `jest-results.json`: final Jest results (33 tests incl. negative controls).
+- `jest-results.json`: final Jest results (36 tests incl. negative controls; pass 4, B5-2).
+- `superseded/pass3-pre-B5-2/`: the pass-3 synth, cdk-nag and Jest outputs (33 tests), kept unmodified after pass 4 replaced them.
 - `SECURITY_EXCEPTIONS.md`: proposed exceptions EX-01..EX-04. `CORRECTION_PASSES.md`: what failed and what changed.
 - `SHA256SUMS`: `sha256sum -c SHA256SUMS` from this directory.
 

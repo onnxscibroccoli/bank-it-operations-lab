@@ -57,7 +57,8 @@ const isWildcardPrincipal = (p: any): boolean => {
   return false;
 };
 
-/** KMS key-policy statements that Allow a wildcard principal, or grant kms:* / "*" actions. */
+/** KMS key-policy statements that Allow a wildcard principal, grant kms:* / "*", use kms:Create* / kms:Put*, or grant
+ *  CreateGrant / PutKeyPolicy without any condition (B5-2). */
 export function kmsWildcards(t: TemplateJson): Violation[] {
   const out: Violation[] = [];
   for (const [id, r] of Object.entries(t.Resources ?? {})) {
@@ -67,6 +68,14 @@ export function kmsWildcards(t: TemplateJson): Violation[] {
       if (isWildcardPrincipal(s.Principal)) out.push({ rule: 'KMS_WILDCARD_PRINCIPAL', resource: id, detail: JSON.stringify(s.Principal) });
       const actions: string[] = Array.isArray(s.Action) ? s.Action : [s.Action];
       if (actions.some((a) => a === '*' || a === 'kms:*')) out.push({ rule: 'KMS_WILDCARD_ACTION', resource: id, detail: actions.join(',') });
+      // B5-2: grant-creation / key-policy-writing actions (incl. the Create* / Put* wildcards) must never be unconditioned.
+      const sensitive = actions.filter((a) => ['kms:create*', 'kms:put*', 'kms:creategrant', 'kms:putkeypolicy'].includes(String(a).toLowerCase()));
+      if (sensitive.length && !(s.Condition && Object.keys(s.Condition).length)) {
+        out.push({ rule: 'KMS_UNCONDITIONED_ADMIN', resource: id, detail: sensitive.join(',') });
+      }
+      if (actions.some((a) => ['kms:create*', 'kms:put*'].includes(String(a).toLowerCase()))) {
+        out.push({ rule: 'KMS_ADMIN_WILDCARD', resource: id, detail: actions.join(',') });
+      }
     }
   }
   return out;
