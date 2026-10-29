@@ -29,8 +29,11 @@ AC status values in coordination/tasks.json (PR #31 F6: every technical AC is de
 --root DIR: the tree whose data (coordination/tasks.json, coordination/modules.json, the exception register and
   synthesized templates) is evaluated. In CI this is the candidate checkout, while the gate CODE runs from a trusted
   checkout (main if it carries the gate, else a pinned SHA). Trusted required_gate_jobs cannot be dropped by --root data.
---gate-trust FILE: verify_trusted_gate.py --check-pin output (D3). Anything but status VERIFIED (independently reviewed
-  pin that is not the candidate) adds "TRUSTED GATE UNVERIFIED" and the verdict is NOT ELIGIBLE.
+--manifest FILE --gate-repo DIR --workflow-repo DIR (D3 + D3-a): this code computes gate trust itself. The expected hash of
+  every gate file is taken from the PINNED commit (git show <gate_sha>:path) and must equal the manifest and the files
+  executing now: these scripts/ci modules, the --config read, and integration-gate.yml at GITHUB_WORKFLOW_SHA. The pin
+  must not be the candidate and needs an API-verified independent APPROVED review. Anything else adds "TRUSTED GATE
+  UNVERIFIED" and the verdict is NOT ELIGIBLE. --gate-trust files are ignored.
 --lint-tasks: fail if tasks.json carries MET for any of AC1-AC5, or a MET without a complete met_for binding.
 Exit 0 = eligible (or lint clean), 1 = not eligible (expected while conditions are open) or lint violations.
 """
@@ -40,6 +43,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import user_actions  # noqa: E402
 import check_exceptions, reviews  # noqa: E402
+import verify_trusted_gate as vtg  # noqa: E402
 
 RUNTIME_ACS = ("AC1", "AC2", "AC3", "AC4", "AC5")
 TECH = ["AC1", "AC2", "AC3", "AC4", "AC5"]
@@ -98,12 +102,29 @@ def lint(conds):
     return v
 
 
+def compute_gate_trust(a, ident):
+    try:
+        man = json.loads(Path(a.manifest).read_text()) if a.manifest else None
+    except (OSError, ValueError):
+        man = None
+    if not man or not a.gate_repo or not a.config:
+        return {"status": "UNVERIFIED", "reasons": ["no trusted manifest / gate checkout / trusted config given (--manifest, --gate-repo, --config)"]}
+    env = os.environ
+    token = env.get("GITHUB_TOKEN")
+    fetch = (lambda m: vtg.fetch_pin_review(m, env.get("GITHUB_REPOSITORY", ""), token, env.get("GITHUB_API_URL", "https://api.github.com"))) if token else None
+    return vtg.gate_trust_at_runtime(man, (ident or {}).get("candidate_sha"), a.gate_repo, Path(__file__).resolve().parent, a.config,
+                                     a.workflow_repo or a.root or ".", env.get("GITHUB_WORKFLOW_SHA"), fetch)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary")
     ap.add_argument("--identity", default=os.environ.get("RUN_IDENTITY"))
     ap.add_argument("--decision-out")
-    ap.add_argument("--gate-trust", help="D3: verify_trusted_gate.py --check-pin output; anything but VERIFIED -> NOT ELIGIBLE")
+    ap.add_argument("--gate-trust", help="IGNORED (D3-a): gate trust is recomputed by this code, never read from a file")
+    ap.add_argument("--manifest", help="trusted gate manifest (from main or evidence/acceptance)")
+    ap.add_argument("--gate-repo", help="git checkout of the pinned gate commit (git show <gate_sha>:path)")
+    ap.add_argument("--workflow-repo", help="git repo containing GITHUB_WORKFLOW_SHA (the executing workflow commit)")
     ap.add_argument("--lint-tasks", action="store_true")
     ap.add_argument("--root", default=str(user_actions.ROOT), help="data root (candidate checkout)")
     ap.add_argument("--tasks")
@@ -196,20 +217,20 @@ def main(argv=None):
             problems += why if any(w.startswith(ac) for w in why) else [f"{ac}: {'; '.join(why)}"]
 
     ac6 = (conds.get("AC6") or {}).get("status", "missing")
-    # D3: a hash-consistent gate is not a trusted gate. Only an independently reviewed pin (not the candidate) counts.
-    try:
-        gate_trust = json.loads(Path(a.gate_trust).read_text()) if a.gate_trust else None
-    except (OSError, ValueError):
-        gate_trust = None
-    if not isinstance(gate_trust, dict) or gate_trust.get("status") != "VERIFIED":
-        why = (gate_trust or {}).get("reasons") if isinstance(gate_trust, dict) else ["no gate-trust result (--gate-trust)"]
-        problems.append("TRUSTED GATE UNVERIFIED: " + "; ".join(why or ["status not VERIFIED"]))
+    # D3 + D3-a: the gate computes its own trust. Expected hashes come from the PINNED commit (git show), and must equal the
+    # manifest and the files executing now (these modules, the config read, the workflow at GITHUB_WORKFLOW_SHA). A
+    # gate-trust file written by the workflow is never trusted (a workflow that just prints VERIFIED must not count).
+    gate_trust = compute_gate_trust(a, ident)
+    if a.gate_trust:
+        print(f"::notice title=merge-eligibility::--gate-trust {a.gate_trust} ignored: gate trust is recomputed by the gate code (D3-a)")
+    if gate_trust.get("status") != "VERIFIED":
+        problems.append("TRUSTED GATE UNVERIFIED: " + "; ".join(gate_trust.get("reasons") or ["status not VERIFIED"]))
     verdict = "ELIGIBLE" if not problems else "NOT ELIGIBLE"
     label = (ident or {}).get("tested_sha") or "local"
     print(f"merge-eligibility for tested {label} (candidate {(ident or {}).get('candidate_sha')}): {verdict}")
     for ac, (st, why) in ac_results.items():
         print(f"  {ac}: {st}" + (f" ({'; '.join(why)})" if why else ""))
-    print("  TRUSTED GATE: " + ((gate_trust or {}).get("status") or "UNVERIFIED") if isinstance(gate_trust, dict) else "  TRUSTED GATE: UNVERIFIED")
+    print("  TRUSTED GATE: " + gate_trust.get("status", "UNVERIFIED"))
     for p in problems:
         print("::notice title=merge-eligibility::" + user_actions.esc_cmd(p))
     if a.decision_out:

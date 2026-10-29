@@ -292,6 +292,7 @@ jobs:
           sparse-checkout: |
             scripts/ci
             .github/acceptance
+            .github/workflows
       - name: Verify gate code, trusted config and workflow against the trusted manifest (R6)
         id: verify
         run: |
@@ -312,7 +313,7 @@ jobs:
           set -euo pipefail
           cand=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("candidate_sha") or "")' "$RUNNER_TEMP/run-identity.json")
           python3 "$GATE/scripts/ci/verify_trusted_gate.py" --check-pin --manifest "$MANIFEST" --gate-dir "$GATE" \
-            --candidate-sha "$cand" --out "$RUNNER_TEMP/gate-trust.json"
+            --candidate-sha "$cand" --workflow-repo "$GITHUB_WORKSPACE" --out "$RUNNER_TEMP/gate-trust.json"
           st=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["status"])' "$RUNNER_TEMP/gate-trust.json")
           { echo "| gate pin | $st (independently reviewed pin required; never the candidate) |"; } >> "$GITHUB_STEP_SUMMARY"
       - name: Runtime evidence from GitHub (reviews, attestations, runs, permissions; read-only GITHUB_TOKEN)
@@ -329,12 +330,13 @@ jobs:
         if: always() && steps.verify.outcome == 'success'
         env:
           NEEDS_JSON: ${{ toJSON(needs) }}
+          GITHUB_TOKEN: ${{ github.token }}   # read-only: fetch the pin's independent review (D3); gate trust is recomputed here (D3-a)
         run: >-
           python3 "$GATE/scripts/ci/merge_eligibility.py" --root "$GITHUB_WORKSPACE"
           --config "$GATE/.github/acceptance/trusted-config.json"
           --identity "$RUNNER_TEMP/run-identity.json" --reviews "$RUNNER_TEMP/reviews.json"
           --exceptions "$RUNNER_TEMP/security-exceptions.json"
-          --gate-trust "$RUNNER_TEMP/gate-trust.json"
+          --manifest "$MANIFEST" --gate-repo "$GATE" --workflow-repo "$GITHUB_WORKSPACE"
           --decision-out "$RUNNER_TEMP/acceptance-decision.json" --summary "$GITHUB_STEP_SUMMARY"
       - name: Upload the decision and all runtime evidence (outside the candidate tree)
         if: always()

@@ -1,5 +1,5 @@
 """R6 hardening: the candidate must not be able to weaken the verifier (verify_trusted_gate.py)."""
-import io, shutil, sys, tempfile, unittest
+import io, shutil, subprocess, sys, tempfile, unittest
 from contextlib import redirect_stdout
 from pathlib import Path
 
@@ -7,7 +7,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import verify_trusted_gate as v  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
-SHA = "4" * 40
+
+
+def git(repo, *args):
+    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, check=True, text=True).stdout.strip()
+
+
+def commit_all(repo, msg="gate"):
+    git(repo, "add", "-A")
+    git(repo, "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-q", "-m", msg)
+    return git(repo, "rev-parse", "HEAD")
 
 
 class TrustedGate(unittest.TestCase):
@@ -20,7 +29,10 @@ class TrustedGate(unittest.TestCase):
             (d / side / ".github/workflows").mkdir(parents=True)
             shutil.copy(ROOT / ".github/workflows/integration-gate.yml", d / side / ".github/workflows/")
         self.g, self.c = d / "gate", d / "cand"
-        self.man = v.build(self.g, self.c / ".github/workflows/integration-gate.yml", SHA)
+        git(self.g, "init", "-q")
+        global SHA
+        SHA = commit_all(self.g)
+        self.man = v.build(self.g, SHA)
 
     def tearDown(self):
         self.tmp.cleanup()

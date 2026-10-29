@@ -21,7 +21,8 @@ AC2 / AC4 / AC5 (decisions_from_comments): INDEPENDENT ACCEPTANCE lives outside 
   account all agents use) never count (D1); exception decisions from it are reported INSUFFICIENT_INDEPENDENCE
   (blocking) until a separate owner identity exists (O-5 / UA-6). workflow_run must be a completed integration-gate
   run (name + path) of the candidate or an attested tested merge whose jobs all succeeded except the fail-closed
-  merge-eligibility job (D1):
+  merge-eligibility job (D1). Every attested tested_merge must be a merge with parents exactly (main, candidate),
+  verified via GET /commits/{sha} (or this run's own validated merge identity) (PR #33):
 
     ACCEPTANCE-ATTESTATION v2
     candidate: <40-hex candidate SHA>
@@ -224,6 +225,12 @@ def attestations(rv, ident, cfg):
             notes.append(f"attestation {cid} ignored: main {a['main'][:12]} is not this run's base/main {main}"); continue
         if tested not in a["tested_merge"]:
             notes.append(f"attestation {cid} ignored: this run's tested merge {tested} is not attested"); continue
+        commits = rv.get("commits") or {}
+        bad_tm = [m for m in a["tested_merge"]
+                  if not ((m == tested and (ident or {}).get("kind") == "merge" and norm((ident or {}).get("base_sha")) == a["main"])
+                          or [norm(x) for x in ((commits.get(m) or {}).get("parents") or [])] == [a["main"], cand])]
+        if bad_tm:
+            notes.append(f"attestation {cid} ignored: tested_merge {' '.join(x[:12] for x in bad_tm)} is not a merge with parents (main {a['main'][:12]}, candidate {cand[:12]})"); continue
         rp = run_problem(runs.get(a["workflow_run"]), cand, a["tested_merge"])
         if rp:
             notes.append(f"attestation {cid} ignored: workflow run {a['workflow_run']}: {rp}"); continue
@@ -370,6 +377,17 @@ def fetch(ident, env, cfg=None):
                 except Exception as e:
                     runs[m.group(1)] = {"error": f"{type(e).__name__}: {e}"}
         out["runs"] = runs
+        commits = {}
+        for c in out["comments"]:
+            m = re.search(r"^\s*tested_merge:\s*(.+?)\s*$", c.get("body") or "", re.M)
+            for s in (m.group(1).split() if m else [])[:4]:
+                s = s.lower()
+                if HEX40.match(s) and s not in commits and len(commits) < 50:
+                    try:
+                        commits[s] = {"parents": [x.get("sha") for x in api(f"/repos/{repo}/commits/{s}", token, base).get("parents") or []]}
+                    except Exception as e:
+                        commits[s] = {"error": f"{type(e).__name__}: {e}"}
+        out["commits"] = commits
     except Exception as e:
         out["comments_error"] = f"{type(e).__name__}: {e}"
     # permissions only for accounts the trusted config could authorize (limits calls; others never count)

@@ -3,6 +3,7 @@
 A MET acceptance condition must be bound to the exact run identity (candidate, base, tested merge), each as a full
 40-hex SHA. Missing, abbreviated, wrong, non-hex and candidate-vs-merge mix-ups must all be NOT ELIGIBLE, and
 AC3 COMPUTED_AT_RUNTIME must only hold for a valid merge identity whose required checks all succeeded in this run."""
+import contextlib
 import io, json, os, sys, tempfile, unittest
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -84,7 +85,7 @@ def tasks(ac_over):
     return {"acceptance_conditions_for_main": {"conditions": conds}}
 
 
-def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC, config=CONFIG, gate_trust=GATE_TRUST_OK):
+def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEWS, exc=CLEAN_EXC, config=CONFIG, gate_trust=GATE_TRUST_OK, env_extra=None):
     with tempfile.TemporaryDirectory() as d:
         tp = Path(d) / "tasks.json"
         tp.write_text(json.dumps(tasks(ac_over or {})))
@@ -93,8 +94,6 @@ def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEW
             (Path(d) / "rv.json").write_text(json.dumps(reviews)); args += ["--reviews", str(Path(d) / "rv.json")]
         if config is not None:
             (Path(d) / "cfg.json").write_text(json.dumps(config)); args += ["--config", str(Path(d) / "cfg.json")]
-        if gate_trust is not None:
-            (Path(d) / "gt.json").write_text(json.dumps(gate_trust)); args += ["--gate-trust", str(Path(d) / "gt.json")]
         if exc is not None:
             (Path(d) / "exc.json").write_text(json.dumps(exc)); args += ["--exceptions", str(Path(d) / "exc.json")]
         if ident is not None:
@@ -102,7 +101,14 @@ def run(ac_over=None, ident=IDENT, needs=None, extra=(), reviews=APPROVED_REVIEW
             ip.write_text(json.dumps(ident))
             args += ["--identity", str(ip)]
         env = {"NEEDS_JSON": json.dumps(all_green() if needs is None else needs)}
-        with mock.patch.dict(os.environ, env), redirect_stdout(io.StringIO()) as out:
+        gt = gate_trust if isinstance(gate_trust, dict) else {"status": "UNVERIFIED", "reasons": ["no gate trust (test)"]}
+        env.update(env_extra or {})
+        patches = [mock.patch.dict(os.environ, env)]
+        if gate_trust != "REAL":   # "REAL": exercise the gate's own trust computation (PR #33 D3-a tests)
+            patches.append(mock.patch.object(me, "compute_gate_trust", lambda a, ident: dict(gt)))
+        with contextlib.ExitStack() as st, redirect_stdout(io.StringIO()) as out:
+            for x in patches:
+                st.enter_context(x)
             rc = me.main(args)
     return rc, out.getvalue()
 
