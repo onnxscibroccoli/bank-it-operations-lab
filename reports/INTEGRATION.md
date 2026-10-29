@@ -15,6 +15,25 @@
 - **Exit code 3:** the harness exit 3 means NOT_EXECUTED. It fails the step and therefore the required job. The step has no `if:` and no `continue-on-error`.
 - **`5f159f1`:** superseded. Its results above are history only.
 
+- **FINAL frozen acceptance candidate `7fe6d7281316190d9b39e35a448fb9fb81b92d50`**, tested against current main `7f50348` on `candidate/main-validation-7fe6d72` @ `770cf3360aeb4cca8f339c412f4cc5c907b88e09`. The `--no-ff` merge was clean and the merged tree is identical to the candidate. Local `validate-all` PASSED 43/43 on both.
+
+  In every gate run below, 18 of 19 jobs succeeded. **Every required job succeeded**, and `final-summary` succeeded. `merge-eligibility` **failed, by design** (AC1, AC2, AC4 and AC5 are open).
+
+  | Run | Fresh incident run |
+  |---|---|
+  | [integration-gate, main-validation 40793236453](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793236453) | All six requirements PASS; MTTD 3.481 s, MTTR 8.671 s |
+  | [integration-gate push 40793219129](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793219129) | MTTD 3.483 s, MTTR 8.675 s |
+  | [integration-gate PR 40793225624](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225624) | MTTD 3.447 s, MTTR 8.499 s |
+
+  The other workflows also succeeded:
+  - [postgres-restore-evidence 40793225365](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225365): 5/5
+  - [aws-cdk 40793225339](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225339)
+  - [offline-validation PR 40793225341](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225341)
+  - [offline-validation push 40793219059](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793219059)
+- **PostgreSQL actually used by the fresh CI run:** `postgresql-16` could not be installed on `ubuntu-latest`, so the fallback ran. The distro `postgresql` package via apt gave `/usr/lib/postgresql/18/bin` (PostgreSQL 18.6, from the image's PGDG packages), with `initdb` and `pg_ctl` on `PATH`. No services container was used.
+- **NOT_EXECUTED items for this SHA:** none. The harness's exit-3 path appears only in the negative job, where it correctly fails.
+- **Independent review of `7fe6d72`:** **not yet requested.** The packet is `coordination/review-requests/PR-7-candidate-7fe6d72.md`. Earlier approvals do not transfer, including `eb42b23`, `82ab7e6`, `02ac2de`, `5f159f1`, PR #14 and PR #27.
+
 ## Round 3 (2026-10-28 ~20:10 EDT, Ian 20:03 EDT): M365 and incident demo integrated at exact SHAs
 
 - **Merged by exact commit, not branch tip:**
@@ -228,7 +247,7 @@ Evaluated at the PR #7 head pushed with this report. Under the merge policy abov
 |---|---|---|---|
 | AC1 | An independent review (human or independent reviewer, e.g. ChatGPT) approves the **exact** candidate SHA. Provenance must be bound to that SHA, and author or agent self-review does not count. *Reworded per PR #27 C6.* | **UNMET** | No approval for any PR #7 head. PR #14 @ `eb8d259` counts only for PR #2's harness v2, and it requests changes on integrated #5. PR #27 reviewed #26, not #7. |
 | AC2 | Security exceptions recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded and test-enforced, but not approved. PR #14 B5-1: the suppressions are already applied. |
-| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **MET for candidate `5f159f1`**: every required job succeeded and all six incident outputs passed (runs 40792418163, 40792426144, main-validation 40792435152). Earlier SHAs are history only. | Local validate-all PASSED 43/43. |
+| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **MET for the FINAL candidate `7fe6d72`**: every required job succeeded and all six incident outputs passed (runs 40793219129, 40793225624, main-validation 40793236453). Earlier SHAs are history only. | Local validate-all PASSED 43/43. |
 | AC4 | Docs match the code. | **PARTIAL** | PR #1 is still open with the superseded design; #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings in integrated code. | **UNMET** | PR #14 B5-1/B5-2 on integrated #5. Fixed in this commit: the shared `postgres-negatives` reported OK on all-NOT_RUN runs. |
 | AC6 | Final human portfolio acceptance (Ian). Separate gate. | **UNMET** | Not requested; it follows AC1–AC5. |
