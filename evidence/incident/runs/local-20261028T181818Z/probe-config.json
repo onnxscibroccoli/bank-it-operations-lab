@@ -1,0 +1,11 @@
+{
+  "disk_path": "/",
+  "expected_probes": ["vendor-api-http", "core-ledger-db-tcp", "resolver-dns"],
+  "policy": {"max_age_s": 300},
+  "probes": [
+    {"name": "vendor-api-http", "kind": "http", "url": "http://127.0.0.1:18099/v1/health",
+     "expect_status": [200], "expect_substring": "SIMULATION", "timeout_s": 2, "max_bytes": 4096},
+    {"name": "core-ledger-db-tcp", "kind": "tcp", "host": "127.0.0.1", "port": 55432, "timeout_s": 2},
+    {"name": "resolver-dns", "kind": "dns", "hostname": "localhost", "timeout_s": 2}
+  ]
+}

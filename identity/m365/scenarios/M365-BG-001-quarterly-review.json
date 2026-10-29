@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-BG-001",
+  "type": "break-glass-review",
+  "title": "Quarterly emergency-access (break-glass) review",
+  "narrative": "Quarterly review of the two break-glass accounts against the bank standard: cloud-only, initial domain, permanent Global Administrator, FIDO2, excluded from every CA policy (CA001-CA007, matching identity/entra BASE-001), unlicensed, SOC sign-in alert, dual-site custody and a sign-in test every 90 days. Bravo's last test is overdue, and the review also flags an IT admin who still holds standing Global Administrator.",
+  "input": {},
+  "auditEvidence": [
+    {"category": "break-glass-review", "ref": "AUD-LAB-5101", "source": "Review worksheet signed by IAM lead and CISO delegate (synthetic)"},
+    {"category": "alert-config", "ref": "AUD-LAB-5102", "source": "Alert rule ALR-LAB-0001 export (synthetic)"},
+    {"category": "test-record", "ref": "AUD-LAB-5103", "source": "Last dual-custody test records (synthetic)"}
+  ],
+  "expected": {"verdict": "COMPLIANT_WITH_WARNINGS", "findings": ["BG-TEST-OVERDUE", "PRIV-STANDING-GA"]}
+}

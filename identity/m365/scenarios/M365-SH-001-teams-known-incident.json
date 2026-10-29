@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-SH-001",
+  "type": "service-health",
+  "title": "Six Teams tickets in 20 minutes during an active Microsoft incident (TM-LAB-0001)",
+  "narrative": "Branch, compliance, audit and HR staff report that Teams meetings will not join. Service health shows TM-LAB-0001 (service degradation) active since 13:10 UTC. Tickets are linked to the incident and a comms notice goes out by email and intranet, not Teams. One reporter (an intern) also has no license at all; that is a separate local issue that would persist after the incident is resolved.",
+  "input": {
+    "escalationThreshold": 5,
+    "reports": [
+      {"userId": "0a110000-0000-4000-8000-00000000000b", "workload": "teams", "reportedUtc": "2026-10-28T13:25:00Z", "symptom": "meeting join spins"},
+      {"userId": "0a110000-0000-4000-8000-00000000000c", "workload": "teams", "reportedUtc": "2026-10-28T13:27:00Z", "symptom": "chat history blank"},
+      {"userId": "0a110000-0000-4000-8000-00000000000d", "workload": "teams", "reportedUtc": "2026-10-28T13:31:00Z", "symptom": "meeting join spins"},
+      {"userId": "0a110000-0000-4000-8000-00000000000e", "workload": "teams", "reportedUtc": "2026-10-28T13:36:00Z", "symptom": "meeting join spins"},
+      {"userId": "0a110000-0000-4000-8000-00000000000f", "workload": "teams", "reportedUtc": "2026-10-28T13:40:00Z", "symptom": "cannot load channels"},
+      {"userId": "0a110000-0000-4000-8000-000000000010", "workload": "teams", "reportedUtc": "2026-10-28T13:44:00Z", "symptom": "Teams says no license"}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "service-health-snapshot", "ref": "AUD-LAB-4101", "source": "Service health issue TM-LAB-0001 export (synthetic)"},
+    {"category": "user-communication", "ref": "AUD-LAB-4102", "source": "All-staff email + intranet banner (synthetic)"}
+  ],
+  "expected": {"verdict": "KNOWN_SERVICE_INCIDENT", "findings": ["LIC-WORKLOAD-MISSING", "SH-KNOWN-INCIDENT"]}
+}

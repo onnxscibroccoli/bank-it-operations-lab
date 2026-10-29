@@ -1,0 +1,5 @@
+$ python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-unknown-device.json --quiet
+--- stdout ---
+--- stderr ---
+MALFORMED SCHEMA-004: M365-ACC-001.signIns[0]: unknown device (fail-closed, nothing evaluated)
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:18:45Z duration_ms=33 ---

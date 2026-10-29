@@ -1,0 +1,473 @@
+{
+ "Description": "Secure storage (static synthesis lab; not deployed)",
+ "Resources": {
+  "DataKey17AFBB84": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "CMK for the data bucket (S3 use only, via kms:ViaService)",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:CreateAlias",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:ListAliases",
+        "kms:ListKeyPolicies",
+        "kms:ListResourceTags",
+        "kms:PutKeyPolicy",
+        "kms:UpdateAlias",
+        "kms:UpdateKeyDescription",
+        "kms:EnableKey",
+        "kms:EnableKeyRotation",
+        "kms:DisableKey",
+        "kms:DisableKeyRotation",
+        "kms:DeleteAlias",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":role/BankItLabKmsKeyAdmin"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":root"
+            ]
+           ]
+          }
+         ]
+        },
+        "BoolIfExists": {
+         "kms:BypassPolicyLockoutSafetyCheck": "false"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "KeyAdministrationByKeyAdminRoleOnly"
+      },
+      {
+       "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "s3.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "CryptoViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:RevokeGrant"
+       ],
+       "Condition": {
+        "Bool": {
+         "kms:GrantIsForAWSResource": "true"
+        },
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "s3.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "GrantsForAwsResourcesViaApprovedServicesOnly"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PendingWindowInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "AccessLogsBucket83982689": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "OwnershipControls": {
+     "Rules": [
+      {
+       "ObjectOwnership": "BucketOwnerEnforced"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "EX-01: S3 server access log delivery only supports SSE-S3 (AES256) on the target bucket; SSE-KMS would break log delivery (ADR-0002).",
+       "id": "NIST.800.53.R5-S3DefaultEncryptionKMS"
+      },
+      {
+       "reason": "EX-02: Cross-region replication needs a destination bucket in a second region/account; out of scope for an env-agnostic, never-deployed lab stack.",
+       "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+      }
+     ]
+    }
+   }
+  },
+  "AccessLogsBucketPolicy7F77476F": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "AccessLogsBucket83982689"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AccessLogsBucket83982689",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AccessLogsBucket83982689",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "s3:PutObject",
+       "Condition": {
+        "ArnLike": {
+         "aws:SourceArn": {
+          "Fn::GetAtt": [
+           "DataBucketE3889A50",
+           "Arn"
+          ]
+         }
+        },
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "logging.s3.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "AccessLogsBucket83982689",
+            "Arn"
+           ]
+          },
+          "/data-bucket/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "DataBucketE3889A50": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "BucketKeyEnabled": true,
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "DataKey17AFBB84",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "LoggingConfiguration": {
+     "DestinationBucketName": {
+      "Ref": "AccessLogsBucket83982689"
+     },
+     "LogFilePrefix": "data-bucket/"
+    },
+    "OwnershipControls": {
+     "Rules": [
+      {
+       "ObjectOwnership": "BucketOwnerEnforced"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "EX-02: Cross-region replication needs a destination bucket in a second region/account; out of scope for an env-agnostic, never-deployed lab stack.",
+       "id": "NIST.800.53.R5-S3BucketReplicationEnabled"
+      }
+     ]
+    }
+   }
+  },
+  "DataBucketPolicy3231C704": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "DataBucketE3889A50"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DataBucketE3889A50",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DataBucketE3889A50",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,993 @@
+{
+  "tool": "bank-it-lab/m365-ops/v1",
+  "mode": "offline-synthetic",
+  "tenantStateClaimed": false,
+  "mutationsExecuted": 0,
+  "disclaimer": "OFFLINE / SYNTHETIC. Evaluated from local JSON in this repository. No Microsoft 365 / Entra ID / Intune tenant, Microsoft Graph call or credential was used, and no change was made anywhere. Every remediation step is PLAN_ONLY (executed=false).",
+  "tenant": {
+    "id": "5a1e0000-0000-4000-8000-00000000a001",
+    "displayName": "Northwind Lab Bank (SYNTHETIC)"
+  },
+  "asOfUtc": "2026-10-28T16:00:00Z",
+  "overall": "PASS",
+  "exitCode": 0,
+  "totals": {
+    "scenarios": 13,
+    "passed": 13,
+    "failed": 0,
+    "plannedSteps": 43
+  },
+  "scenarios": [
+    {
+      "id": "M365-ACC-001",
+      "type": "access-troubleshooting",
+      "title": "Payments ops user blocked from Outlook: AADSTS53000 on a non-compliant laptop",
+      "verdict": "ROOT_CAUSE_IDENTIFIED",
+      "expectedVerdict": "ROOT_CAUSE_IDENTIFIED",
+      "findingCodes": [
+        "CA-DEVICE-NOT-COMPLIANT",
+        "DEV-BITLOCKER",
+        "DEV-OS-MIN",
+        "SH-ADVISORY"
+      ],
+      "expectedFindingCodes": [
+        "CA-DEVICE-NOT-COMPLIANT",
+        "DEV-BITLOCKER",
+        "DEV-OS-MIN",
+        "SH-ADVISORY"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "CA-DEVICE-NOT-COMPLIANT",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "sign-in SI-LAB-3002 (Outlook (synthetic)): AADSTS53000 Conditional Access requires a compliant device (CA004) and the device is not",
+          "remediation": "Remediate the device compliance settings below, then sync the device in Company Portal."
+        },
+        {
+          "code": "DEV-OS-MIN",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "NWL-LT-0506 (CP-WIN-BANK): OS 10.0.19045 below minimum 10.0.22631",
+          "remediation": "Update the OS through the update ring (feature update for Windows 10 -> 11)."
+        },
+        {
+          "code": "DEV-BITLOCKER",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "NWL-LT-0506 (CP-WIN-BANK): BitLocker not enabled",
+          "remediation": "Enable BitLocker via the endpoint security disk encryption policy; escrow the key to Entra."
+        },
+        {
+          "code": "SH-ADVISORY",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "IN-LAB-0004 active: Delays in device compliance status reporting for some Windows devices (SYNTHETIC)",
+          "remediation": "Note it in the ticket, but it does not explain the device's own setting violations."
+        }
+      ],
+      "plan": [
+        {
+          "action": "READ_SIGNIN_LOG",
+          "target": "SI-LAB-3002",
+          "reference": "Graph: GET /v1.0/auditLogs/signIns?$filter=userId eq '{id}'",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "READ_DEVICE_COMPLIANCE",
+          "target": "NWL-LT-0506",
+          "reference": "Graph: GET /v1.0/deviceManagement/managedDevices/{id}/deviceCompliancePolicyStates",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "sign-in-log",
+          "diagnosis",
+          "resolution"
+        ],
+        "provided": [
+          "diagnosis",
+          "resolution",
+          "sign-in-log"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-ACC-002",
+      "type": "access-troubleshooting",
+      "title": "Contractor cannot enroll in Intune: license group disables the Entra ID P1 prerequisite",
+      "verdict": "ROOT_CAUSE_IDENTIFIED",
+      "expectedVerdict": "ROOT_CAUSE_IDENTIFIED",
+      "findingCodes": [
+        "LIC-PREREQ",
+        "LIC-WORKLOAD-MISSING",
+        "SH-ADVISORY"
+      ],
+      "expectedFindingCodes": [
+        "LIC-PREREQ",
+        "LIC-WORKLOAD-MISSING",
+        "SH-ADVISORY"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "LIC-WORKLOAD-MISSING",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "finley.contractor@nwlab-bank.example: workload 'intune' needs one of ['AAD_PREMIUM', 'AAD_PREMIUM_P2']; AAD_PREMIUM disabled in group:GRP-LIC-E3-CONTRACTOR",
+          "remediation": "Assign a license group whose SKU includes the plan (or re-enable the disabled plan); never hand out ad-hoc direct licenses."
+        },
+        {
+          "code": "LIC-PREREQ",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "finley.contractor@nwlab-bank.example: plan INTUNE_A is enabled but its prerequisite ['AAD_PREMIUM', 'AAD_PREMIUM_P2'] is not (group-based licensing reports a dependency violation)",
+          "remediation": "Fix the license group's disabledPlans so prerequisites stay enabled."
+        },
+        {
+          "code": "SH-ADVISORY",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "IN-LAB-0004 active for intune: Delays in device compliance status reporting for some Windows devices (SYNTHETIC)",
+          "remediation": "Link the ticket to the service-health issue."
+        }
+      ],
+      "plan": [
+        {
+          "action": "READ_LICENSE_STATE",
+          "target": "finley.contractor@nwlab-bank.example",
+          "reference": "Graph: GET /v1.0/users/{id}/licenseDetails",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "sign-in-log",
+          "diagnosis",
+          "resolution"
+        ],
+        "provided": [
+          "diagnosis",
+          "resolution",
+          "sign-in-log"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-ACC-003",
+      "type": "access-troubleshooting",
+      "title": "Wealth advisor: sign-in succeeds but Outlook says the mailbox cannot be found",
+      "verdict": "ROOT_CAUSE_IDENTIFIED",
+      "expectedVerdict": "ROOT_CAUSE_IDENTIFIED",
+      "findingCodes": [
+        "LIC-WORKLOAD-MISSING"
+      ],
+      "expectedFindingCodes": [
+        "LIC-WORKLOAD-MISSING"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "LIC-WORKLOAD-MISSING",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "gray.advisor@nwlab-bank.example: workload 'mailbox' needs one of ['EXCHANGE_S_ENTERPRISE', 'EXCHANGE_S_DESKLESS']; EXCHANGE_S_ENTERPRISE disabled in group:GRP-LIC-E3-MIGRATION",
+          "remediation": "Assign a license group whose SKU includes the plan (or re-enable the disabled plan); never hand out ad-hoc direct licenses."
+        }
+      ],
+      "plan": [
+        {
+          "action": "READ_LICENSE_STATE",
+          "target": "gray.advisor@nwlab-bank.example",
+          "reference": "Graph: GET /v1.0/users/{id}/licenseDetails",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "sign-in-log",
+          "diagnosis",
+          "resolution"
+        ],
+        "provided": [
+          "diagnosis",
+          "resolution",
+          "sign-in-log"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-ACC-004",
+      "type": "access-troubleshooting",
+      "title": "Treasury user blocked with AADSTS50079 after phone replacement (no MFA method left)",
+      "verdict": "ROOT_CAUSE_IDENTIFIED",
+      "expectedVerdict": "ROOT_CAUSE_IDENTIFIED",
+      "findingCodes": [
+        "AUTH-MFA-REGISTRATION-REQUIRED"
+      ],
+      "expectedFindingCodes": [
+        "AUTH-MFA-REGISTRATION-REQUIRED"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "AUTH-MFA-REGISTRATION-REQUIRED",
+          "severity": "error",
+          "rootCause": true,
+          "detail": "sign-in SI-LAB-3601 (My Sign-Ins (synthetic)): AADSTS50079 User must register for MFA but has no usable method",
+          "remediation": "Verify identity out of band (call back on HR-record number), issue a one-time Temporary Access Pass, have the user register a phishing-resistant method."
+        }
+      ],
+      "plan": [
+        {
+          "action": "READ_SIGNIN_LOG",
+          "target": "SI-LAB-3601",
+          "reference": "Graph: GET /v1.0/auditLogs/signIns?$filter=userId eq '{id}'",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ISSUE_TAP",
+          "target": "harper.treasury@nwlab-bank.example",
+          "reference": "Graph: POST /v1.0/users/{id}/authentication/temporaryAccessPassMethods (isUsableOnce=true)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "sign-in-log",
+          "diagnosis",
+          "resolution"
+        ],
+        "provided": [
+          "diagnosis",
+          "resolution",
+          "sign-in-log"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-BG-001",
+      "type": "break-glass-review",
+      "title": "Quarterly emergency-access (break-glass) review",
+      "verdict": "COMPLIANT_WITH_WARNINGS",
+      "expectedVerdict": "COMPLIANT_WITH_WARNINGS",
+      "findingCodes": [
+        "BG-TEST-OVERDUE",
+        "PRIV-STANDING-GA"
+      ],
+      "expectedFindingCodes": [
+        "BG-TEST-OVERDUE",
+        "PRIV-STANDING-GA"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "BG-TEST-OVERDUE",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "bg.bravo@nwlab-bank.onmicrosoft.example last tested 2026-06-02T15:00:00Z (> 90 days)",
+          "remediation": "Run the quarterly dual-custody sign-in test and record it."
+        },
+        {
+          "code": "PRIV-STANDING-GA",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "jordan.itadmin@nwlab-bank.example holds standing Global Administrator",
+          "remediation": "Convert to PIM-eligible with approval; only break-glass accounts hold standing GA."
+        }
+      ],
+      "plan": [
+        {
+          "action": "REVIEW_BREAK_GLASS",
+          "target": "bg.alpha@nwlab-bank.onmicrosoft.example",
+          "reference": "Graph: GET /v1.0/users/{id}?$select=onPremisesSyncEnabled,userPrincipalName + roleManagement + authentication/methods",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REVIEW_BREAK_GLASS",
+          "target": "bg.bravo@nwlab-bank.onmicrosoft.example",
+          "reference": "Graph: GET /v1.0/users/{id}?$select=onPremisesSyncEnabled,userPrincipalName + roleManagement + authentication/methods",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "break-glass-review",
+          "alert-config",
+          "test-record"
+        ],
+        "provided": [
+          "alert-config",
+          "break-glass-review",
+          "test-record"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-BG-002",
+      "type": "break-glass-usage",
+      "title": "Break-glass Alpha used during the MFA push/SMS outage (MFA-LAB-0003)",
+      "verdict": "POST_USE_COMPLETE",
+      "expectedVerdict": "POST_USE_COMPLETE",
+      "findingCodes": [],
+      "expectedFindingCodes": [],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [],
+      "plan": [
+        {
+          "action": "READ_SIGNIN_LOG",
+          "target": "SI-LAB-6001",
+          "reference": "Graph: GET /v1.0/auditLogs/signIns/{id}",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "READ_DIRECTORY_AUDIT",
+          "target": "b9a5e000-0000-4000-8000-000000000001",
+          "reference": "Graph: GET /v1.0/auditLogs/directoryAudits?$filter=initiatedBy/user/id eq '{id}'",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ROTATE_CREDENTIAL",
+          "target": "b9a5e000-0000-4000-8000-000000000001",
+          "reference": "Dual-custody credential rotation (offline procedure)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "sign-in-log",
+          "incident-ticket",
+          "credential-rotation",
+          "audit-review"
+        ],
+        "provided": [
+          "audit-review",
+          "credential-rotation",
+          "incident-ticket",
+          "sign-in-log"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-OFF-001",
+      "type": "offboarding",
+      "title": "Involuntary termination of a synced commercial lender under legal hold",
+      "verdict": "APPROVED",
+      "expectedVerdict": "APPROVED",
+      "findingCodes": [],
+      "expectedFindingCodes": [],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [],
+      "plan": [
+        {
+          "action": "DISABLE_ONPREM_AD",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "AD DS: Disable-ADAccount <samAccountName>, then wait for (or trigger) Entra Connect delta sync",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REVOKE_SESSIONS",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "Graph: POST /v1.0/users/{id}/revokeSignInSessions",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REMOVE_AUTH_METHODS",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "Graph: DELETE /v1.0/users/{id}/authentication/<method>Methods/{methodId}",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "SET_LITIGATION_HOLD",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "Exchange Online PowerShell: Set-Mailbox <upn> -LitigationHoldEnabled $true",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "TRANSFER_ONEDRIVE",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "SharePoint admin: grant the manager site-collection admin on the user's OneDrive",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "RETIRE_DEVICE",
+          "target": "DANA-IPHONE",
+          "reference": "Graph: POST /v1.0/deviceManagement/managedDevices/{deviceId}/retire (selective wipe)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "WIPE_DEVICE",
+          "target": "NWL-LT-0404",
+          "reference": "Graph: POST /v1.0/deviceManagement/managedDevices/{deviceId}/wipe (factory reset)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REMOVE_FROM_GROUPS",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "Graph: DELETE /v1.0/groups/{groupId}/members/{id}/$ref",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REMOVE_LICENSES",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "Group-based: remove from GRP-LIC-* groups; direct: POST /v1.0/users/{id}/assignLicense removeLicenses",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "EXPORT_AUDIT_EVIDENCE",
+          "target": "dana.lender@nwlab-bank.example",
+          "reference": "Purview audit search + Entra audit/sign-in log export for the user, hashed into the ticket",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "approval",
+          "identity-change",
+          "session-revocation",
+          "device-action",
+          "mailbox-retention",
+          "license-removal"
+        ],
+        "provided": [
+          "approval",
+          "device-action",
+          "identity-change",
+          "license-removal",
+          "mailbox-retention",
+          "session-revocation"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-OFF-002",
+      "type": "offboarding",
+      "title": "Retiring employee: draft runbook with ordering and BYOD-wipe defects (rejected at review)",
+      "verdict": "REJECTED",
+      "expectedVerdict": "REJECTED",
+      "findingCodes": [
+        "OFF-BYOD-WIPE",
+        "OFF-LICENSE-BEFORE-RETENTION",
+        "OFF-MISSING-STEP",
+        "OFF-REVOKE-BEFORE-DISABLE"
+      ],
+      "expectedFindingCodes": [
+        "OFF-BYOD-WIPE",
+        "OFF-LICENSE-BEFORE-RETENTION",
+        "OFF-MISSING-STEP",
+        "OFF-REVOKE-BEFORE-DISABLE"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "OFF-MISSING-STEP",
+          "severity": "error",
+          "rootCause": false,
+          "detail": "no retire/wipe step for managed device NWL-LT-0909",
+          "remediation": "Corporate: wipe after data hand-over; personal: retire (selective wipe)."
+        },
+        {
+          "code": "OFF-BYOD-WIPE",
+          "severity": "error",
+          "rootCause": false,
+          "detail": "full wipe of personal device IRA-PIXEL would erase personal data",
+          "remediation": "Use RETIRE_DEVICE (selective wipe of corporate data only) on personal devices."
+        },
+        {
+          "code": "OFF-REVOKE-BEFORE-DISABLE",
+          "severity": "error",
+          "rootCause": false,
+          "detail": "sessions revoked before the account is disabled; the user can sign straight back in",
+          "remediation": "Disable first, then revoke refresh tokens/sessions."
+        },
+        {
+          "code": "OFF-LICENSE-BEFORE-RETENTION",
+          "severity": "error",
+          "rootCause": false,
+          "detail": "licenses removed before CONVERT_MAILBOX_SHARED, TRANSFER_ONEDRIVE; mailbox/OneDrive data enters deletion retention",
+          "remediation": "Apply litigation hold / convert mailbox / transfer OneDrive while the license is still assigned."
+        }
+      ],
+      "plan": [
+        {
+          "action": "REVOKE_SESSIONS",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "Graph: POST /v1.0/users/{id}/revokeSignInSessions",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "DISABLE_SIGNIN",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "Graph: PATCH /v1.0/users/{id} {\"accountEnabled\": false}",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REMOVE_AUTH_METHODS",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "Graph: DELETE /v1.0/users/{id}/authentication/<method>Methods/{methodId}",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "REMOVE_LICENSES",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "Group-based: remove from GRP-LIC-* groups; direct: POST /v1.0/users/{id}/assignLicense removeLicenses",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "CONVERT_MAILBOX_SHARED",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "Exchange Online PowerShell: Set-Mailbox <upn> -Type Shared; grant manager FullAccess",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "TRANSFER_ONEDRIVE",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "SharePoint admin: grant the manager site-collection admin on the user's OneDrive",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "WIPE_DEVICE",
+          "target": "IRA-PIXEL",
+          "reference": "Graph: POST /v1.0/deviceManagement/managedDevices/{deviceId}/wipe (factory reset)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "EXPORT_AUDIT_EVIDENCE",
+          "target": "ira.retiring@nwlab-bank.example",
+          "reference": "Purview audit search + Entra audit/sign-in log export for the user, hashed into the ticket",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "approval",
+          "identity-change",
+          "session-revocation",
+          "device-action",
+          "mailbox-retention",
+          "license-removal"
+        ],
+        "provided": [
+          "approval",
+          "device-action",
+          "identity-change",
+          "license-removal",
+          "mailbox-retention",
+          "session-revocation"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-ONB-001",
+      "type": "onboarding",
+      "title": "New credit-risk analyst: E3 via group, Autopilot laptop, Temporary Access Pass on day 1",
+      "verdict": "READY",
+      "expectedVerdict": "READY",
+      "findingCodes": [
+        "ONB-MFA-TAP"
+      ],
+      "expectedFindingCodes": [
+        "ONB-MFA-TAP"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "ONB-MFA-TAP",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "blake.analyst@nwlab-bank.example has no MFA method yet",
+          "remediation": "Issue a one-time Temporary Access Pass on day 1 after in-person ID check; user registers a passkey/FIDO2."
+        }
+      ],
+      "plan": [
+        {
+          "action": "VERIFY_IDENTITY_SOURCE",
+          "target": "blake.analyst@nwlab-bank.example",
+          "reference": "Entra Connect: confirm the HR-driven AD account synced (onPremisesSynced=True)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ADD_LICENSE_GROUP",
+          "target": "blake.analyst@nwlab-bank.example -> GRP-LIC-E3-STAFF",
+          "reference": "Graph: POST /v1.0/groups/{groupId}/members/$ref",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ISSUE_TAP",
+          "target": "blake.analyst@nwlab-bank.example",
+          "reference": "Graph: POST /v1.0/users/{id}/authentication/temporaryAccessPassMethods (isUsableOnce=true)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "VERIFY_DEVICE_COMPLIANCE",
+          "target": "NWL-LT-0101 (compliant)",
+          "reference": "Intune: managedDevices/{id} complianceState must be compliant before CA004 allows access",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "approval",
+          "identity-change",
+          "license-assignment",
+          "mfa-registration"
+        ],
+        "provided": [
+          "approval",
+          "device-compliance",
+          "identity-change",
+          "license-assignment",
+          "mfa-registration"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-ONB-002",
+      "type": "onboarding",
+      "title": "Branch teller on F3 asks for desktop Outlook/Excel; usageLocation missing",
+      "verdict": "BLOCKED",
+      "expectedVerdict": "BLOCKED",
+      "findingCodes": [
+        "LIC-USAGE-LOCATION-INHERITED",
+        "LIC-WORKLOAD-MISSING",
+        "ONB-MFA-TAP"
+      ],
+      "expectedFindingCodes": [
+        "LIC-USAGE-LOCATION-INHERITED",
+        "LIC-WORKLOAD-MISSING",
+        "ONB-MFA-TAP"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "LIC-USAGE-LOCATION-INHERITED",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "avery.teller@nwlab-bank.example has no usageLocation; group-based licensing falls back to the tenant country (US)",
+          "remediation": "Set usageLocation from the HR record (it drives service availability and data-residency reporting)."
+        },
+        {
+          "code": "LIC-WORKLOAD-MISSING",
+          "severity": "error",
+          "rootCause": false,
+          "detail": "avery.teller@nwlab-bank.example: workload 'desktop-apps' needs one of ['OFFICESUBSCRIPTION']; no assigned SKU includes it",
+          "remediation": "Assign a license group whose SKU includes the plan (or re-enable the disabled plan); never hand out ad-hoc direct licenses."
+        },
+        {
+          "code": "ONB-MFA-TAP",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "avery.teller@nwlab-bank.example has no MFA method yet",
+          "remediation": "Issue a one-time Temporary Access Pass on day 1 after in-person ID check; user registers a passkey/FIDO2."
+        }
+      ],
+      "plan": [
+        {
+          "action": "VERIFY_IDENTITY_SOURCE",
+          "target": "avery.teller@nwlab-bank.example",
+          "reference": "Entra Connect: confirm the HR-driven AD account synced (onPremisesSynced=True)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "SET_USAGE_LOCATION",
+          "target": "avery.teller@nwlab-bank.example",
+          "reference": "Graph: PATCH /v1.0/users/{id} {\"usageLocation\": \"<from HR>\"}",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ADD_LICENSE_GROUP",
+          "target": "avery.teller@nwlab-bank.example -> GRP-LIC-F3-BRANCH",
+          "reference": "Graph: POST /v1.0/groups/{groupId}/members/$ref",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ISSUE_TAP",
+          "target": "avery.teller@nwlab-bank.example",
+          "reference": "Graph: POST /v1.0/users/{id}/authentication/temporaryAccessPassMethods (isUsableOnce=true)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "approval",
+          "identity-change",
+          "license-assignment",
+          "mfa-registration"
+        ],
+        "provided": [
+          "approval",
+          "identity-change",
+          "license-assignment",
+          "mfa-registration"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-ONB-003",
+      "type": "onboarding",
+      "title": "SOC analyst needs E5 (Defender for Endpoint, PIM) but E5 seats are exhausted",
+      "verdict": "BLOCKED",
+      "expectedVerdict": "BLOCKED",
+      "findingCodes": [
+        "LIC-NO-SEATS",
+        "ONB-MFA-TAP",
+        "ONB-PRIV-ROLE"
+      ],
+      "expectedFindingCodes": [
+        "LIC-NO-SEATS",
+        "ONB-MFA-TAP",
+        "ONB-PRIV-ROLE"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "LIC-NO-SEATS",
+          "severity": "error",
+          "rootCause": false,
+          "detail": "LAB_M365_E5 has 15/15 seats consumed; adding to GRP-LIC-E5-SECOPS fails (CountViolation)",
+          "remediation": "Reclaim seats from leavers or raise a procurement request before day 1."
+        },
+        {
+          "code": "ONB-MFA-TAP",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "casey.secops@nwlab-bank.example has no MFA method yet",
+          "remediation": "Issue a one-time Temporary Access Pass on day 1 after in-person ID check; user registers a passkey/FIDO2."
+        },
+        {
+          "code": "ONB-PRIV-ROLE",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "casey.secops@nwlab-bank.example requested Security Reader at onboarding",
+          "remediation": "Grant as PIM-eligible after 30-day probation sign-off; never permanent."
+        }
+      ],
+      "plan": [
+        {
+          "action": "VERIFY_IDENTITY_SOURCE",
+          "target": "casey.secops@nwlab-bank.example",
+          "reference": "Entra Connect: confirm the HR-driven AD account synced (onPremisesSynced=True)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ADD_LICENSE_GROUP",
+          "target": "casey.secops@nwlab-bank.example -> GRP-LIC-E5-SECOPS",
+          "reference": "Graph: POST /v1.0/groups/{groupId}/members/$ref",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "ISSUE_TAP",
+          "target": "casey.secops@nwlab-bank.example",
+          "reference": "Graph: POST /v1.0/users/{id}/authentication/temporaryAccessPassMethods (isUsableOnce=true)",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "approval",
+          "identity-change",
+          "license-assignment",
+          "mfa-registration"
+        ],
+        "provided": [
+          "approval",
+          "identity-change",
+          "license-assignment",
+          "mfa-registration"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-SH-001",
+      "type": "service-health",
+      "title": "Six Teams tickets in 20 minutes during an active Microsoft incident (TM-LAB-0001)",
+      "verdict": "KNOWN_SERVICE_INCIDENT",
+      "expectedVerdict": "KNOWN_SERVICE_INCIDENT",
+      "findingCodes": [
+        "LIC-WORKLOAD-MISSING",
+        "SH-KNOWN-INCIDENT"
+      ],
+      "expectedFindingCodes": [
+        "LIC-WORKLOAD-MISSING",
+        "SH-KNOWN-INCIDENT"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "SH-KNOWN-INCIDENT",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "6 report(s) for teams match TM-LAB-0001: Users may be unable to join meetings or load chat history (SYNTHETIC)",
+          "remediation": "Link tickets to the issue, post a status-page/Teams-free notice (email + intranet), do not troubleshoot users individually."
+        },
+        {
+          "code": "LIC-WORKLOAD-MISSING",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "parker.intern@nwlab-bank.example: workload 'teams' needs one of ['TEAMS1']; no assigned SKU includes it",
+          "remediation": "Assign a license group whose SKU includes the plan (or re-enable the disabled plan); never hand out ad-hoc direct licenses."
+        },
+        {
+          "code": "LIC-WORKLOAD-MISSING",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "parker.intern@nwlab-bank.example: workload 'teams' needs one of ['EXCHANGE_S_ENTERPRISE', 'EXCHANGE_S_DESKLESS']; no assigned SKU includes it",
+          "remediation": "Assign a license group whose SKU includes the plan (or re-enable the disabled plan); never hand out ad-hoc direct licenses."
+        }
+      ],
+      "plan": [
+        {
+          "action": "READ_SERVICE_HEALTH",
+          "target": "teams",
+          "reference": "Graph: GET /v1.0/admin/serviceAnnouncement/issues?$filter=status ne 'serviceRestored'",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        },
+        {
+          "action": "COMMUNICATE",
+          "target": "teams",
+          "reference": "Bank comms template: known Microsoft incident, workaround, next update time",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "service-health-snapshot",
+          "user-communication"
+        ],
+        "provided": [
+          "service-health-snapshot",
+          "user-communication"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "M365-SH-002",
+      "type": "service-health",
+      "title": "Two loan-ops users report Outlook problems after EX-LAB-0002 was restored",
+      "verdict": "LOCAL_ISSUE",
+      "expectedVerdict": "LOCAL_ISSUE",
+      "findingCodes": [
+        "DEV-STALE-CHECKIN",
+        "SH-LOCAL-ISSUE",
+        "SH-RESTORED-RECENTLY"
+      ],
+      "expectedFindingCodes": [
+        "DEV-STALE-CHECKIN",
+        "SH-LOCAL-ISSUE",
+        "SH-RESTORED-RECENTLY"
+      ],
+      "unexpected": [],
+      "missingExpected": [],
+      "result": "PASS",
+      "findings": [
+        {
+          "code": "SH-RESTORED-RECENTLY",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "EX-LAB-0002 was restored at 2026-10-28T12:30:00Z; residual client-side effects possible",
+          "remediation": "Restart Outlook/Teams, clear cached credentials, then troubleshoot locally."
+        },
+        {
+          "code": "SH-LOCAL-ISSUE",
+          "severity": "info",
+          "rootCause": false,
+          "detail": "2 report(s) for mailbox and no active Microsoft issue",
+          "remediation": "Troubleshoot per user (licenses, device compliance, client)."
+        },
+        {
+          "code": "DEV-STALE-CHECKIN",
+          "severity": "warn",
+          "rootCause": false,
+          "detail": "NWL-LT-1212 (CP-WIN-BANK): last check-in 2026-09-19T11:00:00Z is older than the 30-day compliance validity period",
+          "remediation": "Power on, connect to the network and sync from Company Portal; investigate if the device is lost."
+        }
+      ],
+      "plan": [
+        {
+          "action": "READ_SERVICE_HEALTH",
+          "target": "mailbox",
+          "reference": "Graph: GET /v1.0/admin/serviceAnnouncement/issues?$filter=status ne 'serviceRestored'",
+          "mode": "PLAN_ONLY",
+          "executed": false
+        }
+      ],
+      "auditEvidence": {
+        "required": [
+          "service-health-snapshot",
+          "user-communication"
+        ],
+        "provided": [
+          "service-health-snapshot",
+          "user-communication"
+        ],
+        "missing": []
+      }
+    }
+  ],
+  "provenance": {
+    "commitSha": "8452788d69d91373a26d4963f4a8f8547163913a",
+    "runLabel": "local-offline-20261028T181845Z",
+    "generatedUtc": "2026-10-28T18:18:45Z",
+    "evidence": "SUMMARY.json"
+  }
+}

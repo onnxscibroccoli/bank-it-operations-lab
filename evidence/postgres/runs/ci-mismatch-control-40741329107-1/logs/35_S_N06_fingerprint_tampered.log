@@ -1,0 +1,1 @@
+# step=S_N06_fingerprint_tampered NOT RUN: dependency S_N06_tamper_row is NOT_RUN

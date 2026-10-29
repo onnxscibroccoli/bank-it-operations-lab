@@ -1,0 +1,18 @@
+2026-10-28 14:18:18.549 EDT [1930219] LOG:  starting PostgreSQL 17.10 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit
+2026-10-28 14:18:18.549 EDT [1930219] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-28 14:18:18.551 EDT [1930219] LOG:  listening on Unix socket "$WORK/.s.PGSQL.55432"
+2026-10-28 14:18:18.554 EDT [1930222] LOG:  database system was shut down at 2026-10-28 14:18:18 EDT
+2026-10-28 14:18:18.556 EDT [1930219] LOG:  database system is ready to accept connections
+2026-10-28 14:18:20.731 EDT [1930219] LOG:  received immediate shutdown request
+2026-10-28 14:18:20.737 EDT [1930219] LOG:  database system is shut down
+2026-10-28 14:18:24.514 EDT [1931049] LOG:  starting PostgreSQL 17.10 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit
+2026-10-28 14:18:24.514 EDT [1931049] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-28 14:18:24.515 EDT [1931049] LOG:  listening on Unix socket "$WORK/.s.PGSQL.55432"
+2026-10-28 14:18:24.517 EDT [1931052] LOG:  database system was interrupted; last known up at 2026-10-28 14:18:18 EDT
+2026-10-28 14:18:24.523 EDT [1931052] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-10-28 14:18:24.524 EDT [1931052] LOG:  redo starts at 0/14D8A48
+2026-10-28 14:18:24.527 EDT [1931052] LOG:  invalid record length at 0/1549F10: expected at least 24, got 0
+2026-10-28 14:18:24.527 EDT [1931052] LOG:  redo done at 0/1549DA8 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-10-28 14:18:24.529 EDT [1931050] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-10-28 14:18:24.533 EDT [1931050] LOG:  checkpoint complete: wrote 85 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.006 s; sync files=54, longest=0.001 s, average=0.001 s; distance=453 kB, estimate=453 kB; lsn=0/1549F10, redo lsn=0/1549F10
+2026-10-28 14:18:24.535 EDT [1931049] LOG:  database system is ready to accept connections

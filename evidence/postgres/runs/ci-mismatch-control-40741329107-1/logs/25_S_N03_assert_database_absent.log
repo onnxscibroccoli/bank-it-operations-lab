@@ -1,0 +1,1 @@
+# step=S_N03_assert_database_absent NOT RUN: dependency S04_client_server_major_match is ERROR

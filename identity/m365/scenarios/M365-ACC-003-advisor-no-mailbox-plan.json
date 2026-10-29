@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ACC-003",
+  "type": "access-troubleshooting",
+  "title": "Wealth advisor: sign-in succeeds but Outlook says the mailbox cannot be found",
+  "narrative": "Sign-ins succeed, and the Exchange incident from this morning (EX-LAB-0002) was restored at 12:30 UTC, before the report. The user is in GRP-LIC-E3-MIGRATION, a staging group that disables EXCHANGE_S_ENTERPRISE during mailbox migration waves; the user was never moved to the standard group after cut-over.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000007",
+    "workload": "mailbox",
+    "reportedUtc": "2026-10-28T14:45:00Z",
+    "signIns": [
+      {"id": "SI-LAB-3401", "timeUtc": "2026-10-28T14:40:00Z", "appDisplayName": "Outlook (synthetic)", "errorCode": 0, "deviceId": null}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "sign-in-log", "ref": "AUD-LAB-3501", "source": "Entra sign-in log SI-LAB-3401 (synthetic)"},
+    {"category": "diagnosis", "ref": "AUD-LAB-3502", "source": "licenseDetails shows EXCHANGE_S_ENTERPRISE disabled (synthetic)"},
+    {"category": "resolution", "ref": "CHG-LAB-3503", "source": "Change: move user from GRP-LIC-E3-MIGRATION to GRP-LIC-E3-STAFF (synthetic)"}
+  ],
+  "expected": {"verdict": "ROOT_CAUSE_IDENTIFIED", "findings": ["LIC-WORKLOAD-MISSING"]}
+}

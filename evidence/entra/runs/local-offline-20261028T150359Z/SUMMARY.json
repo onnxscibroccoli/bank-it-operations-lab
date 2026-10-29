@@ -1,0 +1,921 @@
+{
+  "schema": "bank-it-lab/entra-ca-offline-evidence/v1",
+  "runLabel": "local-offline-20261028T150359Z",
+  "mode": "offline-synthetic",
+  "tenantStateClaimed": false,
+  "disclaimer": "OFFLINE / SYNTHETIC EVIDENCE. Generated from local JSON fixtures in this repository. No Microsoft Entra ID tenant, Microsoft Graph API or credential was used. Nothing here describes or claims the configuration or state of any tenant.",
+  "git": {
+    "commitSha": "e8771c9aa09b3e1c60d87b04cd65a266b673eed8",
+    "branch": "entra-ca-offline",
+    "scopedTreeClean": true,
+    "note": "commitSha is the commit whose identity/entra and tests/entra content was validated; the evidence itself is committed on top of it. inputHashes pin the exact bytes."
+  },
+  "startedUtc": "2026-10-28T15:03:59Z",
+  "finishedUtc": "2026-10-28T15:04:00Z",
+  "environment": {
+    "python": "3.13.5",
+    "implementation": "CPython",
+    "network": "not used",
+    "credentials": "not used"
+  },
+  "overall": "PASS",
+  "totals": {
+    "commands": 41,
+    "passed": 41,
+    "failed": 0
+  },
+  "validation": {
+    "report": "validation-report.json",
+    "reportMarkdown": "validation-report.md",
+    "overall": "PASS",
+    "exitCode": 0,
+    "rules": [
+      {
+        "id": "SCHEMA-001",
+        "category": "schema",
+        "status": "PASS"
+      },
+      {
+        "id": "SCHEMA-002",
+        "category": "schema",
+        "status": "PASS"
+      },
+      {
+        "id": "SCHEMA-003",
+        "category": "schema",
+        "status": "PASS"
+      },
+      {
+        "id": "SCHEMA-004",
+        "category": "schema",
+        "status": "PASS"
+      },
+      {
+        "id": "SCHEMA-005",
+        "category": "schema",
+        "status": "PASS"
+      },
+      {
+        "id": "SCHEMA-006",
+        "category": "schema",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-001",
+        "category": "baseline",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-002",
+        "category": "baseline",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-003",
+        "category": "baseline",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-004",
+        "category": "baseline",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-005",
+        "category": "baseline",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-006",
+        "category": "baseline",
+        "status": "PASS"
+      },
+      {
+        "id": "BASE-007",
+        "category": "baseline",
+        "status": "PASS"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "seq": 1,
+      "stepId": "python_version",
+      "kind": "env",
+      "command": "python3 --version",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 1,
+      "log": "logs/01_python_version.log"
+    },
+    {
+      "seq": 2,
+      "stepId": "fixtures_drift_check",
+      "kind": "test",
+      "command": "python3 tests/entra/make_fixtures.py --check",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 30,
+      "log": "logs/02_fixtures_drift_check.log"
+    },
+    {
+      "seq": 3,
+      "stepId": "unit_tests",
+      "kind": "test",
+      "command": "python3 -m unittest discover -s tests/entra -v",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 171,
+      "log": "logs/03_unit_tests.log"
+    },
+    {
+      "seq": 4,
+      "stepId": "validate_baseline_policies",
+      "kind": "validator",
+      "command": "python3 identity/entra/ca_validator.py identity/entra/policies --baseline identity/entra/baseline.json --json-out evidence/entra/runs/local-offline-20261028T150359Z/validation-report.json --quiet",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 28,
+      "log": "logs/04_validate_baseline_policies.log"
+    },
+    {
+      "seq": 5,
+      "stepId": "fixture_malformed_bad_guid",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-bad-guid.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 28,
+      "log": "logs/05_fixture_malformed_bad_guid.log"
+    },
+    {
+      "seq": 6,
+      "stepId": "fixture_malformed_bad_operator",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-bad-operator.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 27,
+      "log": "logs/06_fixture_malformed_bad_operator.log"
+    },
+    {
+      "seq": 7,
+      "stepId": "fixture_malformed_bad_risk_level",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-bad-risk-level.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 47,
+      "log": "logs/07_fixture_malformed_bad_risk_level.log"
+    },
+    {
+      "seq": 8,
+      "stepId": "fixture_malformed_block_combined",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-block-combined.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 30,
+      "log": "logs/08_fixture_malformed_block_combined.log"
+    },
+    {
+      "seq": 9,
+      "stepId": "fixture_malformed_duplicate_id",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-duplicate-id.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 26,
+      "log": "logs/09_fixture_malformed_duplicate_id.log"
+    },
+    {
+      "seq": 10,
+      "stepId": "fixture_malformed_duplicate_key",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-duplicate-key.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 33,
+      "log": "logs/10_fixture_malformed_duplicate_key.log"
+    },
+    {
+      "seq": 11,
+      "stepId": "fixture_malformed_empty_grant",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-empty-grant.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:03:59Z",
+      "durationMs": 29,
+      "log": "logs/11_fixture_malformed_empty_grant.log"
+    },
+    {
+      "seq": 12,
+      "stepId": "fixture_malformed_empty_set",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-empty-set.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/12_fixture_malformed_empty_set.log"
+    },
+    {
+      "seq": 13,
+      "stepId": "fixture_malformed_invalid_state",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-invalid-state.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 29,
+      "log": "logs/13_fixture_malformed_invalid_state.log"
+    },
+    {
+      "seq": 14,
+      "stepId": "fixture_malformed_missing_state",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-missing-state.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/14_fixture_malformed_missing_state.log"
+    },
+    {
+      "seq": 15,
+      "stepId": "fixture_malformed_nan",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-nan.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 28,
+      "log": "logs/15_fixture_malformed_nan.log"
+    },
+    {
+      "seq": 16,
+      "stepId": "fixture_malformed_no_users_target",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-no-users-target.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/16_fixture_malformed_no_users_target.log"
+    },
+    {
+      "seq": 17,
+      "stepId": "fixture_malformed_not_object",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-not-object.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 54,
+      "log": "logs/17_fixture_malformed_not_object.log"
+    },
+    {
+      "seq": 18,
+      "stepId": "fixture_malformed_truncated",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-truncated.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 43,
+      "log": "logs/18_fixture_malformed_truncated.log"
+    },
+    {
+      "seq": 19,
+      "stepId": "fixture_malformed_unknown_client_app",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-unknown-client-app.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 32,
+      "log": "logs/19_fixture_malformed_unknown_client_app.log"
+    },
+    {
+      "seq": 20,
+      "stepId": "fixture_malformed_unknown_condition",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-unknown-condition.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/20_fixture_malformed_unknown_condition.log"
+    },
+    {
+      "seq": 21,
+      "stepId": "fixture_malformed_unknown_control",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-unknown-control.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 32,
+      "log": "logs/21_fixture_malformed_unknown_control.log"
+    },
+    {
+      "seq": 22,
+      "stepId": "fixture_malformed_unknown_top_key",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-unknown-top-key.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 29,
+      "log": "logs/22_fixture_malformed_unknown_top_key.log"
+    },
+    {
+      "seq": 23,
+      "stepId": "fixture_malformed_wrong_type",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/malformed-wrong-type.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/23_fixture_malformed_wrong_type.log"
+    },
+    {
+      "seq": 24,
+      "stepId": "fixture_neg_admin_role_excluded",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-admin-role-excluded.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/24_fixture_neg_admin_role_excluded.log"
+    },
+    {
+      "seq": 25,
+      "stepId": "fixture_neg_admin_role_missing",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-admin-role-missing.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/25_fixture_neg_admin_role_missing.log"
+    },
+    {
+      "seq": 26,
+      "stepId": "fixture_neg_admin_weak_strength",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-admin-weak-strength.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/26_fixture_neg_admin_weak_strength.log"
+    },
+    {
+      "seq": 27,
+      "stepId": "fixture_neg_break_glass_included",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-break-glass-included.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 28,
+      "log": "logs/27_fixture_neg_break_glass_included.log"
+    },
+    {
+      "seq": 28,
+      "stepId": "fixture_neg_break_glass_not_excluded",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-break-glass-not-excluded.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 35,
+      "log": "logs/28_fixture_neg_break_glass_not_excluded.log"
+    },
+    {
+      "seq": 29,
+      "stepId": "fixture_neg_device_disabled",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-device-disabled.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/29_fixture_neg_device_disabled.log"
+    },
+    {
+      "seq": 30,
+      "stepId": "fixture_neg_device_or_bypass",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-device-or-bypass.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/30_fixture_neg_device_or_bypass.log"
+    },
+    {
+      "seq": 31,
+      "stepId": "fixture_neg_legacy_auth_not_blocked",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-legacy-auth-not-blocked.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/31_fixture_neg_legacy_auth_not_blocked.log"
+    },
+    {
+      "seq": 32,
+      "stepId": "fixture_neg_legacy_auth_partial",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-legacy-auth-partial.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/32_fixture_neg_legacy_auth_partial.log"
+    },
+    {
+      "seq": 33,
+      "stepId": "fixture_neg_mfa_extra_exclusion",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-mfa-extra-exclusion.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/33_fixture_neg_mfa_extra_exclusion.log"
+    },
+    {
+      "seq": 34,
+      "stepId": "fixture_neg_mfa_or_bypass",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-mfa-or-bypass.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 25,
+      "log": "logs/34_fixture_neg_mfa_or_bypass.log"
+    },
+    {
+      "seq": 35,
+      "stepId": "fixture_neg_mfa_policy_removed",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-mfa-policy-removed.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 25,
+      "log": "logs/35_fixture_neg_mfa_policy_removed.log"
+    },
+    {
+      "seq": 36,
+      "stepId": "fixture_neg_mfa_report_only",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-mfa-report-only.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 28,
+      "log": "logs/36_fixture_neg_mfa_report_only.log"
+    },
+    {
+      "seq": 37,
+      "stepId": "fixture_neg_missing_compliant_device",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-missing-compliant-device.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/37_fixture_neg_missing_compliant_device.log"
+    },
+    {
+      "seq": 38,
+      "stepId": "fixture_neg_missing_mfa",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-missing-mfa.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 26,
+      "log": "logs/38_fixture_neg_missing_mfa.log"
+    },
+    {
+      "seq": 39,
+      "stepId": "fixture_neg_risk_enforced",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-risk-enforced.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 27,
+      "log": "logs/39_fixture_neg_risk_enforced.log"
+    },
+    {
+      "seq": 40,
+      "stepId": "fixture_neg_unscoped_block",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-unscoped-block.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 25,
+      "log": "logs/40_fixture_neg_unscoped_block.log"
+    },
+    {
+      "seq": 41,
+      "stepId": "fixture_valid_graph_envelope",
+      "kind": "validator-fixture",
+      "command": "python3 identity/entra/ca_validator.py tests/entra/fixtures/valid-graph-envelope.json --baseline identity/entra/baseline.json --quiet",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T15:04:00Z",
+      "durationMs": 29,
+      "log": "logs/41_fixture_valid_graph_envelope.log"
+    }
+  ],
+  "inputHashes": [
+    {
+      "path": "evidence/entra/generate_evidence.py",
+      "kind": "evidence-generator",
+      "sha256": "ada9ce36d4cd3a02eb914df08fa2b57b5d4008c0efa5e466b0a5bd6c0b10e965",
+      "bytes": 13550
+    },
+    {
+      "path": "identity/entra/.gitignore",
+      "kind": "doc",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+      "bytes": 19
+    },
+    {
+      "path": "identity/entra/README.md",
+      "kind": "doc",
+      "sha256": "a1d775f9d874b3318175cf09cb19f22b128fe56b0d1086870ad282941fa57992",
+      "bytes": 3768
+    },
+    {
+      "path": "identity/entra/baseline.json",
+      "kind": "validator",
+      "sha256": "f5566caf556175ecbc0cb8d0dfbf434f6095c37fd5012476e2ac0143c2f82cbc",
+      "bytes": 1604
+    },
+    {
+      "path": "identity/entra/ca_validator.py",
+      "kind": "validator",
+      "sha256": "313dcbc7d31717b7060334d19f31c74f7065718b1f725fe9dce3c0a0ad38a01e",
+      "bytes": 34979
+    },
+    {
+      "path": "identity/entra/policies/CA001-Block-Legacy-Authentication-All-Users.json",
+      "kind": "policy-fixture",
+      "sha256": "4f91671c3fb2e07dd286f74dd5e3d8baf789a59d1bf7d04b75b1eecec4100fd1",
+      "bytes": 866
+    },
+    {
+      "path": "identity/entra/policies/CA002-Require-MFA-All-Users.json",
+      "kind": "policy-fixture",
+      "sha256": "e888511acb339629e94d264499652873f58981d07604b48c59c5bc2fac560da0",
+      "bytes": 860
+    },
+    {
+      "path": "identity/entra/policies/CA003-Require-Phishing-Resistant-MFA-Admin-Roles.json",
+      "kind": "policy-fixture",
+      "sha256": "2e76720ba8b66177c4a4973a6c6488afbffd6de2dbcdb824a1e1b4d36a8a4555",
+      "bytes": 1526
+    },
+    {
+      "path": "identity/entra/policies/CA004-Require-Compliant-Device-All-Users.json",
+      "kind": "policy-fixture",
+      "sha256": "7fd7710a4109c83d27441c6a0c3300876d3d0dc70ba5ec0dd18bcf008ddef877",
+      "bytes": 991
+    },
+    {
+      "path": "identity/entra/policies/CA005-Block-High-Sign-In-Risk-ReportOnly.json",
+      "kind": "policy-fixture",
+      "sha256": "a9c030d967b905d9f84e89f173b06b804e4ccf96d556f15e137dbee9eabb2ebd",
+      "bytes": 905
+    },
+    {
+      "path": "identity/entra/policies/CA006-High-User-Risk-Require-Password-Change-ReportOnly.json",
+      "kind": "policy-fixture",
+      "sha256": "2d551d9f6d4756c8b891ed4b7360b362de689c19abf5ae185e6911a43f55db87",
+      "bytes": 1143
+    },
+    {
+      "path": "identity/entra/policies/CA007-Block-Admin-Portals-From-Untrusted-Locations.json",
+      "kind": "policy-fixture",
+      "sha256": "43e8d8d341b4a7fbe09e0fe7614dc440d92ab0235553523034977a441303d970",
+      "bytes": 1556
+    },
+    {
+      "path": "tests/entra/.gitignore",
+      "kind": "doc",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+      "bytes": 19
+    },
+    {
+      "path": "tests/entra/README.md",
+      "kind": "doc",
+      "sha256": "469c6173909b3f40302639cdfa8edc332a155c32e937e5758100b19649600543",
+      "bytes": 887
+    },
+    {
+      "path": "tests/entra/fixtures/INDEX.json",
+      "kind": "test-fixture",
+      "sha256": "cb30cbd8949a2445056950969606a0d459fb3a59e5a82fa77d94bc4ab0ed0e56",
+      "bytes": 2779
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-bad-guid.json",
+      "kind": "test-fixture",
+      "sha256": "59a1deef1bd1bfb57147efc3d340e52ee5b42a159617f25f83d8f529f6729ff1",
+      "bytes": 9206
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-bad-operator.json",
+      "kind": "test-fixture",
+      "sha256": "9a4e30c9244b00e90d3608c2405335208d8c3acf60c082a659016ced4f4b781b",
+      "bytes": 9271
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-bad-risk-level.json",
+      "kind": "test-fixture",
+      "sha256": "c417748a8c4cd851a22e1ec32fdd398b5babb91f3313ebdc3df28585523cdff9",
+      "bytes": 9275
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-block-combined.json",
+      "kind": "test-fixture",
+      "sha256": "dec5165bc1698bb7eada15f0b84519e1cdf78bc4a3b85df70f1688969e0f1dc6",
+      "bytes": 9288
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-duplicate-id.json",
+      "kind": "test-fixture",
+      "sha256": "3b64688e50b9a38c22a8d256f5fb5583a30f3225d556de3867d6b5e19344a9ab",
+      "bytes": 10298
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-duplicate-key.json",
+      "kind": "test-fixture",
+      "sha256": "a09aa98f171ed18233fead930de8db334257c69abc81278345ea215f0e422f51",
+      "bytes": 104
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-empty-grant.json",
+      "kind": "test-fixture",
+      "sha256": "664c6fbebf0efe0d929e97c552802afd2aefa91ff125702f804615ee0f32f12e",
+      "bytes": 9246
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-empty-set.json",
+      "kind": "test-fixture",
+      "sha256": "ba6b28ef7d9e13314d4d21bc8fe249beb4f59c92238972d2921789389a2e0d31",
+      "bytes": 18
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-invalid-state.json",
+      "kind": "test-fixture",
+      "sha256": "5a705cda26376404e47c511fb3204f8e7beb133d995f4b5e6b484d994514511b",
+      "bytes": 9266
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-missing-state.json",
+      "kind": "test-fixture",
+      "sha256": "26b079333f7c16fc73529317c8f9496bbb29985f8d11c2e50ceefec554ac6a87",
+      "bytes": 9245
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-nan.json",
+      "kind": "test-fixture",
+      "sha256": "618401c15240c927e85ffd5f7877b364e88ec1338f9b7686fbea41308ec6882a",
+      "bytes": 82
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-no-users-target.json",
+      "kind": "test-fixture",
+      "sha256": "3f67083aaea4b2b6fe5e1026c09f568aa4a396c51939cdc35c13bf04736de184",
+      "bytes": 8976
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-not-object.json",
+      "kind": "test-fixture",
+      "sha256": "b8f781472faad99e1ad27e72709eee89c50597f845cf4b331cd8285fb5b517ba",
+      "bytes": 25
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-truncated.json",
+      "kind": "test-fixture",
+      "sha256": "dcabd2785c492311963543049eedfde307f397abfd68fb26f7f2912e14d3099c",
+      "bytes": 53
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-unknown-client-app.json",
+      "kind": "test-fixture",
+      "sha256": "0ba66299b85a085d06bea5e77a7e222f9b05f0dc4ab4745424c32fc8b32a2ec4",
+      "bytes": 9270
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-unknown-condition.json",
+      "kind": "test-fixture",
+      "sha256": "33c8bdd644a5bf9ae9555722c10198dc2d083331511158fa0ebf2bf0aefbf5d6",
+      "bytes": 9367
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-unknown-control.json",
+      "kind": "test-fixture",
+      "sha256": "ba8e268a66545dee188a95e6dc0b6955a121e6b06f4be5f79b63b1d1abb00d33",
+      "bytes": 9280
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-unknown-top-key.json",
+      "kind": "test-fixture",
+      "sha256": "c9edecb2a9745873c8c9acf9adc863a2bf6e3af9b798a3533e4de07e4ce36f1a",
+      "bytes": 9304
+    },
+    {
+      "path": "tests/entra/fixtures/malformed-wrong-type.json",
+      "kind": "test-fixture",
+      "sha256": "1a2881c7407c0d3880b2f95227a6fd253da821ace37ac42bcf3c9be3d41a3d9b",
+      "bytes": 9245
+    },
+    {
+      "path": "tests/entra/fixtures/neg-admin-role-excluded.json",
+      "kind": "test-fixture",
+      "sha256": "ca15ef61fdbba874d1ba0dd130a2a0ef14d4f4f3a534fda7c5532a659bf81653",
+      "bytes": 9333
+    },
+    {
+      "path": "tests/entra/fixtures/neg-admin-role-missing.json",
+      "kind": "test-fixture",
+      "sha256": "d68c02b71fb8fca9e08bc693d873968f3e454d7a276ae3b0ea11ee25bd5bda39",
+      "bytes": 9219
+    },
+    {
+      "path": "tests/entra/fixtures/neg-admin-weak-strength.json",
+      "kind": "test-fixture",
+      "sha256": "3be04de9c6670d83bb83ac857c02d155008e1267f6f1c88fd7c95582da054c70",
+      "bytes": 9252
+    },
+    {
+      "path": "tests/entra/fixtures/neg-break-glass-included.json",
+      "kind": "test-fixture",
+      "sha256": "dabb8db5fd7a18cee8e00a96bd9891e3f892c1fc42abcd0fbff491a7ee29fb28",
+      "bytes": 9333
+    },
+    {
+      "path": "tests/entra/fixtures/neg-break-glass-not-excluded.json",
+      "kind": "test-fixture",
+      "sha256": "c9b5fe093fd9fc3e86bd174d355cc6be60534064884326beac1a5c66cbd612cd",
+      "bytes": 9219
+    },
+    {
+      "path": "tests/entra/fixtures/neg-device-disabled.json",
+      "kind": "test-fixture",
+      "sha256": "5cccf6bf85dacfad26b623676a8a7e0efe7e97165cc1211bad9048463e0f4e4d",
+      "bytes": 9272
+    },
+    {
+      "path": "tests/entra/fixtures/neg-device-or-bypass.json",
+      "kind": "test-fixture",
+      "sha256": "2b008ee0142452a483d98c727353f447355ec94c291e0a930d4771ea3d1d791c",
+      "bytes": 9287
+    },
+    {
+      "path": "tests/entra/fixtures/neg-legacy-auth-not-blocked.json",
+      "kind": "test-fixture",
+      "sha256": "9b76f563fb639930c4067362f3508d370d1145904256dff77a643b2842f3e473",
+      "bytes": 9272
+    },
+    {
+      "path": "tests/entra/fixtures/neg-legacy-auth-partial.json",
+      "kind": "test-fixture",
+      "sha256": "9544430ab3d241f681541d1d6609064a43a1ff4f4bd96539663af78f8da51dbf",
+      "bytes": 9252
+    },
+    {
+      "path": "tests/entra/fixtures/neg-mfa-extra-exclusion.json",
+      "kind": "test-fixture",
+      "sha256": "518d09e5c7f428f4bd9f2667a5fbfd333300d3646e02bf7e4333d9f5d663d962",
+      "bytes": 9333
+    },
+    {
+      "path": "tests/entra/fixtures/neg-mfa-or-bypass.json",
+      "kind": "test-fixture",
+      "sha256": "33ae69aa0913eb0baa89808859f4c14255762a92b0cf0e78830c7f7554d9c9a9",
+      "bytes": 9304
+    },
+    {
+      "path": "tests/entra/fixtures/neg-mfa-policy-removed.json",
+      "kind": "test-fixture",
+      "sha256": "52517d2296b1a0bae9d71e6d808a105b97ccc0b2122424f1e2fa4963b4e1158d",
+      "bytes": 8250
+    },
+    {
+      "path": "tests/entra/fixtures/neg-mfa-report-only.json",
+      "kind": "test-fixture",
+      "sha256": "0a685d5a2110a0649d91afa2da047a2926e464df3537e618e0ad3fc578a64738",
+      "bytes": 9297
+    },
+    {
+      "path": "tests/entra/fixtures/neg-missing-compliant-device.json",
+      "kind": "test-fixture",
+      "sha256": "761ebd8aa590546805af7e3746073fb1d81a27022b06694d66e32ebd2cd3f600",
+      "bytes": 9259
+    },
+    {
+      "path": "tests/entra/fixtures/neg-missing-mfa.json",
+      "kind": "test-fixture",
+      "sha256": "0e74d6e980796e3d12ed52866068a32c677e1a861431d22b6063feb60547d17d",
+      "bytes": 9287
+    },
+    {
+      "path": "tests/entra/fixtures/neg-risk-enforced.json",
+      "kind": "test-fixture",
+      "sha256": "70d9c37c41fcec405baa2022950c035f9075d4bcc1b14f163fc169a829bde541",
+      "bytes": 9245
+    },
+    {
+      "path": "tests/entra/fixtures/neg-unscoped-block.json",
+      "kind": "test-fixture",
+      "sha256": "032933c16468be1873d0ee501da12306ea676ec196892fcd43d9e68f63dfdbcb",
+      "bytes": 9157
+    },
+    {
+      "path": "tests/entra/fixtures/valid-graph-envelope.json",
+      "kind": "test-fixture",
+      "sha256": "efd066a8cd6f8d781e5515697fa2c7039cc911c6f86e43c8c0d4167b6778bc62",
+      "bytes": 9271
+    },
+    {
+      "path": "tests/entra/make_fixtures.py",
+      "kind": "test",
+      "sha256": "6cdc3369089776e48de1adf004137e2d4096fac6307d810b1e651e53557a1de5",
+      "bytes": 9896
+    },
+    {
+      "path": "tests/entra/test_ca_validator.py",
+      "kind": "validator",
+      "sha256": "69ceca7f003e0e6b08eead10f4b6ef8aac55be5d8ff4a09c4cb217fcc07ed472",
+      "bytes": 13500
+    }
+  ],
+  "hashes": "SHA256SUMS"
+}

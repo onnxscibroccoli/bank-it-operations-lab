@@ -1,0 +1,12 @@
+{
+  "run_label": "ci-service-40630856041-1",
+  "mode": "service",
+  "overall": "FAIL",
+  "steps": 28,
+  "passed": 22,
+  "failed": 6,
+  "finished_utc": "2026-10-28T04:11:09Z",
+  "commands_tsv": "COMMANDS.tsv",
+  "hashes": "SHA256SUMS",
+  "artifact_hashes": "ARTIFACTS.sha256"
+}

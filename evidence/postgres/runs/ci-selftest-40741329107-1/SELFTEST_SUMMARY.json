@@ -1,0 +1,8 @@
+{
+  "status": "CURRENT",
+  "run_label": "ci-selftest-40741329107-1",
+  "assertions": 26,
+  "failed_assertions": 0,
+  "overall": "PASS",
+  "note": "PASS means the harness correctly reported FAIL/ERROR/NOT_RUN for every deliberately bad case."
+}

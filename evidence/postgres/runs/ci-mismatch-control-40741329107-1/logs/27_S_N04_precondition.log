@@ -1,0 +1,1 @@
+# step=S_N04_precondition NOT RUN: dependency P06_compare_restored is NOT_RUN
