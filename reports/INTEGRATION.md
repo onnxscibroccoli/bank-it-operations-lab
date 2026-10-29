@@ -48,6 +48,23 @@
 - **Local `validate-all`:** PASS (43 steps; coincidentally the same number as the plan steps) with `PG_BIN=/workspace/pg16/bin`.
 - **Round 2 record (`02ac2de`):** CI showed the fail-closed behaviour with the M365 module absent: the M365 jobs, offline-validation, final-summary and merge-eligibility failed. It is history only and was never a review target.
 
+- **Frozen combined candidate `5f159f1c757d7fbf2964e4d8b615fcb9a810f7ca`**, tested against current main `7f50348` on `candidate/main-validation-5f159f1` @ `ba4d5e02146b33b74957a60b62a055f4c46ad089`. The `--no-ff` merge was clean and the merged tree is identical to the candidate. Local `validate-all` PASSED 43/43 on both.
+
+  In every gate run below, **every required job succeeded** and `final-summary` reported "gate: PASS". `merge-eligibility` **failed, by design**, because AC1, AC2, AC4 and AC5 are open.
+
+  | Run | Notes |
+  |---|---|
+  | [integration-gate, main-validation 40792435152](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792435152) | Fresh SIMULATION run on PostgreSQL 18.6: all six requirements PASS; MTTD 3.704 s, MTTR 8.73 s |
+  | [integration-gate push 40792418163](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418163) | Fresh run MTTD 3.501 s |
+  | [integration-gate PR 40792426144](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144) | Fresh run MTTD 3.489 s, MTTR 8.695 s |
+  | [postgres-restore-evidence 40792426140](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426140) | 5/5 succeeded |
+  | [aws-cdk 40792426294](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426294) | Succeeded |
+  | [offline-validation PR 40792426193](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426193) | Succeeded |
+  | [offline-validation push 40792418146](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418146) | Succeeded |
+
+- **NOT_EXECUTED items in these runs:** none. The PostgreSQL binaries were present on the runner. The NOT_EXECUTED path runs only in the negative job, where it correctly fails.
+- **Independent review of `5f159f1`:** **not yet requested.** The packet is `coordination/review-requests/PR-7-candidate-5f159f1.md`. Earlier reviews and approvals (`eb42b23`, `82ab7e6`, `02ac2de`, PR #14, PR #27) do not transfer.
+
 ## Round 2 (2026-10-28 ~20:00 EDT, request pt12u): M365 required checks, checkpoint, new candidate
 
 - **Reconcile:** remote `overnight/integration` was still at `82ab7e6`. Local `1a3cea0` was a fast-forward, so I pushed it normally (no rebase, no force).
@@ -81,7 +98,7 @@
 - **Acceptance workflow:** there is none on this branch. `acceptance.yml` exists only on PR #26's branch, which was not modified.
 - **Expected result:** on this branch the M365 jobs, `offline-validation` (its `--python-only` suite includes the M365 steps), `final-summary` and `merge-eligibility` **fail by design** until PR #20 is reviewed and integrated. AC3 is therefore UNMET for the new candidate. AC3 was MET for `82ab7e6`, but that is history only and does not transfer.
 
-## Accelerated completion plan (PR #27 @ 72aa8b7, lane B): progress as of 2026-10-28 18:27 EDT
+## Accelerated completion plan (PR #27 @ 72aa8b7, lane B): progress as of 2026-10-28 18:27 EDT (see Round 2/3 above for later work)
 
 Deadline 2026-10-29 00:00 EDT. Remaining window at commit time: about 5h33m. This commit started from `4f54a016`.
 
@@ -203,7 +220,7 @@ Evaluated at the PR #7 head pushed with this report. Under the merge policy abov
 |---|---|---|---|
 | AC1 | An independent review (human or independent reviewer, e.g. ChatGPT) approves the **exact** candidate SHA. Provenance must be bound to that SHA, and author or agent self-review does not count. *Reworded per PR #27 C6.* | **UNMET** | No approval for any PR #7 head. PR #14 @ `eb8d259` counts only for PR #2's harness v2, and it requests changes on integrated #5. PR #27 reviewed #26, not #7. |
 | AC2 | Security exceptions recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded and test-enforced, but not approved. PR #14 B5-1: the suppressions are already applied. |
-| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **Pending CI for the round-3 candidate** (local validate-all PASSED, 43 steps). MET for `82ab7e6` is history only and does not transfer. | See Round 3. |
+| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **MET for candidate `5f159f1`**: every required job succeeded and all six incident outputs passed (runs 40792418163, 40792426144, main-validation 40792435152). Earlier SHAs are history only. | Local validate-all PASSED 43/43. |
 | AC4 | Docs match the code. | **PARTIAL** | PR #1 is still open with the superseded design; #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings in integrated code. | **UNMET** | PR #14 B5-1/B5-2 on integrated #5. Fixed in this commit: the shared `postgres-negatives` reported OK on all-NOT_RUN runs. |
 | AC6 | Final human portfolio acceptance (Ian). Separate gate. | **UNMET** | Not requested; it follows AC1–AC5. |

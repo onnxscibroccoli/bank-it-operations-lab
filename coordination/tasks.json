@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T20:11:00-04:00",
-    "remaining": "3h49m",
+    "as_of": "2026-10-28T20:17:00-04:00",
+    "remaining": "3h43m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T20:11:00-04:00",
+  "updated": "2026-10-28T20:17:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -145,7 +145,8 @@
         "id": "AC1",
         "condition": "An independent review (human or an independent reviewer such as the external ChatGPT review) approves the EXACT candidate SHA, with reviewer evidence bound to that SHA through GitHub review or commit provenance. Self-review by the author or this integration agent does not count. (Reworded per PR #27 C6; previously 'independent human review'.)",
         "status": "UNMET",
-        "detail": "No approval exists for any PR #7 head. Partial evidence: PR #14 @ eb8d259 (review notes; independence asserted, same GitHub account) verifies PR #2's harness v2 at 2aac93c/e7399fb, and counts toward AC1 ONLY for PR #2's harness, not for PR #7's head. The same notes REQUEST CHANGES on integrated PR #5. PR #27 reviewed PR #26 @ 181bcdd (CHANGES REQUIRED), not PR #7."
+        "detail": "No approval exists for any PR #7 head. Partial evidence: PR #14 @ eb8d259 (review notes; independence asserted, same GitHub account) verifies PR #2's harness v2 at 2aac93c/e7399fb, and counts toward AC1 ONLY for PR #2's harness, not for PR #7's head. The same notes REQUEST CHANGES on integrated PR #5. PR #27 reviewed PR #26 @ 181bcdd (CHANGES REQUIRED), not PR #7.",
+        "detail_round3": "Review packet for 5f159f1 prepared; NOT YET REQUESTED; no verdict exists."
       },
       {
         "id": "AC2",
@@ -156,8 +157,8 @@
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "PENDING_CI",
-        "detail": "Local validate-all PASS (43 steps) before freezing the round-3 candidate; CI result recorded after the run. Earlier MET (82ab7e6) is history only.",
+        "status": "MET",
+        "detail": "Every required job succeeded for 5f159f1 (runs 40792418163, 40792426144) and for its main-validation merge ba4d5e0 (run 40792435152), with all six incident outputs PASS; validate-all PASS (43 steps). Earlier SHAs are history only.",
         "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
         "runs": {
           "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
@@ -185,7 +186,8 @@
           "aws-cdk push (path filter not matched by that push)",
           "postgres-restore-evidence push (overnight/integration is not in its push branches)"
         ],
-        "history_note": "Was MET for 82ab7e6 (history only; it does not transfer)."
+        "history_note": "Was MET for 82ab7e6 (history only; it does not transfer).",
+        "met_for_sha": "5f159f1c757d7fbf2964e4d8b615fcb9a810f7ca"
       },
       {
         "id": "AC4",
@@ -319,6 +321,13 @@
       "state": "prepared_not_sent",
       "verdict": null,
       "prior_external_review": "PR #27 (CHANGES REQUIRED, C1-C5); the request asks for re-review against those findings"
+    },
+    {
+      "file": "coordination/review-requests/PR-7-candidate-5f159f1.md",
+      "pr": 7,
+      "exact_sha": "5f159f1c757d7fbf2964e4d8b615fcb9a810f7ca",
+      "status": "NOT_YET_REQUESTED",
+      "verdict": null
     }
   ],
   "user_actions": [
@@ -640,7 +649,56 @@
         "15": "commands recorded in the committed M365 evidence run (15/15 with the expected exit code)"
       },
       "acceptance_workflow": "Still none on overnight/integration (acceptance.yml is only on PR #26, not integrated, not modified); required checks live in integration-gate.yml.",
-      "local_validate_all": "PASS (43 steps) with PG_BIN=/workspace/pg16/bin before freezing"
+      "local_validate_all": "PASS (43 steps) with PG_BIN=/workspace/pg16/bin before freezing",
+      "frozen_candidate": {
+        "candidate_sha": "5f159f1c757d7fbf2964e4d8b615fcb9a810f7ca",
+        "frozen_at": "2026-10-28T20:12:00-04:00",
+        "main_at_test": "7f50348bf1370381615eaed91c02607fe41de2f5",
+        "main_validation_branch": "candidate/main-validation-5f159f1",
+        "main_validation_sha": "ba4d5e02146b33b74957a60b62a055f4c46ad089",
+        "merge_result": "clean --no-ff merge; main is an ancestor; merged tree identical to the candidate",
+        "local_validate_all": {
+          "candidate": "PASS (43 steps)",
+          "main_validation": "PASS (43 steps)",
+          "pg": "16.15"
+        },
+        "ci": {
+          "integration-gate push candidate/main-validation-5f159f1 (ba4d5e0)": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792435152",
+            "result": "every required job success (19 jobs incl. 5 postgres); final-summary success (gate: PASS); merge-eligibility failure by design (AC1, AC2, AC4, AC5 open). Fresh SIMULATION run on PostgreSQL 18.6: all six requirements PASS, MTTD 3.704 s, MTTR 8.73 s"
+          },
+          "integration-gate push overnight/integration (5f159f1)": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418163",
+            "result": "same; fresh run MTTD 3.501 s, all six PASS; merge-eligibility reported only AC1/AC2/AC3(PENDING_CI at that time)/AC4/AC5, no required-check problem"
+          },
+          "integration-gate pull_request PR #7 (5f159f1)": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144",
+            "result": "same; fresh run MTTD 3.489 s, MTTR 8.695 s, all six PASS"
+          },
+          "postgres-restore-evidence pull_request": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426140",
+            "result": "success 5/5"
+          },
+          "aws-cdk pull_request": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426294",
+            "result": "success"
+          },
+          "offline-validation pull_request": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426193",
+            "result": "success"
+          },
+          "offline-validation push": {
+            "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418146",
+            "result": "success"
+          }
+        },
+        "not_executed_items": "None in these runs: PostgreSQL 18.6 binaries were present on the runner image, so no requirement was NOT_EXECUTED. The NOT_EXECUTED path is exercised only by the negative job, where it correctly fails.",
+        "review": {
+          "packet": "coordination/review-requests/PR-7-candidate-5f159f1.md",
+          "disposition": "NOT_YET_REQUESTED",
+          "note": "No independent review exists for this exact SHA. Earlier approvals or reviews (eb42b23, 82ab7e6, 02ac2de, PR #14, PR #27, anything else) do not transfer."
+        }
+      }
     }
   },
   "checkpoints": [
