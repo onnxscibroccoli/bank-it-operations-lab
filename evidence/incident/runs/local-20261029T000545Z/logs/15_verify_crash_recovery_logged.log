@@ -1,0 +1,18 @@
+2026-10-28 20:05:46.161 EDT [264157] LOG:  starting PostgreSQL 16.15 on x86_64-conda-linux-gnu, compiled by x86_64-conda-linux-gnu-cc (conda-forge gcc 15.3.0-1) 15.3.0, 64-bit
+2026-10-28 20:05:46.161 EDT [264157] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-28 20:05:46.164 EDT [264157] LOG:  listening on Unix socket "$WORK/.s.PGSQL.55432"
+2026-10-28 20:05:46.166 EDT [264160] LOG:  database system was shut down at 2026-10-28 20:05:46 EDT
+2026-10-28 20:05:46.169 EDT [264157] LOG:  database system is ready to accept connections
+2026-10-28 20:05:48.316 EDT [264157] LOG:  received immediate shutdown request
+2026-10-28 20:05:48.321 EDT [264157] LOG:  database system is shut down
+2026-10-28 20:05:52.057 EDT [264428] LOG:  starting PostgreSQL 16.15 on x86_64-conda-linux-gnu, compiled by x86_64-conda-linux-gnu-cc (conda-forge gcc 15.3.0-1) 15.3.0, 64-bit
+2026-10-28 20:05:52.057 EDT [264428] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-28 20:05:52.059 EDT [264428] LOG:  listening on Unix socket "$WORK/.s.PGSQL.55432"
+2026-10-28 20:05:52.060 EDT [264431] LOG:  database system was interrupted; last known up at 2026-10-28 20:05:46 EDT
+2026-10-28 20:05:52.066 EDT [264431] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-10-28 20:05:52.067 EDT [264431] LOG:  redo starts at 0/147FC30
+2026-10-28 20:05:52.069 EDT [264431] LOG:  invalid record length at 0/14F48F0: expected at least 24, got 0
+2026-10-28 20:05:52.069 EDT [264431] LOG:  redo done at 0/14F4788 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-10-28 20:05:52.071 EDT [264429] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-10-28 20:05:52.074 EDT [264429] LOG:  checkpoint complete: wrote 85 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.001 s, total=0.004 s; sync files=55, longest=0.001 s, average=0.001 s; distance=467 kB, estimate=467 kB; lsn=0/14F48F0, redo lsn=0/14F48F0
+2026-10-28 20:05:52.076 EDT [264428] LOG:  database system is ready to accept connections

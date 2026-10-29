@@ -1,0 +1,7 @@
+# step=S_N04_precondition kind=setup expect=zero started=2026-10-28T18:02:12Z
+# reason_regex: ^ledger_entries=1000 orphan_account_absent=1$
+# cmd: n04_precondition
+# --- output ---
+ledger_entries=1000 orphan_account_absent=1
+# --- end output ---
+# exit_code=0 duration_ms=12

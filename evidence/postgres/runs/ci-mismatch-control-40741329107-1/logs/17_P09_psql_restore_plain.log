@@ -1,0 +1,1 @@
+# step=P09_psql_restore_plain NOT RUN: dependency P07_pg_dump_plain is NOT_RUN

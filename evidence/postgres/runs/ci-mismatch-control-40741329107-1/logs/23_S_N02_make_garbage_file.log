@@ -1,0 +1,1 @@
+# step=S_N02_make_garbage_file NOT RUN: dependency S04_client_server_major_match is ERROR

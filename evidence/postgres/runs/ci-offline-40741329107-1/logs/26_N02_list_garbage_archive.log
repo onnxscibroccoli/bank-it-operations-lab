@@ -1,0 +1,7 @@
+# step=N02_list_garbage_archive kind=negative expect=nonzero started=2026-10-28T18:02:24Z
+# reason_regex: does not appear to be a valid archive|input file is too short
+# cmd: pg_restore --list /home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-offline-40741329107-1/artifacts/garbage.dump
+# --- output ---
+pg_restore: error: input file does not appear to be a valid archive (too short?)
+# --- end output ---
+# exit_code=1 duration_ms=7

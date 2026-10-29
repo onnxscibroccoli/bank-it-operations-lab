@@ -1,0 +1,53 @@
+== SIMULATION incident demo: local-20261029T000545Z
+  [PASS] materialize_components             exit=0
+  [PASS] pg_initdb                          exit=0
+  [PASS] pg_start                           exit=0
+  [PASS] pg_seed                            exit=0
+  [PASS] pg_fingerprint_baseline            exit=0
+  [PASS] vendor_health                      exit=0
+[SIMULATION 20:05:46 EDT] baseline_healthy
+[SIMULATION 20:05:48 EDT] failure_injected
+  [PASS] inject_pg_immediate_stop           exit=0
+[SIMULATION 20:05:51 EDT] detected
+[SIMULATION 20:05:51 EDT] escalation_simulated
+  [PASS] diag_failed_checks                 exit=0
+  [PASS] diag_vendor_tier_ok                exit=0
+  [PASS] diag_db_ping                       exit=1
+  [PASS] diag_pg_ctl_status                 exit=3
+  [PASS] diag_server_log                    exit=0
+  [PASS] diag_business_txn_impact           exit=1
+[SIMULATION 20:05:52 EDT] diagnosed
+[SIMULATION 20:05:52 EDT] restore_started
+  [PASS] restore_pg_start                   exit=0
+[SIMULATION 20:05:52 EDT] db_restarted
+  [PASS] verify_crash_recovery_logged       exit=0
+  [PASS] verify_db_ping                     exit=0
+  [PASS] verify_fingerprint_after           exit=0
+  [PASS] verify_fingerprint_matches_baseline exit=0
+[SIMULATION 20:05:52 EDT] data_integrity_verified
+  [PASS] verify_business_txn                exit=0
+[SIMULATION 20:05:56 EDT] service_restored
+[SIMULATION 20:06:01 EDT] monitoring_stopped
+VERIFY PASS (SIMULATION run local-20261029T000545Z)
+{
+  "failed_steps": [],
+  "metrics": {
+    "db_unavailable_s": 3.838,
+    "detect_to_restore_s": 5.086,
+    "first_healthy_poll_after_seq": 3,
+    "first_unhealthy_poll_seq": 2,
+    "mttd_s": 3.59,
+    "mttr_s": 8.677,
+    "poll_cross_check": true,
+    "polls_total": 3,
+    "polls_unhealthy": 1,
+    "time_to_diagnose_s": 0.13
+  },
+  "missing_events": [],
+  "run_id": "local-20261029T000545Z",
+  "simulation": "SIMULATION",
+  "status": "PASS",
+  "steps_total": 19,
+  "timezone_reported": "America/New_York"
+}
+== SIMULATION run local-20261029T000545Z -> $REPO/evidence/incident/runs/local-20261029T000545Z (script rc=0, timeline rc=0)
