@@ -1068,32 +1068,41 @@
     },
     {
       "id": "inventory-diagrams",
-      "status": "NOT_STARTED",
+      "status": "INTEGRATED",
       "category": "functional",
-      "prs": [],
+      "prs": [
+        35
+      ],
       "paths": [
         "inventory"
       ],
       "delivery_location": [
         "inventory"
       ],
-      "reason": "JRM 'Top gaps' #4: landing-zone/network diagram generated from the CDK code and an asset/service inventory. No PR.",
       "owner": {
-        "agent": "unassigned",
-        "pr_author": null,
-        "branch": null
+        "agent": "ChatGPT delivery integrator",
+        "branch": "delivery/portfolio",
+        "pr_author": "onnxscibroccoli"
       },
       "plan_sources": [
         "JRM:B11,C10,gap-4"
       ],
       "required_checks": {
-        "present": [],
-        "proposed": [
-          "diagram generator test against cdk.out",
-          "inventory schema validation",
-          "drift check vs infra/"
-        ]
-      }
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
     }
   ],
   "required_gate_jobs": [

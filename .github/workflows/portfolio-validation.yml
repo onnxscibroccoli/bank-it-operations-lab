@@ -54,3 +54,25 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run synth
+  package:
+    needs: [offline, backup-static]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Package exact validated source tree
+        shell: bash
+        run: |
+          mkdir -p delivery-artifact
+          git archive --format=zip --prefix=bank-it-operations-lab/ HEAD > delivery-artifact/portfolio.zip
+          git rev-parse HEAD > delivery-artifact/COMMIT.txt
+          printf '%s\n' 'DRAFT PORTFOLIO: validated by portfolio-validation only; not independently approved or merge-eligible. No live deployment.' > delivery-artifact/STATUS.txt
+          cd delivery-artifact
+          sha256sum portfolio.zip COMMIT.txt STATUS.txt > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: portfolio-package-${{ github.sha }}
+          path: delivery-artifact/
+          retention-days: 7

@@ -17,4 +17,8 @@ check python3 operations/patching/tests/make_fixtures.py --check
 check python3 -m unittest discover -s operations/hardening/tests
 check python3 -m unittest discover -s operations/hybrid/checks
 check python3 operations/hybrid/checks/check_hybrid_runbooks.py
+check python3 -m unittest discover -s docs/runbooks/aws-backup/cost-capacity
+check bash -c "sha256sum -c evidence/backup/aws-backup-dr/SHA256SUMS --quiet"
+check python3 -m unittest discover -s inventory/tests
+check python3 inventory/generate.py --check
 exit "$failed"
