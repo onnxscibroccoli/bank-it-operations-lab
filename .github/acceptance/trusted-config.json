@@ -15,7 +15,7 @@
   "write"
  ],
  "decision_pr": 7,
- "decision_header": "ACCEPTANCE-DECISION v1",
+ "decision_header": "ACCEPTANCE-ATTESTATION v2",
  "required_gate_jobs": [
   "user-actions",
   "module-registry",

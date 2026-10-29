@@ -243,7 +243,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: read   # AC1: PR reviews; collaborator permission of allow-listed accounts (read-only GITHUB_TOKEN)
-      issues: read          # AC2/AC4/AC5: owner / allow-listed decision comments on the decision PR (read-only)
+      issues: read          # AC2/AC4/AC5: ACCEPTANCE-ATTESTATION v2 comments on the decision PR (read-only)
+      actions: read         # verify that an attestation's workflow_run is a run of the candidate (read-only)
     # R6: neither the verifier code nor the allow-list comes from the candidate. The gate manifest (gate_sha + sha256 of
     # every verifier file, the trusted config and this workflow file) is read from main when main carries one, else from
     # the evidence/acceptance branch. The gate code is checked out BY SHA from the manifest and hash-verified, and the
@@ -303,7 +304,7 @@ jobs:
       - name: Run identity (candidate, base == current main, tested merge) for AC3 provenance
         if: always() && steps.verify.outcome == 'success'
         run: python3 "$GATE/scripts/ci/provenance.py" --out "$RUNNER_TEMP/run-identity.json" --summary "$GITHUB_STEP_SUMMARY"
-      - name: Runtime evidence from GitHub (reviews, decision comments, permissions; read-only GITHUB_TOKEN)
+      - name: Runtime evidence from GitHub (reviews, attestations, runs, permissions; read-only GITHUB_TOKEN)
         if: always() && steps.verify.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ github.token }}

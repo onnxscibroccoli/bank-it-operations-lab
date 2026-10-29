@@ -37,16 +37,16 @@ M365 counts:
 - **`merge-eligibility`** always runs, for that run's identity: candidate SHA, base SHA (must equal the **current** `main`, read at runtime) and tested-merge SHA, from `scripts/ci/provenance.py`. It applies the PR #27 C6 policy, and **every technical AC is decided at runtime from authenticated evidence, never from the candidate's own files**:
   - **Trusted gate (R6):** the gate code and the reviewer allow-list come from a trusted manifest (main, else the `evidence/acceptance` branch). The code is checked out by SHA and hash-verified, and the candidate's `scripts/ci`, `.github/acceptance/trusted-config.json` and `integration-gate.yml` must match the manifest (`verify_trusted_gate.py`). Full closure needs branch protection on `main` (UA-3).
   - **AC1:** an APPROVED GitHub review on the exact candidate SHA by an account that is not the PR author, is on the trusted `reviewer_allowlist` and has write/maintain/admin permission; no undismissed CHANGES_REQUESTED from anyone else. **A same-account review can never satisfy AC1**, and neither can a random GitHub account's approval.
-  - **AC2:** an owner decision comment approving exactly the applied exceptions (UA-1) for the exact SHA. The exception register's own text never approves anything.
+  - **AC2:** for every applied exception, an effective owner decision (`ACCEPTANCE-ATTESTATION v2`, `criterion: EXCEPTION`) on PR #7 bound to the exception id, scope, evidence, candidate, main, tested merge and Actions run. States: PROPOSED / APPROVED / REJECTED / APPROVED_WITH_CONDITIONS (effective only after a later CONDITIONS_VERIFIED) / SUPERSEDED. The exception register's own text never approves anything.
   - **AC3:** a merge of the candidate into the current `main` whose required checks all succeeded in that run.
-  - **AC4 / AC5:** "AC4: ACCEPT" / "AC5: ACCEPT" decision comments for the exact SHA by the owner or an allow-listed reviewer; AC5 also needs AC2.
+  - **AC4 / AC5:** `ACCEPTANCE-ATTESTATION v2` comments (`criterion: AC4` / `AC5`, `decision: ACCEPT`) by the owner or an allow-listed reviewer, bound to the same candidate / main / tested merge / run; AC5 also needs AC2. GitHub authenticates the author and timestamp; edited comments are ignored. The decision artifact keeps candidate-produced evidence (never sufficient) separate from this independent acceptance.
   - The decision is uploaded as the run artifact `acceptance-decision-<tested sha>`. It is never committed into the tree it describes.
   - AC6 (final human acceptance) is a separate gate.
 - **Path to ELIGIBLE** (all owner actions; see `coordination/tasks.json` → `accelerated_plan.round7_pr31_repairs.path_to_eligible` and the USER ACTION REQUIRED list):
   1. Protect `main` (UA-3, exact settings in the UA-3 instructions).
   2. Add an independent reviewer as a collaborator with Write, and add its login to `reviewer_allowlist` in the trusted config.
   3. That reviewer approves PR #7 at the exact candidate SHA.
-  4. The owner posts the decision comment on PR #7 (`ACCEPTANCE-DECISION v1` / `candidate: <sha>` / `UA-1: APPROVE EX-01 EX-02 EX-03 EX-04` / `AC4: ACCEPT` / `AC5: ACCEPT`).
+  4. The owner posts one `ACCEPTANCE-ATTESTATION v2` comment per exception (EX-01..EX-04) and for AC4 / AC5 on PR #7 (format in `scripts/ci/reviews.py` and the UA-1 instructions). No new candidate commit is needed.
   5. Re-run the gate.
 - **Module coverage (current):** 7 of 25 modules integrated (28.0%; functional 7/17; denominator 26 including 1 SUPERSEDED, 1 BLOCKED, 14 NOT_INTEGRATED and 3 NOT_STARTED). See `coordination/modules.json`.
 - **Merging into `main` is not automated here.** All third-party actions are pinned to full commit SHAs.

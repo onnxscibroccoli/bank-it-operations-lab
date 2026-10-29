@@ -13,12 +13,14 @@ AC status values in coordination/tasks.json (PR #31 F6: every technical AC is de
       AC1: GitHub reviews API (reviews.ac1_from_reviews): APPROVED on the exact candidate by an account that is not the
            PR author, is on the TRUSTED reviewer_allowlist and has write/maintain/admin permission (F4); no undismissed
            CHANGES_REQUESTED by a non-author on any commit (F5).
-      AC2: owner decision comment "UA-1: APPROVE <exact applied EX ids>" bound to the candidate SHA, by a TRUSTED
-           owner login with admin permission (F7). The register's own status text never approves anything.
+      AC2: for EVERY applied exception, an effective owner EXCEPTION attestation (APPROVED, or APPROVED_WITH_CONDITIONS
+           followed by CONDITIONS_VERIFIED) bound to exception id, scope, evidence, candidate, main, tested merge and
+           workflow run, by a TRUSTED owner login with admin permission (F7). The register's status text never approves.
       AC3: valid kind "merge" identity (base == current main, provenance.py F1) AND every required job/output succeeded.
-      AC4: "AC4: ACCEPT" decision comment by the owner or an allow-listed reviewer, bound to the candidate SHA.
-      AC5: "AC5: ACCEPT" decision comment likewise, AND AC2 met (B5-1).
-      Decision comment format and rules: scripts/ci/reviews.py. The decision is written to --decision-out (run
+      AC4: "criterion: AC4 / decision: ACCEPT" attestation by the owner or an allow-listed reviewer, same binding.
+      AC5: likewise for AC5, AND AC2 met (B5-1).
+      Attestation format (ACCEPTANCE-ATTESTATION v2) and rules: scripts/ci/reviews.py. The decision artifact separates
+      "candidate_produced" evidence (never sufficient) from "independent_acceptance" (GitHub-authenticated records). The decision is written to --decision-out (run
       artifact) and mirrored on evidence/acceptance; nothing is stored as MET in the candidate tree.
   "MET" (in-tree): never accepted for AC1-AC5; its met_for binding problems are still reported.
   anything else: not satisfied.
@@ -211,6 +213,12 @@ def main(argv=None):
                                     "register_text_unapproved (informational; never approves)": sorted({u.get("exception") for u in exc.get("unapproved") or []}),
                                     "errors": exc.get("errors"), "blocking_user_action": bool(exc_block)},
             "required_jobs": {j: (needs or {}).get(j, {}).get("result", "missing") for j in required + ["final-summary"]} if isinstance(needs, dict) else None,
+            "candidate_produced (never satisfies AC1-AC5)": {
+                "tasks_json_status": {ac: (conds.get(ac) or {}).get("status") for ac in TECH},
+                "register_status_text": {k: v.get("status") for k, v in (exc.get("exceptions") or {}).items()}},
+            "independent_acceptance": {"source": "GitHub API: PR reviews and ACCEPTANCE-ATTESTATION v2 comments on the trusted decision_pr",
+                                       "exception_states": dec.get("exceptions") if isinstance(dec, dict) else None,
+                                       "AC1": ac_results["AC1"][0], "AC2": dec["AC2"][0], "AC4": dec["AC4"][0], "AC5": dec["AC5"][0]},
             "policy": "PR #27 C6"}, indent=2) + "\n")
     if a.summary:
         md = [f"### Merge eligibility: **{verdict}**", "",

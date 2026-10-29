@@ -40,7 +40,18 @@ CONFIG = {"owner_logins": [AUTHOR], "owner_required_permission": ["admin"], "rev
           "reviewer_required_permission": ["admin", "maintain", "write"], "decision_pr": 7, "decision_header": "ACCEPTANCE-DECISION v1"}
 
 
-def decision_comment(login, lines, cand=CAND, cid=100, at="2026-10-28T23:10:00Z", edited=False):
+RUN = "40800364073"
+
+
+def attestation(login, criterion, decision, cand=CAND, main=BASE, tested=(MERGE,), run=RUN, cid=100,
+                at="2026-10-28T23:10:00Z", edited=False, extra=(), evidence="https://github.com/o/r/actions/runs/40800364073"):
+    lines = ["ACCEPTANCE-ATTESTATION v2", f"candidate: {cand}", f"main: {main}", "tested_merge: " + " ".join(tested),
+             f"workflow_run: {run}", f"criterion: {criterion}", f"decision: {decision}", *extra, f"evidence: {evidence}"]
+    return {"id": cid, "user": {"login": login}, "created_at": at, "updated_at": "2026-10-28T23:59:00Z" if edited else at,
+            "body": "\n".join(lines)}
+
+
+def decision_comment(login, lines, cand=CAND, cid=100, at="2026-10-28T23:10:00Z", edited=False):  # legacy v1 (ignored by the gate)
     return {"id": cid, "user": {"login": login}, "created_at": at, "updated_at": "2026-10-28T23:59:00Z" if edited else at,
             "body": "ACCEPTANCE-DECISION v1\ncandidate: " + cand + "\n" + "\n".join(lines)}
 
@@ -49,7 +60,8 @@ APPROVED_REVIEWS = {"ok": True, "pr": 7, "pr_author": AUTHOR, "head_sha": CAND, 
                     "reviews": [{"id": 1, "user": {"login": REVIEWER}, "state": "APPROVED", "commit_id": CAND,
                                  "submitted_at": "2026-10-28T23:00:00Z"}],
                     "comments_ok": True,
-                    "comments": [decision_comment(REVIEWER, ["AC4: ACCEPT", "AC5: ACCEPT"])],
+                    "comments": [attestation(REVIEWER, "AC4", "ACCEPT", cid=101), attestation(REVIEWER, "AC5", "ACCEPT", cid=102)],
+                    "runs": {RUN: {"head_sha": CAND}},
                     "permissions": {AUTHOR: {"permission": "admin", "role_name": "admin"}, REVIEWER: {"permission": "write", "role_name": "write"}}}
 CLEAN_EXC = {"applied": [], "unapproved": [], "errors": [], "blocking_user_action": False}
 

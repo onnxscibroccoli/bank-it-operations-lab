@@ -15,19 +15,28 @@ AC1 (ac1_from_reviews) is MET_AT_RUNTIME only when ALL hold:
     review blocking until it is dismissed).
   A random account approving (public repo) or a same-account review can never satisfy AC1. Any fetch error -> UNMET.
 
-AC2 / AC4 / AC5 (decisions_from_comments): decisions are PR comments on the trusted decision_pr whose body is exactly
+AC2 / AC4 / AC5 (decisions_from_comments): INDEPENDENT ACCEPTANCE lives outside the candidate, as GitHub-authenticated
+  attestation comments on the trusted decision_pr (author and timestamp are authenticated by the GitHub API):
 
-    ACCEPTANCE-DECISION v1
+    ACCEPTANCE-ATTESTATION v2
     candidate: <40-hex candidate SHA>
-    UA-1: APPROVE EX-01 EX-02 EX-03 EX-04        (owner only: binds the exception approval to the owner account)
-    AC4: ACCEPT                                  (owner or allow-listed reviewer)
-    AC5: ACCEPT                                  (owner or allow-listed reviewer)
+    main: <40-hex main SHA the candidate was tested against>
+    tested_merge: <40-hex tested merge SHA> [<another tested merge SHA>]
+    workflow_run: <Actions run id of that candidate (verified via the API: run.head_sha == candidate)>
+    criterion: AC4 | AC5 | EXCEPTION
+    decision: ACCEPT | REJECT                                    (AC4 / AC5)
+              PROPOSED | APPROVED | REJECTED | APPROVED_WITH_CONDITIONS | SUPERSEDED | CONDITIONS_VERIFIED   (EXCEPTION)
+    exception: EX-NN                                             (EXCEPTION only)
+    scope: <rule> <applied resource logical ids, sorted>         (EXCEPTION only; must equal the applied suppressions)
+    conditions: <text>                                           (required iff APPROVED_WITH_CONDITIONS)
+    evidence: <ref> [<ref> ...]
 
-  (any subset of decision lines; REJECT instead of APPROVE/ACCEPT records a rejection). A decision counts only when
-  the comment author is authorized in the trusted config AND has the required permission at runtime, the candidate
-  line equals this run's candidate exactly, and the comment was never edited. The latest authorized decision per
-  item wins. AC2 needs UA-1 APPROVE naming EXACTLY the set of exceptions whose suppressions are applied; AC5 also
-  needs AC2. In-tree statuses (tasks.json, the register's "APPROVED" text) never approve anything (F6/F7).
+  One criterion per comment; strict parse; edited comments ignored; latest authorized attestation wins. An
+  attestation counts only for this run's exact candidate, main and tested merge. EXCEPTION decisions only from a
+  trusted owner login with admin permission (F7); AC4/AC5 and CONDITIONS_VERIFIED from the owner or an allow-listed,
+  write-permitted non-author reviewer. APPROVED_WITH_CONDITIONS is effective only after a later CONDITIONS_VERIFIED
+  attestation for the same exception and scope. AC2 needs an effective approval for EVERY applied exception; AC5 also
+  needs AC2. Candidate-produced evidence (tasks.json statuses, the register's status text) never satisfies anything.
 Usage: reviews.py --identity FILE --config FILE --out FILE   (env GITHUB_TOKEN, GITHUB_REPOSITORY, GITHUB_API_URL)
 """
 import argparse, json, os, re, sys, urllib.error, urllib.request
@@ -99,80 +108,145 @@ def ac1_from_reviews(rv, ident, cfg=None):
     return "MET_AT_RUNTIME", notes + [f"APPROVED on {cand} by " + "; ".join(approvals)]
 
 
-DEC_LINE = re.compile(r"^(UA-1|AC4|AC5):\s*(APPROVE|ACCEPT|REJECT)((?:\s+EX-\d{2})*)\s*$")
+ATT_HEADER = "ACCEPTANCE-ATTESTATION v2"
+EXC_STATES = {"PROPOSED", "APPROVED", "REJECTED", "APPROVED_WITH_CONDITIONS", "SUPERSEDED", "CONDITIONS_VERIFIED"}
+AC_STATES = {"ACCEPT", "REJECT"}
+KEYS = {"candidate", "main", "tested_merge", "workflow_run", "criterion", "decision", "exception", "scope", "conditions", "evidence"}
 
 
-def parse_decision(body, header):
+def parse_attestation(body):
+    """Strict 'key: value' attestation. Returns dict or None (any unknown/duplicate key or malformed value -> None)."""
     lines = [x.strip() for x in (body or "").strip().splitlines() if x.strip()]
-    if len(lines) < 3 or lines[0] != header:
+    if not lines or lines[0] != ATT_HEADER:
         return None
-    m = re.fullmatch(r"candidate:\s*([0-9A-Fa-f]{40})", lines[1])
-    if not m:
+    a = {}
+    for x in lines[1:]:
+        k, sep, v = x.partition(":")
+        k, v = k.strip(), v.strip()
+        if not sep or k not in KEYS or k in a or not v:
+            return None
+        a[k] = v
+    for k in ("candidate", "main"):
+        if not HEX40.match(a.get(k, "").lower()):
+            return None
+        a[k] = a[k].lower()
+    tm = a.get("tested_merge", "").lower().split()
+    if not tm or not all(HEX40.match(x) for x in tm):
         return None
-    out = {"candidate": m.group(1).lower(), "items": {}}
-    for x in lines[2:]:
-        d = DEC_LINE.match(x)
-        if not d:
-            return None  # strict: any unrecognized line invalidates the whole comment
-        out["items"][d.group(1)] = {"verb": d.group(2), "ids": sorted(set(d.group(3).split()))}
-    return out
+    a["tested_merge"] = tm
+    if not re.fullmatch(r"\d{5,20}", a.get("workflow_run", "")):
+        return None
+    a["evidence"] = a.get("evidence", "").split()
+    if not a["evidence"]:
+        return None
+    c, d = a.get("criterion"), a.get("decision")
+    if c in ("AC4", "AC5"):
+        if d not in AC_STATES or {"exception", "scope", "conditions"} & set(a):
+            return None
+    elif c == "EXCEPTION":
+        if d not in EXC_STATES or not EXID.match(a.get("exception", "")) or not a.get("scope"):
+            return None
+        if (d == "APPROVED_WITH_CONDITIONS") != ("conditions" in a):
+            return None
+    else:
+        return None
+    return a
+
+
+def exception_scopes(exc):
+    """{EX-id: 'RULE RES1 RES2...'} from the applied suppressions (resources sorted)."""
+    sc = {}
+    for u in (exc or {}).get("applied") or []:
+        if u.get("exception"):
+            sc.setdefault(u["exception"], {"rule": u.get("rule"), "res": set()})["res"].add(u.get("resource"))
+    return {k: f"{v['rule']} " + " ".join(sorted(v["res"])) for k, v in sc.items()}
+
+
+def attestations(rv, ident, cfg):
+    """Authenticated, independent attestations bound to this exact run identity. Returns (accepted list, notes)."""
+    cand = norm((ident or {}).get("candidate_sha")); main = norm((ident or {}).get("base_sha")); tested = norm((ident or {}).get("tested_sha"))
+    owners = {_l(x) for x in (cfg or {}).get("owner_logins") or []}
+    reviewers = {_l(x) for x in (cfg or {}).get("reviewer_allowlist") or []}
+    runs = rv.get("runs") or {}
+    out, notes = [], []
+    for c in sorted(rv.get("comments") or [], key=lambda c: (c.get("created_at") or "", c.get("id") or 0)):
+        if not (c.get("body") or "").lstrip().startswith(ATT_HEADER):
+            continue
+        login = _l((c.get("user") or {}).get("login")); cid = c.get("id")
+        a = parse_attestation(c.get("body"))
+        if a is None:
+            notes.append(f"attestation {cid} by {login} ignored: malformed"); continue
+        if c.get("updated_at") != c.get("created_at"):
+            notes.append(f"attestation {cid} by {login} ignored: edited after posting"); continue
+        if a["candidate"] != cand:
+            continue
+        if not main or a["main"] != main:
+            notes.append(f"attestation {cid} ignored: main {a['main'][:12]} is not this run's base/main {main}"); continue
+        if tested not in a["tested_merge"]:
+            notes.append(f"attestation {cid} ignored: this run's tested merge {tested} is not attested"); continue
+        run = runs.get(a["workflow_run"]) or {}
+        if norm(run.get("head_sha")) != cand:
+            notes.append(f"attestation {cid} ignored: workflow run {a['workflow_run']} is not a run of candidate {cand} ({run.get('error') or run.get('head_sha')})"); continue
+        is_owner = login in owners and has_perm(rv, login, (cfg or {}).get("owner_required_permission") or ["admin"])
+        is_rev = login in reviewers and login != _l(rv.get("pr_author")) and has_perm(rv, login, (cfg or {}).get("reviewer_required_permission") or ["admin", "maintain", "write"])
+        if a["criterion"] == "EXCEPTION" and a["decision"] != "CONDITIONS_VERIFIED":
+            ok = is_owner                      # F7: exception decisions are the owner's
+        else:
+            ok = is_owner or is_rev            # AC4/AC5 and verification of conditions: owner or allow-listed reviewer
+        if not ok:
+            notes.append(f"attestation {cid} by {login} ignored: not authorized by the trusted config / runtime permission"); continue
+        out.append(dict(a, by=login, comment=cid, at=c.get("created_at")))
+    return out, notes
 
 
 def decisions_from_comments(rv, ident, cfg, exc):
-    """Pure. Returns {"AC2": (status, why), "AC4": ..., "AC5": ...}."""
-    res = {}
+    """Pure. Returns {"AC2": (status, why), "AC4": ..., "AC5": ..., "exceptions": {EX: state}}."""
     if not isinstance(rv, dict) or not rv.get("ok") or not rv.get("comments_ok"):
-        why = ["decision comments not available: " + str((rv or {}).get("comments_error") or (rv or {}).get("error") if isinstance(rv, dict) else "no file")]
-        return {k: ("UNMET", why) for k in ("AC2", "AC4", "AC5")}
+        why = ["attestations not available: " + str((rv or {}).get("comments_error") or (rv or {}).get("error") if isinstance(rv, dict) else "no file")]
+        return {k: ("UNMET", why) for k in ("AC2", "AC4", "AC5")} | {"exceptions": {}}
     if not isinstance(cfg, dict):
-        return {k: ("UNMET", ["trusted config not available"]) for k in ("AC2", "AC4", "AC5")}
+        return {k: ("UNMET", ["trusted config not available"]) for k in ("AC2", "AC4", "AC5")} | {"exceptions": {}}
+    atts, notes = attestations(rv, ident, cfg)
     cand = norm((ident or {}).get("candidate_sha"))
-    owners = {_l(x) for x in cfg.get("owner_logins") or []}
-    reviewers = {_l(x) for x in cfg.get("reviewer_allowlist") or []}
-    header = cfg.get("decision_header") or "ACCEPTANCE-DECISION v1"
-    latest, notes = {}, []
-    for c in sorted(rv.get("comments") or [], key=lambda c: (c.get("created_at") or "", c.get("id") or 0)):
-        dec = parse_decision(c.get("body"), header)
-        if dec is None:
-            continue
-        login = _l((c.get("user") or {}).get("login"))
-        if c.get("updated_at") and c.get("created_at") and c["updated_at"] != c["created_at"]:
-            notes.append(f"decision comment {c.get('id')} by {login} ignored: edited after posting"); continue
-        if not cand or dec["candidate"] != cand:
-            continue
-        for item, v in dec["items"].items():
-            if item == "UA-1":
-                ok = login in owners and has_perm(rv, login, cfg.get("owner_required_permission") or ["admin"])
-            else:
-                ok = (login in owners and has_perm(rv, login, cfg.get("owner_required_permission") or ["admin"])) or \
-                     (login in reviewers and has_perm(rv, login, cfg.get("reviewer_required_permission") or ["admin", "maintain", "write"]))
-            if not ok:
-                notes.append(f"{item} decision by {login} ignored: not authorized by the trusted config / permission"); continue
-            latest[item] = dict(v, by=login, comment=c.get("id"), at=c.get("created_at"))
-    applied = sorted({u.get("exception") for u in (exc or {}).get("applied") or [] if u.get("exception")})
-    ua1 = latest.get("UA-1")
+    res = {}
+    scopes = exception_scopes(exc)
+    state, why2 = {}, []
+    for ex in sorted(scopes):
+        mine = [a for a in atts if a["criterion"] == "EXCEPTION" and a["exception"] == ex]
+        decs = [a for a in mine if a["decision"] != "CONDITIONS_VERIFIED"]
+        last = decs[-1] if decs else None
+        if last is None:
+            state[ex] = "PROPOSED"; why2.append(f"{ex}: PROPOSED (no owner decision on {cand})"); continue
+        if " ".join(last["scope"].split()) != scopes[ex]:
+            state[ex] = "PROPOSED"; why2.append(f"{ex}: owner decision scope '{last['scope']}' != applied '{scopes[ex]}'"); continue
+        d = last["decision"]
+        if d == "APPROVED_WITH_CONDITIONS":
+            ver = [a for a in mine if a["decision"] == "CONDITIONS_VERIFIED" and (a["at"] or "") > (last["at"] or "")
+                   and " ".join(a["scope"].split()) == scopes[ex]]
+            state[ex] = "APPROVED_WITH_CONDITIONS (verified)" if ver else "APPROVED_WITH_CONDITIONS (conditions NOT verified)"
+            why2.append(f"{ex}: {state[ex]} by {last['by']} (comment {last['comment']}); conditions: {last['conditions']}")
+        else:
+            state[ex] = d
+            why2.append(f"{ex}: {d} by {last['by']} (comment {last['comment']}, {last['at']}, evidence {' '.join(last['evidence'])})")
+    effective = {ex for ex, s in state.items() if s in ("APPROVED", "APPROVED_WITH_CONDITIONS (verified)")}
     if (exc or {}).get("errors") or not isinstance((exc or {}).get("applied"), list):
         res["AC2"] = ("UNMET", ["security exception register inconsistent or not checked"])
-    elif not applied:
-        res["AC2"] = ("MET_AT_RUNTIME", ["no cdk-nag suppression is applied"])
-    elif not ua1:
-        res["AC2"] = ("UNMET", notes + [f"BLOCKING USER ACTION UA-1: no owner decision on candidate {cand} for applied exceptions {' '.join(applied)}"])
-    elif ua1["verb"] != "APPROVE":
-        res["AC2"] = ("UNMET", [f"UA-1 REJECTED by {ua1['by']} (comment {ua1['comment']})"])
-    elif ua1["ids"] != applied:
-        res["AC2"] = ("UNMET", [f"UA-1 approval by {ua1['by']} names {' '.join(ua1['ids']) or 'nothing'}, applied exceptions are {' '.join(applied)} (must match exactly)"])
+    elif set(scopes) - effective:
+        res["AC2"] = ("UNMET", notes + why2 + [f"BLOCKING USER ACTION UA-1: applied exceptions without an effective owner approval: {' '.join(sorted(set(scopes) - effective))}"])
     else:
-        res["AC2"] = ("MET_AT_RUNTIME", [f"UA-1 APPROVE {' '.join(applied)} on {cand} by owner {ua1['by']} (comment {ua1['comment']}, {ua1['at']})"])
+        res["AC2"] = ("MET_AT_RUNTIME", why2 or ["no cdk-nag suppression is applied"])
     for ac in ("AC4", "AC5"):
-        d = latest.get(ac)
+        mine = [a for a in atts if a["criterion"] == ac]
+        d = mine[-1] if mine else None
         if not d:
-            res[ac] = ("UNMET", notes + [f"no authorized {ac} decision on candidate {cand}"])
-        elif d["verb"] != "ACCEPT":
-            res[ac] = ("UNMET", [f"{ac} REJECTED by {d['by']} (comment {d['comment']})"])
+            res[ac] = ("UNMET", notes + [f"no authorized {ac} attestation bound to candidate {cand} / this run's main and tested merge"])
+        elif d["decision"] != "ACCEPT":
+            res[ac] = ("UNMET", [f"{ac} REJECT by {d['by']} (comment {d['comment']})"])
         elif ac == "AC5" and res["AC2"][0] != "MET_AT_RUNTIME":
-            res[ac] = ("UNMET", [f"AC5 accepted by {d['by']}, but B5-1 is open until AC2 (UA-1) is met"])
+            res[ac] = ("UNMET", [f"AC5 ACCEPT by {d['by']}, but B5-1 is open until AC2 (UA-1) is met"])
         else:
-            res[ac] = ("MET_AT_RUNTIME", [f"{ac} ACCEPT on {cand} by {d['by']} (comment {d['comment']}, {d['at']})"])
+            res[ac] = ("MET_AT_RUNTIME", [f"{ac} ACCEPT on {cand} by {d['by']} (comment {d['comment']}, {d['at']}, run {d['workflow_run']}, evidence {' '.join(d['evidence'])})"])
+    res["exceptions"] = state
     return res
 
 
@@ -224,8 +298,19 @@ def fetch(ident, env, cfg=None):
             page += 1
         out.update(comments_ok=True, decision_pr=dpr, comments=[
             {"id": c.get("id"), "user": {"login": (c.get("user") or {}).get("login")}, "created_at": c.get("created_at"),
-             "updated_at": c.get("updated_at"), "body": c.get("body") if (c.get("body") or "").lstrip().startswith("ACCEPTANCE-DECISION") else None}
+             "updated_at": c.get("updated_at"), "body": c.get("body") if (c.get("body") or "").lstrip().startswith("ACCEPTANCE-") else None}
             for c in com])
+        runs = {}
+        for c in out["comments"]:
+            m = re.search(r"^\s*workflow_run:\s*(\d{5,20})\s*$", c.get("body") or "", re.M)
+            if m and m.group(1) not in runs and len(runs) < 50:
+                try:
+                    r = api(f"/repos/{repo}/actions/runs/{m.group(1)}", token, base)
+                    runs[m.group(1)] = {"head_sha": r.get("head_sha"), "event": r.get("event"), "name": r.get("name"),
+                                        "conclusion": r.get("conclusion"), "html_url": r.get("html_url")}
+                except Exception as e:
+                    runs[m.group(1)] = {"error": f"{type(e).__name__}: {e}"}
+        out["runs"] = runs
     except Exception as e:
         out["comments_error"] = f"{type(e).__name__}: {e}"
     # permissions only for accounts the trusted config could authorize (limits calls; others never count)

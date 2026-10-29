@@ -169,7 +169,7 @@
       "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
      }
     ],
-    "binding": "Evaluated by merge-eligibility (trusted gate) from authenticated runtime evidence: owner decision comment 'UA-1: APPROVE <exactly the applied EX ids>' on PR #7, bound to the exact candidate SHA, by a trusted owner login (trusted-config owner_logins) with admin permission at runtime; the register's own status text never approves anything (PR #31 F6/F7). In-tree MET is rejected."
+    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: for every applied exception, the latest ACCEPTANCE-ATTESTATION v2 'criterion: EXCEPTION' comment on PR #7 by a trusted owner login with admin permission (GitHub API) must be APPROVED, or APPROVED_WITH_CONDITIONS followed by a CONDITIONS_VERIFIED attestation; bound to exception id, scope (rule + applied resources), evidence refs, candidate SHA, main SHA, tested merge SHA and an Actions run of the candidate. States: PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED. The register's status text and tasks.json are candidate-produced and never approve (Ian 21:50 P3). In-tree MET is rejected."
    },
    {
     "id": "AC3",
@@ -217,7 +217,7 @@
     "id": "AC4",
     "condition": "Docs match the code: READMEs, PR bodies, INTEGRATION.md and tasks.json",
     "status": "COMPUTED_AT_RUNTIME",
-    "detail": "Docs match code as of this candidate (README coverage 7/25, gate behaviour, path to ELIGIBLE; Entra baseline choices PENDING UA-2). Needs an authorized 'AC4: ACCEPT' decision on the exact SHA.",
+    "detail": "Docs match code as of this candidate (README coverage 7/25, gate behaviour, path to ELIGIBLE; Entra baseline choices PENDING UA-2). Needs an authorized ACCEPTANCE-ATTESTATION v2 (criterion AC4) decision on the exact SHA.",
     "history": [
      {
       "status": "PARTIAL",
@@ -225,7 +225,7 @@
       "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
      }
     ],
-    "binding": "Evaluated by merge-eligibility (trusted gate) from authenticated runtime evidence: 'AC4: ACCEPT' decision comment on PR #7 bound to the exact candidate SHA by the trusted owner (admin) or a trusted allow-listed reviewer (write+) (PR #31 F6). In-tree MET is rejected."
+    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: latest ACCEPTANCE-ATTESTATION v2 'criterion: AC4' comment on PR #7 with decision ACCEPT, by the trusted owner (admin) or an allow-listed non-author reviewer (write+), bound to candidate, main, tested merge, workflow run (verified via API: run.head_sha == candidate), evidence refs; author and timestamp authenticated by GitHub; edited comments ignored (Ian 21:50 P2). In-tree MET is rejected."
    },
    {
     "id": "AC5",
@@ -239,7 +239,7 @@
       "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
      }
     ],
-    "binding": "Evaluated by merge-eligibility (trusted gate) from authenticated runtime evidence: 'AC5: ACCEPT' decision comment likewise, AND AC2 met at runtime (B5-1) (PR #31 F6). In-tree MET is rejected."
+    "binding": "Same as AC4 with 'criterion: AC5', AND AC2 met at runtime (B5-1). In-tree MET is rejected."
    },
    {
     "id": "AC6",
@@ -394,11 +394,11 @@
    "task_id": "PR-5/AC2",
    "classification": "USER_ACTION_REQUIRED",
    "status": "OPEN",
-   "action": "Approve or reject EX-01..EX-04 for the exact candidate SHA via an owner decision comment on PR #7 (format in instructions).",
+   "action": "Decide EX-01..EX-04 for the exact candidate SHA: one owner ACCEPTANCE-ATTESTATION v2 comment per exception on PR #7 (format in instructions).",
    "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
    "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded. | 2026-10-28 21:25 EDT: scripts/ci/check_exceptions.py reports 5 applied suppressions tied to PROPOSED EX-01..EX-04 as a BLOCKING USER ACTION; merge-eligibility keeps AC2/AC5 UNMET until this is decided.",
-   "smallest_permission": "Owner decision (comment on PR #5 or edit SECURITY_EXCEPTIONS.md approval fields).",
-   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. To approve, post ONE new (never edited) comment on PR #7 from the owner account listed in .github/acceptance/trusted-config.json (onnxscibroccoli, admin), body exactly:\nACCEPTANCE-DECISION v1\ncandidate: <exact 40-hex candidate SHA>\nUA-1: APPROVE EX-01 EX-02 EX-03 EX-04\nAC4: ACCEPT\nAC5: ACCEPT\n(use REJECT instead of APPROVE to reject; list exactly the exceptions whose suppressions are applied: EX-01 EX-02 EX-03 EX-04). The gate verifies author, admin permission, exact SHA and IDs at runtime. The integrator never posts this.",
+   "smallest_permission": "Owner decision recorded as a GitHub-authenticated comment on PR #7 by onnxscibroccoli (admin). Editing SECURITY_EXCEPTIONS.md never approves.",
+   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. For EACH applied exception post ONE new (never edited) comment on PR #7 from the owner account in the trusted config (onnxscibroccoli, admin), body exactly:\nACCEPTANCE-ATTESTATION v2\ncandidate: <exact 40-hex candidate SHA>\nmain: <exact 40-hex main SHA>\ntested_merge: <PR merge SHA> <candidate/main-validation merge SHA>\nworkflow_run: <Actions run id of the candidate's integration-gate run>\ncriterion: EXCEPTION\ndecision: APPROVED | REJECTED | APPROVED_WITH_CONDITIONS | SUPERSEDED\nexception: EX-NN\nscope: <rule> <applied resource logical ids, sorted, exactly as in the gate's decision artifact>\nconditions: <text>   (only with APPROVED_WITH_CONDITIONS; effective only after a later CONDITIONS_VERIFIED attestation)\nevidence: <one or more refs, e.g. the run URL and SECURITY_EXCEPTIONS.md#EX-NN>\nApplied scopes on this tree: EX-01: 'NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689'; EX-02: 'NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50'; EX-03: 'AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC'; EX-04: 'AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF'. The gate verifies author, admin permission, exact SHAs, the run, and the scope at runtime. The integrator never posts this.",
    "blocks": [
     "AC2",
     "merge of PR #7 into main"
@@ -949,10 +949,54 @@
     "UA-3: protect main as specified (and land the gate + manifest + trusted config on main through it)",
     "Add an independent reviewer account as a collaborator with Write; add its login to reviewer_allowlist in the TRUSTED config (main, or a new pinned gate commit + manifest)",
     "That reviewer submits an APPROVED GitHub review on PR #7 with commit_id = the exact candidate SHA; no undismissed CHANGES_REQUESTED from anyone else",
-    "Owner posts the UA-1 / AC4 / AC5 decision comment on PR #7 for the exact candidate SHA (format in UA-1 instructions)",
+    "Owner posts the UA-1 EXCEPTION attestations (one per EX id) and AC4/AC5 attestations on PR #7 (ACCEPTANCE-ATTESTATION v2, format in reviews.py and UA-1 instructions), bound to the exact candidate, main, tested merges and run",
     "Re-run integration-gate (PR run and candidate/main-validation push): AC3 MET_AT_RUNTIME with base == current main and all required jobs green -> ELIGIBLE",
     "AC6 (final human portfolio acceptance) remains a separate gate; merging stays a human action"
    ],
+   "residual": [
+    "R6: until UA-3 the merge-eligibility job definition lives in the candidate's workflow file (a candidate could delete the verify step); the manifest makes any verifier change visible and the gate rejects it when the step runs",
+    "F7: the owner login onnxscibroccoli is also the PR author and the account the agents push with; the decision comment proves the account, not the person. Ian should post decisions himself; a dedicated owner/reviewer account removes this ambiguity"
+   ]
+  },
+  "round8_ian_2150_alignment": {
+   "requested": "Ian 21:41 recovery directive + 21:50 execution alignment (P1-P5)",
+   "superseded_candidate": "e9310f3a94162a5dae31ee1cca9e35452de033ed was frozen before the 21:50 alignment; it is NOT the review candidate (its attestation format lacked main/tested-merge/run binding and exception states)",
+   "P1": "AC1 unchanged design (non-author, API write+ permission, trusted allow-list, APPROVED on exact 40-hex SHA, latest decisive review per account, fail closed on any undismissed CHANGES_REQUESTED); added superseded/dismissed/abbreviated regressions",
+   "P2": "AC2/AC4/AC5 only from ACCEPTANCE-ATTESTATION v2 comments (GitHub-authenticated author+timestamp) binding candidate, main, tested merge(s), criterion, decision, evidence refs, workflow run (run.head_sha verified via API); decision artifact separates candidate_produced from independent_acceptance",
+   "P3": "exception states PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED (+CONDITIONS_VERIFIED); scope must equal applied rule+resources; conditional approval effective only after a later CONDITIONS_VERIFIED; nothing approved",
+   "P4": "trusted manifest-pinned gate unchanged; no pull_request_target used; base-controlled closure = UA-3 (exact settings) ; residual documented",
+   "exception_reconciliation": {
+    "EX-01": {
+     "register": "PROPOSED",
+     "rule": "NIST.800.53.R5-S3DefaultEncryptionKMS",
+     "suppression": "infra/aws-cdk/lib/secure-storage-stack.ts:60",
+     "scope": "NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689",
+     "provenance": "register row + suppression reason cite EX-01 and ADR-0002; no approver recorded anywhere",
+     "state": "PROPOSED"
+    },
+    "EX-02": {
+     "register": "PROPOSED",
+     "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+     "suppression": "infra/aws-cdk/lib/secure-storage-stack.ts:65,72",
+     "scope": "NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50",
+     "provenance": "register row + two suppression reasons cite EX-02; no approver recorded",
+     "state": "PROPOSED"
+    },
+    "EX-03": {
+     "register": "PROPOSED",
+     "rule": "AwsSolutions-IAM5",
+     "suppression": "infra/aws-cdk/lib/network-database-stack.ts:241-246",
+     "scope": "AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC",
+     "provenance": "register row + suppression reason cite EX-03; no approver recorded",
+     "state": "PROPOSED"
+    },
+    "EX-04": {
+     "register": "PROPOSED",
+     "state": "UNRESOLVED (left open per Ian 21:50 P3)",
+     "suppression": "infra/aws-cdk/lib/network-database-stack.ts:226-234",
+     "scope": "AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF"
+    }
+   },
    "residual": [
     "R6: until UA-3 the merge-eligibility job definition lives in the candidate's workflow file (a candidate could delete the verify step); the manifest makes any verifier change visible and the gate rejects it when the step runs",
     "F7: the owner login onnxscibroccoli is also the PR author and the account the agents push with; the decision comment proves the account, not the person. Ian should post decisions himself; a dedicated owner/reviewer account removes this ambiguity"

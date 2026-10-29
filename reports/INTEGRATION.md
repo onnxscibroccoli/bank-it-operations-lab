@@ -7,6 +7,24 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Round 8 (2026-10-28 ~22:15 EDT): Ian's 21:50 execution alignment (P1-P5)
+
+- `e9310f3` was frozen before the 21:50 alignment. **It is not the review candidate**: its decision comments did not bind main, tested merge, workflow run or exception scope, and it had no exception states.
+- **P1 (AC1):** design unchanged (non-author; write+ via `GET /collaborators/{login}/permission`; trusted `reviewer_allowlist` outside the candidate; APPROVED with `commit_id` = exact 40-hex SHA; latest decisive review per account; any undismissed CHANGES_REQUESTED fails closed). New regressions: superseded by a later CHANGES_REQUESTED, dismissed, wrong / 12-char / 39-char SHA, author on the allow-list.
+- **P2 (AC2/AC4/AC5):** only `ACCEPTANCE-ATTESTATION v2` comments on PR #7 count. Each binds candidate, main, tested merge(s), criterion, decision, evidence refs and `workflow_run`; the run is checked through the API (`run.head_sha == candidate`, new `actions: read`). Decision-maker and timestamp come from GitHub. Strict parse; edited comments are ignored. The decision artifact has separate `candidate_produced` and `independent_acceptance` sections. Regressions: forged in-tree MET (tasks.json and register text) leaves NOT ELIGIBLE; valid external attestations give ELIGIBLE with the tree unchanged.
+- **P3 (exceptions):** PROPOSED / APPROVED / REJECTED / APPROVED_WITH_CONDITIONS / SUPERSEDED (+ CONDITIONS_VERIFIED). Only the owner (admin) decides; scope must equal the applied rule + resources; a conditional approval is effective only after a later CONDITIONS_VERIFIED. Nothing is approved.
+- **Exception reconciliation** (no approver is recorded anywhere; none is invented):
+
+| ID | Register | Suppression in code | Scope the gate requires | State |
+|---|---|---|---|---|
+| EX-01 | PROPOSED | `infra/aws-cdk/lib/secure-storage-stack.ts:60` | `NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689` | PROPOSED (reconciled) |
+| EX-02 | PROPOSED | `secure-storage-stack.ts:65,72` | `NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50` | PROPOSED (reconciled) |
+| EX-03 | PROPOSED | `network-database-stack.ts:241-246` | `AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC` | PROPOSED (reconciled) |
+| EX-04 | PROPOSED | `network-database-stack.ts:226-234` | `AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF` | **UNRESOLVED** (left open) |
+
+- **P4 (R6):** no `pull_request_target` is used. The gate stays manifest-pinned and hash-verified. Full closure is UA-3, an owner action. Residual until then: on `pull_request` the job definition comes from the candidate's workflow file.
+- **P5:** B6-3 is in `orgs-security.blocker.ids`; the DatabaseKey CreateGrant wording is fixed; README says 7/25; historical checksums are kept (`superseded/pass3-pre-B5-2/`).
+
 ## Round 7 (2026-10-28 ~22:00 EDT): repairs for PR #31 (CHANGES REQUIRED on `1fdf25a`)
 
 - **Reconciled at start (no drift):**
