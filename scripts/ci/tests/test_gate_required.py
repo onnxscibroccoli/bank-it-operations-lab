@@ -7,12 +7,15 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import final_summary, merge_eligibility  # noqa: E402
 
-REQ = json.loads((Path(__file__).resolve().parents[3] / "coordination/modules.json").read_text())["required_gate_jobs"]
+_REG = json.loads((Path(__file__).resolve().parents[3] / "coordination/modules.json").read_text())
+REQ = _REG["required_gate_jobs"]
+OUTS = _REG.get("required_gate_outputs") or {}
+INCIDENT = ["incident-committed-runs", "incident-fresh-run", "incident-not-executed-negative", "labeling-markers"]
 M365 = ["m365-scenario-evaluation", "m365-unit-tests", "m365-evidence-verification", "plan-only-assertions"]
 
 
 def needs(**override):
-    n = {j: {"result": "success"} for j in REQ}
+    n = {j: {"result": "success", "outputs": {k: "PASS" for k in OUTS.get(j, [])}} for j in REQ}
     for k, v in override.items():
         k = k.replace("_", "-")
         if v is None:
@@ -29,6 +32,33 @@ def run(mod, n, extra=()):
 
 
 class Gate(unittest.TestCase):
+    def test_incident_jobs_and_outputs_are_required(self):
+        for j in INCIDENT:
+            self.assertIn(j, REQ)
+        self.assertEqual(sorted(OUTS.get("incident-fresh-run", [])),
+                         sorted(["injection", "detection", "diagnosis", "recovery", "timeline", "simulation"]))
+
+    def test_not_executed_requirement_fails_both(self):
+        for k in OUTS["incident-fresh-run"]:
+            for bad in ("NOT_EXECUTED", "FAIL", "", None):
+                n = needs()
+                n["final-summary"] = {"result": "success"}
+                if bad is None:
+                    n["incident-fresh-run"]["outputs"].pop(k)
+                else:
+                    n["incident-fresh-run"]["outputs"][k] = bad
+                with self.subTest(output=k, value=bad):
+                    self.assertEqual(run(final_summary, n)[0], 1)
+                    rc, out = run(merge_eligibility, n, ["--sha", "abc"])
+                    self.assertEqual(rc, 1)
+                    self.assertIn("required check incident-fresh-run." + k, out)
+
+    def test_incident_jobs_fail_closed(self):
+        for j in INCIDENT:
+            for bad in (None, "skipped", "failure"):
+                with self.subTest(job=j, result=bad):
+                    self.assertEqual(run(final_summary, needs(**{j: bad}))[0], 1)
+
     def test_m365_jobs_are_required(self):
         for j in M365:
             self.assertIn(j, REQ)

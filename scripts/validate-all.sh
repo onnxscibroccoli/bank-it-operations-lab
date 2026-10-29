@@ -29,6 +29,10 @@ step "m365 scenario evaluation"     bash scripts/ci/m365_checks.sh evaluate
 step "m365 unit tests"              bash scripts/ci/m365_checks.sh unit
 step "m365 evidence verification"   bash scripts/ci/m365_checks.sh evidence
 step "plan-only negative tests"     bash scripts/ci/m365_checks.sh plan-only-negatives
+# --- PR #22 SIMULATION incident module: REQUIRED checks, fail closed (scripts/ci/incident_checks.sh, check_labels.py)
+step "incident committed runs"        bash scripts/ci/incident_checks.sh committed
+step "incident NOT_EXECUTED negative" bash scripts/ci/incident_checks.sh not-executed-negative
+step "labeling markers"               python3 scripts/ci/check_labels.py
 # --- PR #5 AWS evidence bundle (static)
 step "aws evidence SHA256SUMS" bash -c 'cd evidence/aws/aws-remediation-vpc-rds && sha256sum -c SHA256SUMS --quiet'
 for t in evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do step "s3 self-logging $t" python3 "$V" cfn-s3-selflog "$t"; done
@@ -71,5 +75,11 @@ if [ "$PY_ONLY" -eq 0 ]; then
 fi
 
 echo
+# --- fresh SIMULATION incident run (needs PostgreSQL server binaries; PG_BIN or auto-detect). Written to a temp dir.
+# Without binaries it reports NOT_EXECUTED and FAILS: it never counts as PASS.
+if [ "$PY_ONLY" -eq 0 ]; then
+  step "incident fresh run" bash -c 'd=$(mktemp -d); INCIDENT_OUT="$d" bash scripts/ci/incident_checks.sh fresh; rc=$?; rm -rf "$d"; exit $rc'
+fi
+
 if [ "${#FAILED[@]}" -eq 0 ]; then echo "validate-all: PASS ($N steps)"; exit 0; fi
 echo "validate-all: FAIL (${#FAILED[@]} of $N): ${FAILED[*]}"; exit 1

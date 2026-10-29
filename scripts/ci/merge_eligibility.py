@@ -45,6 +45,9 @@ def main(argv=None):
             res = (needs.get(job) or {}).get("result", "missing") if job in needs else "missing"
             if res != "success":
                 problems.append(f"required check {job}: {res}")
+        import final_summary
+        for job, k, v in final_summary.output_problems(needs, reg):
+            problems.append(f"required check {job}.{k}: {v}")
     ac6 = (conds.get("AC6") or {}).get("status", "missing")
     verdict = "ELIGIBLE" if not problems else "NOT ELIGIBLE"
     print(f"merge-eligibility for {a.sha or 'local'}: {verdict}")

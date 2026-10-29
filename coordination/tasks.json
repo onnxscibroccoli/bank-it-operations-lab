@@ -5,8 +5,8 @@
   "deadline": "2026-10-29T00:00:00-04:00",
   "deadline_tz": "America/New_York (EDT, UTC-4)",
   "remaining_window": {
-    "as_of": "2026-10-28T20:01:00-04:00",
-    "remaining": "3h59m",
+    "as_of": "2026-10-28T20:11:00-04:00",
+    "remaining": "3h49m",
     "note": "computed at commit time"
   },
   "base": {
@@ -14,7 +14,7 @@
     "sha": "7f50348",
     "verified": "main contains only README.md; nothing to break"
   },
-  "updated": "2026-10-28T20:01:00-04:00",
+  "updated": "2026-10-28T20:11:00-04:00",
   "rules": [
     "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
     "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
@@ -156,8 +156,8 @@
       {
         "id": "AC3",
         "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
-        "status": "UNMET",
-        "detail": "Required M365 checks fail closed on the current tree because PR #20 is not integrated; see accelerated_plan.round2.",
+        "status": "PENDING_CI",
+        "detail": "Local validate-all PASS (43 steps) before freezing the round-3 candidate; CI result recorded after the run. Earlier MET (82ab7e6) is history only.",
         "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
         "runs": {
           "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
@@ -436,7 +436,9 @@
       "source": "pt12u / PR #20",
       "classification": "AUTONOMOUS_FIX",
       "owner": "lane E (independent review) then integrator",
-      "item": "M365 scenario module (PR #20 @ 1b3c240, draft, 0 reviews, no CI) is not reviewed, so not integrated. Its required checks (m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification) are wired and FAIL CLOSED until it is reviewed and integrated; a local trial merge passed them all."
+      "item": "M365 scenario module (PR #20 @ 1b3c240, draft, 0 reviews, no CI) is not reviewed, so not integrated. Its required checks (m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification) are wired and FAIL CLOSED until it is reviewed and integrated; a local trial merge passed them all.",
+      "status": "RESOLVED_BY_INSTRUCTION",
+      "resolution": "Ian (20:03 EDT) instructed integration of PR #20 at 1b3c240; the module is integrated and its checks are required. PR #20 still has no independent review: covered by AB-2 / AC1 for the combined candidate."
     }
   ],
   "accelerated_plan": {
@@ -568,7 +570,77 @@
         "applicability": "Only the M365 module emits PLAN_ONLY/executed/mutationsExecuted records in this tree or in PR #20; no integrated module produces such records."
       },
       "acceptance_workflow": "No acceptance workflow exists on overnight/integration (acceptance.yml exists only on PR #26's branch, which is not integrated and was not modified). The required checks live in integration-gate.yml.",
-      "expected_gate_result": "FAIL (fail closed) until PR #20 is reviewed and integrated."
+      "expected_gate_result": "FAIL (fail closed) until PR #20 is reviewed and integrated.",
+      "superseded_by": "round3 (Ian 20:03 EDT: integrate M365 and incident demo at exact SHAs). Round 2 record preserved as history.",
+      "ci_on_02ac2de": {
+        "summary": "Fail-closed behaviour demonstrated in CI: with the M365 module absent, the three M365 jobs, offline-validation, final-summary and merge-eligibility FAILED; user-actions, module-registry, plan-only-assertions, aws-cdk and postgres succeeded.",
+        "runs": {
+          "integration-gate push candidate/main-validation-02ac2de (3c3eb5c)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791334264",
+          "integration-gate push overnight/integration (02ac2de)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791318497",
+          "integration-gate pull_request (02ac2de)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325470",
+          "aws-cdk pull_request (02ac2de) success": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325346",
+          "postgres-restore-evidence pull_request (02ac2de) success": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325341",
+          "offline-validation pull_request (02ac2de) failure (M365 steps)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325340",
+          "offline-validation push (02ac2de) failure (M365 steps)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791318492"
+        },
+        "note": "02ac2de was never sent for review; its draft review packet was discarded before commit. It is not the candidate."
+      }
+    },
+    "round3": {
+      "requested": "2026-10-28T20:03:00-04:00 (Ian, via parent)",
+      "merged_exact_shas": {
+        "PR #20 M365": "1b3c240374285d7b0760b946e861dee15197dcf3 (merge c6c1061)",
+        "PR #22 incident demo": "9f21329f0e796362c4498d49687fd0f99ce3a042 (merge 0964281)"
+      },
+      "verification": "Both SHAs verified as commit objects; both have main 7f50348 as ancestor; they add only identity/m365, evidence/m365, scenarios/incident and evidence/incident (no conflicts). Merged by exact SHA, not branch tip.",
+      "review_status_of_merged_prs": "PR #20 and PR #22 are drafts with 0 reviews and no CI runs of their own. They were integrated on Ian's explicit instruction; this is NOT a review or approval of either.",
+      "required_checks": {
+        "integration-gate.yml jobs": [
+          "m365-scenario-evaluation",
+          "m365-unit-tests",
+          "m365-evidence-verification",
+          "plan-only-assertions",
+          "incident-committed-runs",
+          "incident-fresh-run",
+          "incident-not-executed-negative",
+          "labeling-markers"
+        ],
+        "incident-fresh-run outputs (each must be exactly PASS)": [
+          "injection",
+          "detection",
+          "diagnosis",
+          "recovery",
+          "timeline",
+          "simulation"
+        ],
+        "validate-all.sh steps": [
+          "m365 scenario evaluation",
+          "m365 unit tests",
+          "m365 evidence verification",
+          "plan-only negative tests",
+          "incident committed runs",
+          "incident NOT_EXECUTED negative",
+          "labeling markers",
+          "incident fresh run (full mode only)"
+        ],
+        "enforcement": "final-summary and merge-eligibility fail if any required job is missing, skipped, cancelled or failed, or any required output is not PASS (NOT_EXECUTED counts as not passed). check_modules.py fails if a required job is undefined or absent from either job's needs."
+      },
+      "not_executed_rule": "If PostgreSQL server binaries are unavailable, run_incident_demo.sh exits 3 and writes SUMMARY status NOT_EXECUTED; check_incident_run.py then reports all six requirements NOT_EXECUTED (exit 1) and incident_checks.sh fresh fails. Negative tests: incident_checks.sh not-executed-negative (CI job incident-not-executed-negative) and scripts/ci/tests/test_incident_requirements.py (NOT_EXECUTED / missing SUMMARY never PASS).",
+      "fresh_runs": {
+        "local": "evidence/incident/runs/local-20261029T000545Z (+ .console), 2026-10-28 20:05 EDT, PostgreSQL 16.15, 19/19 steps PASS, MTTD 3.590 s, MTTR 8.677 s, all six requirements PASS. Added alongside the original run.",
+        "ci": "incident-fresh-run job: runner-installed PostgreSQL (apt only if missing), output to runner temp, uploaded as artifact incident-fresh-run-<sha> (7 days). Never written over committed runs."
+      },
+      "preserved_evidence": "evidence/incident/runs/local-20261028T181818Z and evidence/m365/runs/local-offline-20261028T181845Z are unmodified (SHA256SUMS verify). All earlier postgres runs preserved.",
+      "labeling_check": "scripts/ci/check_labels.py (job labeling-markers): SIMULATION.md label in every incident run/console dir, SIMULATION in the first lines of incident docs and scripts, M365 PLAN_ONLY / executed:false / mutationsExecuted:0 markers. 7 negative tests.",
+      "m365_counts": {
+        "13": "scenario files evaluated; each matched its recorded expected verdict AND expected finding codes (report totals.scenarios=13, totals.passed=13)",
+        "43": "PLAN_ONLY remediation plan steps emitted across those 13 scenarios (totals.plannedSteps), every one executed:false. They are planned actions, not assertions or tests.",
+        "28": "findings across the 13 scenarios",
+        "29": "unit tests in identity/m365/tests",
+        "15": "commands recorded in the committed M365 evidence run (15/15 with the expected exit code)"
+      },
+      "acceptance_workflow": "Still none on overnight/integration (acceptance.yml is only on PR #26, not integrated, not modified); required checks live in integration-gate.yml.",
+      "local_validate_all": "PASS (43 steps) with PG_BIN=/workspace/pg16/bin before freezing"
     }
   },
   "checkpoints": [

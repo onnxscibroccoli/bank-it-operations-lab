@@ -7,6 +7,47 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Round 3 (2026-10-28 ~20:10 EDT, Ian 20:03 EDT): M365 and incident demo integrated at exact SHAs
+
+- **Merged by exact commit, not branch tip:**
+  - PR #20 (M365) `1b3c240374285d7b0760b946e861dee15197dcf3`, merge `c6c1061`
+  - PR #22 (incident demo, SIMULATION) `9f21329f0e796362c4498d49687fd0f99ce3a042`, merge `0964281`
+
+  Both commits exist, descend from main `7f50348`, and add only `identity/m365`, `evidence/m365`, `scenarios/incident` and `evidence/incident`, so there were no conflicts. Both PRs are drafts with **0 reviews**. Integrating them on Ian's instruction does not approve either one.
+- **Required gate jobs.** All are in `required_gate_jobs` and in the `needs` of `final-summary` and `merge-eligibility`:
+
+  | Area | Jobs |
+  |---|---|
+  | M365 | `m365-scenario-evaluation`, `m365-unit-tests`, `m365-evidence-verification`, `plan-only-assertions` |
+  | Incident | `incident-committed-runs`, `incident-fresh-run`, `incident-not-executed-negative` |
+  | Labeling | `labeling-markers` (a separate job) |
+
+  `incident-fresh-run` publishes six outputs: injection, detection, diagnosis, recovery, timeline and simulation. Each must be exactly `PASS`. A job that is missing, skipped, cancelled or failed, or an output that is `NOT_EXECUTED`, `FAIL` or missing, fails both `final-summary` and `merge-eligibility`.
+- **Fresh incident run in Actions:**
+  - It uses PostgreSQL server binaries from the runner image, installing them with apt only if they are absent.
+  - It needs a full-history checkout, because the scenario extracts pinned component commits.
+  - Output goes to the runner's temp dir and is uploaded as artifact `incident-fresh-run-<sha>` (7 days). It is never written over committed runs.
+  - **If the binaries are missing, every requirement is NOT_EXECUTED and the job fails. That never counts as PASS.** This is proven by `incident-not-executed-negative` and `scripts/ci/tests/test_incident_requirements.py`.
+- **Evidence preserved:** `evidence/incident/runs/local-20261028T181818Z` and `evidence/m365/runs/local-offline-20261028T181845Z` are untouched. A new local SIMULATION run, `evidence/incident/runs/local-20261029T000545Z` (+ `.console`), was added alongside it:
+  - 2026-10-28 20:05 EDT, PostgreSQL 16.15
+  - 19/19 steps passed
+  - MTTD 3.590 s, MTTR 8.677 s
+  - all six requirements passed
+  - labelled with `SIMULATION.md`
+- **What the M365 "13" and "43" count:**
+
+  | Number | What it counts | Source in the engine report |
+  |---|---|---|
+  | **13** | Scenario files evaluated. Each matched its recorded expected verdict **and** expected finding codes | `totals.scenarios` = `totals.passed` = 13 |
+  | **43** | PLAN_ONLY remediation plan steps emitted across those 13 scenarios, each `executed: false`. These are planned actions, **not assertions or tests** | `totals.plannedSteps` |
+  | 28 | Findings across the 13 scenarios | |
+  | 29 | Unit tests | `identity/m365/tests` |
+  | 15 | Commands in the committed evidence run, all with the expected exit code | |
+
+  These are counts produced by the scenario engine; they are not a measure of how many checks the module was tested against.
+- **Local `validate-all`:** PASS (43 steps; coincidentally the same number as the plan steps) with `PG_BIN=/workspace/pg16/bin`.
+- **Round 2 record (`02ac2de`):** CI showed the fail-closed behaviour with the M365 module absent: the M365 jobs, offline-validation, final-summary and merge-eligibility failed. It is history only and was never a review target.
+
 ## Round 2 (2026-10-28 ~20:00 EDT, request pt12u): M365 required checks, checkpoint, new candidate
 
 - **Reconcile:** remote `overnight/integration` was still at `82ab7e6`. Local `1a3cea0` was a fast-forward, so I pushed it normally (no rebase, no force).
@@ -162,7 +203,7 @@ Evaluated at the PR #7 head pushed with this report. Under the merge policy abov
 |---|---|---|---|
 | AC1 | An independent review (human or independent reviewer, e.g. ChatGPT) approves the **exact** candidate SHA. Provenance must be bound to that SHA, and author or agent self-review does not count. *Reworded per PR #27 C6.* | **UNMET** | No approval for any PR #7 head. PR #14 @ `eb8d259` counts only for PR #2's harness v2, and it requests changes on integrated #5. PR #27 reviewed #26, not #7. |
 | AC2 | Security exceptions recorded **and approved**. | **PARTIAL** | EX-01..EX-04 are recorded and test-enforced, but not approved. PR #14 B5-1: the suppressions are already applied. |
-| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **UNMET for the round-2 candidate**: the required M365 checks fail closed (PR #20 not integrated). It was MET for `82ab7e6`; that is history only and does not transfer. | See Round 2. |
+| AC3 | All checks pass on that SHA (PR #7 CI + `scripts/validate-all.sh`). | **Pending CI for the round-3 candidate** (local validate-all PASSED, 43 steps). MET for `82ab7e6` is history only and does not transfer. | See Round 3. |
 | AC4 | Docs match the code. | **PARTIAL** | PR #1 is still open with the superseded design; #4 baseline choices are unconfirmed. |
 | AC5 | No unresolved blocking findings in integrated code. | **UNMET** | PR #14 B5-1/B5-2 on integrated #5. Fixed in this commit: the shared `postgres-negatives` reported OK on all-NOT_RUN runs. |
 | AC6 | Final human portfolio acceptance (Ian). Separate gate. | **UNMET** | Not requested; it follows AC1–AC5. |

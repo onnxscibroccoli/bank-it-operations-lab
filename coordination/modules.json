@@ -328,7 +328,7 @@
   },
   {
    "id": "m365-endpoint",
-   "status": "NOT_INTEGRATED",
+   "status": "INTEGRATED",
    "prs": [
     20
    ],
@@ -336,14 +336,17 @@
     "identity/m365",
     "evidence/m365"
    ],
-   "reason": "PR #20 is a draft with no reviews and no CI runs (checked 2026-10-28 ~20:00 EDT), so it is not integrated. Its checks are REQUIRED and wired to fail closed: they fail while identity/m365 and evidence/m365 are absent. A local trial merge of 1b3c240 passed all of them (13/13 scenarios, 29 unit tests, evidence verify OK, 43 PLAN_ONLY steps, mutationsExecuted 0), not pushed.",
+   "reason": "Integrated at the exact SHA on Ian's instruction (20:03 EDT). PR #20 itself is still a draft with 0 reviews; independent review of the combined candidate is pending (AC1).",
    "required": true,
    "source": {
-    "branch": "m365-endpoint",
-    "head": "1b3c240374285d7b0760b946e861dee15197dcf3"
+    "pr": 20,
+    "exact_sha": "1b3c240374285d7b0760b946e861dee15197dcf3",
+    "merge": "--no-ff merge of the exact commit (not the branch tip), per Ian 20:03 EDT"
    },
    "evidence_class": [
-    "EXECUTED_LOCAL"
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "PLAN_ONLY"
    ],
    "validate_all_steps": [
     "m365 scenario evaluation",
@@ -357,7 +360,14 @@
     "integration-gate.yml:m365-evidence-verification",
     "integration-gate.yml:plan-only-assertions"
    ],
-   "plan_only_assertions": "scripts/ci/check_plan_only.py: every plan step mode PLAN_ONLY and executed false; every executed key false; mutationsExecuted integer 0; at least one plan step. Negative tests: scripts/ci/tests/test_check_plan_only.py (14)."
+   "plan_only_assertions": "scripts/ci/check_plan_only.py: every plan step mode PLAN_ONLY and executed false; every executed key false; mutationsExecuted integer 0; at least one plan step. Negative tests: scripts/ci/tests/test_check_plan_only.py (14).",
+   "counts": {
+    "scenarios": "13 scenario files evaluated; each must match its recorded expected verdict AND expected finding codes (totals.passed=13)",
+    "plan_steps": "43 = total PLAN_ONLY remediation plan steps emitted across the 13 scenarios (totals.plannedSteps), each executed:false; these are NOT assertions or tests",
+    "findings": "28 findings across the 13 scenarios",
+    "unit_tests": "29 unittest cases in identity/m365/tests",
+    "evidence_commands": "15 recorded commands in the committed run (python version, unit tests, evaluation, 9 malformed + 3 mismatch negative fixtures), all with the expected exit code"
+   }
   },
   {
    "id": "backup-dr-aws",
@@ -376,7 +386,7 @@
   },
   {
    "id": "incident-demo",
-   "status": "NOT_INTEGRATED",
+   "status": "INTEGRATED",
    "prs": [
     22
    ],
@@ -384,7 +394,42 @@
     "scenarios",
     "evidence/incident"
    ],
-   "reason": "Not yet reviewed for integration (SIMULATION)."
+   "reason": "Integrated at the exact SHA on Ian's instruction (20:03 EDT). PR #22 has no reviews; independent review of the combined candidate is pending (AC1).",
+   "required": true,
+   "source": {
+    "pr": 22,
+    "exact_sha": "9f21329f0e796362c4498d49687fd0f99ce3a042",
+    "merge": "--no-ff merge of the exact commit (not the branch tip), per Ian 20:03 EDT"
+   },
+   "evidence_class": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "SIMULATION"
+   ],
+   "validate_all_steps": [
+    "incident committed runs",
+    "incident NOT_EXECUTED negative",
+    "labeling markers",
+    "incident fresh run"
+   ],
+   "ci_jobs": [
+    "integration-gate.yml:incident-committed-runs",
+    "integration-gate.yml:incident-fresh-run",
+    "integration-gate.yml:incident-not-executed-negative",
+    "integration-gate.yml:labeling-markers"
+   ],
+   "requirements": [
+    "injection",
+    "detection",
+    "diagnosis",
+    "recovery",
+    "timeline",
+    "simulation"
+   ],
+   "runs": {
+    "local-20261028T181818Z": "original (PR #22), preserved unmodified",
+    "local-20261029T000545Z": "fresh integrator run 2026-10-28 20:05 EDT, PostgreSQL 16.15, added alongside"
+   }
   }
  ],
  "required_gate_jobs": [
@@ -396,7 +441,22 @@
   "m365-scenario-evaluation",
   "m365-unit-tests",
   "m365-evidence-verification",
-  "plan-only-assertions"
+  "plan-only-assertions",
+  "incident-committed-runs",
+  "incident-fresh-run",
+  "incident-not-executed-negative",
+  "labeling-markers"
  ],
- "required_gate_jobs_note": "final-summary and merge-eligibility fail if any of these jobs is missing from the run, skipped, cancelled or failed. A clean merge without these checks is not acceptance."
+ "required_gate_jobs_note": "final-summary and merge-eligibility fail if any of these jobs is missing from the run, skipped, cancelled or failed. A clean merge without these checks is not acceptance.",
+ "required_gate_outputs": {
+  "incident-fresh-run": [
+   "injection",
+   "detection",
+   "diagnosis",
+   "recovery",
+   "timeline",
+   "simulation"
+  ]
+ },
+ "required_gate_outputs_note": "Each output must be exactly PASS. NOT_EXECUTED (e.g. no PostgreSQL binaries), FAIL, empty or missing fail final-summary and merge-eligibility."
 }

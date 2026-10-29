@@ -10,6 +10,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import user_actions  # noqa: E402
 
 
+
+def output_problems(needs, reg):
+    """Required per-requirement outputs (modules.json required_gate_outputs): each must be exactly PASS.
+    NOT_EXECUTED, FAIL, empty or missing all count as not passed."""
+    out = []
+    req = reg.get("required_gate_outputs") or {}
+    for job, keys in sorted(req.items()):
+        outs = ((needs.get(job) or {}).get("outputs") or {}) if isinstance(needs, dict) else {}
+        for k in keys:
+            v = str(outs.get(k) or "missing")
+            if v != "PASS":
+                out.append((job, k, v))
+    return out
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary")
@@ -33,6 +47,9 @@ def main(argv=None):
         rows.append(f"| {user_actions.esc_md(job)} | {user_actions.esc_md(res)} |")
         if res != "success":
             bad.append(job + (" (required)" if job in required else ""))
+    for job, k, v in output_problems(needs, reg):
+        rows.append(f"| {user_actions.esc_md(job)}.{user_actions.esc_md(k)} | {user_actions.esc_md(v)} (required PASS) |")
+        bad.append(f"{job}.{k}={v}")
     counts = {}
     for job in needs:
         r = str((needs[job] or {}).get("result", "unknown"))
