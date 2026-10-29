@@ -1,0 +1,5 @@
+$ python3 identity/entra/ca_validator.py tests/entra/fixtures/neg-admin-role-excluded.json --baseline identity/entra/baseline.json --quiet
+--- stdout ---
+--- stderr ---
+overall=FAIL exit=1
+--- exit_code=1 expected=1 started_utc=2026-10-28T15:04:00Z duration_ms=26 ---

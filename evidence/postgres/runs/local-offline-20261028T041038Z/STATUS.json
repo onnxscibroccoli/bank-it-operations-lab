@@ -1,0 +1,8 @@
+{
+  "status": "HISTORICAL-KNOWN-INVALID",
+  "harness": "v1 (exit-code only; superseded)",
+  "reason": "Produced by harness v1, which could not distinguish fault detection from setup/version/tool failures. The logs happen to show intended error text for N01-N06, but the run does not meet the v2 evidence rules. Do not count as a current pass.",
+  "false_pass_steps": [],
+  "files_not_modified": ["SUMMARY.json", "SUMMARY.md", "COMMANDS.tsv", "logs/*", "SHA256SUMS"],
+  "marked_utc": "2026-10-28"
+}

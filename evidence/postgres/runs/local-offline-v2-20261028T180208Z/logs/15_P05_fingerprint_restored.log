@@ -1,0 +1,9 @@
+# step=P05_fingerprint_restored kind=positive expect=zero started=2026-10-28T18:02:11Z
+# reason_regex: ^lab\.ledger_entries\|1000\|[0-9a-f]{32}$
+# cmd: fingerprint lab_restore_ok /workspace/bank-it-operations-lab-ci/evidence/postgres/runs/local-offline-v2-20261028T180208Z/fingerprints/restore_ok.txt
+# --- output ---
+lab.accounts|50|18ce2a21b6db0941bbafafc7100c664e
+lab.ledger_entries|1000|6c98ddff215606b5d030548b19a0303c
+lab.account_balances|50|0014b6daf7f178c739d3a80eea35f469
+# --- end output ---
+# exit_code=0 duration_ms=44

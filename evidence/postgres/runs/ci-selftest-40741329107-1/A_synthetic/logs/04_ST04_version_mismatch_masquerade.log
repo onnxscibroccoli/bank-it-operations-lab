@@ -1,0 +1,8 @@
+# step=ST04_version_mismatch_masquerade kind=negative expect=nonzero started=2026-10-28T18:02:17Z
+# reason_regex: ^injected fault: disk full$
+# cmd: versionerr
+# --- output ---
+pg_restore: error: could not execute query: ERROR:  unrecognized configuration parameter "transaction_timeout"
+injected fault: disk ful
+# --- end output ---
+# exit_code=1 duration_ms=4

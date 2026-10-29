@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-SH-002",
+  "type": "service-health",
+  "title": "Two loan-ops users report Outlook problems after EX-LAB-0002 was restored",
+  "narrative": "Two reports arrive at 14:00 UTC. EX-LAB-0002 was restored at 12:30 UTC, so this is not an active Microsoft incident and is below the escalation threshold: troubleshoot locally. One reporter's laptop has not checked in to Intune for 39 days, past the 30-day compliance validity period, so CA004 will block it regardless of the earlier incident.",
+  "input": {
+    "escalationThreshold": 5,
+    "reports": [
+      {"userId": "0a110000-0000-4000-8000-000000000011", "workload": "mailbox", "reportedUtc": "2026-10-28T14:00:00Z", "symptom": "mail not arriving"},
+      {"userId": "0a110000-0000-4000-8000-000000000012", "workload": "mailbox", "reportedUtc": "2026-10-28T14:02:00Z", "symptom": "Outlook will not sign in"}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "service-health-snapshot", "ref": "AUD-LAB-4201", "source": "Service health history EX-LAB-0002 (synthetic)"},
+    {"category": "user-communication", "ref": "INC-LAB-4202", "source": "Per-user ticket updates (synthetic)"}
+  ],
+  "expected": {"verdict": "LOCAL_ISSUE", "findings": ["DEV-STALE-CHECKIN", "SH-LOCAL-ISSUE", "SH-RESTORED-RECENTLY"]}
+}

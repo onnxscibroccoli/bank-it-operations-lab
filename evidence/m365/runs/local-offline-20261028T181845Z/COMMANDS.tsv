@@ -1,0 +1,16 @@
+seq	step_id	kind	expected_exit	exit_code	result	started_utc	duration_ms	log	command
+1	python_version	env	0	0	PASS	2026-10-28T18:18:45Z	1	logs/01_python_version.log	python3 --version
+2	unit_tests	test	0	0	PASS	2026-10-28T18:18:45Z	102	logs/02_unit_tests.log	python3 -m unittest discover -s identity/m365/tests -v
+3	evaluate_scenarios	engine	0	0	PASS	2026-10-28T18:18:45Z	34	logs/03_evaluate_scenarios.log	python3 identity/m365/m365_ops.py --json-out evidence/m365/runs/local-offline-20261028T181845Z/validation-report.json
+4	fixture_malformed_duplicate_key	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	33	logs/04_fixture_malformed_duplicate_key.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-duplicate-key.json --quiet
+5	fixture_malformed_execute_flag	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	34	logs/05_fixture_malformed_execute_flag.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-execute-flag.json --quiet
+6	fixture_malformed_invalid_verdict	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	33	logs/06_fixture_malformed_invalid_verdict.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-invalid-verdict.json --quiet
+7	fixture_malformed_real_domain	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	33	logs/07_fixture_malformed_real_domain.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-real-domain.json --quiet
+8	fixture_malformed_real_guid	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	33	logs/08_fixture_malformed_real_guid.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-real-guid.json --quiet
+9	fixture_malformed_truncated	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	35	logs/09_fixture_malformed_truncated.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-truncated.json --quiet
+10	fixture_malformed_unknown_device	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	33	logs/10_fixture_malformed_unknown_device.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-unknown-device.json --quiet
+11	fixture_malformed_unmapped_error_code	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	34	logs/11_fixture_malformed_unmapped_error_code.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-unmapped-error-code.json --quiet
+12	fixture_malformed_url	engine-fixture	2	2	PASS	2026-10-28T18:18:45Z	34	logs/12_fixture_malformed_url.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-url.json --quiet
+13	fixture_mismatch_missing_device_findings	engine-fixture	1	1	PASS	2026-10-28T18:18:45Z	33	logs/13_fixture_mismatch_missing_device_findings.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-missing-device-findings.json --quiet
+14	fixture_mismatch_no_approval	engine-fixture	1	1	PASS	2026-10-28T18:18:45Z	33	logs/14_fixture_mismatch_no_approval.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-no-approval.json --quiet
+15	fixture_mismatch_synced_cloud_disable	engine-fixture	1	1	PASS	2026-10-28T18:18:45Z	35	logs/15_fixture_mismatch_synced_cloud_disable.log	python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-synced-cloud-disable.json --quiet

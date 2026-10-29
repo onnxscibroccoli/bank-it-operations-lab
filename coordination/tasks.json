@@ -1,0 +1,1052 @@
+{
+ "schema": "bank-it-operations-lab/coordination/tasks@1",
+ "integration_branch": "overnight/integration",
+ "branch_name_note": "The branch name 'overnight/integration' is historical only. Keep using it and do not rename it; it no longer implies an overnight window.",
+ "deadline": "2026-10-29T00:00:00-04:00",
+ "deadline_tz": "America/New_York (EDT, UTC-4)",
+ "remaining_window": {
+  "as_of": "2026-10-28T21:46:00-04:00",
+  "remaining": "2h13m",
+  "note": "computed at commit time"
+ },
+ "base": {
+  "branch": "main",
+  "sha": "7f50348",
+  "verified": "main contains only README.md; nothing to break"
+ },
+ "updated": "2026-10-28T21:02:00-04:00",
+ "rules": [
+  "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
+  "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
+  "Technical blockers are not relaxed by this policy: failing or missing checks, unapproved security exceptions, the PR #6 self-logging defect, docs mismatches, and the open review findings (PR #14 B5-1/B5-2, PR #27 C1-C5) all still block.",
+  "This integration agent does not merge anything into main itself, and makes no production changes.",
+  "no deploys",
+  "no AWS/Entra/Graph calls",
+  "no credentials",
+  "PRs are not closed by integration",
+  "no force pushes",
+  "Review identity strings alone are not authenticated approval. Bind reviewer evidence to the exact SHA through GitHub review or commit provenance (PR #27 C4)."
+ ],
+ "merge_order": [
+  3,
+  5,
+  4,
+  2
+ ],
+ "tasks": [
+  {
+   "pr": 3,
+   "branch": "review/pr1-pr2-evidence-audit",
+   "head": "fb36341",
+   "title": "review: evidence audit of PR #1 and PR #2 + shared evidence validator",
+   "status": "integrated",
+   "paths": [
+    "evidence/shared/**",
+    "reports/review-pr1-pr2.md"
+   ],
+   "why": "Dependency-free shared tooling (validate_evidence.py, manifest schema, Postgres negative expectations) used by the other components' CI. Wired into CI at integration.",
+   "review": "No formal GitHub review recorded. This PR is itself the review of #1/#2."
+  },
+  {
+   "pr": 5,
+   "branch": "aws-remediation-vpc-rds",
+   "head": "099479e",
+   "title": "AWS remediation: private VPC + RDS, remove S3 self-logging, AwsSolutions + NIST 800-53 R5 nag",
+   "status": "integrated",
+   "paths": [
+    "infra/aws-cdk/**",
+    "evidence/aws/aws-remediation-vpc-rds/**"
+   ],
+   "why": "Newer implementation of infra/aws-cdk. It imports PR #1's app at e494bcf and fixes PR #3's blocking finding (AccessLogsBucket self-logging). Its templates pass evidence/shared cfn-s3-selflog.",
+   "review": "No formal GitHub review recorded. Proposed security exceptions EX-01..EX-04 still need an owner's approval.",
+   "integration_changes": [
+    "infra/aws-cdk/README.md: fixed the stale evidence/aws/README.md pointer and the CI note"
+   ]
+  },
+  {
+   "pr": 1,
+   "branch": "bank-aws-001",
+   "head": "e494bcf",
+   "title": "BANK-AWS-001: credential-free secure storage stack + evidence",
+   "status": "superseded",
+   "superseded_by": "PR #5 for infra/aws-cdk/**. The CI workflow was adapted into .github/workflows/aws-cdk.yml.",
+   "not_carried": [
+    "infra/aws-cdk/** (the PR #5 version is used)",
+    "infra/aws-cdk/lib/evidence-validator.ts + scripts/validate-evidence.ts (PR #5 dropped it; evidence/shared/validate_evidence.py replaces it)",
+    "evidence/aws/** top level (evidence for the self-logging template; it fails cfn-s3-selflog)",
+    "reports/MORNING_REPORT.md (overnight run log for the superseded implementation)"
+   ],
+   "why": "14 of its infra/aws-cdk files duplicate PR #5. PR #3 rated it 'accept with changes' because of the self-logging bug, which only PR #5 fixes. Combining both implementations would duplicate the app.",
+   "suggested_action": "Owner: close as superseded by #5 once #5 lands, or rebase onto overnight/integration to keep only the evidence history."
+  },
+  {
+   "pr": 4,
+   "branch": "entra-ca-offline",
+   "head": "d302c99",
+   "title": "entra: offline Conditional Access policy validation",
+   "status": "integrated",
+   "paths": [
+    "identity/entra/**",
+    "tests/entra/**",
+    "evidence/entra/**"
+   ],
+   "why": "Disjoint paths and stdlib only. 25/25 unit tests, baseline exit 0, fixture drift check and evidence --verify all pass. Wired into offline-validation.yml.",
+   "review": "No formal GitHub review recorded. Baseline policy choices in the PR body still need an owner's confirmation."
+  },
+  {
+   "pr": 2,
+   "branch": "ci-evidence-postgres",
+   "head": "e7399fb",
+   "title": "ci: Postgres backup/restore exercise with offline tests and evidence",
+   "status": "integrated",
+   "paths": [
+    ".github/workflows/postgres-restore-evidence.yml",
+    "evidence/postgres/**",
+    "tests/integration/**"
+   ],
+   "why": "Harness v2 by the owner (2aac93c + e7399fb) fixes PR #3's review findings: declared reason regexes, separately checked setup, FAIL/ERROR/NOT_RUN classification, independent verifier, self-test, and a version-mismatch negative control. It replaces the interim integration hardening from f3a8f17.",
+   "integration_changes": [
+    "merge e76d8a4: conflicts in run_restore_scenario.sh, postgres-restore-evidence.yml and ci-service-40630856041-1/NOTE.md resolved to the owner's v2 version (theirs); interim fixes from f3a8f17 discarded",
+    "evidence/shared/validate_evidence.py postgres-negatives: reads columns by header so it handles the v2 12-column COMMANDS.tsv. It used to report a vacuous 'OK: 0 negative steps' on v2 runs, and now errors when no negatives are found. Tests: 15/15",
+    "scripts/validate-all.sh: uses the v2 verifier, the self-test, the mismatch control (must be rejected), the HISTORICAL exit 3 for v1 runs, and cross-checks with the shared validator",
+    "interim run integration-offline-20261028T180134Z: removed in e76d8a4, restored unchanged from fb70afd with STATUS.json HISTORICAL-KNOWN-INVALID and an INDEX.md row; v2 verifier exits 3 (historical)"
+   ],
+   "open": [
+    "The workflow's cdk-synth job (now pinned, no CDK_DEFAULT_*) overlaps aws-cdk.yml. It is harmless, but the work is duplicated."
+   ],
+   "review": "No formal GitHub review recorded. The PR body was updated by the owner to describe v2. GitHub CI at e7399fb: all 5 jobs green.",
+   "source_commit": "e7399fbb538504f723d1fb83e32ce50604807b8e",
+   "evidence_preservation": "Every v1 failure record (ci-service-40630856041-1) and every v1 local run is byte-identical to e610015, apart from the owner-added NOTE.md and STATUS.json; evidence/postgres/** is identical to e7399fb apart from the restored interim run and its INDEX.md row."
+  },
+  {
+   "pr": 6,
+   "branch": "orgs-security-refs",
+   "head": "e5e7f46",
+   "title": "orgs: credential-free Organizations security reference modules + evidence (draft)",
+   "status": "awaiting_changes",
+   "why": "It repeats the defect PR #3 flagged in PR #1: infra/orgs/lib/org-cloudtrail-stack.ts:50 sets serverAccessLogsPrefix 'self-access-logs/' on TrailAccessLogsBucket with no destination, so the bucket logs to itself. evidence/shared cfn-s3-selflog reports ERROR TrailAccessLogsBucket30C0D746 on evidence/orgs/synth/BankItLabOrgCloudTrail.template.json. evidence/orgs/SHA256SUMS covers infra/orgs, so a fix has to regenerate the evidence. Otherwise tsc, 49/49 Jest, synth, SHA256SUMS and the synth drift check were clean when trial-merged. The PR is also an explicit draft with no review.",
+   "required_changes": [
+    "Remove the self-logging the same way PR #5 did (terminal sink + documented S1 suppression or exception, plus a test asserting no LoggingConfiguration)",
+    "Regenerate evidence/orgs and SHA256SUMS",
+    "Optionally add an infra/orgs CI workflow modelled on aws-cdk.yml"
+   ],
+   "merge_conflicts": "none (disjoint paths: infra/orgs/**, evidence/orgs/**)"
+  }
+ ],
+ "validation": {
+  "command": "scripts/validate-all.sh",
+  "python_only": "scripts/validate-all.sh --python-only",
+  "postgres_binaries": "set PG_BIN if initdb is not on PATH"
+ },
+ "acceptance_conditions_for_main": {
+  "evaluated_at_sha": "see reports/INTEGRATION.md (HEAD of overnight/integration at push time)",
+  "conditions": [
+   {
+    "id": "AC1",
+    "condition": "An independent review (human or an independent reviewer such as the external ChatGPT review) approves the EXACT candidate SHA, with reviewer evidence bound to that SHA through GitHub review or commit provenance. Self-review by the author or this integration agent does not count. (Reworded per PR #27 C6; previously 'independent human review'.)",
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "No APPROVED review by a non-author account exists on any PR #7 head. PR #30 (CHANGES REQUIRED on b908a66) is a same-account findings note.",
+    "detail_round3": "Review packet for 5f159f1 prepared; NOT YET REQUESTED; no verdict exists.",
+    "detail_round4": "Final review packet for 7fe6d72 prepared; NOT YET REQUESTED; no verdict exists.",
+    "history": [
+     {
+      "status": "UNMET",
+      "detail": "No approval exists for any PR #7 head. Partial evidence: PR #14 @ eb8d259 (review notes; independence asserted, same GitHub account) verifies PR #2's harness v2 at 2aac93c/e7399fb, and counts toward AC1 ONLY for PR #2's harness, not for PR #7's head. The same notes REQUEST CHANGES on integrated PR #5. PR #27 reviewed PR #26 @ 181bcdd (CHANGES REQUIRED), not PR #7.",
+      "replaced": "2026-10-28 ~21:25 EDT (PR #30 F3/R6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility (trusted gate) from the GitHub reviews API: an APPROVED review (latest decisive review of that account) with commit_id = the exact candidate SHA by an account that is NOT the PR author, IS on the trusted reviewer_allowlist (.github/acceptance/trusted-config.json read from main or the manifest-pinned gate commit, never the candidate) and HAS write/maintain/admin permission (GET /repos/{repo}/collaborators/{login}/permission, read-only GITHUB_TOKEN); and no non-author has an undismissed CHANGES_REQUESTED on any commit (PR #31 F4/F5). Same-account reviews never count. In-tree MET is rejected."
+   },
+   {
+    "id": "AC2",
+    "condition": "Security exceptions are recorded and approved by an owner",
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "EX-01..EX-04 are PROPOSED (not approved). 5 applied suppressions: EX-01 AccessLogsBucket (NIST S3DefaultEncryptionKMS); EX-02 AccessLogsBucket + DataBucket (NIST S3BucketReplicationEnabled); EX-03 RdsMonitoringPolicy (AwsSolutions-IAM5); EX-04 BackupPlan/Postgres/Role (AwsSolutions-IAM4). Approval path: UA-1 decision comment by the owner (see UA-1 instructions).",
+    "history": [
+     {
+      "status": "PARTIAL",
+      "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, all PROPOSED; none approved (UA-1). B5-1 is now enforced fail-closed: scripts/ci/check_exceptions.py (validate-all + merge-eligibility) requires every applied cdk-nag suppression to name a registered EX-NN with the same rule, and reports the 5 applied suppressions tied to non-APPROVED exceptions as a BLOCKING USER ACTION; merge-eligibility keeps AC2 and AC5 UNMET until the owner approves (or the suppressions are removed). The integrator does not and cannot approve them.",
+      "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: for every applied exception, the latest ACCEPTANCE-ATTESTATION v2 'criterion: EXCEPTION' comment on PR #7 by a trusted owner LOGIN with admin permission (GitHub API) that is NOT the PR author: owner-login-bound, NOT owner-authenticated (PR #32 D2); decisions from the PR author / shared account are INSUFFICIENT_INDEPENDENCE until O-5 (UA-6) must be APPROVED, or APPROVED_WITH_CONDITIONS followed by a CONDITIONS_VERIFIED attestation; bound to exception id, scope (rule + applied resources), evidence refs, candidate SHA, main SHA, tested merge SHA and an Actions run of the candidate. States: PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED. The register's status text and tasks.json are candidate-produced and never approve (Ian 21:50 P3). In-tree MET is rejected."
+   },
+   {
+    "id": "AC3",
+    "condition": "All checks pass on that SHA: GitHub CI on PR #7 plus scripts/validate-all.sh",
+    "status": "COMPUTED_AT_RUNTIME",
+    "binding": "Evaluated by merge-eligibility in each integration-gate run for that run's identity tuple (candidate_sha, base_sha, tested_sha) from scripts/ci/provenance.py. It holds only for a valid kind=merge identity (PR synthetic merge or candidate/main-validation-<sha> push) whose required jobs and outputs all succeeded in that run. The decision and identity are uploaded as the run artifact acceptance-decision-<tested_sha>, and mirrored on the evidence/acceptance branch, outside the candidate tree. This file never carries MET for AC3.",
+    "history": [
+     {
+      "status": "MET",
+      "detail": "Every required job succeeded for the final candidate 7fe6d72 (runs 40793219129, 40793225624) and its main-validation merge 770cf33 (run 40793236453), with all six incident outputs PASS; validate-all PASS (43 steps). Earlier SHAs (5f159f1, 82ab7e6, ...) are history only.",
+      "met_at_sha": "afb41278b591ba6e390e0850cf9bb3b0c3bade9f",
+      "runs": {
+       "aws-cdk (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023477",
+       "postgres-restore-evidence (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023651",
+       "offline-validation (pull_request)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743023533",
+       "offline-validation (push)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40743011205"
+      },
+      "jobs": {
+       "aws-cdk": [
+        "synth-and-test: success"
+       ],
+       "postgres-restore-evidence": [
+        "harness self-test: success",
+        "restore exercise (postgres:18 service container): success",
+        "restore exercise (offline, unix-socket-only cluster): success",
+        "negative control pg_dump 18 vs postgres:16: success",
+        "CDK synth: success"
+       ],
+       "offline-validation": [
+        "validate (pull_request): success",
+        "validate (push): success"
+       ]
+      },
+      "not_triggered": [
+       "aws-cdk push (path filter not matched by that push)",
+       "postgres-restore-evidence push (overnight/integration is not in its push branches)"
+      ],
+      "history_note": "Was MET for 82ab7e6 (history only; it does not transfer).",
+      "met_for_sha": "7fe6d7281316190d9b39e35a448fb9fb81b92d50",
+      "note": "Earlier AC3 records (bare met_for_sha, superseded by the runtime binding per pt15u). They are history only and do not count."
+     }
+    ]
+   },
+   {
+    "id": "AC4",
+    "condition": "Docs match the code: READMEs, PR bodies, INTEGRATION.md and tasks.json",
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "Docs match code as of this candidate (README coverage 7/25, gate behaviour, path to ELIGIBLE; Entra baseline choices PENDING UA-2). Needs an authorized ACCEPTANCE-ATTESTATION v2 (criterion AC4) decision on the exact SHA.",
+    "history": [
+     {
+      "status": "PARTIAL",
+      "detail": "In-tree docs now match the code (pt15u). Root README covers the integrated modules, M365 and incident modules and the gate behaviour; evidence/entra/BASELINE-CHOICES-PENDING.md documents the PR #4 baseline choices as PENDING owner confirmation (not identity/entra/README.md, which is a hash-pinned evidence input); infra/aws-cdk/README.md records PR #1 as superseded. Still open, outside the tree: PR #1 is still open and its description shows the superseded design (UA-4), the PR #4 baseline choices are unconfirmed (UA-2; no confirmation is claimed), and PR #7's description predates the M365, incident and gate changes. Editing PR descriptions was not authorized.",
+      "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility (trusted gate) from INDEPENDENT acceptance only: latest ACCEPTANCE-ATTESTATION v2 'criterion: AC4' comment on PR #7 with decision ACCEPT, by the trusted owner login (admin) or an allow-listed reviewer (write+), never the PR author (PR #32 D1), bound to candidate, main, tested merge, workflow run (verified via API: integration-gate name+path, completed, head_sha = candidate or attested tested merge, every job green except the fail-closed merge-eligibility, PR #32 D1), evidence refs; GitHub vouches for the login and timestamp (login-bound, not person-authenticated); edited comments ignored (Ian 21:50 P2). In-tree MET is rejected."
+   },
+   {
+    "id": "AC5",
+    "condition": "No unresolved blocking findings in integrated code",
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "B5-2 fixed in 80f01d63659b801434c1a9e050484abc8716adcd (KMS key admin scoped to role BankItLabKmsKeyAdmin / root user, no Create*/Put*, no CreateGrant; guard + negative control). B5-1: enforced as a blocking user action (see AC2), still open until UA-1. B5-3 (conflict with PR #1): resolved in code (PR #1 superseded by PR #5; bank-aws-001 SUPERSEDED); PR #1 stays open pending UA-4. PR #30 F1 (base not verified as main) and F3/R6 (self-asserted AC1, candidate grades itself) fixed in 4e6fef4f5d05a72378f0e4c5ec75154efe821710. PR #6 stays BLOCKED (B6-1, B6-2, B6-3). Earlier: shared postgres-negatives all-NOT_RUN fix.",
+    "history": [
+     {
+      "status": "UNMET",
+      "detail": "B5-2 fixed in 80f01d63659b801434c1a9e050484abc8716adcd (KMS key admin scoped to role BankItLabKmsKeyAdmin / root user, no Create*/Put*, no CreateGrant; guard + negative control). B5-1: enforced as a blocking user action (see AC2), still open until UA-1. B5-3 (conflict with PR #1): resolved in code (PR #1 superseded by PR #5; bank-aws-001 SUPERSEDED); PR #1 stays open pending UA-4. PR #30 F1 (base not verified as main) and F3/R6 (self-asserted AC1, candidate grades itself) fixed in 4e6fef4f5d05a72378f0e4c5ec75154efe821710. PR #6 stays BLOCKED (B6-1, B6-2, B6-3). Earlier: shared postgres-negatives all-NOT_RUN fix.",
+      "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
+     }
+    ],
+    "binding": "Same as AC4 with 'criterion: AC5', AND AC2 met at runtime (B5-1). In-tree MET is rejected."
+   },
+   {
+    "id": "AC6",
+    "condition": "Final human portfolio acceptance by Ian. This gate is separate from technical merge eligibility (PR #27 C6) and is not satisfied by any automated or model review.",
+    "status": "UNMET",
+    "detail": "Not requested yet. It applies after AC1-AC5 are met."
+   }
+  ],
+  "merge_policy": "Automated merge into main is allowed only when AC1-AC5 are all MET for the exact same SHA. AC6 (human portfolio acceptance) remains a separate final gate. This agent does not perform the merge.",
+  "ac3_design": {
+   "source": "pt15u (ChatGPT checkpoint relayed by Ian, 20:57 EDT)",
+   "chosen": "runtime computation in the gate + run artifact + evidence/acceptance branch",
+   "why": "A MET written into tasks.json changes the SHA it describes (self-referential loop), and a bare met_for_sha did not bind the base or the tested merge. Computing AC3 inside the run that executed the checks binds it to GitHub's own record of that run (run id, attempt, event, head and merge SHAs). It needs no write permission (the workflow keeps contents: read), and no extra credential.",
+   "rejected": {
+    "commit status / check-run": "needs statuses:write or checks:write on GITHUB_TOKEN; not needed for correctness",
+    "annotated tag per decision": "would work, but adds refs per run; the evidence branch covers human-readable mirroring",
+    "query older runs via API": "would let one run vouch for another; the current run's needs are authoritative"
+   }
+  }
+ },
+ "history": [
+  {
+   "sha": "876f7b7",
+   "note": "first integration: #3, #5, #4 and #2 @ e610015 with interim hardening"
+  },
+  {
+   "sha": "0f57289",
+   "note": "#2 re-merged at e7399fb (harness v2) in merge e76d8a4; shared validator interface fix 05941a9; acceptance conditions"
+  },
+  {
+   "sha": "(this commit)",
+   "note": "#2 source e7399fbb538504f723d1fb83e32ce50604807b8e is confirmed an ancestor (git merge reported 'Already up to date'). The interim run integration-offline-20261028T180134Z was restored byte-for-byte from fb70afd and marked HISTORICAL-KNOWN-INVALID, so no earlier evidence record is deleted."
+  },
+  {
+   "sha": "(this commit)",
+   "note": "deadline, remaining window and branch-name note added; AC3 marked MET for afb41278"
+  },
+  {
+   "sha": "(this commit)",
+   "note": "PR #14/#26/#27 verified and recorded (not integrated); review-request packets added; shared postgres-negatives now rejects non-PASS negatives; policy wording updated per PR #27 C6 (no technical blocker relaxed); AC1 reworded, AC5 now UNMET, AC6 added"
+  }
+ ],
+ "policy_source": {
+  "pr": 27,
+  "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27",
+  "sha": "703f6a71840559e98f49b4c897ca5216d4018133",
+  "finding": "C6: coordination documents retain obsolete approval constraints",
+  "file": "reports/independent/chatgpt/acceptance-181bcdd-review.md",
+  "replaces": [
+   "never merge into main from automation",
+   "AC1 wording that required an independent HUMAN review"
+  ]
+ },
+ "related_prs": [
+  {
+   "pr": 14,
+   "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/14",
+   "branch": "review/pr3-pr6",
+   "head": "eb8d259588f2d1ba8a8787cf2c37044617cbcbdb",
+   "title": "review: independent review notes for PR #3-#6",
+   "status": "recorded_not_integrated",
+   "verified_facts": [
+    "head SHA matches the claim",
+    "changes 1 file: reports/review-pr3-pr6.md (522 lines; review notes, no code)",
+    "no GitHub reviews, comments or CI checks on PR #14",
+    "every PR in this repo, #14 included, is authored by the same GitHub account (onnxscibroccoli); the reviewer's independence is asserted in the file and cannot be shown from GitHub metadata",
+    "checkpoint 2 (eb8d259) verifies PR #2's harness v2 at 2aac93c/e7399fb and concludes 'priority B: remediated'. In the replay of run 40630856041, N01/N05/N06 → ERROR/version_mismatch and N04 → ERROR/environment_error; N02/N03 PASS",
+    "subject CI: 40741329107 (push @ 2aac93c, success); 40741536430 (push @ e7399fb, success); 40741546543 (pull_request @ e7399fb, success)",
+    "verdicts at exact SHAs: #3 fb36341 Approve; #4 d302c99 Approve with comments; #5 099479e REQUEST CHANGES (B5-1 suppressions applied before approval, B5-2 KMS key-admin escalation, B5-3 #1 conflict); #6 e5e7f46 REQUEST CHANGES (B6-1 self-logging, B6-2 exempt-role SCP bypass, B6-3 CDK vs Terraform)",
+    "the reviewer did not run the PostgreSQL scenario locally; this agent did (PG 16.15, 38/38, VERIFIED)"
+   ],
+   "discrepancies": [
+    "The claim says 'harness v2 independent verification on PR #14'. PR #14 is a review-notes PR. The verification is file content at eb8d259 about PR #2's code at 2aac93c/e7399fb, not a GitHub review, and PR #14 has no CI."
+   ],
+   "follow_ups_for_pr2": [
+    "regex ordering: env/version-error patterns evaluated after the declared reason",
+    "verify_evidence.py trusts the run's own EXPECTATIONS.tsv",
+    "cdk-synth green when there is no CDK app",
+    "optional control bypassing S04"
+   ],
+   "why_not_integrated": "Review notes only, with no review of PR #14 itself. Recorded per instruction ('if unsure, just record')."
+  },
+  {
+   "pr": 26,
+   "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+   "branch": "acceptance/vertical-slice",
+   "head": "181bcdd1420d699c37aa928b636b9332aca83e57",
+   "title": "acceptance/vertical-slice: first executable acceptance command + A/B/C integration (DRAFT, Worker D)",
+   "status": "changes_required_not_integrated",
+   "verified_facts": [
+    "head SHA matches the claim",
+    "based on overnight/integration @ 49122f2 (ancestor); adds 99 files (+13,240 lines, no deletions) on top of it; 710 files vs main",
+    "run 40749373581: workflow acceptance, push, head_sha 181bcdd…, conclusion success, 3 jobs, all success (gate self-test, acceptance @ target SHA, defect control)",
+    "the '43 required checks' are internal checks of the acceptance job, not GitHub checks: artifact results.json overall=PASS required=43 pass=43 (45 rows: 43 required PASS + 2 non-required PASS)",
+    "planted defect detected: the defect artifact has injected_defect=entra-mfa-report-only, overall=FAIL, pass 35/43; required FAILs are ENTRA-01, ENTRA-02, ENTRA-03, ENTRA-04.1, ACC-B-02, ACC-C-01, ACC-C-02, ACC-C-03; the defect-control job asserted this and succeeded. In-run DEFECT-AWS/ENTRA/HASH controls PASS",
+    "other runs on 181bcdd: acceptance PR 40749387217 (3/3), aws-cdk 40749387209 (1/1), offline-validation 40749387223 (1/1), postgres-restore-evidence 40749387416 (5/5): all success",
+    "no GitHub reviews or comments on PR #26",
+    "external ChatGPT review in PR #27 @ 703f6a7 on exact SHA 181bcdd: CHANGES REQUIRED. C1 High: required-check inventory not verified. C2 High: required INFO yields PASS. C3 Medium: JSON/TSV verdicts can disagree. C4 High: contract approval is not the final gate. C5 Medium: action tags not SHAs, 30-day retention, tests PR head not the merged candidate"
+   ],
+   "discrepancies": [
+    "The claim says '43 required checks'. The run has 3 GitHub jobs; 43 is the internal required-check count.",
+    "PR #26 integrated acceptance-adapters @ c6aa238, but PR #25's head is now ce39504 (4 files, +287 lines not included).",
+    "The run passing does not mean acceptance: PR #27 found verifier gaps C1-C3 that would let an incomplete or inconsistent bundle pass."
+   ],
+   "why_not_integrated": "Not reviewed favourably: PR #27 says CHANGES REQUIRED, and it is stale against PR #25."
+  },
+  {
+   "pr": 27,
+   "url": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27",
+   "branch": "review/chatgpt-acceptance-181bcdd",
+   "head": "703f6a71840559e98f49b4c897ca5216d4018133",
+   "title": "review: independent acceptance gate findings at 181bcdd",
+   "status": "recorded_not_integrated",
+   "note": "External review of PR #26 @ 181bcdd: CHANGES REQUIRED (C1-C5). C6 is the source of the policy wording update. It has no GitHub review or CI of its own."
+  }
+ ],
+ "review_requests": [
+  {
+   "file": "coordination/review-requests/PR-14-postgres-harness-v2.md",
+   "pr": 14,
+   "sha": "eb8d259588f2d1ba8a8787cf2c37044617cbcbdb",
+   "state": "prepared_not_sent",
+   "verdict": null
+  },
+  {
+   "file": "coordination/review-requests/PR-26-acceptance-vertical-slice.md",
+   "pr": 26,
+   "sha": "181bcdd1420d699c37aa928b636b9332aca83e57",
+   "state": "prepared_not_sent",
+   "verdict": null,
+   "prior_external_review": "PR #27 (CHANGES REQUIRED, C1-C5); the request asks for re-review against those findings"
+  },
+  {
+   "file": "coordination/review-requests/PR-7-candidate-5f159f1.md",
+   "pr": 7,
+   "exact_sha": "5f159f1c757d7fbf2964e4d8b615fcb9a810f7ca",
+   "status": "SUPERSEDED_BEFORE_SENDING",
+   "verdict": null
+  },
+  {
+   "file": "coordination/review-requests/PR-7-candidate-7fe6d72.md",
+   "pr": 7,
+   "final": true,
+   "exact_sha": "7fe6d7281316190d9b39e35a448fb9fb81b92d50",
+   "status": "NOT_YET_REQUESTED",
+   "verdict": null
+  }
+ ],
+ "user_actions": [
+  {
+   "id": "UA-1",
+   "task_id": "PR-5/AC2",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Decide EX-01..EX-04 for the exact candidate SHA: one owner ACCEPTANCE-ATTESTATION v2 comment per exception on PR #7 (format in instructions).",
+   "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
+   "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded. | 2026-10-28 21:25 EDT: scripts/ci/check_exceptions.py reports 5 applied suppressions tied to PROPOSED EX-01..EX-04 as a BLOCKING USER ACTION; merge-eligibility keeps AC2/AC5 UNMET until this is decided.",
+   "smallest_permission": "Owner decision recorded as a login-bound comment on PR #7 by an owner login distinct from the PR author (O-5 / UA-6). Editing SECURITY_EXCEPTIONS.md never approves.",
+   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. For EACH applied exception post ONE new (never edited) comment on PR #7 from the SEPARATE owner login in the trusted config (after UA-6; onnxscibroccoli is the PR author / shared agent account and its decisions are INSUFFICIENT_INDEPENDENCE), body exactly:\nACCEPTANCE-ATTESTATION v2\ncandidate: <exact 40-hex candidate SHA>\nmain: <exact 40-hex main SHA>\ntested_merge: <PR merge SHA> <candidate/main-validation merge SHA>\nworkflow_run: <Actions run id of the candidate's integration-gate run>\ncriterion: EXCEPTION\ndecision: APPROVED | REJECTED | APPROVED_WITH_CONDITIONS | SUPERSEDED\nexception: EX-NN\nscope: <rule> <applied resource logical ids, sorted, exactly as in the gate's decision artifact>\nconditions: <text>   (only with APPROVED_WITH_CONDITIONS; effective only after a later CONDITIONS_VERIFIED attestation)\nevidence: <one or more refs, e.g. the run URL and SECURITY_EXCEPTIONS.md#EX-NN>\nApplied scopes on this tree: EX-01: 'NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689'; EX-02: 'NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50'; EX-03: 'AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC'; EX-04: 'AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF'. The gate verifies author, admin permission, exact SHAs, the run, and the scope at runtime. The integrator never posts this.",
+   "blocks": [
+    "AC2",
+    "merge of PR #7 into main"
+   ],
+   "continuing": "All other lanes continue; the B5-2 KMS key-policy fix is an autonomous code fix.",
+   "deadline_impact": "Blocks a merge to main before 2026-10-29T00:00-04:00 if not decided."
+  },
+  {
+   "id": "UA-2",
+   "task_id": "PR-4/AC4",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Confirm the Entra Conditional Access baseline choices: risk policies stay report-only, device compliance applies to All users on All apps, and the 12-role privileged list.",
+   "reason": "Baseline policy scope is an identity-risk decision for the owner.",
+   "observed": "PR #4 body lists these as open questions; identity/entra/baseline.json encodes the current choice.",
+   "smallest_permission": "Owner decision (comment on PR #4).",
+   "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/4",
+   "blocks": [
+    "AC4"
+   ],
+   "continuing": "All other lanes continue.",
+   "deadline_impact": "Blocks AC4 (docs match) for a merge before midnight."
+  },
+  {
+   "id": "UA-3",
+   "task_id": "REPO/branch-protection",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Protect main AND evidence/acceptance so the gate and its manifest cannot be weakened by a candidate or the shared account (R6/D3 full closure).",
+   "reason": "main is unprotected (branch protection API returns 404). Repository settings changes were not delegated to this agent.",
+   "observed": "Branch not protected (HTTP 404). The owner account has admin permission, so this is a decision, not a permission gap. | 2026-10-28 22:00 EDT: still unprotected (0 rulesets). R6 within the repo is hardened (manifest-pinned, hash-verified gate), but the gate job definition is in the candidate's workflow until this is done.",
+   "smallest_permission": "Repository admin (already held by the owner account).",
+   "instructions": "Settings > Rules > Rulesets > New branch ruleset (https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/rules), or Settings > Branches > Add classic branch protection rule. Exact recommended settings: Target: default branch (main); Enforcement: Active; Bypass list: empty (do not add the owner); Restrict deletions: on; Block force pushes: on; Require linear history: optional; Require a pull request before merging: on, Required approvals: 1, Dismiss stale pull request approvals when new commits are pushed: on, Require approval of the most recent reviewable push: on, Require review from Code Owners: on (after adding a CODEOWNERS file on main naming the independent reviewer for .github/ and scripts/ci/), Require conversation resolution: on; Require status checks to pass: on, Require branches to be up to date: on, required checks: 'integration-gate / final-summary' and 'integration-gate / merge-eligibility' (source: GitHub Actions); classic rule only: Do not allow bypassing the above settings (include administrators): on. Then, for full R6 closure, land the gate on main (.github/workflows/integration-gate.yml, scripts/ci, .github/acceptance/trusted-config.json and .github/acceptance/gate-manifest.json) through that protected PR flow, so the manifest and allow-list are read from main. Also add the independent reviewer as a collaborator with Write and add their login to reviewer_allowlist on main. ALSO (PR #32 D3) protect evidence/acceptance with a second ruleset: target branch evidence/acceptance; Enforcement Active; Bypass list empty; Restrict deletions on; Block force pushes on; Require a pull request before merging on with 1 approval from the independent reviewer (Code Owners for trusted-gate/); Restrict updates so the shared agent account cannot push directly. Then have the independent reviewer approve the gate commit and re-pin trusted-gate/gate-manifest.json with independent_review {pr, review_id}.",
+   "blocks": [],
+   "continuing": "The gate runs and reports regardless; without protection it is advisory.",
+   "deadline_impact": "None for testing; affects whether the gate is enforced."
+  },
+  {
+   "id": "UA-4",
+   "task_id": "PR-1",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Close PR #1 as superseded by PR #5, or tell the integrator to keep it open.",
+   "reason": "This agent does not close PRs.",
+   "observed": "PR #1 is open and still describes the superseded self-logging design.",
+   "smallest_permission": "Owner closes the PR.",
+   "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/1",
+   "blocks": [
+    "AC4"
+   ],
+   "continuing": "All other lanes continue.",
+   "deadline_impact": "Minor (docs consistency)."
+  },
+  {
+   "id": "UA-5",
+   "task_id": "AC6",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "NOT_YET_ACTIONABLE",
+   "action": "Final human portfolio acceptance of the merged result.",
+   "reason": "Separate final gate by policy (PR #27 C6).",
+   "observed": "AC1, AC2, AC4 and AC5 are not met yet.",
+   "smallest_permission": "Owner decision.",
+   "instructions": "After AC1-AC5 are MET for one exact SHA, review reports/INTEGRATION.md for that SHA.",
+   "blocks": [
+    "AC6"
+   ],
+   "continuing": "Everything else.",
+   "deadline_impact": "Required for portfolio acceptance, not for technical merge eligibility."
+  },
+  {
+   "id": "UA-6",
+   "alias": "O-5",
+   "task_id": "PR-7/AC2,AC4,AC5",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Create an owner identity that agents cannot use (a separate Ian-only GitHub account, or a signing key the agents do not hold) and put it in owner_logins of the trusted config (re-reviewed and re-pinned).",
+   "reason": "onnxscibroccoli is the PR author and the shared account every agent lane pushes and comments with; a comment from it proves the login, not Ian (PR #32 D2). Owner decisions from it are INSUFFICIENT_INDEPENDENCE.",
+   "observed": "2026-10-28 ~22:30 EDT: trusted-config owner_logins = [onnxscibroccoli] = PR #7 author; repository collaborators: onnxscibroccoli only.",
+   "smallest_permission": "Owner creates/invites a second account (admin for the owner identity) and edits the trusted config through the protected flow (UA-3).",
+   "instructions": "1) Create or choose an Ian-only GitHub account whose credentials no agent holds. 2) Invite it as collaborator with Admin. 3) Through the protected flow, set owner_logins to that login only (remove onnxscibroccoli) in .github/acceptance/trusted-config.json, have the independent reviewer approve the gate commit, and re-pin the manifest. 4) Post the UA-1 EXCEPTION and AC4/AC5 attestations from that account.",
+   "blocks": [
+    "AC2",
+    "AC5",
+    "merge of PR #7 into main"
+   ],
+   "continuing": "All other lanes continue.",
+   "deadline_impact": "Blocks a merge before 2026-10-29T00:00-04:00 if not done."
+  }
+ ],
+ "autonomous_blockers": [
+  {
+   "id": "AB-1",
+   "source": "PR #14 B5-2",
+   "item": "KMS key-admin statement allows grant or key-policy escalation (infra/aws-cdk/lib/least-privilege-key.ts)",
+   "classification": "AUTONOMOUS_FIX",
+   "owner": "aws-cdk module owner"
+  },
+  {
+   "id": "AB-2",
+   "source": "AC1",
+   "item": "Independent exact-SHA review of the frozen PR #7 candidate",
+   "classification": "AUTONOMOUS_FIX",
+   "owner": "lane E (independent review)"
+  },
+  {
+   "id": "AB-3",
+   "source": "PR #27 C1-C5",
+   "item": "Acceptance verifier repairs on PR #26 (reported at 17cfaea / eb42b23); exact-SHA re-review",
+   "classification": "AUTONOMOUS_FIX",
+   "owner": "lane A (Worker D)"
+  },
+  {
+   "id": "AB-4",
+   "source": "PR #14 B6-1/B6-2",
+   "item": "PR #6 self-logging and exempt-role SCP bypass",
+   "classification": "AUTONOMOUS_FIX",
+   "owner": "orgs module owner"
+  },
+  {
+   "id": "AB-5",
+   "source": "pt12u / PR #20",
+   "classification": "AUTONOMOUS_FIX",
+   "owner": "lane E (independent review) then integrator",
+   "item": "M365 scenario module (PR #20 @ 1b3c240, draft, 0 reviews, no CI) is not reviewed, so not integrated. Its required checks (m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification) are wired and FAIL CLOSED until it is reviewed and integrated; a local trial merge passed them all.",
+   "status": "RESOLVED_BY_INSTRUCTION",
+   "resolution": "Ian (20:03 EDT) instructed integration of PR #20 at 1b3c240; the module is integrated and its checks are required. PR #20 still has no independent review: covered by AB-2 / AC1 for the combined candidate."
+  }
+ ],
+ "accelerated_plan": {
+  "source": "PR #27 @ 72aa8b7, reports/independent/chatgpt/accelerated-completion-plan-20261028.md (lane B, integrator)",
+  "started_from_head": "4f54a0164f25c0e9bd4ab17d718bc188fd242772",
+  "items": [
+   {
+    "id": "P1",
+    "item": "USER ACTION REQUIRED reporting in GitHub Actions",
+    "status": "DONE",
+    "detail": "integration-gate.yml: user-actions job (fast, sparse checkout, step summary + warning annotations + 7-day artifact) and final-summary job (if: always(), needs all jobs, aggregates success/failure/cancelled/skipped plus the USER ACTION REQUIRED top line). Source of truth: user_actions in this file. scripts/ci/user_actions.py validates every field and escapes all values."
+   },
+   {
+    "id": "P2",
+    "item": "Pin actions to full commit SHAs",
+    "status": "DONE",
+    "pinned": {
+     "actions/checkout": "fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5",
+     "actions/setup-node": "a0853c24544627f65ddf259abe73b1d18a591444 # v5",
+     "actions/setup-python": "a26af69be951a213d495a4c3e4e4022e16d87065 # v5",
+     "actions/upload-artifact v4": "ea165f8d65b6e75b540449e92b4886f43607fa02 # v4",
+     "actions/upload-artifact v5": "330a01c490aca151604b8cf639adc76d48f6c5d4 # v5"
+    },
+    "unpinned": [
+     {
+      "uses": "./.github/workflows/{offline-validation,aws-cdk,postgres-restore-evidence}.yml",
+      "why": "same-repository reusable workflows; they always resolve at the commit under test"
+     }
+    ],
+    "not_done": "Major upgrades (checkout v7, setup-node/python v7, upload-artifact v7) deferred: not needed for correctness before the deadline."
+   },
+   {
+    "id": "P3",
+    "item": "Module registry",
+    "status": "DONE",
+    "detail": "coordination/modules.json (22 modules: 5 INTEGRATED, 1 EXCLUDED, 16 NOT_INTEGRATED) checked by scripts/ci/check_modules.py in validate-all.sh and the integration-gate module-registry job: paths exist or are absent as declared, every tracked file is claimed, every listed validate-all step and CI job exists."
+   },
+   {
+    "id": "P4",
+    "item": "Freeze the combined candidate and test it against current main",
+    "status": "DONE",
+    "detail": "Candidate 82ab7e6 tested on candidate/main-validation-82ab7e6 (ccbb442): clean merge, validate-all PASS, all technical CI jobs success."
+   },
+   {
+    "id": "P5",
+    "item": "Update tasks.json and INTEGRATION.md",
+    "status": "DONE_FOR_THIS_COMMIT"
+   }
+  ],
+  "gates": {
+   "exact_sha_review": "UNMET (AC1): no independent review of the candidate SHA yet. Review packets in coordination/review-requests/.",
+   "current_main_validation": "PASSED for candidate 82ab7e6 against main 7f50348 (branch candidate/main-validation-82ab7e6 @ ccbb442; run 40778969827; every technical job success)",
+   "merge_eligibility": "NOT ELIGIBLE (merge-eligibility job failed by design in runs 40778969827, 40778886245, 40778896261): AC1 UNMET, AC2 PARTIAL, AC3 MET for 82ab7e6 technical checks, AC4 PARTIAL, AC5 UNMET. AC6 is a separate human gate."
+  },
+  "pr27_c1_c5": "Not addressed here: C1-C5 are on PR #26's acceptance verifier, which is not integrated, and PR #26's branch is not modified by the integrator.",
+  "frozen_candidate": {
+   "candidate_sha": "82ab7e6bbec1d20e034494c987253f3a81f3296c",
+   "frozen_at": "2026-10-28T18:21:00-04:00",
+   "note": "Commits on overnight/integration after the candidate change only coordination/tasks.json and reports/INTEGRATION.md (result records). Reviews must cite the candidate SHA.",
+   "main_at_test": "7f50348bf1370381615eaed91c02607fe41de2f5",
+   "main_validation_branch": "candidate/main-validation-82ab7e6",
+   "main_validation_sha": "ccbb44216a777174b688767e0fb900db599e8eb1",
+   "merge_result": "clean; main is an ancestor of the candidate, so no conflicts and the merged tree is identical to the candidate tree (git diff 82ab7e6 ccbb442 is empty)",
+   "local_validate_all": {
+    "candidate": "PASS (35 steps)",
+    "main_validation": "PASS (35 steps)",
+    "pg_bin": "PostgreSQL 16.15 (local)"
+   },
+   "ci": {
+    "integration-gate push candidate/main-validation-82ab7e6 (ccbb442)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778969827",
+     "conclusion": "failure (only merge-eligibility, by design)",
+     "jobs": "user-actions, module-registry, offline-validation/validate, aws-cdk/synth-and-test, postgres x5, final-summary: success; merge-eligibility: failure (NOT ELIGIBLE)"
+    },
+    "integration-gate push overnight/integration (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886245",
+     "conclusion": "failure (only merge-eligibility, by design)"
+    },
+    "integration-gate pull_request PR #7 (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896261",
+     "conclusion": "failure (only merge-eligibility, by design)"
+    },
+    "postgres-restore-evidence pull_request (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896275",
+     "conclusion": "success (5/5)"
+    },
+    "aws-cdk pull_request (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896256",
+     "conclusion": "success"
+    },
+    "aws-cdk push (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886053",
+     "conclusion": "success"
+    },
+    "offline-validation pull_request (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778896220",
+     "conclusion": "success"
+    },
+    "offline-validation push (82ab7e6)": {
+     "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40778886069",
+     "conclusion": "success"
+    }
+   }
+  },
+  "round2": {
+   "requested": "2026-10-28T19:55:00-04:00 (pt12u)",
+   "started_from_head": "1a3cea07a688ac7dad4b4a6f15b4167fc212d896",
+   "reconcile": "Remote overnight/integration was still 82ab7e6; local 1a3cea0 was a fast-forward and was pushed normally at ~19:58 EDT (no rebase needed, no force).",
+   "m365_module": {
+    "found": "PR #20, branch m365-endpoint @ 1b3c240374285d7b0760b946e861dee15197dcf3 (identity/m365, evidence/m365). Draft, mergeable, 0 reviews, 0 comments, no check runs.",
+    "decision": "NOT_INTEGRATED (unreviewed). Registered in coordination/modules.json as required: true.",
+    "required_checks": {
+     "validate-all.sh": [
+      "m365 scenario evaluation",
+      "m365 unit tests",
+      "m365 evidence verification",
+      "plan-only negative tests"
+     ],
+     "integration-gate.yml": [
+      "m365-scenario-evaluation",
+      "m365-unit-tests",
+      "m365-evidence-verification",
+      "plan-only-assertions"
+     ]
+    },
+    "fail_closed": "scripts/ci/m365_checks.sh fails when identity/m365 or evidence/m365 is absent; final-summary and merge-eligibility fail if any job in modules.json required_gate_jobs is missing, skipped, cancelled or failed (tests: scripts/ci/tests/test_gate_required.py).",
+    "plan_only_assertions": "scripts/ci/check_plan_only.py on the fresh engine report and on every committed run (validation-report.json and SUMMARY.json): plan steps mode PLAN_ONLY and executed false, every executed key false, mutationsExecuted integer 0, at least one plan step. 14 negative tests in scripts/ci/tests/test_check_plan_only.py.",
+    "local_trial": "Scratch worktree = this branch + --no-ff merge of 1b3c240 (not committed, not pushed): evaluate OK (13/13 scenarios, 43 PLAN_ONLY steps, mutationsExecuted 0), unit OK (29 tests), evidence OK (verify + PLAN_ONLY), negatives OK; a run with one plan step tampered to executed:true was rejected (exit 1).",
+    "applicability": "Only the M365 module emits PLAN_ONLY/executed/mutationsExecuted records in this tree or in PR #20; no integrated module produces such records."
+   },
+   "acceptance_workflow": "No acceptance workflow exists on overnight/integration (acceptance.yml exists only on PR #26's branch, which is not integrated and was not modified). The required checks live in integration-gate.yml.",
+   "expected_gate_result": "FAIL (fail closed) until PR #20 is reviewed and integrated.",
+   "superseded_by": "round3 (Ian 20:03 EDT: integrate M365 and incident demo at exact SHAs). Round 2 record preserved as history.",
+   "ci_on_02ac2de": {
+    "summary": "Fail-closed behaviour demonstrated in CI: with the M365 module absent, the three M365 jobs, offline-validation, final-summary and merge-eligibility FAILED; user-actions, module-registry, plan-only-assertions, aws-cdk and postgres succeeded.",
+    "runs": {
+     "integration-gate push candidate/main-validation-02ac2de (3c3eb5c)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791334264",
+     "integration-gate push overnight/integration (02ac2de)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791318497",
+     "integration-gate pull_request (02ac2de)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325470",
+     "aws-cdk pull_request (02ac2de) success": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325346",
+     "postgres-restore-evidence pull_request (02ac2de) success": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325341",
+     "offline-validation pull_request (02ac2de) failure (M365 steps)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791325340",
+     "offline-validation push (02ac2de) failure (M365 steps)": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40791318492"
+    },
+    "note": "02ac2de was never sent for review; its draft review packet was discarded before commit. It is not the candidate."
+   }
+  },
+  "round3": {
+   "requested": "2026-10-28T20:03:00-04:00 (Ian, via parent)",
+   "merged_exact_shas": {
+    "PR #20 M365": "1b3c240374285d7b0760b946e861dee15197dcf3 (merge c6c1061)",
+    "PR #22 incident demo": "9f21329f0e796362c4498d49687fd0f99ce3a042 (merge 0964281)"
+   },
+   "verification": "Both SHAs verified as commit objects; both have main 7f50348 as ancestor; they add only identity/m365, evidence/m365, scenarios/incident and evidence/incident (no conflicts). Merged by exact SHA, not branch tip.",
+   "review_status_of_merged_prs": "PR #20 and PR #22 are drafts with 0 reviews and no CI runs of their own. They were integrated on Ian's explicit instruction; this is NOT a review or approval of either.",
+   "required_checks": {
+    "integration-gate.yml jobs": [
+     "m365-scenario-evaluation",
+     "m365-unit-tests",
+     "m365-evidence-verification",
+     "plan-only-assertions",
+     "incident-committed-runs",
+     "incident-fresh-run",
+     "incident-not-executed-negative",
+     "labeling-markers"
+    ],
+    "incident-fresh-run outputs (each must be exactly PASS)": [
+     "injection",
+     "detection",
+     "diagnosis",
+     "recovery",
+     "timeline",
+     "simulation"
+    ],
+    "validate-all.sh steps": [
+     "m365 scenario evaluation",
+     "m365 unit tests",
+     "m365 evidence verification",
+     "plan-only negative tests",
+     "incident committed runs",
+     "incident NOT_EXECUTED negative",
+     "labeling markers",
+     "incident fresh run (full mode only)"
+    ],
+    "enforcement": "final-summary and merge-eligibility fail if any required job is missing, skipped, cancelled or failed, or any required output is not PASS (NOT_EXECUTED counts as not passed). check_modules.py fails if a required job is undefined or absent from either job's needs."
+   },
+   "not_executed_rule": "If PostgreSQL server binaries are unavailable, run_incident_demo.sh exits 3 and writes SUMMARY status NOT_EXECUTED; check_incident_run.py then reports all six requirements NOT_EXECUTED (exit 1) and incident_checks.sh fresh fails. Negative tests: incident_checks.sh not-executed-negative (CI job incident-not-executed-negative) and scripts/ci/tests/test_incident_requirements.py (NOT_EXECUTED / missing SUMMARY never PASS).",
+   "fresh_runs": {
+    "local": "evidence/incident/runs/local-20261029T000545Z (+ .console), 2026-10-28 20:05 EDT, PostgreSQL 16.15, 19/19 steps PASS, MTTD 3.590 s, MTTR 8.677 s, all six requirements PASS. Added alongside the original run.",
+    "ci": "incident-fresh-run job: runner-installed PostgreSQL (apt only if missing), output to runner temp, uploaded as artifact incident-fresh-run-<sha> (7 days). Never written over committed runs."
+   },
+   "preserved_evidence": "evidence/incident/runs/local-20261028T181818Z and evidence/m365/runs/local-offline-20261028T181845Z are unmodified (SHA256SUMS verify). All earlier postgres runs preserved.",
+   "labeling_check": "scripts/ci/check_labels.py (job labeling-markers): SIMULATION.md label in every incident run/console dir, SIMULATION in the first lines of incident docs and scripts, M365 PLAN_ONLY / executed:false / mutationsExecuted:0 markers. 7 negative tests.",
+   "m365_counts": {
+    "13": "scenario files evaluated; each matched its recorded expected verdict AND expected finding codes (report totals.scenarios=13, totals.passed=13)",
+    "43": "PLAN_ONLY remediation plan steps emitted across those 13 scenarios (totals.plannedSteps), every one executed:false. They are planned actions, not assertions or tests.",
+    "28": "findings across the 13 scenarios",
+    "29": "unit tests in identity/m365/tests",
+    "15": "commands recorded in the committed M365 evidence run (15/15 with the expected exit code)"
+   },
+   "acceptance_workflow": "Still none on overnight/integration (acceptance.yml is only on PR #26, not integrated, not modified); required checks live in integration-gate.yml.",
+   "local_validate_all": "PASS (43 steps) with PG_BIN=/workspace/pg16/bin before freezing",
+   "frozen_candidate": {
+    "candidate_sha": "5f159f1c757d7fbf2964e4d8b615fcb9a810f7ca",
+    "frozen_at": "2026-10-28T20:12:00-04:00",
+    "main_at_test": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "main_validation_branch": "candidate/main-validation-5f159f1",
+    "main_validation_sha": "ba4d5e02146b33b74957a60b62a055f4c46ad089",
+    "merge_result": "clean --no-ff merge; main is an ancestor; merged tree identical to the candidate",
+    "local_validate_all": {
+     "candidate": "PASS (43 steps)",
+     "main_validation": "PASS (43 steps)",
+     "pg": "16.15"
+    },
+    "ci": {
+     "integration-gate push candidate/main-validation-5f159f1 (ba4d5e0)": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792435152",
+      "result": "every required job success (19 jobs incl. 5 postgres); final-summary success (gate: PASS); merge-eligibility failure by design (AC1, AC2, AC4, AC5 open). Fresh SIMULATION run on PostgreSQL 18.6: all six requirements PASS, MTTD 3.704 s, MTTR 8.73 s"
+     },
+     "integration-gate push overnight/integration (5f159f1)": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418163",
+      "result": "same; fresh run MTTD 3.501 s, all six PASS; merge-eligibility reported only AC1/AC2/AC3(PENDING_CI at that time)/AC4/AC5, no required-check problem"
+     },
+     "integration-gate pull_request PR #7 (5f159f1)": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426144",
+      "result": "same; fresh run MTTD 3.489 s, MTTR 8.695 s, all six PASS"
+     },
+     "postgres-restore-evidence pull_request": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426140",
+      "result": "success 5/5"
+     },
+     "aws-cdk pull_request": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426294",
+      "result": "success"
+     },
+     "offline-validation pull_request": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792426193",
+      "result": "success"
+     },
+     "offline-validation push": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40792418146",
+      "result": "success"
+     }
+    },
+    "not_executed_items": "None in these runs: PostgreSQL 18.6 binaries were present on the runner image, so no requirement was NOT_EXECUTED. The NOT_EXECUTED path is exercised only by the negative job, where it correctly fails.",
+    "review": {
+     "packet": "coordination/review-requests/PR-7-candidate-5f159f1.md",
+     "disposition": "NOT_YET_REQUESTED",
+     "note": "No independent review exists for this exact SHA. Earlier approvals or reviews (eb42b23, 82ab7e6, 02ac2de, PR #14, PR #27, anything else) do not transfer."
+    }
+   }
+  },
+  "round4_final": {
+   "requested": "2026-10-28T20:16:00-04:00 (Ian final sprint)",
+   "sole_writer": "The integrator is the sole writer of overnight/integration.",
+   "m365_sha": {
+    "used": "1b3c240374285d7b0760b946e861dee15197dcf3",
+    "why": "Checked at ~20:18 EDT: origin/m365-endpoint and PR #20's head are still 1b3c240, with 0 reviews. No newer reviewed head exists, so there was nothing to refresh to."
+   },
+   "incident_sha": "9f21329f0e796362c4498d49687fd0f99ce3a042 (exact; unchanged)",
+   "fresh_run_postgres": "incident-fresh-run installs PostgreSQL SERVER binaries with apt (postgresql-16 first, distro postgresql as fallback), adds the bin dir to PATH and sets PG_BIN. No services container; guarded by scripts/ci/tests/test_fresh_run_wiring.py. If installation fails, PG_BIN points at a nonexistent dir, the harness exits 3 (NOT_EXECUTED) and the required check FAILS. The step has no if: and no continue-on-error, so it cannot be skipped.",
+   "earlier_candidate_5f159f1": "Superseded by the final candidate. Its CI (fresh run used the image's PGDG 18.6 binaries) is history only; its review packet was never sent.",
+   "frozen_candidate": {
+    "candidate_sha": "7fe6d7281316190d9b39e35a448fb9fb81b92d50",
+    "frozen_at": "2026-10-28T20:18:00-04:00",
+    "final": true,
+    "main_at_test": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "main_validation_branch": "candidate/main-validation-7fe6d72",
+    "main_validation_sha": "770cf3360aeb4cca8f339c412f4cc5c907b88e09",
+    "merge_result": "clean --no-ff merge; main is an ancestor; merged tree identical to the candidate",
+    "local_validate_all": {
+     "candidate": "PASS (43 steps)",
+     "main_validation": "PASS (43 steps)",
+     "pg": "16.15 (box)"
+    },
+    "ci": {
+     "integration-gate push candidate/main-validation-7fe6d72 (770cf33)": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793236453",
+      "result": "18/19 jobs success; every required job success; final-summary success; merge-eligibility failure by design. Fresh run: all six PASS, MTTD 3.481 s, MTTR 8.671 s"
+     },
+     "integration-gate push overnight/integration (7fe6d72)": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793219129",
+      "result": "18/19; same pattern. Fresh run MTTD 3.483 s, MTTR 8.675 s; merge-eligibility notices only AC1 UNMET, AC2 PARTIAL, AC3 (MET for 5f159f1, not this SHA), AC4 PARTIAL, AC5 UNMET; no required-check problem"
+     },
+     "integration-gate pull_request PR #7 (7fe6d72)": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225624",
+      "result": "18/19; same pattern. Fresh run MTTD 3.447 s, MTTR 8.499 s"
+     },
+     "postgres-restore-evidence pull_request": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225365",
+      "result": "success 5/5"
+     },
+     "aws-cdk pull_request": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225339",
+      "result": "success"
+     },
+     "offline-validation pull_request": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793225341",
+      "result": "success"
+     },
+     "offline-validation push": {
+      "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40793219059",
+      "result": "success"
+     }
+    },
+    "fresh_run_postgres_actual": "apt install of postgresql-16 is not available on the ubuntu-latest image, so the fallback ran: apt 'postgresql' (distro default) resolved to /usr/lib/postgresql/18/bin (PostgreSQL 18.6, PGDG packages on the image). initdb and pg_ctl were on PATH. No services container was used.",
+    "not_executed_items": "None in the CI runs for this SHA. The NOT_EXECUTED path (harness exit 3) appears only in the incident-not-executed-negative job and in selftest case 4, where it correctly fails.",
+    "review": {
+     "packet": "coordination/review-requests/PR-7-candidate-7fe6d72.md",
+     "disposition": "NOT_YET_REQUESTED",
+     "note": "No independent review exists for this exact SHA. Earlier reviews or approvals (eb42b23, 82ab7e6, 02ac2de, 5f159f1, PR #14, PR #27, anything else) do not transfer."
+    }
+   }
+  },
+  "round5_pt15u": {
+   "requested": "2026-10-28T20:57:00-04:00 (ChatGPT checkpoint relayed by Ian, pt15u)",
+   "started_from_head": "08cdf11aecfdae56867f21cbec33e7505c8ce8a9",
+   "what_771045e_is": "771045ee413f7550cd0279db06915dddba548dfd is GitHub's synthetic merge commit for PR #7 (refs/pull/7/merge), with parents 7f50348 (main) and 08cdf11 (PR head). It is the GITHUB_SHA of pull_request runs; the head SHA is 08cdf11.",
+   "ac3": "COMPUTED_AT_RUNTIME; see acceptance_conditions_for_main.ac3_design. Run identity comes from scripts/ci/provenance.py; the decision is in run artifact acceptance-decision-<tested_sha> (90 days) and is mirrored to branch evidence/acceptance after the run. Nothing is written back into the candidate.",
+   "merge_eligibility_fix": "MET now needs met_for {candidate_sha, base_sha, tested_sha}, each full 40-hex (case-normalized), equal to this run's identity, plus evidence. A bare met_for_sha, missing, abbreviated, non-hex or wrong SHAs, and candidate/merge mixups are NOT eligible. --lint-tasks rejects a naked MET (validate-all step 'tasks lint (no naked MET)'). Regression tests: scripts/ci/tests/test_merge_eligibility_binding.py (18). No check removed.",
+   "post_freeze_records": "To avoid the self-referential loop, nothing is committed to overnight/integration after this candidate is frozen. CI results and the decision go to branch evidence/acceptance (an orphan branch, normal push)."
+  },
+  "post_candidate_coverage_delta_pt16u": {
+   "requested": "Ian, module-coverage sprint, 2026-10-28 21:06 EDT (pt16u)",
+   "review_candidate": "b908a669b302ff37f2c2ca79ed828f65e5a9f432 (unchanged; NOT re-frozen or replaced; Bank IT Lab PR Reviewer is reviewing it)",
+   "is_review_candidate": false,
+   "base_of_delta": "b908a669b302ff37f2c2ca79ed828f65e5a9f432",
+   "commits": [
+    {
+     "sha": "51e404c4d2de0db88ca83e2b774d61fcb56201eb",
+     "what": "/workspace/coverage-patches/00-all.patch applied unchanged: modules.json 22->26 modules with coverage.denominator_floor=26, category/owner/delivery_location/required_checks per module; orgs-security EXCLUDED->BLOCKED (B6-1, B6-2); bank-aws-001 SUPERSEDED by aws-cdk; 3 NOT_STARTED modules from JRM top gaps; check_modules.coverage() fail-closed; user_actions.py prints the coverage line and exits 1 on invalid coverage; scripts/ci/tests/test_module_coverage.py (11 tests)"
+    },
+    {
+     "sha": "(this commit)",
+     "what": "integrator review fixes + these records: (1) scripts/ci/tests was not executed by validate-all or any Actions job (true since the suite was added, so the 18 binding regressions on b908a66 ran locally only); added validate-all step 'ci self-tests (scripts/ci/tests)' and a module-registry job step running the suite; (2) check_modules.py --coverage-json without a FILE crashed with IndexError, now exits 2 with an error; (3) module-registry job writes --coverage-json"
+    }
+   ],
+   "review_findings": [
+    "Patch logic correct: non-INTEGRATED statuses (incl. BLOCKED/SUPERSEDED/NOT_STARTED) still fail if their paths exist on the branch; every module counts in the denominator; completion = INTEGRATED/(all - SUPERSEDED)",
+    "No checks removed",
+    "Gap fixed: scripts/ci/tests not wired into validate-all/CI (see commits[1])",
+    "Minor: --coverage-json argument crash fixed"
+   ],
+   "coverage_line": "MODULE COVERAGE: 7/25 integrated (28.0%), functional 7/17; denominator 26 (BLOCKED=1, INTEGRATED=7, NOT_INTEGRATED=14, NOT_STARTED=3, SUPERSEDED=1)",
+   "coverage": {
+    "denominator": 26,
+    "completion_denominator": 25,
+    "integrated": 7,
+    "completion_pct": 28.0,
+    "functional": 17,
+    "functional_integrated": 7,
+    "functional_missing_delivery_location": [],
+    "by_status": {
+     "INTEGRATED": 7,
+     "BLOCKED": 1,
+     "NOT_INTEGRATED": 14,
+     "SUPERSEDED": 1,
+     "NOT_STARTED": 3
+    },
+    "by_category": {
+     "functional": {
+      "INTEGRATED": 7,
+      "NOT_INTEGRATED": 7,
+      "NOT_STARTED": 3
+     },
+     "blocked": {
+      "BLOCKED": 1
+     },
+     "review_record": {
+      "NOT_INTEGRATED": 1
+     },
+     "documentation": {
+      "NOT_INTEGRATED": 6
+     },
+     "superseded": {
+      "SUPERSEDED": 1
+     }
+    },
+    "incomplete": [
+     "acceptance(NOT_INTEGRATED)",
+     "aws-network-edge(NOT_STARTED)",
+     "backup-dr-aws(NOT_INTEGRATED)",
+     "control-mapping(NOT_INTEGRATED)",
+     "endpoint-windows-automation(NOT_STARTED)",
+     "final-report(NOT_INTEGRATED)",
+     "hybrid-operations(NOT_INTEGRATED)",
+     "identity-governance(NOT_INTEGRATED)",
+     "inventory-diagrams(NOT_STARTED)",
+     "job-requirements-matrix(NOT_INTEGRATED)",
+     "learning-guide(NOT_INTEGRATED)",
+     "observability(NOT_INTEGRATED)",
+     "orgs-security(BLOCKED)",
+     "patch-hardening(NOT_INTEGRATED)",
+     "portfolio-cases(NOT_INTEGRATED)",
+     "review-notes(NOT_INTEGRATED)",
+     "team-management(NOT_INTEGRATED)",
+     "vendor-mock(NOT_INTEGRATED)"
+    ]
+   },
+   "acceptance_effect": "None on AC1-AC5 for b908a66. AC3 for this HEAD is computed per run by merge-eligibility and is not a review of b908a66; a later candidate would need its own freeze, main-validation and review.",
+   "actions": "recorded on evidence/acceptance (outside the tree) and in the integrator's report, not here, to avoid the self-reference loop"
+  },
+  "round6_pr30_repairs": {
+   "requested": "parent agent steering 2026-10-28 21:15 EDT: apply PR #30 (independent verdict CHANGES REQUIRED on b908a66) repairs, then freeze a new candidate",
+   "review_of": "b908a669b302ff37f2c2ca79ed828f65e5a9f432 (PR #30 head eb82d7d, same GitHub account: not an AC1 approval)",
+   "started_from_head": "a29f4d9bf65c332c31236e1e09a1e047312aaa31 (b908a66 + coverage delta 51e404c, a29f4d9)",
+   "fixes": {
+    "B5-2": "80f01d63659b801434c1a9e050484abc8716adcd",
+    "F1": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "F3/R6": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "B5-1": "4e6fef4f5d05a72378f0e4c5ec75154efe821710 (check_exceptions.py) + this commit (records)",
+    "N1": "this commit (modules.json orgs-security reason B6-3)",
+    "B5-3": "this commit (records: resolved in code; PR #1 open pending UA-4)"
+   },
+   "trusted_gate": {
+    "pinned_sha": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "rule": "merge-eligibility runs scripts/ci from main when main carries the gate scripts, else from the pinned SHA; the candidate's data is read with --root",
+    "residual": "on pull_request events the workflow file itself comes from the candidate merge, so a candidate could change the pin; only branch protection / a ruleset requiring this workflow from main (UA-3) closes that"
+   },
+   "not_done": [
+    "AC2/UA-1 owner approval of EX-01..EX-04 (owner only)",
+    "AC1 requires an APPROVED review by a different GitHub account",
+    "F2: CI runs validate-all --python-only; the full suite runs locally and its parts run as separate CI jobs",
+    "R5: main unprotected (UA-3)"
+   ],
+   "post_freeze_records": "evidence/acceptance branch (outside the tree)"
+  },
+  "round7_pr31_repairs": {
+   "requested": "Ian (relayed) 21:38 EDT + recovery directive 21:41 EDT: PR #31 F4/F5/F6/F7/R6/minor",
+   "review_of": "1fdf25ad10c56bb457d6242392f9305c539d1209 (PR #31 head eccac83, same GitHub account: not an AC1 approval)",
+   "reconciled_at_start": {
+    "candidate": "1fdf25ad10c56bb457d6242392f9305c539d1209 == origin/overnight/integration",
+    "main": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "tested_merge": "07eea1cefdc15873af2a579d3795af402961edd6",
+    "gate_run": "40800364073",
+    "drift": "none"
+   },
+   "gate_code_sha": "ce69f84b3333e1d8da99deb03d17f1457464d962",
+   "trusted_manifest": "evidence/acceptance:trusted-gate/gate-manifest.json (gate_sha + sha256 of scripts/ci/**, .github/acceptance/trusted-config.json, .github/workflows/integration-gate.yml); main's .github/acceptance/gate-manifest.json takes precedence once it exists",
+   "path_to_eligible": [
+    "UA-3: protect main as specified (and land the gate + manifest + trusted config on main through it)",
+    "Add an independent reviewer account as a collaborator with Write; add its login to reviewer_allowlist in the TRUSTED config (main, or a new pinned gate commit + manifest)",
+    "That reviewer submits an APPROVED GitHub review on PR #7 with commit_id = the exact candidate SHA; no undismissed CHANGES_REQUESTED from anyone else",
+    "Owner posts the UA-1 EXCEPTION attestations (one per EX id) and AC4/AC5 attestations on PR #7 (ACCEPTANCE-ATTESTATION v2, format in reviews.py and UA-1 instructions), bound to the exact candidate, main, tested merges and run",
+    "Re-run integration-gate (PR run and candidate/main-validation push): AC3 MET_AT_RUNTIME with base == current main and all required jobs green -> ELIGIBLE",
+    "AC6 (final human portfolio acceptance) remains a separate gate; merging stays a human action"
+   ],
+   "residual": [
+    "R6: until UA-3 the merge-eligibility job definition lives in the candidate's workflow file (a candidate could delete the verify step); the manifest makes any verifier change visible and the gate rejects it when the step runs",
+    "F7: the owner login onnxscibroccoli is also the PR author and the account the agents push with; the decision comment proves the account, not the person. Ian should post decisions himself; a dedicated owner/reviewer account removes this ambiguity"
+   ]
+  },
+  "round8_ian_2150_alignment": {
+   "requested": "Ian 21:41 recovery directive + 21:50 execution alignment (P1-P5)",
+   "superseded_candidate": "e9310f3a94162a5dae31ee1cca9e35452de033ed was frozen before the 21:50 alignment; it is NOT the review candidate (its attestation format lacked main/tested-merge/run binding and exception states)",
+   "P1": "AC1 unchanged design (non-author, API write+ permission, trusted allow-list, APPROVED on exact 40-hex SHA, latest decisive review per account, fail closed on any undismissed CHANGES_REQUESTED); added superseded/dismissed/abbreviated regressions",
+   "P2": "AC2/AC4/AC5 only from ACCEPTANCE-ATTESTATION v2 comments (GitHub-authenticated author+timestamp) binding candidate, main, tested merge(s), criterion, decision, evidence refs, workflow run (run.head_sha verified via API); decision artifact separates candidate_produced from independent_acceptance",
+   "P3": "exception states PROPOSED/APPROVED/REJECTED/APPROVED_WITH_CONDITIONS/SUPERSEDED (+CONDITIONS_VERIFIED); scope must equal applied rule+resources; conditional approval effective only after a later CONDITIONS_VERIFIED; nothing approved",
+   "P4": "trusted manifest-pinned gate unchanged; no pull_request_target used; base-controlled closure = UA-3 (exact settings) ; residual documented",
+   "exception_reconciliation": {
+    "EX-01": {
+     "register": "PROPOSED",
+     "rule": "NIST.800.53.R5-S3DefaultEncryptionKMS",
+     "suppression": "infra/aws-cdk/lib/secure-storage-stack.ts:60",
+     "scope": "NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689",
+     "provenance": "register row + suppression reason cite EX-01 and ADR-0002; no approver recorded anywhere",
+     "state": "PROPOSED"
+    },
+    "EX-02": {
+     "register": "PROPOSED",
+     "rule": "NIST.800.53.R5-S3BucketReplicationEnabled",
+     "suppression": "infra/aws-cdk/lib/secure-storage-stack.ts:65,72",
+     "scope": "NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50",
+     "provenance": "register row + two suppression reasons cite EX-02; no approver recorded",
+     "state": "PROPOSED"
+    },
+    "EX-03": {
+     "register": "PROPOSED",
+     "rule": "AwsSolutions-IAM5",
+     "suppression": "infra/aws-cdk/lib/network-database-stack.ts:241-246",
+     "scope": "AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC",
+     "provenance": "register row + suppression reason cite EX-03; no approver recorded",
+     "state": "PROPOSED"
+    },
+    "EX-04": {
+     "register": "PROPOSED",
+     "state": "UNRESOLVED (left open per Ian 21:50 P3)",
+     "suppression": "infra/aws-cdk/lib/network-database-stack.ts:226-234",
+     "scope": "AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF"
+    }
+   },
+   "residual": [
+    "R6: until UA-3 the merge-eligibility job definition lives in the candidate's workflow file (a candidate could delete the verify step); the manifest makes any verifier change visible and the gate rejects it when the step runs",
+    "F7: the owner login onnxscibroccoli is also the PR author and the account the agents push with; the decision comment proves the account, not the person. Ian should post decisions himself; a dedicated owner/reviewer account removes this ambiguity"
+   ]
+  },
+  "round9_pr32_repairs": {
+   "requested": "relayed 22:06 EDT: PR #32 CHANGES REQUIRED on 5a75d9c (D1/D2/D3 + nits)",
+   "D1": "PR author excluded from all attestations; workflow_run must be a completed integration-gate run (name+path) of candidate/attested tested merge, all jobs green except fail-closed merge-eligibility, final-summary green",
+   "D2": "owner-login-bound, NOT owner-authenticated; author/shared-account owner decisions = INSUFFICIENT_INDEPENDENCE (blocking); O-5 recorded as UA-6",
+   "D3": "pin must be an independently reviewed gate commit != candidate (verify_trusted_gate --check-pin, API-verified review); otherwise TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE; evidence/acceptance protection added to UA-3",
+   "pin_state": "manifest pins the gate commit (parent of the candidate), independent_review null -> UNVERIFIED by construction until a qualifying review exists",
+   "path_to_eligible": [
+    "UA-3 (main + evidence/acceptance protected)",
+    "UA-6/O-5 separate owner identity in owner_logins",
+    "independent reviewer (Write, allow-listed) approves the gate commit; manifest re-pinned with independent_review",
+    "that reviewer approves PR #7 at the exact candidate",
+    "separate owner posts EXCEPTION attestations EX-01..EX-04 (EX-04 unresolved today); owner or reviewer posts AC4/AC5",
+    "re-run integration-gate"
+   ]
+  }
+ },
+ "checkpoints": [
+  {
+   "tag": "checkpoint/eb42b23",
+   "tag_object": "8535ec9fba045ec4461d8fefee53093c4ccd4f10",
+   "commit": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+   "branch": "acceptance/vertical-slice",
+   "pr": 26,
+   "created": "2026-10-28T20:00:00-04:00",
+   "pushed": true,
+   "meaning": "Bounded checkpoint of PR #26's head (C1-C4 repairs 17cfaea, assurance report 35674c4, timestamp fix eb42b23). Annotated tag; it records a point in history only. It is not a review, not an approval and not integrated. Do not move or rewrite it."
+  }
+ ]
+}

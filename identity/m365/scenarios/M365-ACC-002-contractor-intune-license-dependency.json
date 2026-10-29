@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ACC-002",
+  "type": "access-troubleshooting",
+  "title": "Contractor cannot enroll in Intune: license group disables the Entra ID P1 prerequisite",
+  "narrative": "A vendor engineer signs in fine (no sign-in errors) but Company Portal enrollment fails with a licensing error. GRP-LIC-E3-CONTRACTOR was cloned from a cost-reduction template that disables AAD_PREMIUM; INTUNE_A depends on it in the lab model, so group licensing reports a dependency violation and the Intune workload is not usable. The active Intune reporting-delay advisory (IN-LAB-0004) is recorded but is not the cause.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000006",
+    "workload": "intune",
+    "reportedUtc": "2026-10-28T15:05:00Z",
+    "signIns": [
+      {"id": "SI-LAB-3201", "timeUtc": "2026-10-28T15:00:00Z", "appDisplayName": "Company Portal (synthetic)", "errorCode": 0, "deviceId": null}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "sign-in-log", "ref": "AUD-LAB-3301", "source": "Entra sign-in log SI-LAB-3201 (synthetic)"},
+    {"category": "diagnosis", "ref": "AUD-LAB-3302", "source": "licenseDetails + group licensing error report (synthetic)"},
+    {"category": "resolution", "ref": "CHG-LAB-3303", "source": "Change: re-enable AAD_PREMIUM in GRP-LIC-E3-CONTRACTOR (synthetic)"}
+  ],
+  "expected": {"verdict": "ROOT_CAUSE_IDENTIFIED", "findings": ["LIC-PREREQ", "LIC-WORKLOAD-MISSING", "SH-ADVISORY"]}
+}

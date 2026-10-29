@@ -1,0 +1,4 @@
+# step=reset_lab_restore_tamper kind=setup expect=zero started=2026-10-28T18:01:35Z
+# cmd: dropdb --if-exists lab_restore_tamper 
+NOTICE:  database "lab_restore_tamper" does not exist, skipping
+# exit_code=0 duration_ms=13

@@ -1,0 +1,12 @@
+{
+  "run_label": "integration-offline-20261028T180134Z",
+  "mode": "offline",
+  "overall": "PASS",
+  "steps": 39,
+  "passed": 39,
+  "failed": 0,
+  "finished_utc": "2026-10-28T18:01:36Z",
+  "commands_tsv": "COMMANDS.tsv",
+  "hashes": "SHA256SUMS",
+  "artifact_hashes": "ARTIFACTS.sha256"
+}

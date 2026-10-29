@@ -1,0 +1,10 @@
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:19.221170Z","event":"baseline_healthy","detail":{"poll_seq":1,"poll_finished_utc":"2026-10-28T18:18:19.070434Z","exit_code":0,"overall":"HEALTHY","failed_checks":""}}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:20.726332Z","event":"failure_injected","detail":{"fault":"core-ledger PostgreSQL killed: pg_ctl stop -m immediate","component":"postgres:55432"}}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:24.310081Z","event":"detected","detail":{"poll_seq":2,"poll_finished_utc":"2026-10-28T18:18:24.142332Z","exit_code":1,"overall":"UNHEALTHY","failed_checks":"probe:core-ledger-db-tcp"}}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:24.312345Z","event":"escalation_simulated","detail":{"severity":"SEV1 (core ledger unavailable)","notified":"DB on-call, incident commander, service desk lead","channel":"SIMULATED - no message sent"}}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:24.488523Z","event":"diagnosed","detail":{"root_cause":"core-ledger PostgreSQL postmaster not running (immediate shutdown); vendor API tier and DNS healthy","evidence":"diag_* steps in COMMANDS.tsv"}}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:24.490650Z","event":"restore_started","detail":"runbook: start PostgreSQL, let crash recovery complete, verify data, confirm via monitor"}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:24.604725Z","event":"db_restarted","detail":"pg_ctl start returned 0"}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:24.757508Z","event":"data_integrity_verified","detail":"lab.accounts, lab.ledger_entries, lab.account_balances row counts and md5 identical to baseline"}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:29.319266Z","event":"service_restored","detail":{"poll_seq":3,"poll_finished_utc":"2026-10-28T18:18:29.213946Z","exit_code":0,"overall":"HEALTHY","failed_checks":""}}
+{"simulation":"SIMULATION","ts":"2026-10-28T18:18:34.233374Z","event":"monitoring_stopped","detail":"scenario complete; stack torn down"}

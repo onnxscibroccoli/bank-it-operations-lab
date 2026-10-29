@@ -1,0 +1,15 @@
+{
+  "status": "CURRENT",
+  "harness": "tests/integration/postgres/lib.sh (reason-asserting, v2)",
+  "run_label": "ci-service-40741329107-1",
+  "mode": "service",
+  "overall": "PASS",
+  "expected_cases": 36,
+  "rows": 36,
+  "passed": 36,
+  "failed": 0,
+  "errors": 0,
+  "not_run": 0,
+  "negative_faults_detected": 6,
+  "finished_utc": "2026-10-28T18:02:33Z"
+}
