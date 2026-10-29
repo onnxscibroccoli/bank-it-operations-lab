@@ -1,0 +1,10 @@
+{
+  "status": "HISTORICAL-KNOWN-INVALID",
+  "harness": "v1 (exit-code only; superseded)",
+  "github_run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/40630856041",
+  "reason": "Harness v1 recorded N01, N04, N05 and N06 as PASS, but they failed for unrelated reasons (transaction_timeout version mismatch / missing relation). Positive steps P04-P06 and P09-P11 failed genuinely. Kept for the record; do not count as evidence of a working restore or of fault detection.",
+  "false_pass_steps": ["N01_restore_truncated_dump", "N04_fk_enforced_after_restore", "N05_restore_over_existing_objects", "N06_tamper_detected"],
+  "genuine_negative_steps": ["N02_list_garbage_archive", "N03_restore_missing_database"],
+  "files_not_modified": ["SUMMARY.json", "SUMMARY.md", "COMMANDS.tsv", "logs/*", "SHA256SUMS"],
+  "marked_utc": "2026-10-28"
+}

@@ -1,0 +1,6 @@
+SIMULATION mock on http://127.0.0.1:18099 scenario=normal
+127.0.0.1 - - [28/Oct/2026 20:05:46] "GET /v1/health HTTP/1.1" 200 -
+127.0.0.1 - - [28/Oct/2026 20:05:46] "GET /v1/health HTTP/1.1" 200 -
+127.0.0.1 - - [28/Oct/2026 20:05:51] "GET /v1/health HTTP/1.1" 200 -
+127.0.0.1 - - [28/Oct/2026 20:05:51] "GET /v1/health HTTP/1.1" 200 -
+127.0.0.1 - - [28/Oct/2026 20:05:56] "GET /v1/health HTTP/1.1" 200 -

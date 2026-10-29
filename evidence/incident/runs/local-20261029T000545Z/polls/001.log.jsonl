@@ -1,0 +1,6 @@
+{"component":"healthcheck","event":"config.loaded","expected":3,"level":"INFO","probes":3,"ts":"2026-10-29T00:05:46.640603Z"}
+{"component":"healthcheck","errors":[],"event":"host.collected","level":"INFO","metrics_ok":6,"metrics_total":6,"ts":"2026-10-29T00:05:46.642816Z"}
+{"component":"healthcheck","detail":"HTTP 200","event":"probe.result","kind":"http","latency_ms":3.01,"level":"INFO","probe":"vendor-api-http","status":"OK","target":"http://127.0.0.1:18099/v1/health","ts":"2026-10-29T00:05:46.645960Z"}
+{"component":"healthcheck","detail":"connected","event":"probe.result","kind":"tcp","latency_ms":0.493,"level":"INFO","probe":"core-ledger-db-tcp","status":"OK","target":"127.0.0.1:55432","ts":"2026-10-29T00:05:46.646583Z"}
+{"component":"healthcheck","detail":"2 answers","event":"probe.result","kind":"dns","latency_ms":0.846,"level":"INFO","probe":"resolver-dns","status":"OK","target":"localhost","ts":"2026-10-29T00:05:46.647527Z"}
+{"component":"healthcheck","event":"health.decision","exit_code":0,"failed_checks":[],"http_status":200,"level":"INFO","overall":"HEALTHY","ts":"2026-10-29T00:05:46.649931Z"}

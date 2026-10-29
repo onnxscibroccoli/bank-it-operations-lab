@@ -1,0 +1,7 @@
+# step=N01_restore_truncated_dump kind=negative expect=nonzero started=2026-10-28T18:02:12Z
+# reason_regex: could not read from input file|unexpected end of file
+# cmd: restore lab_restore_trunc /workspace/bank-it-operations-lab-ci/evidence/postgres/runs/local-offline-v2-20261028T180208Z/artifacts/truncated.dump
+# --- output ---
+pg_restore: error: could not read from input file: end of file
+# --- end output ---
+# exit_code=1 duration_ms=49
