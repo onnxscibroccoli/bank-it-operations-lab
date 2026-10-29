@@ -1,0 +1,13 @@
+# step=S05_reset_databases kind=setup expect=zero started=2026-10-28T18:02:10Z
+# reason_regex: <none>
+# cmd: reset_databases
+# --- output ---
+NOTICE:  database "lab_source" does not exist, skipping
+NOTICE:  database "lab_restore_ok" does not exist, skipping
+NOTICE:  database "lab_restore_plain" does not exist, skipping
+NOTICE:  database "lab_restore_trunc" does not exist, skipping
+NOTICE:  database "lab_restore_dup" does not exist, skipping
+NOTICE:  database "lab_restore_tamper" does not exist, skipping
+NOTICE:  database "lab_db_does_not_exist" does not exist, skipping
+# --- end output ---
+# exit_code=0 duration_ms=198

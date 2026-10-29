@@ -1,0 +1,12 @@
+run_label=local-offline-20261028T041038Z
+mode=offline
+date_utc=2026-10-28T04:10:38Z
+uname=Linux 6.12.94+ x86_64
+pg_bin=/tmp/pgenv/bin
+pg_dump=pg_dump (PostgreSQL) 16.15
+pg_restore=pg_restore (PostgreSQL) 16.15
+psql=psql (PostgreSQL) 16.15
+git_sha=7f50348bf1370381615eaed91c02607fe41de2f5
+github_run_id=
+github_run_attempt=
+pghost_kind=unix-socket-only

@@ -1,0 +1,5 @@
+$ python3 identity/entra/ca_validator.py identity/entra/policies --baseline identity/entra/baseline.json --json-out evidence/entra/runs/local-offline-20261028T150359Z/validation-report.json --quiet
+--- stdout ---
+--- stderr ---
+overall=PASS exit=0
+--- exit_code=0 expected=0 started_utc=2026-10-28T15:03:59Z duration_ms=28 ---

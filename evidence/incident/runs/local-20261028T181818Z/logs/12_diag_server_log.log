@@ -1,0 +1,7 @@
+2026-10-28 14:18:18.549 EDT [1930219] LOG:  starting PostgreSQL 17.10 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit
+2026-10-28 14:18:18.549 EDT [1930219] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-10-28 14:18:18.551 EDT [1930219] LOG:  listening on Unix socket "$WORK/.s.PGSQL.55432"
+2026-10-28 14:18:18.554 EDT [1930222] LOG:  database system was shut down at 2026-10-28 14:18:18 EDT
+2026-10-28 14:18:18.556 EDT [1930219] LOG:  database system is ready to accept connections
+2026-10-28 14:18:20.731 EDT [1930219] LOG:  received immediate shutdown request
+2026-10-28 14:18:20.737 EDT [1930219] LOG:  database system is shut down
