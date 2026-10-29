@@ -1,0 +1,1 @@
+# step=P01_pg_dump_custom NOT RUN: dependency S09_fingerprint_source_sanity is NOT_RUN

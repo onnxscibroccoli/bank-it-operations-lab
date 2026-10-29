@@ -1,0 +1,1 @@
+# step=S_N01_make_truncated_dump NOT RUN: dependency P01_pg_dump_custom is NOT_RUN

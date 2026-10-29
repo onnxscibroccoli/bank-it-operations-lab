@@ -1,0 +1,4 @@
+# step=server_ready kind=setup expect=zero started=2026-10-28T04:10:38Z
+# cmd: pg_isready -t 30 
+/tmp/tmp.AI1xwYrw0s/sock:54329 - accepting connections
+# exit_code=0 duration_ms=7

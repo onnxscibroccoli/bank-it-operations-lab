@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-OFF-001",
+  "type": "offboarding",
+  "title": "Involuntary termination of a synced commercial lender under legal hold",
+  "narrative": "HR and Legal schedule a 10:00 termination meeting. At 09:58 IT disables the AD DS account (source of authority) and revokes Entra sessions, then removes MFA methods. Legal requires a litigation hold, so the hold is placed and OneDrive transferred to the manager while the E3 license is still assigned. The corporate laptop is wiped after collection; the personal iPhone is only retired (selective wipe). Audit evidence is exported last.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000004",
+    "approvalRef": "HR-LAB-2001",
+    "terminationType": "involuntary",
+    "legalHold": true,
+    "runbook": [
+      {"step": "DISABLE_ONPREM_AD"},
+      {"step": "REVOKE_SESSIONS"},
+      {"step": "REMOVE_AUTH_METHODS"},
+      {"step": "SET_LITIGATION_HOLD"},
+      {"step": "TRANSFER_ONEDRIVE"},
+      {"step": "RETIRE_DEVICE", "deviceId": "0d110000-0000-4000-8000-000000000005"},
+      {"step": "WIPE_DEVICE", "deviceId": "0d110000-0000-4000-8000-000000000004"},
+      {"step": "REMOVE_FROM_GROUPS"},
+      {"step": "REMOVE_LICENSES"},
+      {"step": "EXPORT_AUDIT_EVIDENCE"}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "approval", "ref": "HR-LAB-2001", "source": "HR leaver ticket + Legal hold notice (synthetic)"},
+    {"category": "identity-change", "ref": "AUD-LAB-2101", "source": "AD DS security log 4725 + Entra audit Update user (synthetic)"},
+    {"category": "session-revocation", "ref": "AUD-LAB-2102", "source": "Entra audit log: Invalidate all refresh tokens (synthetic)"},
+    {"category": "device-action", "ref": "AUD-LAB-2103", "source": "Intune device actions report: retire DANA-IPHONE, wipe NWL-LT-0404 (synthetic)"},
+    {"category": "mailbox-retention", "ref": "AUD-LAB-2104", "source": "Exchange admin audit: Set-Mailbox LitigationHoldEnabled (synthetic)"},
+    {"category": "license-removal", "ref": "AUD-LAB-2105", "source": "Entra audit log: Remove member from group GRP-LIC-E3-STAFF (synthetic)"}
+  ],
+  "expected": {"verdict": "APPROVED", "findings": []}
+}

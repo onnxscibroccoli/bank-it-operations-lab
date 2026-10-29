@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-OFF-002",
+  "type": "offboarding",
+  "title": "Retiring employee: draft runbook with ordering and BYOD-wipe defects (rejected at review)",
+  "narrative": "A service-desk technician drafted the leaver runbook for a cloud-only retail-banking employee. Peer review rejects it: sessions are revoked before the account is disabled, licenses are removed before the mailbox is converted to shared and OneDrive is transferred (starting the deletion clock), the personal Android phone is factory-wiped instead of retired, and the corporate laptop has no action at all.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000009",
+    "approvalRef": "HR-LAB-2002",
+    "terminationType": "voluntary",
+    "legalHold": false,
+    "runbook": [
+      {"step": "REVOKE_SESSIONS"},
+      {"step": "DISABLE_SIGNIN"},
+      {"step": "REMOVE_AUTH_METHODS"},
+      {"step": "REMOVE_LICENSES"},
+      {"step": "CONVERT_MAILBOX_SHARED"},
+      {"step": "TRANSFER_ONEDRIVE"},
+      {"step": "WIPE_DEVICE", "deviceId": "0d110000-0000-4000-8000-000000000008"},
+      {"step": "EXPORT_AUDIT_EVIDENCE"}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "approval", "ref": "HR-LAB-2002", "source": "HR leaver ticket (synthetic)"},
+    {"category": "identity-change", "ref": "AUD-LAB-2201", "source": "Draft only; not executed (synthetic)"},
+    {"category": "session-revocation", "ref": "AUD-LAB-2202", "source": "Draft only; not executed (synthetic)"},
+    {"category": "device-action", "ref": "AUD-LAB-2203", "source": "Draft only; not executed (synthetic)"},
+    {"category": "mailbox-retention", "ref": "AUD-LAB-2204", "source": "Draft only; not executed (synthetic)"},
+    {"category": "license-removal", "ref": "AUD-LAB-2205", "source": "Draft only; not executed (synthetic)"}
+  ],
+  "expected": {"verdict": "REJECTED", "findings": ["OFF-BYOD-WIPE", "OFF-LICENSE-BEFORE-RETENTION", "OFF-MISSING-STEP", "OFF-REVOKE-BEFORE-DISABLE"]}
+}

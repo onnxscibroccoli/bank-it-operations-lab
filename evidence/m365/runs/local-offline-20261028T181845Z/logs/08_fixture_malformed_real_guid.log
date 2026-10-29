@@ -1,0 +1,5 @@
+$ python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-real-guid.json --quiet
+--- stdout ---
+--- stderr ---
+MALFORMED SYN-001: malformed-real-guid.json[0].input.userId: '72f988bf-86f1-41af-91ab-2d7cd011db47' is not a synthetic lab GUID (fail-closed, nothing evaluated)
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:18:45Z duration_ms=33 ---

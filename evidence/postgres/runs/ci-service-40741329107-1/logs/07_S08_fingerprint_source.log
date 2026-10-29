@@ -1,0 +1,9 @@
+# step=S08_fingerprint_source kind=setup expect=zero started=2026-10-28T18:02:31Z
+# reason_regex: ^lab\.ledger_entries\|1000\|[0-9a-f]{32}$
+# cmd: fingerprint lab_source /home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-service-40741329107-1/fingerprints/source.txt
+# --- output ---
+lab.accounts|50|18ce2a21b6db0941bbafafc7100c664e
+lab.ledger_entries|1000|6c98ddff215606b5d030548b19a0303c
+lab.account_balances|50|0014b6daf7f178c739d3a80eea35f469
+# --- end output ---
+# exit_code=0 duration_ms=22

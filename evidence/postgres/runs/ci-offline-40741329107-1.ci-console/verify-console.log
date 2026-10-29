@@ -1,0 +1,2 @@
+artifacts: checked against ARTIFACTS.sha256
+evidence/postgres/runs/ci-offline-40741329107-1: cases=38 positive=11 negative=6 rows=38 problems=0 -> VERIFIED

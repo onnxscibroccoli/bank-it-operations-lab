@@ -1,0 +1,6 @@
+# step=S07_seed_source kind=setup expect=zero started=2026-10-28T18:02:10Z
+# reason_regex: <none>
+# cmd: psql -X -v ON_ERROR_STOP=1 -v VERBOSITY=verbose -q -d lab_source -f /workspace/bank-it-operations-lab-ci/tests/integration/postgres/seed.sql
+# --- output ---
+# --- end output ---
+# exit_code=0 duration_ms=68

@@ -1,0 +1,7 @@
+# step=ST05_missing_executable kind=negative expect=nonzero started=2026-10-28T18:02:13Z
+# reason_regex: ^injected fault: disk full$
+# cmd: definitely-not-installed-pg-tool --version
+# --- output ---
+harness: executable or function not found: definitely-not-installed-pg-tool
+# --- end output ---
+# exit_code=127 duration_ms=1

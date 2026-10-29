@@ -1,0 +1,4 @@
+# step=N04_setup_table_present kind=setup expect=zero started=2026-10-28T18:01:36Z
+# cmd: psql -X -v ON_ERROR_STOP=1 -q -d lab_restore_ok -Atc select\ \'lab.ledger_entries\'::regclass 
+lab.ledger_entries
+# exit_code=0 duration_ms=5

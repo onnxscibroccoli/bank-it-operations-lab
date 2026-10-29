@@ -1,0 +1,14 @@
+started_utc	exit_code	duration_s	log	cwd	command
+2026-10-28T15:00:26Z	0	3	logs/01-pass0-tsc.log	infra/aws-cdk	npx tsc --noEmit
+2026-10-28T15:00:29Z	1	8	logs/02-pass0-cdk-synth.log	infra/aws-cdk	npx cdk synth --no-lookups --no-version-reporting --path-metadata false --quiet
+2026-10-28T15:01:20Z	0	4	logs/03-pass1-tsc.log	infra/aws-cdk	npx tsc --noEmit
+2026-10-28T15:01:24Z	1	9	logs/04-pass1-cdk-synth.log	infra/aws-cdk	npx cdk synth --no-lookups --no-version-reporting --path-metadata false --quiet
+2026-10-28T15:02:04Z	0	3	logs/05-pass2-tsc.log	infra/aws-cdk	npx tsc --noEmit
+2026-10-28T15:02:07Z	0	13	logs/06-pass2-cdk-synth.log	infra/aws-cdk	npx cdk synth --no-lookups --no-version-reporting --path-metadata false --quiet
+2026-10-28T15:05:31Z	0	3	logs/07-pass3-tsc.log	infra/aws-cdk	npx tsc --noEmit
+2026-10-28T15:05:34Z	0	14	logs/08-pass3-jest.log	infra/aws-cdk	npx jest --ci --json --outputFile=../../evidence/aws/aws-remediation-vpc-rds/jest-results.json --verbose
+2026-10-28T15:05:48Z	0	8	logs/09-pass3-cdk-synth.log	infra/aws-cdk	npx cdk synth --no-lookups --no-version-reporting --path-metadata false --quiet
+2026-10-28T15:05:56Z	0	1	logs/10-env-versions.log	infra/aws-cdk	bash -c node --version; npm --version; npx cdk --version; npm ls aws-cdk-lib cdk-nag constructs --depth=0; env | grep -c "^AWS_ACCESS_KEY_ID=" || true
+2026-10-29T01:18:09Z	0	2	logs/11-pass4-tsc.log	/workspace/bank-lab/infra/aws-cdk	npx tsc --noEmit
+2026-10-29T01:18:11Z	0	12	logs/12-pass4-jest.log	/workspace/bank-lab/infra/aws-cdk	npx jest --ci --json --outputFile=../../evidence/aws/aws-remediation-vpc-rds/jest-results.json --verbose
+2026-10-29T01:18:23Z	0	6	logs/13-pass4-cdk-synth.log	/workspace/bank-lab/infra/aws-cdk	npx cdk synth --no-lookups --no-version-reporting --path-metadata false --quiet

@@ -1,0 +1,14 @@
+id	kind	expect	modes	fail_class	reason_regex
+# Harness self-test cases. Several are DESIGNED to be non-PASS; selftest_harness.sh asserts each verdict.
+ST01_control_expected_fault	negative	nonzero	selftest	-	^injected fault: disk full$
+ST02_unexpected_success	negative	nonzero	selftest	-	^injected fault: disk full$
+ST03_wrong_reason	negative	nonzero	selftest	-	^injected fault: disk full$
+ST04_version_mismatch_masquerade	negative	nonzero	selftest	-	^injected fault: disk full$
+ST05_missing_executable	negative	nonzero	selftest	-	^injected fault: disk full$
+ST06_setup_failure	setup	zero	selftest	setup_failure	-
+ST07_dependent_on_failed_setup	negative	nonzero	selftest	-	^injected fault: disk full$
+ST08_pipeline_failure_hidden_by_tail	positive	zero	selftest	-	-
+ST09_positive_wrong_output	positive	zero	selftest	-	^rows=1000$
+ST10_declared_but_never_run	negative	nonzero	selftest	-	^injected fault: disk full$
+ST11_run_twice	positive	zero	selftest	-	-
+ST12_version_gate	setup	zero	selftest	version_mismatch	^client_major=[0-9]+ server_major=[0-9]+ match$

@@ -1,0 +1,9 @@
+v20.19.2
+11.21.1
+2.1146.1 (build 8c52d44)
+bank-it-lab-aws-cdk@0.1.0 /workspace/bank-it-ops-remediation/infra/aws-cdk
+├── aws-cdk-lib@2.275.0
+├── cdk-nag@2.38.2
+└── constructs@10.8.1
+
+0

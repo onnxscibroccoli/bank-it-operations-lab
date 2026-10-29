@@ -1,0 +1,15 @@
+{
+  "status": "CURRENT",
+  "harness": "tests/integration/postgres/lib.sh (reason-asserting, v2)",
+  "run_label": "ci-mismatch-control-40741329107-1",
+  "mode": "service",
+  "overall": "FAIL",
+  "expected_cases": 36,
+  "rows": 36,
+  "passed": 2,
+  "failed": 0,
+  "errors": 1,
+  "not_run": 33,
+  "negative_faults_detected": 0,
+  "finished_utc": "2026-10-28T18:02:30Z"
+}

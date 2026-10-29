@@ -1,0 +1,11 @@
+{
+  "description": "For each negative step in tests/integration/postgres/run_restore_scenario.sh, the error text that proves the step failed for the intended reason. A non-zero exit whose log does not match is a FALSE PASS (the step failed, but for an unrelated reason such as a setup error). Checked by evidence/shared/validate_evidence.py postgres-negatives.",
+  "steps": {
+    "N01_restore_truncated_dump": "could not read from input file|unexpected end of file|end of file",
+    "N02_list_garbage_archive": "does not appear to be a valid archive|input file is too short",
+    "N03_restore_missing_database": "database \"lab_db_does_not_exist\" does not exist",
+    "N04_fk_enforced_after_restore": "violates foreign key constraint",
+    "N05_restore_over_existing_objects": "already exists",
+    "N06_tamper_detected": "^[-+]lab\\.ledger_entries\\|"
+  }
+}
