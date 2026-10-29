@@ -5,8 +5,8 @@
  "deadline": "2026-10-29T00:00:00-04:00",
  "deadline_tz": "America/New_York (EDT, UTC-4)",
  "remaining_window": {
-  "as_of": "2026-10-28T21:14:00-04:00",
-  "remaining": "2h45m",
+  "as_of": "2026-10-28T21:24:00-04:00",
+  "remaining": "2h35m",
   "note": "computed at commit time"
  },
  "base": {
@@ -144,16 +144,24 @@
    {
     "id": "AC1",
     "condition": "An independent review (human or an independent reviewer such as the external ChatGPT review) approves the EXACT candidate SHA, with reviewer evidence bound to that SHA through GitHub review or commit provenance. Self-review by the author or this integration agent does not count. (Reworded per PR #27 C6; previously 'independent human review'.)",
-    "status": "UNMET",
-    "detail": "No approval exists for any PR #7 head. Partial evidence: PR #14 @ eb8d259 (review notes; independence asserted, same GitHub account) verifies PR #2's harness v2 at 2aac93c/e7399fb, and counts toward AC1 ONLY for PR #2's harness, not for PR #7's head. The same notes REQUEST CHANGES on integrated PR #5. PR #27 reviewed PR #26 @ 181bcdd (CHANGES REQUIRED), not PR #7.",
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "No APPROVED review by a non-author account exists on any PR #7 head. PR #30 (CHANGES REQUIRED on b908a66) is a same-account findings note.",
     "detail_round3": "Review packet for 5f159f1 prepared; NOT YET REQUESTED; no verdict exists.",
-    "detail_round4": "Final review packet for 7fe6d72 prepared; NOT YET REQUESTED; no verdict exists."
+    "detail_round4": "Final review packet for 7fe6d72 prepared; NOT YET REQUESTED; no verdict exists.",
+    "history": [
+     {
+      "status": "UNMET",
+      "detail": "No approval exists for any PR #7 head. Partial evidence: PR #14 @ eb8d259 (review notes; independence asserted, same GitHub account) verifies PR #2's harness v2 at 2aac93c/e7399fb, and counts toward AC1 ONLY for PR #2's harness, not for PR #7's head. The same notes REQUEST CHANGES on integrated PR #5. PR #27 reviewed PR #26 @ 181bcdd (CHANGES REQUIRED), not PR #7.",
+      "replaced": "2026-10-28 ~21:25 EDT (PR #30 F3/R6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility in each integration-gate run from the GitHub reviews API (scripts/ci/reviews.py, read-only GITHUB_TOKEN, job permission pull-requests: read): it holds only when an account OTHER than the PR author has an APPROVED review (its latest decisive review) whose commit_id is the exact candidate SHA, the PR head is still that SHA, and no non-author has CHANGES_REQUESTED on it. Same-account reviews (e.g. the onnxscibroccoli review notes PR #14/#28/#29/#30) can never satisfy AC1. MET for AC1 in this file is rejected by the gate and by --lint-tasks."
    },
    {
     "id": "AC2",
     "condition": "Security exceptions are recorded and approved by an owner",
     "status": "PARTIAL",
-    "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md and enforced by tests, but none is approved. PR #14 B5-1: the suppressions are already applied while the register says PROPOSED."
+    "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, all PROPOSED; none approved (UA-1). B5-1 is now enforced fail-closed: scripts/ci/check_exceptions.py (validate-all + merge-eligibility) requires every applied cdk-nag suppression to name a registered EX-NN with the same rule, and reports the 5 applied suppressions tied to non-APPROVED exceptions as a BLOCKING USER ACTION; merge-eligibility keeps AC2 and AC5 UNMET until the owner approves (or the suppressions are removed). The integrator does not and cannot approve them."
    },
    {
     "id": "AC3",
@@ -207,7 +215,7 @@
     "id": "AC5",
     "condition": "No unresolved blocking findings in integrated code",
     "status": "UNMET",
-    "detail": "Open blocking review findings on integrated code: PR #14 B5-1 (suppressions before approval) and B5-2 (KMS key-admin statement allows grant/key-policy escalation) on PR #5. Fixed here: the shared postgres-negatives reported OK on all-NOT_RUN runs (found in PR #26's ACCEPTANCE.md). PR #6 (B6-1/B6-2) stays excluded."
+    "detail": "B5-2 fixed in 80f01d63659b801434c1a9e050484abc8716adcd (KMS key admin scoped to role BankItLabKmsKeyAdmin / root user, no Create*/Put*, no CreateGrant; guard + negative control). B5-1: enforced as a blocking user action (see AC2), still open until UA-1. B5-3 (conflict with PR #1): resolved in code (PR #1 superseded by PR #5; bank-aws-001 SUPERSEDED); PR #1 stays open pending UA-4. PR #30 F1 (base not verified as main) and F3/R6 (self-asserted AC1, candidate grades itself) fixed in 4e6fef4f5d05a72378f0e4c5ec75154efe821710. PR #6 stays BLOCKED (B6-1, B6-2, B6-3). Earlier: shared postgres-negatives all-NOT_RUN fix."
    },
    {
     "id": "AC6",
@@ -364,7 +372,7 @@
    "status": "OPEN",
    "action": "Approve or reject the AWS security exceptions EX-01..EX-04 in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, and the cdk-nag suppressions that are already applied for them (PR #14 B5-1).",
    "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
-   "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded.",
+   "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded. | 2026-10-28 21:25 EDT: scripts/ci/check_exceptions.py reports 5 applied suppressions tied to PROPOSED EX-01..EX-04 as a BLOCKING USER ACTION; merge-eligibility keeps AC2/AC5 UNMET until this is decided.",
    "smallest_permission": "Owner decision (comment on PR #5 or edit SECURITY_EXCEPTIONS.md approval fields).",
    "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
    "blocks": [
@@ -875,6 +883,31 @@
    },
    "acceptance_effect": "None on AC1-AC5 for b908a66. AC3 for this HEAD is computed per run by merge-eligibility and is not a review of b908a66; a later candidate would need its own freeze, main-validation and review.",
    "actions": "recorded on evidence/acceptance (outside the tree) and in the integrator's report, not here, to avoid the self-reference loop"
+  },
+  "round6_pr30_repairs": {
+   "requested": "parent agent steering 2026-10-28 21:15 EDT: apply PR #30 (independent verdict CHANGES REQUIRED on b908a66) repairs, then freeze a new candidate",
+   "review_of": "b908a669b302ff37f2c2ca79ed828f65e5a9f432 (PR #30 head eb82d7d, same GitHub account: not an AC1 approval)",
+   "started_from_head": "a29f4d9bf65c332c31236e1e09a1e047312aaa31 (b908a66 + coverage delta 51e404c, a29f4d9)",
+   "fixes": {
+    "B5-2": "80f01d63659b801434c1a9e050484abc8716adcd",
+    "F1": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "F3/R6": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "B5-1": "4e6fef4f5d05a72378f0e4c5ec75154efe821710 (check_exceptions.py) + this commit (records)",
+    "N1": "this commit (modules.json orgs-security reason B6-3)",
+    "B5-3": "this commit (records: resolved in code; PR #1 open pending UA-4)"
+   },
+   "trusted_gate": {
+    "pinned_sha": "4e6fef4f5d05a72378f0e4c5ec75154efe821710",
+    "rule": "merge-eligibility runs scripts/ci from main when main carries the gate scripts, else from the pinned SHA; the candidate's data is read with --root",
+    "residual": "on pull_request events the workflow file itself comes from the candidate merge, so a candidate could change the pin; only branch protection / a ruleset requiring this workflow from main (UA-3) closes that"
+   },
+   "not_done": [
+    "AC2/UA-1 owner approval of EX-01..EX-04 (owner only)",
+    "AC1 requires an APPROVED review by a different GitHub account",
+    "F2: CI runs validate-all --python-only; the full suite runs locally and its parts run as separate CI jobs",
+    "R5: main unprotected (UA-3)"
+   ],
+   "post_freeze_records": "evidence/acceptance branch (outside the tree)"
   }
  },
  "checkpoints": [

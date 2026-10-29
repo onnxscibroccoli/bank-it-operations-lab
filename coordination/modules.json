@@ -200,6 +200,11 @@
      "aws-cdk.yml:synth-and-test"
     ],
     "proposed": []
+   },
+   "review_findings": {
+    "B5-1": "enforced: scripts/ci/check_exceptions.py; applied suppressions tied to non-APPROVED EX-01..EX-04 are a blocking user action (UA-1); AC2/AC5 stay UNMET until the owner decides",
+    "B5-2": "fixed in 80f01d63659b801434c1a9e050484abc8716adcd (least-privilege-key.ts KeyAdministrationByKeyAdminRoleOnly)",
+    "B5-3": "resolved in code: PR #1's infra/aws-cdk is superseded by PR #5 (bank-aws-001 SUPERSEDED, superseded_by aws-cdk); PR #1 itself stays open pending UA-4"
    }
   },
   {
@@ -262,7 +267,7 @@
     "infra/orgs",
     "evidence/orgs"
    ],
-   "reason": "BLOCKED, not excluded: counted in the portfolio denominator. B6-1: infra/orgs/lib/org-cloudtrail-stack.ts TrailAccessLogsBucket sets serverAccessLogsPrefix without serverAccessLogsBucket, so it logs to itself (evidence/shared cfn-s3-selflog ERROR; same defect that superseded PR #1). B6-2: exempt-role SCP bypass (PR #14). Verified at PR #6 head e5e7f4604597c7e6e35e69bf0607fe0535d4cdab, 2026-10-28 21:10 EDT.",
+   "reason": "BLOCKED, not excluded: counted in the portfolio denominator. B6-1: infra/orgs/lib/org-cloudtrail-stack.ts TrailAccessLogsBucket sets serverAccessLogsPrefix without serverAccessLogsBucket, so it logs to itself (evidence/shared cfn-s3-selflog ERROR; same defect that superseded PR #1). B6-2: exempt-role SCP bypass (PR #14). B6-3: the plan asked for a Terraform track and PR #6 delivers CDK only; Terraform coverage is MISSING. It is not descoped (descoping needs an owner decision), so fixing B6-1/B6-2 alone does not admit PR #6 (PR #30 N1). Verified at PR #6 head e5e7f4604597c7e6e35e69bf0607fe0535d4cdab, 2026-10-28 21:10 EDT.",
    "category": "blocked",
    "delivery_location": [
     "infra/orgs"
@@ -294,7 +299,12 @@
     "source": "PR #14 eb8d259 + PR #3 cfn-s3-selflog",
     "head_sha": "e5e7f4604597c7e6e35e69bf0607fe0535d4cdab",
     "unblock": "Give TrailAccessLogsBucket no server access logging (or a separate dedicated log bucket) with a cdk-nag suppression recorded as an exception; remove the exempt-role SCP bypass; re-run cfn-s3-selflog = 0 ERROR."
-   }
+   },
+   "blockers": [
+    "B6-1",
+    "B6-2",
+    "B6-3"
+   ]
   },
   {
    "id": "acceptance",

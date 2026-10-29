@@ -7,6 +7,27 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Round 6 (2026-10-28 ~21:25 EDT): repairs for PR #30 (CHANGES REQUIRED on `b908a66`)
+
+PR #30 (`review/candidate-b908a66` @ `eb82d7d`) is an independent-lane findings note on `b908a669b302ff37f2c2ca79ed828f65e5a9f432`, pushed by the same GitHub account as PR #7's author. Its verdict is CHANGES REQUIRED. **It is not an AC1 approval: a same-account review can never satisfy AC1.** AC1 now comes only from the GitHub reviews API and needs a different account.
+
+| Finding | Fix | Commit |
+|---|---|---|
+| **B5-2**: root `kms:Create*`/`kms:Put*` unconditioned (`least-privilege-key.ts:8/12`) | `KeyAdministrationByKeyAdminRoleOnly`:<br>• explicit admin actions, no wildcard, no `CreateGrant`<br>• `ArnEquals aws:PrincipalArn` = role `BankItLabKmsKeyAdmin` or the account root user (break-glass)<br>• `BoolIfExists kms:BypassPolicyLockoutSafetyCheck=false`<br>• `PutKeyPolicy` kept, so the key stays manageable<br><br>New guard `KMS_UNCONDITIONED_ADMIN`/`KMS_ADMIN_WILDCARD` with a negative control. Jest 36/36, cdk-nag 0 Non-Compliant. Evidence pass 4 is added; the pass-3 outputs are kept in `superseded/pass3-pre-B5-2/`, and SHA256SUMS is regenerated | `80f01d6` |
+| **B5-1**: suppressions applied while the register says PROPOSED | `scripts/ci/check_exceptions.py` (validate-all + merge-eligibility):<br>• every applied suppression must name a registered EX-NN with the same rule, otherwise ERROR<br>• suppressions tied to non-APPROVED exceptions are a **BLOCKING USER ACTION (UA-1)**, and merge-eligibility keeps **AC2 and AC5 UNMET** whatever `tasks.json` says<br><br>Nothing is approved here; that is UA-1 | `4e6fef4` |
+| **F1**: AC3 accepted a merge into any base | `provenance.py`:<br>• `base_sha` must equal the **current** `main` SHA read at runtime (`TRUSTED_MAIN_SHA`, from a checkout of `main` in the job)<br>• a moved PR base or a non-main base ref is INVALID<br><br>Regression: a local `--no-ff` merge into a non-main parent under the `candidate/main-validation-*` name is INVALID | `4e6fef4` |
+| **F3/R6**: AC1 self-asserted; the candidate grades itself | • AC1 is `COMPUTED_AT_RUNTIME` from `GET /pulls/{n}/reviews` (`reviews.py`, read-only `GITHUB_TOKEN`, `pull-requests: read`): an APPROVED review with `commit_id` = the exact candidate, from a non-author<br>• AC1 MET in `tasks.json` is rejected<br>• merge-eligibility runs `scripts/ci` from `main` (if `main` has the gate) or from pinned `TRUSTED_GATE_SHA=4e6fef4…`, and reads the candidate's data via `--root` | `4e6fef4` + workflow |
+| **N1**: PR #6's Terraform track (B6-3) was dropped | B6-3 restored in the `orgs-security` BLOCKED reason and in the README | records |
+| **B5-3**: conflict with PR #1 | Resolved in code (PR #1 superseded by PR #5; `bank-aws-001` SUPERSEDED). PR #1 stays open pending UA-4 | records |
+
+- **Residual R6:** on `pull_request` the workflow file comes from the candidate merge, so a candidate could edit the pin. Only branch protection, or a ruleset requiring this workflow from `main` (UA-3), closes that.
+- **Residual F2:** CI runs `validate-all --python-only`. The full suite runs locally, and its Node/PostgreSQL parts run as separate CI jobs.
+- **Residual R5:** `main` is unprotected (UA-3).
+- **New tests:**
+  - `scripts/ci/tests/test_provenance_base.py`: 6 tests
+  - `scripts/ci/tests/test_ac_repairs_b908a66.py`: 15 tests
+  - `scripts/ci/tests` now has 87 tests in total, run by validate-all and by the module-registry job
+
 ## Post-candidate coverage delta pt16u (2026-10-28 ~21:15 EDT): module coverage registry
 
 - **The review candidate is unchanged:** `b908a669b302ff37f2c2ca79ed828f65e5a9f432`. It was not re-frozen or replaced, and the Bank IT Lab PR Reviewer is reviewing it. The commits below sit on top of it on `overnight/integration`; they are not part of what is under review, and no approval of `b908a66` covers them.

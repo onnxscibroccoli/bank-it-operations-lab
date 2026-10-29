@@ -12,7 +12,7 @@ test-authoring defects (a CDK cyclic-dependency error in the two-bucket loop fix
 that also landed on the BackupSelection). Both were fixed (raw-template loop fixture; suppression scoped to the role).
 No control was weakened to make anything pass.
 
-## Pass 4 (post-review fix B5-2, 2026-10-28 ~21:30 EDT, integration branch)
+## Pass 4 (post-review fix B5-2, 2026-10-28 ~21:20 EDT, integration branch)
 
 This pass comes after the original 3-pass limit. It is a fix for independent-review finding B5-2 (PR #30 on candidate `b908a66`), not a nag-driven retry.
 

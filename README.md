@@ -19,7 +19,7 @@ The authoritative list, with paths, checks and status for every module, is `coor
 
 PR #1 (`bank-aws-001`) is **superseded by PR #5**. It is still open, and its description shows the old S3 self-logging
 design that PR #5 removed (ADR-0004). Only its CI workflow was carried over, adapted as `.github/workflows/aws-cdk.yml`.
-Closing PR #1 is user action UA-4. PR #6 is excluded until findings B6-1 and B6-2 are fixed.
+Closing PR #1 is user action UA-4. PR #6 is BLOCKED: B6-1 (trail access-logs bucket logs to itself), B6-2 (exempt-role SCP bypass) and B6-3 (the requested Terraform track is missing; PR #6 is CDK only). Fixing B6-1/B6-2 alone does not admit it.
 
 M365 counts:
 - **13** scenarios evaluated, each matching its expected verdict and finding codes.
@@ -35,8 +35,10 @@ M365 counts:
   - If the binaries are missing, the harness exits 3 (NOT_EXECUTED). That fails the job; it never passes.
 - **`final-summary`** always runs. It fails if any required job is missing, skipped, cancelled or failed, or if any required output is not `PASS`.
 - **`merge-eligibility`** always runs, for that run's identity: candidate SHA, base SHA and tested-merge SHA, from `scripts/ci/provenance.py`. It applies the PR #27 C6 policy:
-  - AC1, AC2, AC4 and AC5 must be MET and bound to that exact identity, with full 40-hex SHAs.
-  - AC3 is computed at runtime. It holds only for a merge of the candidate with `main` whose required checks all succeeded in that run.
+  - The gate code runs from `main` (once it carries the gate scripts) or from a pinned SHA, not from the candidate's own copy. The candidate's data is read with `--root`.
+  - AC1 is computed at runtime from the GitHub reviews API with the read-only `GITHUB_TOKEN`. It needs an APPROVED review on the exact candidate SHA by an account other than the PR author. **A same-account review can never satisfy AC1**, and AC1 "MET" in `tasks.json` is rejected.
+  - AC3 is computed at runtime. It holds only for a merge of the candidate into the **current** `main`, whose SHA is read at runtime; a merge into any other parent is invalid. All required checks must also have succeeded in that run.
+  - AC2, AC4 and AC5 must be MET and bound to that exact identity, with full 40-hex SHAs. Any applied cdk-nag suppression tied to a non-APPROVED exception (`scripts/ci/check_exceptions.py`) is a blocking user action (UA-1) and keeps AC2 and AC5 UNMET.
   - The decision is uploaded as the run artifact `acceptance-decision-<tested sha>`. It is never committed into the tree it describes.
   - AC6 (final human acceptance) is a separate gate.
 - **Merging into `main` is not automated here.** All third-party actions are pinned to full commit SHAs.

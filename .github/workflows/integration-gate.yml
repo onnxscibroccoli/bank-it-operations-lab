@@ -10,8 +10,12 @@ name: integration-gate
 #    a separate labeling-markers job (SIMULATION / PLAN_ONLY).
 #    They fail closed when the module is absent: a clean merge without these checks is not acceptance.
 # 5. final-summary (always runs): aggregates every job result; fails if any required job is missing, skipped or failed.
-# 6. merge-eligibility (always runs): PR #27 C6 policy check for this run's identity (candidate, base, tested merge from
-#    scripts/ci/provenance.py). AC3 is computed at runtime here; the decision is uploaded as an artifact, never committed.
+# 6. merge-eligibility (always runs): PR #27 C6 policy check for this run's identity (candidate, base == current main,
+#    tested merge from scripts/ci/provenance.py). AC1 (reviews API, non-author APPROVED on the exact SHA) and AC3 are
+#    computed at runtime; applied suppressions tied to unapproved exceptions block AC2/AC5 (B5-1). The gate code runs
+#    from main or a pinned SHA, not from the candidate (R6). The decision is uploaded as an artifact, never committed.
+#    Residual: on pull_request the workflow file itself comes from the candidate merge; only branch protection /
+#    a ruleset requiring this workflow from main (UA-3) closes that.
 #    Expected to FAIL while AC1, AC2, AC4 or AC5 are open.
 # No secrets, no cloud credentials, nothing is deployed, nothing is merged.
 on:
@@ -234,28 +238,76 @@ jobs:
     if: always()
     needs: [final-summary, user-actions, module-registry, offline-validation, aws-cdk, postgres, m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification, plan-only-assertions, incident-committed-runs, incident-fresh-run, incident-not-executed-negative, labeling-markers]
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read   # AC1: read the PR's reviews with the workflow's own GITHUB_TOKEN (read-only)
+    env:
+      # R6: the gate CODE does not come from the candidate. It runs from main when main carries the gate scripts,
+      # otherwise from this pinned commit (gate code of PR #30 repairs). Data (tasks.json, modules.json, exception
+      # register, synthesized templates) is read from the candidate checkout via --root.
+      TRUSTED_GATE_SHA: 4e6fef4f5d05a72378f0e4c5ec75154efe821710
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
           fetch-depth: 2   # the tested commit and its parents (PR synthetic merge / main-validation merge)
-      - name: Run identity (candidate, base, tested merge) for AC3 provenance
-        run: python3 scripts/ci/provenance.py --out "$RUNNER_TEMP/run-identity.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: Trusted checkout of main (current base, read at runtime)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: main
+          path: .trusted/main
+      - name: Trusted checkout of the pinned gate code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: ${{ env.TRUSTED_GATE_SHA }}
+          path: .trusted/pinned
+          sparse-checkout: scripts/ci
+      - name: Select trusted gate code; current main SHA
+        run: |
+          set -euo pipefail
+          main_sha=$(git -C .trusted/main rev-parse HEAD)
+          if [ -f .trusted/main/scripts/ci/merge_eligibility.py ] && [ -f .trusted/main/scripts/ci/reviews.py ] && [ -f .trusted/main/scripts/ci/check_exceptions.py ]; then
+            gate=.trusted/main; src=main; gsha=$main_sha
+          else
+            gate=.trusted/pinned; src=pinned; gsha=$(git -C .trusted/pinned rev-parse HEAD)
+            [ "$gsha" = "$TRUSTED_GATE_SHA" ] || { echo "::error::pinned gate checkout $gsha != $TRUSTED_GATE_SHA"; exit 1; }
+          fi
+          { echo "GATE=$GITHUB_WORKSPACE/$gate"; echo "GATE_SOURCE=$src"; echo "GATE_SHA=$gsha"; echo "TRUSTED_MAIN_SHA=$main_sha"; } >> "$GITHUB_ENV"
+          same=yes; diff -rq "$gate/scripts/ci" scripts/ci >/dev/null || same=no
+          { echo "### Trusted gate code"; echo; echo "| field | value |"; echo "|---|---|"
+            echo "| gate source | $src |"; echo "| gate SHA | \`$gsha\` |"; echo "| current main | \`$main_sha\` |"
+            echo "| candidate's scripts/ci identical to the gate copy | $same (informational; the candidate copy is not executed) |"; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Run identity (candidate, base == current main, tested merge) for AC3 provenance
+        run: python3 "$GATE/scripts/ci/provenance.py" --out "$RUNNER_TEMP/run-identity.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: AC1 from the GitHub reviews API (read-only GITHUB_TOKEN)
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 "$GATE/scripts/ci/reviews.py" --identity "$RUNNER_TEMP/run-identity.json" --out "$RUNNER_TEMP/reviews.json"
+      - name: Security exceptions vs applied suppressions (B5-1)
+        if: always()
+        run: python3 "$GATE/scripts/ci/check_exceptions.py" --root "$GITHUB_WORKSPACE" --out "$RUNNER_TEMP/security-exceptions.json"
       - name: AC1-AC5 for this exact identity (PR #27 C6) and every required check succeeded
         if: always()
         env:
           NEEDS_JSON: ${{ toJSON(needs) }}
         run: >-
-          python3 scripts/ci/merge_eligibility.py --identity "$RUNNER_TEMP/run-identity.json"
+          python3 "$GATE/scripts/ci/merge_eligibility.py" --root "$GITHUB_WORKSPACE"
+          --identity "$RUNNER_TEMP/run-identity.json" --reviews "$RUNNER_TEMP/reviews.json"
+          --exceptions "$RUNNER_TEMP/security-exceptions.json"
           --decision-out "$RUNNER_TEMP/acceptance-decision.json" --summary "$GITHUB_STEP_SUMMARY"
-      - name: Upload the decision and identity (evidence outside the candidate tree)
+      - name: Upload the decision, identity, reviews and exceptions check (evidence outside the candidate tree)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: acceptance-decision-${{ github.sha }}
           path: |
             ${{ runner.temp }}/run-identity.json
+            ${{ runner.temp }}/reviews.json
+            ${{ runner.temp }}/security-exceptions.json
             ${{ runner.temp }}/acceptance-decision.json
           retention-days: 90
           if-no-files-found: error
