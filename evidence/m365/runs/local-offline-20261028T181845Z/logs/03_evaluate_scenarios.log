@@ -1,0 +1,18 @@
+$ python3 identity/m365/m365_ops.py --json-out evidence/m365/runs/local-offline-20261028T181845Z/validation-report.json
+--- stdout ---
+PASS M365-ACC-001 access-troubleshooting   ROOT_CAUSE_IDENTIFIED      CA-DEVICE-NOT-COMPLIANT,DEV-BITLOCKER,DEV-OS-MIN,SH-ADVISORY
+PASS M365-ACC-002 access-troubleshooting   ROOT_CAUSE_IDENTIFIED      LIC-PREREQ,LIC-WORKLOAD-MISSING,SH-ADVISORY
+PASS M365-ACC-003 access-troubleshooting   ROOT_CAUSE_IDENTIFIED      LIC-WORKLOAD-MISSING
+PASS M365-ACC-004 access-troubleshooting   ROOT_CAUSE_IDENTIFIED      AUTH-MFA-REGISTRATION-REQUIRED
+PASS M365-BG-001 break-glass-review       COMPLIANT_WITH_WARNINGS    BG-TEST-OVERDUE,PRIV-STANDING-GA
+PASS M365-BG-002 break-glass-usage        POST_USE_COMPLETE          -
+PASS M365-OFF-001 offboarding              APPROVED                   -
+PASS M365-OFF-002 offboarding              REJECTED                   OFF-BYOD-WIPE,OFF-LICENSE-BEFORE-RETENTION,OFF-MISSING-STEP,OFF-REVOKE-BEFORE-DISABLE
+PASS M365-ONB-001 onboarding               READY                      ONB-MFA-TAP
+PASS M365-ONB-002 onboarding               BLOCKED                    LIC-USAGE-LOCATION-INHERITED,LIC-WORKLOAD-MISSING,ONB-MFA-TAP
+PASS M365-ONB-003 onboarding               BLOCKED                    LIC-NO-SEATS,ONB-MFA-TAP,ONB-PRIV-ROLE
+PASS M365-SH-001 service-health           KNOWN_SERVICE_INCIDENT     LIC-WORKLOAD-MISSING,SH-KNOWN-INCIDENT
+PASS M365-SH-002 service-health           LOCAL_ISSUE                DEV-STALE-CHECKIN,SH-LOCAL-ISSUE,SH-RESTORED-RECENTLY
+overall=PASS scenarios=13 passed=13 failed=0 plannedSteps=43 mutationsExecuted=0
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:18:45Z duration_ms=34 ---

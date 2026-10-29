@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ONB-001",
+  "type": "onboarding",
+  "title": "New credit-risk analyst: E3 via group, Autopilot laptop, Temporary Access Pass on day 1",
+  "narrative": "HR ticket HR-LAB-1001 creates Blake Analyst in AD DS; Entra Connect syncs the account. IT adds Blake to GRP-LIC-E3-STAFF, ships an Autopilot laptop that is already compliant, and issues a one-time Temporary Access Pass after an in-person ID check so Blake can register a passkey. Expected: ready, with an informational TAP note.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000001",
+    "approvalRef": "HR-LAB-1001",
+    "assignGroups": ["GRP-LIC-E3-STAFF"],
+    "requiredWorkloads": ["mailbox", "teams", "onedrive", "desktop-apps", "intune", "conditional-access"],
+    "primaryDeviceId": "0d110000-0000-4000-8000-000000000001"
+  },
+  "auditEvidence": [
+    {"category": "approval", "ref": "HR-LAB-1001", "source": "HR joiner ticket (synthetic)"},
+    {"category": "identity-change", "ref": "AUD-LAB-1101", "source": "Entra audit log: Add user (sync) (synthetic)"},
+    {"category": "license-assignment", "ref": "AUD-LAB-1102", "source": "Entra audit log: Add member to group GRP-LIC-E3-STAFF (synthetic)"},
+    {"category": "mfa-registration", "ref": "AUD-LAB-1103", "source": "Entra audit log: TAP issued + passkey registered (synthetic)"},
+    {"category": "device-compliance", "ref": "AUD-LAB-1104", "source": "Intune device compliance report NWL-LT-0101 (synthetic)"}
+  ],
+  "expected": {"verdict": "READY", "findings": ["ONB-MFA-TAP"]}
+}
