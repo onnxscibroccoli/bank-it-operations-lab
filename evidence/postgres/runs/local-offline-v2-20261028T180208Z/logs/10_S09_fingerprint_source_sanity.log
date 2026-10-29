@@ -1,0 +1,7 @@
+# step=S09_fingerprint_source_sanity kind=setup expect=zero started=2026-10-28T18:02:11Z
+# reason_regex: ^fingerprint ok: 3 tables$
+# cmd: fingerprint_sanity
+# --- output ---
+fingerprint ok: 3 tables
+# --- end output ---
+# exit_code=0 duration_ms=37

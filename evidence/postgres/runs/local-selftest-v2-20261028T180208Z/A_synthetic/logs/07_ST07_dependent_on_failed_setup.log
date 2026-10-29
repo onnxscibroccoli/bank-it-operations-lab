@@ -1,0 +1,1 @@
+# step=ST07_dependent_on_failed_setup NOT RUN: dependency ST06_setup_failure is ERROR

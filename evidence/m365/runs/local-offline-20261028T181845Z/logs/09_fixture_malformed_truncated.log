@@ -1,0 +1,5 @@
+$ python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-truncated.json --quiet
+--- stdout ---
+--- stderr ---
+MALFORMED SCHEMA-001: identity/m365/tests/fixtures/malformed-truncated.json: Unterminated string starting at: line 1 column 181 (char 180) (fail-closed, nothing evaluated)
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:18:45Z duration_ms=35 ---

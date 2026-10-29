@@ -1,0 +1,548 @@
+{
+  "schema": "bank-it-lab/m365-ops-offline-evidence/v1",
+  "runLabel": "local-offline-20261028T181845Z",
+  "mode": "offline-synthetic",
+  "tenantStateClaimed": false,
+  "mutationsExecuted": 0,
+  "disclaimer": "OFFLINE / SYNTHETIC EVIDENCE. Generated from local JSON scenarios in this repository. No Microsoft 365, Entra ID, Intune or Exchange Online tenant, Microsoft Graph API or credential was used, no change was executed anywhere, and nothing here describes or claims the configuration or state of any tenant.",
+  "git": {
+    "commitSha": "8452788d69d91373a26d4963f4a8f8547163913a",
+    "branch": "m365-endpoint",
+    "scopedTreeClean": true,
+    "note": "commitSha is the commit whose identity/m365 content was validated; the evidence itself is committed on top of it. inputHashes pin the exact bytes."
+  },
+  "startedUtc": "2026-10-28T18:18:45Z",
+  "finishedUtc": "2026-10-28T18:18:45Z",
+  "environment": {
+    "python": "3.13.5",
+    "implementation": "CPython",
+    "network": "not used",
+    "credentials": "not used"
+  },
+  "overall": "PASS",
+  "totals": {
+    "commands": 15,
+    "passed": 15,
+    "failed": 0
+  },
+  "validation": {
+    "report": "validation-report.json",
+    "reportMarkdown": "validation-report.md",
+    "overall": "PASS",
+    "exitCode": 0,
+    "scenarios": [
+      {
+        "id": "M365-ACC-001",
+        "type": "access-troubleshooting",
+        "verdict": "ROOT_CAUSE_IDENTIFIED",
+        "findingCodes": [
+          "CA-DEVICE-NOT-COMPLIANT",
+          "DEV-BITLOCKER",
+          "DEV-OS-MIN",
+          "SH-ADVISORY"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-ACC-002",
+        "type": "access-troubleshooting",
+        "verdict": "ROOT_CAUSE_IDENTIFIED",
+        "findingCodes": [
+          "LIC-PREREQ",
+          "LIC-WORKLOAD-MISSING",
+          "SH-ADVISORY"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-ACC-003",
+        "type": "access-troubleshooting",
+        "verdict": "ROOT_CAUSE_IDENTIFIED",
+        "findingCodes": [
+          "LIC-WORKLOAD-MISSING"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-ACC-004",
+        "type": "access-troubleshooting",
+        "verdict": "ROOT_CAUSE_IDENTIFIED",
+        "findingCodes": [
+          "AUTH-MFA-REGISTRATION-REQUIRED"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-BG-001",
+        "type": "break-glass-review",
+        "verdict": "COMPLIANT_WITH_WARNINGS",
+        "findingCodes": [
+          "BG-TEST-OVERDUE",
+          "PRIV-STANDING-GA"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-BG-002",
+        "type": "break-glass-usage",
+        "verdict": "POST_USE_COMPLETE",
+        "findingCodes": [],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-OFF-001",
+        "type": "offboarding",
+        "verdict": "APPROVED",
+        "findingCodes": [],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-OFF-002",
+        "type": "offboarding",
+        "verdict": "REJECTED",
+        "findingCodes": [
+          "OFF-BYOD-WIPE",
+          "OFF-LICENSE-BEFORE-RETENTION",
+          "OFF-MISSING-STEP",
+          "OFF-REVOKE-BEFORE-DISABLE"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-ONB-001",
+        "type": "onboarding",
+        "verdict": "READY",
+        "findingCodes": [
+          "ONB-MFA-TAP"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-ONB-002",
+        "type": "onboarding",
+        "verdict": "BLOCKED",
+        "findingCodes": [
+          "LIC-USAGE-LOCATION-INHERITED",
+          "LIC-WORKLOAD-MISSING",
+          "ONB-MFA-TAP"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-ONB-003",
+        "type": "onboarding",
+        "verdict": "BLOCKED",
+        "findingCodes": [
+          "LIC-NO-SEATS",
+          "ONB-MFA-TAP",
+          "ONB-PRIV-ROLE"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-SH-001",
+        "type": "service-health",
+        "verdict": "KNOWN_SERVICE_INCIDENT",
+        "findingCodes": [
+          "LIC-WORKLOAD-MISSING",
+          "SH-KNOWN-INCIDENT"
+        ],
+        "result": "PASS"
+      },
+      {
+        "id": "M365-SH-002",
+        "type": "service-health",
+        "verdict": "LOCAL_ISSUE",
+        "findingCodes": [
+          "DEV-STALE-CHECKIN",
+          "SH-LOCAL-ISSUE",
+          "SH-RESTORED-RECENTLY"
+        ],
+        "result": "PASS"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "seq": 1,
+      "stepId": "python_version",
+      "kind": "env",
+      "command": "python3 --version",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 1,
+      "log": "logs/01_python_version.log"
+    },
+    {
+      "seq": 2,
+      "stepId": "unit_tests",
+      "kind": "test",
+      "command": "python3 -m unittest discover -s identity/m365/tests -v",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 102,
+      "log": "logs/02_unit_tests.log"
+    },
+    {
+      "seq": 3,
+      "stepId": "evaluate_scenarios",
+      "kind": "engine",
+      "command": "python3 identity/m365/m365_ops.py --json-out evidence/m365/runs/local-offline-20261028T181845Z/validation-report.json",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 34,
+      "log": "logs/03_evaluate_scenarios.log"
+    },
+    {
+      "seq": 4,
+      "stepId": "fixture_malformed_duplicate_key",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-duplicate-key.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/04_fixture_malformed_duplicate_key.log"
+    },
+    {
+      "seq": 5,
+      "stepId": "fixture_malformed_execute_flag",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-execute-flag.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 34,
+      "log": "logs/05_fixture_malformed_execute_flag.log"
+    },
+    {
+      "seq": 6,
+      "stepId": "fixture_malformed_invalid_verdict",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-invalid-verdict.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/06_fixture_malformed_invalid_verdict.log"
+    },
+    {
+      "seq": 7,
+      "stepId": "fixture_malformed_real_domain",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-real-domain.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/07_fixture_malformed_real_domain.log"
+    },
+    {
+      "seq": 8,
+      "stepId": "fixture_malformed_real_guid",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-real-guid.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/08_fixture_malformed_real_guid.log"
+    },
+    {
+      "seq": 9,
+      "stepId": "fixture_malformed_truncated",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-truncated.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 35,
+      "log": "logs/09_fixture_malformed_truncated.log"
+    },
+    {
+      "seq": 10,
+      "stepId": "fixture_malformed_unknown_device",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-unknown-device.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/10_fixture_malformed_unknown_device.log"
+    },
+    {
+      "seq": 11,
+      "stepId": "fixture_malformed_unmapped_error_code",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-unmapped-error-code.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 34,
+      "log": "logs/11_fixture_malformed_unmapped_error_code.log"
+    },
+    {
+      "seq": 12,
+      "stepId": "fixture_malformed_url",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-url.json --quiet",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 34,
+      "log": "logs/12_fixture_malformed_url.log"
+    },
+    {
+      "seq": 13,
+      "stepId": "fixture_mismatch_missing_device_findings",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-missing-device-findings.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/13_fixture_mismatch_missing_device_findings.log"
+    },
+    {
+      "seq": 14,
+      "stepId": "fixture_mismatch_no_approval",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-no-approval.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 33,
+      "log": "logs/14_fixture_mismatch_no_approval.log"
+    },
+    {
+      "seq": 15,
+      "stepId": "fixture_mismatch_synced_cloud_disable",
+      "kind": "engine-fixture",
+      "command": "python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-synced-cloud-disable.json --quiet",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:18:45Z",
+      "durationMs": 35,
+      "log": "logs/15_fixture_mismatch_synced_cloud_disable.log"
+    }
+  ],
+  "inputHashes": [
+    {
+      "path": "evidence/m365/generate_evidence.py",
+      "kind": "evidence-generator",
+      "sha256": "c489f13e2ae2ab91832357fee747aa89ae004c7d6bea1e28e15cc2c9aa524860",
+      "bytes": 13643
+    },
+    {
+      "path": "identity/m365/.gitignore",
+      "kind": "doc",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+      "bytes": 19
+    },
+    {
+      "path": "identity/m365/README.md",
+      "kind": "doc",
+      "sha256": "c74afcbb9c6cde9a7710622f80bb0a5dcc5ba2bb47d404e27952b05f66ba6656",
+      "bytes": 5456
+    },
+    {
+      "path": "identity/m365/m365_ops.py",
+      "kind": "engine",
+      "sha256": "f9234e927da39c9bc76c1bcc84dd4197059cc225fd30a1975459271be56d273f",
+      "bytes": 58221
+    },
+    {
+      "path": "identity/m365/runbooks/README.md",
+      "kind": "doc",
+      "sha256": "9641c8ae5d416a05133a9a468bac2b53b31b8a8313b9c7877a58f85132d3ed30",
+      "bytes": 6030
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ACC-001-noncompliant-laptop.json",
+      "kind": "scenario",
+      "sha256": "306c5fa416f0e520412f8f80ca4fdd2c5342e8b58c259663dd5adb1171ad2560",
+      "bytes": 1614
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ACC-002-contractor-intune-license-dependency.json",
+      "kind": "scenario",
+      "sha256": "1f242906899488375cde106130af32046127527997e50b34f71119f3d5b2245e",
+      "bytes": 1453
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ACC-003-advisor-no-mailbox-plan.json",
+      "kind": "scenario",
+      "sha256": "963af746e68f95b1c85bea5c0d33d93196e6ef1f4cc2369314a3130a320bd959",
+      "bytes": 1305
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ACC-004-treasury-mfa-registration.json",
+      "kind": "scenario",
+      "sha256": "97463d62c379df71bfb4a932d9be73211a8b3cb0390828b0fd16b12770ae2155",
+      "bytes": 1385
+    },
+    {
+      "path": "identity/m365/scenarios/M365-BG-001-quarterly-review.json",
+      "kind": "scenario",
+      "sha256": "6603576dc019816c9de34f74c42262a12e12bd4ab84b7a46006d6ddd29d8b22c",
+      "bytes": 1094
+    },
+    {
+      "path": "identity/m365/scenarios/M365-BG-002-usage-during-mfa-outage.json",
+      "kind": "scenario",
+      "sha256": "9e1607033beb63e7371b429921db1c737d78fddb04be19fcd6b6fb58326ab90c",
+      "bytes": 1386
+    },
+    {
+      "path": "identity/m365/scenarios/M365-OFF-001-involuntary-lender-legal-hold.json",
+      "kind": "scenario",
+      "sha256": "4bb3f01695fcfc9962f4b0c447a6ee738b7468ad2037251bcd53d7e86fd2fba5",
+      "bytes": 2173
+    },
+    {
+      "path": "identity/m365/scenarios/M365-OFF-002-voluntary-leaver-bad-runbook.json",
+      "kind": "scenario",
+      "sha256": "c881dfc671d26c349301c6bb16c0f97baec5ca75a354553af1507dc30e8f2aae",
+      "bytes": 1958
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ONB-001-new-analyst-e3.json",
+      "kind": "scenario",
+      "sha256": "4a298204f9a01f54405ac41416122e868bf19af7fcc8f6b57e0a43cc00574ab4",
+      "bytes": 1549
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ONB-002-teller-f3-desktop-apps.json",
+      "kind": "scenario",
+      "sha256": "2c063314c76894afee55bb668f958d4c98571d407a24a19395c94725841515f5",
+      "bytes": 1392
+    },
+    {
+      "path": "identity/m365/scenarios/M365-ONB-003-secops-e5-no-seats.json",
+      "kind": "scenario",
+      "sha256": "022c97b05e15c0a4eaed01b8a120a09459945b8f7d775c17fc5578d959a96b67",
+      "bytes": 1321
+    },
+    {
+      "path": "identity/m365/scenarios/M365-SH-001-teams-known-incident.json",
+      "kind": "scenario",
+      "sha256": "510aee158ad5a6f3e1897448121987e7dd3ebac3c8281300ed3cc0bcfc16ef1c",
+      "bytes": 1955
+    },
+    {
+      "path": "identity/m365/scenarios/M365-SH-002-exchange-after-restore.json",
+      "kind": "scenario",
+      "sha256": "e464689556f3ffd7046ca497eed42e161a0b5d7025edb6b367eefbbef7690708",
+      "bytes": 1291
+    },
+    {
+      "path": "identity/m365/tenant/tenant.json",
+      "kind": "tenant-fixture",
+      "sha256": "dc3ba5b0857d65b05f274bd9b50952ed759cb39aa76f1be2b51a63c9928e4a4c",
+      "bytes": 19172
+    },
+    {
+      "path": "identity/m365/tests/README.md",
+      "kind": "doc",
+      "sha256": "aaded126f8e3a7cec5da1572c09d39e432321dfe6c30c9e0ffc20ee409aac3a9",
+      "bytes": 657
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-duplicate-key.json",
+      "kind": "test-fixture",
+      "sha256": "407a3ee798ec7b00ccca9dd6cce4ed1fecbf4611de1eae660e06b928142a7002",
+      "bytes": 41
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-execute-flag.json",
+      "kind": "test-fixture",
+      "sha256": "dedbf0ca5f0c9a77ceb0edc82853b2e7ba031ba038ab3e8a016a495fa06c5157",
+      "bytes": 1845
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-invalid-verdict.json",
+      "kind": "test-fixture",
+      "sha256": "fb9ee097d5fbb96afd5ca1e68d8d0381c38cc1299cc191ab4bf708e0b4772c2c",
+      "bytes": 1808
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-real-domain.json",
+      "kind": "test-fixture",
+      "sha256": "ae5de4ec28719f53f4b2eb45751443714c66690f512db6e2e98c24d2c7d4d82c",
+      "bytes": 1855
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-real-guid.json",
+      "kind": "test-fixture",
+      "sha256": "b092f911dbaea3dae21ba3aacb1227963e919877eb66c6be014db4a5e9386c1d",
+      "bytes": 1824
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-truncated.json",
+      "kind": "test-fixture",
+      "sha256": "8f6ae4b9bcdeee429aa0d55db732a4848c58fe59d27ca6c541a4bad56e62dd75",
+      "bytes": 200
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-unknown-device.json",
+      "kind": "test-fixture",
+      "sha256": "b10465788cdbd70ba37fdb1d5365cf2c76f80bcbcdfc10d34c2978430de77cad",
+      "bytes": 1824
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-unmapped-error-code.json",
+      "kind": "test-fixture",
+      "sha256": "200d5c417a3dc7300dda34f8ad4ee123820aa2ab77c75531f569ff232fa1d793",
+      "bytes": 1824
+    },
+    {
+      "path": "identity/m365/tests/fixtures/malformed-url.json",
+      "kind": "test-fixture",
+      "sha256": "375a3795328a564dbb04494b2172f03e1f66064855608800275e9253bca28fa7",
+      "bytes": 1853
+    },
+    {
+      "path": "identity/m365/tests/fixtures/mismatch-missing-device-findings.json",
+      "kind": "test-fixture",
+      "sha256": "79639254d6b9bfb11b8bb711eecc92e16fb3854803c83a05fa55ee70f3c17d78",
+      "bytes": 1760
+    },
+    {
+      "path": "identity/m365/tests/fixtures/mismatch-no-approval.json",
+      "kind": "test-fixture",
+      "sha256": "29f8c66ace678cff1739bdb565c924521412138a930502fef4121a2942711171",
+      "bytes": 2471
+    },
+    {
+      "path": "identity/m365/tests/fixtures/mismatch-synced-cloud-disable.json",
+      "kind": "test-fixture",
+      "sha256": "e512aabbede0f975356e7ba49c1197276f84b0738a8d1bedcbb2df630ae23cd4",
+      "bytes": 2502
+    },
+    {
+      "path": "identity/m365/tests/test_m365_ops.py",
+      "kind": "engine",
+      "sha256": "1b81461d7e851a06b0bac56f1cd1f557590460fddd5d156a09d6dfa3e8552832",
+      "bytes": 11086
+    }
+  ],
+  "hashes": "SHA256SUMS"
+}

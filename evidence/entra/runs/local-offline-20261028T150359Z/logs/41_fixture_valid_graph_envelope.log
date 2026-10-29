@@ -1,0 +1,5 @@
+$ python3 identity/entra/ca_validator.py tests/entra/fixtures/valid-graph-envelope.json --baseline identity/entra/baseline.json --quiet
+--- stdout ---
+--- stderr ---
+overall=PASS exit=0
+--- exit_code=0 expected=0 started_utc=2026-10-28T15:04:00Z duration_ms=29 ---

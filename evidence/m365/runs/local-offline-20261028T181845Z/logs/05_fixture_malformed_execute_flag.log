@@ -1,0 +1,5 @@
+$ python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-execute-flag.json --quiet
+--- stdout ---
+--- stderr ---
+MALFORMED SAFE-001: malformed-execute-flag.json[0].input: forbidden key 'execute' (no secrets, no execution flags) (fail-closed, nothing evaluated)
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:18:45Z duration_ms=34 ---

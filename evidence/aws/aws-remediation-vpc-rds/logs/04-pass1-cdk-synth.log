@@ -1,0 +1,13 @@
+AI agent detected
+ERROR AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup]: The IAM user, role, or group uses AWS managed policies. An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Policy::<policy>' for AWS managed policies. Example: appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/foo']. (Construct Annotations)
+   BankItLabNetworkDatabase/BackupPlan/Postgres/Role/Resource
+   Rule Annotation::error-annotation
+
+WARNING CdkNagValidationFailure[NIST.800.53.R5-EC2RestrictedCommonPorts]: 'NIST.800.53.R5-EC2RestrictedCommonPorts' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. You can suppress the "CdkNagValidationFailure" to get rid of this error. For more details enable verbose logging.' The parameter resolved to to a non-primitive value "{"Fn::GetAtt":["Postgres9DC8BB04","Endpoint.Port"]}", therefore the rule could not be validated. (Construct Annotations)
+   BankItLabNetworkDatabase/DatabaseSecurityGroup/from BankItLabNetworkDatabasePostgresRotationSingleUserSecurityGroup7BBC972A:{IndirectPort}
+   Acknowledge with 'Annotation::warning-annotation'
+
+WARNING CdkNagValidationFailure[NIST.800.53.R5-EC2RestrictedSSH]: 'NIST.800.53.R5-EC2RestrictedSSH' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. You can suppress the "CdkNagValidationFailure" to get rid of this error. For more details enable verbose logging.' The parameter resolved to to a non-primitive value "{"Fn::GetAtt":["Postgres9DC8BB04","Endpoint.Port"]}", therefore the rule could not be validated. (Construct Annotations)
+   BankItLabNetworkDatabase/DatabaseSecurityGroup/from BankItLabNetworkDatabasePostgresRotationSingleUserSecurityGroup7BBC972A:{IndirectPort}
+   Acknowledge with 'Annotation::warning-annotation'
+Synthesis finished with errors

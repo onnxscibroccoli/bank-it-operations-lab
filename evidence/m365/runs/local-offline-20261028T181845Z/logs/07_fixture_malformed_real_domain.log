@@ -1,0 +1,5 @@
+$ python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/malformed-real-domain.json --quiet
+--- stdout ---
+--- stderr ---
+MALFORMED SYN-002: malformed-real-domain.json[0].narrative: domain 'contoso.com' is not a synthetic tenant domain (fail-closed, nothing evaluated)
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:18:45Z duration_ms=33 ---

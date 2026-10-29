@@ -1,0 +1,6 @@
+# step=P07_pg_dump_plain kind=positive expect=zero started=2026-10-28T18:02:11Z
+# reason_regex: <none>
+# cmd: pg_dump -Fp --no-owner -d lab_source -f /workspace/bank-it-operations-lab-ci/evidence/postgres/runs/local-offline-v2-20261028T180208Z/artifacts/lab_source.sql
+# --- output ---
+# --- end output ---
+# exit_code=0 duration_ms=105

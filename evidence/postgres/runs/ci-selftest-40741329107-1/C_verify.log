@@ -1,0 +1,15 @@
+artifacts: NOT CHECKED (artifacts/ not present; dumps live in the CI artifact)
+ERROR ST99_undeclared: row for undeclared case
+ERROR ST02_unexpected_success: result FAIL/unexpected_success
+ERROR ST03_wrong_reason: reason_regex not found in log output: ^injected fault: disk full$
+ERROR ST04_version_mismatch_masquerade: result ERROR/version_mismatch
+ERROR ST05_missing_executable: result ERROR/missing_executable
+ERROR ST06_setup_failure: result ERROR/setup_failure
+ERROR ST07_dependent_on_failed_setup: result NOT_RUN/dependency_failed:ST06_setup_failure
+ERROR ST08_pipeline_failure_hidden_by_tail: result FAIL/positive_failed
+ERROR ST09_positive_wrong_output: result FAIL/output_mismatch
+ERROR ST10_declared_but_never_run: result NOT_RUN/missing_test
+ERROR ST11_run_twice: expected exactly 1 row, found 2
+ERROR ST12_version_gate: result ERROR/version_mismatch
+ERROR SUMMARY.json overall=FAIL
+/home/runner/work/bank-it-operations-lab/bank-it-operations-lab/evidence/postgres/runs/ci-selftest-40741329107-1/C_forged: cases=12 positive=3 negative=7 rows=14 problems=13 -> REJECTED

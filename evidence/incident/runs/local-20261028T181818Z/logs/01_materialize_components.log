@@ -1,0 +1,14 @@
+$WORK/src
+$WORK/src/integrations
+$WORK/src/integrations/vendor-mock
+$WORK/src/integrations/vendor-mock/fixtures
+$WORK/src/integrations/vendor-mock/contract
+$WORK/src/integrations/vendor-mock/tests
+$WORK/src/integrations/vendor-mock/vendor_mock
+$WORK/src/tests
+$WORK/src/tests/integration
+$WORK/src/tests/integration/postgres
+$WORK/src/observability
+$WORK/src/observability/healthcheck
+$WORK/src/observability/fixtures
+$WORK/src/observability/tests

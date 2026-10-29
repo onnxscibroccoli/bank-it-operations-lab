@@ -1,0 +1,1 @@
+# step=N04_fk_enforced_after_restore NOT RUN: dependency S_N04_precondition is NOT_RUN

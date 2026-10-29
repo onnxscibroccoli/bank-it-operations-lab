@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ACC-004",
+  "type": "access-troubleshooting",
+  "title": "Treasury user blocked with AADSTS50079 after phone replacement (no MFA method left)",
+  "narrative": "The user's old phone was the only Authenticator registration and was wiped. Sign-in now fails with AADSTS50079. The service desk must verify identity out of band (call back on the HR-record number, manager confirmation) before issuing a one-time Temporary Access Pass; resetting MFA on a caller's word is the social-engineering path this control exists to stop.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000008",
+    "workload": "entra-signin",
+    "reportedUtc": "2026-10-28T13:30:00Z",
+    "signIns": [
+      {"id": "SI-LAB-3601", "timeUtc": "2026-10-28T13:21:00Z", "appDisplayName": "My Sign-Ins (synthetic)", "errorCode": 50079, "deviceId": null}
+    ]
+  },
+  "auditEvidence": [
+    {"category": "sign-in-log", "ref": "AUD-LAB-3701", "source": "Entra sign-in log SI-LAB-3601 (synthetic)"},
+    {"category": "diagnosis", "ref": "AUD-LAB-3702", "source": "authentication methods: none registered (synthetic)"},
+    {"category": "resolution", "ref": "INC-LAB-3703", "source": "Ticket: identity verified by call-back, TAP issued, passkey registered (synthetic)"}
+  ],
+  "expected": {"verdict": "ROOT_CAUSE_IDENTIFIED", "findings": ["AUTH-MFA-REGISTRATION-REQUIRED"]}
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ONB-003",
+  "type": "onboarding",
+  "title": "SOC analyst needs E5 (Defender for Endpoint, PIM) but E5 seats are exhausted",
+  "narrative": "Security Operations hires an analyst who needs Defender for Endpoint and PIM-eligible Security Reader. LAB_M365_E5 shows 15/15 seats consumed, so adding the user to GRP-LIC-E5-SECOPS would leave a group licensing CountViolation. The role request is also flagged: it must be PIM-eligible, not permanent.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000003",
+    "approvalRef": "HR-LAB-1003",
+    "assignGroups": ["GRP-LIC-E5-SECOPS"],
+    "requiredWorkloads": ["mailbox", "teams", "defender-endpoint", "pim"],
+    "roles": ["Security Reader"]
+  },
+  "auditEvidence": [
+    {"category": "approval", "ref": "HR-LAB-1003", "source": "HR joiner ticket (synthetic)"},
+    {"category": "identity-change", "ref": "AUD-LAB-1301", "source": "Entra audit log: Add user (sync) (synthetic)"},
+    {"category": "license-assignment", "ref": "SR-LAB-1302", "source": "Procurement request for 5 additional E5 seats (synthetic)"},
+    {"category": "mfa-registration", "ref": "AUD-LAB-1303", "source": "TAP issuance scheduled (synthetic)"}
+  ],
+  "expected": {"verdict": "BLOCKED", "findings": ["LIC-NO-SEATS", "ONB-MFA-TAP", "ONB-PRIV-ROLE"]}
+}

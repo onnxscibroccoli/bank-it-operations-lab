@@ -1,0 +1,34 @@
+$ python3 -m unittest discover -s tests/entra -v
+--- stdout ---
+--- stderr ---
+test_each_negative_fixture_fails_expected_rule (test_ca_validator.TestBaselineNegatives.test_each_negative_fixture_fails_expected_rule) ... ok
+test_missing_compliant_device_grant_fails (test_ca_validator.TestBaselineNegatives.test_missing_compliant_device_grant_fails) ... ok
+test_missing_mfa_is_reported_with_reason (test_ca_validator.TestBaselineNegatives.test_missing_mfa_is_reported_with_reason) ... ok
+test_non_compliant_device_path_fails (test_ca_validator.TestBaselineNegatives.test_non_compliant_device_path_fails) ... ok
+test_each_malformed_fixture_fails_closed (test_ca_validator.TestFailClosed.test_each_malformed_fixture_fails_closed) ... ok
+test_empty_directory_fails_closed (test_ca_validator.TestFailClosed.test_empty_directory_fails_closed) ... ok
+test_malformed_baseline_fails_closed (test_ca_validator.TestFailClosed.test_malformed_baseline_fails_closed) ... ok
+test_missing_path_fails_closed (test_ca_validator.TestFailClosed.test_missing_path_fails_closed) ... ok
+test_stray_non_json_file_in_policy_dir_fails_closed (test_ca_validator.TestFailClosed.test_stray_non_json_file_in_policy_dir_fails_closed) ... ok
+test_unexpected_types_never_crash (test_ca_validator.TestFailClosed.test_unexpected_types_never_crash) ... ok
+test_cli_exit_codes (test_ca_validator.TestFixturesAndCli.test_cli_exit_codes) ... ok
+test_cli_writes_reports (test_ca_validator.TestFixturesAndCli.test_cli_writes_reports) ... ok
+test_committed_fixtures_match_generator (test_ca_validator.TestFixturesAndCli.test_committed_fixtures_match_generator) ... ok
+test_every_fixture_is_classified (test_ca_validator.TestFixturesAndCli.test_every_fixture_is_classified) ... ok
+test_no_network_or_credential_code_paths (test_ca_validator.TestFixturesAndCli.test_no_network_or_credential_code_paths) ... ok
+test_authentication_strength_satisfies_all_users_mfa (test_ca_validator.TestRuleUnits.test_authentication_strength_satisfies_all_users_mfa) ... ok
+test_break_glass_group_exclusion_is_accepted (test_ca_validator.TestRuleUnits.test_break_glass_group_exclusion_is_accepted) ... ok
+test_mfa_scoped_by_location_does_not_count (test_ca_validator.TestRuleUnits.test_mfa_scoped_by_location_does_not_count) ... ok
+test_report_only_does_not_satisfy_legacy_block (test_ca_validator.TestRuleUnits.test_report_only_does_not_satisfy_legacy_block) ... ok
+test_risk_rule_can_be_disabled_in_baseline (test_ca_validator.TestRuleUnits.test_risk_rule_can_be_disabled_in_baseline) ... ok
+test_baseline_policy_directory_passes (test_ca_validator.TestValidPolicySet.test_baseline_policy_directory_passes) ... ok
+test_every_rule_is_reported (test_ca_validator.TestValidPolicySet.test_every_rule_is_reported) ... ok
+test_fixtures_cover_policies_conditions_and_grant_controls (test_ca_validator.TestValidPolicySet.test_fixtures_cover_policies_conditions_and_grant_controls) ... ok
+test_graph_envelope_passes (test_ca_validator.TestValidPolicySet.test_graph_envelope_passes) ... ok
+test_report_is_labelled_offline_and_claims_no_tenant_state (test_ca_validator.TestValidPolicySet.test_report_is_labelled_offline_and_claims_no_tenant_state) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.108s
+
+OK
+--- exit_code=0 expected=0 started_utc=2026-10-28T15:03:59Z duration_ms=171 ---

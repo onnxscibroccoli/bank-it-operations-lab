@@ -1,0 +1,5 @@
+$ python3 identity/m365/m365_ops.py identity/m365/tests/fixtures/mismatch-synced-cloud-disable.json --quiet
+--- stdout ---
+overall=FAIL scenarios=1 passed=0 failed=1 plannedSteps=10 mutationsExecuted=0
+--- stderr ---
+--- exit_code=1 expected=1 started_utc=2026-10-28T18:18:45Z duration_ms=35 ---
