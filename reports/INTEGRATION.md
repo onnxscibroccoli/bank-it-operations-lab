@@ -7,6 +7,40 @@
 - Machine-readable status: [`coordination/tasks.json`](../coordination/tasks.json).
 - Full validation: `scripts/validate-all.sh` (Node 20, npm, and PostgreSQL binaries via `PG_BIN` or PATH). For the Python-only subset, run `scripts/validate-all.sh --python-only`.
 
+## Round 7 (2026-10-28 ~22:00 EDT): repairs for PR #31 (CHANGES REQUIRED on `1fdf25a`)
+
+- **Reconciled at start (no drift):**
+  - `origin/overnight/integration` = `1fdf25ad10c56bb457d6242392f9305c539d1209`
+  - `origin/main` = `7f50348bf1370381615eaed91c02607fe41de2f5`
+  - `refs/pull/7/merge` = `07eea1cefdc15873af2a579d3795af402961edd6`
+  - gate run 40800364073 = 18/19, with only merge-eligibility failing
+- **PR #31** (`eccac83`) is a same-account findings note. It is not an AC1 approval; same-account reviews never count.
+- **KMS wildcards removed since `b908a66`:**
+  - At `b908a66`, `infra/aws-cdk/lib/least-privilege-key.ts:8` was `'kms:Create*'`, `:12` was `'kms:Put*'`, and `:52` was `sid: 'KeyAdministrationByAccountRoot'` (unconditioned).
+  - Now the admin list is explicit (`:17` `'kms:CreateAlias'`, `:24` `'kms:PutKeyPolicy'`), `:73` is `sid: 'KeyAdministrationByKeyAdminRoleOnly'`, `:78` is `ArnEquals aws:PrincipalArn` and `:84` is `BoolIfExists kms:BypassPolicyLockoutSafetyCheck=false`.
+  - Committed synth templates: `"kms:Create*"` 2 → 0 (NetworkDatabase) and 1 → 0 (SecureStorage); `"kms:Put*"` → 0.
+
+| Finding | Fix |
+|---|---|
+| **F4**: any GitHub account's approval counted | AC1 approver must be on the trusted `reviewer_allowlist` and have write/maintain/admin permission (`/collaborators/{login}/permission`), and must not be the author. Negative test: a random account approving gives UNMET |
+| **F5**: CHANGES_REQUESTED on an earlier commit ignored | An undismissed CHANGES_REQUESTED by a non-author on any commit blocks AC1 |
+| **F6**: AC2/AC4/AC5 only satisfiable in-tree | All of AC1–AC5 are `COMPUTED_AT_RUNTIME`. AC2/AC4/AC5 come from `ACCEPTANCE-DECISION v1` comments on PR #7. Each is bound to the exact candidate SHA, unedited, and from an authorized account with runtime permission. In-tree MET is rejected (gate and `--lint-tasks`). ELIGIBLE is reachable in principle (test `test_owner_decision_on_exact_sha_meets_ac2_ac4_ac5_and_eligible_is_reachable`) |
+| **F7**: UA-1 approval was a text edit | AC2 needs an owner decision comment by a trusted `owner_logins` account with admin permission, naming **exactly** the applied EX ids. The register's "APPROVED" text never approves (test `test_register_text_approved_does_not_approve`). Residual: the owner login is also the PR author and the agents' push account, so the comment proves the account, not the person; Ian should post it himself |
+| **R6**: candidate controls the verifier | The gate manifest (`evidence/acceptance:trusted-gate/gate-manifest.json`, or `main` once it carries one) pins `gate_sha`. The gate code and trusted config are checked out **by SHA** and hash-verified. The candidate's `scripts/ci/**`, trusted config and `integration-gate.yml` must hash-match the manifest, or merge-eligibility runs no decision and fails. Trusted `required_gate_jobs` cannot be dropped by candidate data. **Only UA-3** closes the residual (the job definition sits in the candidate's workflow); the exact settings are in the UA-3 instructions |
+| **M1** | `least-privilege-key.ts` comment now documents the CDK Secret's `CreateGrant` statement on DatabaseKey (conditioned only on `kms:ViaService=secretsmanager`). Synth unchanged |
+| **Minor** | `orgs-security.blocker.ids` now `[B6-1, B6-2, B6-3]` with a Terraform unblock step. The README states coverage 7/25. The test count is corrected to 93 at `1fdf25a` |
+
+**EX-01..EX-04 reconciliation** (from `check_exceptions.py` on this tree; none approved, and nothing here approves them):
+
+| ID | Register status | Rule | Applied suppression(s) |
+|---|---|---|---|
+| EX-01 | PROPOSED | NIST.800.53.R5-S3DefaultEncryptionKMS | BankItLabSecureStorage:AccessLogsBucket83982689 |
+| EX-02 | PROPOSED | NIST.800.53.R5-S3BucketReplicationEnabled | BankItLabSecureStorage:AccessLogsBucket83982689, BankItLabSecureStorage:DataBucketE3889A50 |
+| EX-03 | PROPOSED | AwsSolutions-IAM5 | BankItLabNetworkDatabase:RdsMonitoringPolicy5DA8ACAC |
+| EX-04 | PROPOSED | AwsSolutions-IAM4 | BankItLabNetworkDatabase:BackupPlanPostgresRole2A2CEBDF |
+
+**Approval path (UA-1):** the owner posts one new comment on PR #7 with the body `ACCEPTANCE-DECISION v1` / `candidate: <exact 40-hex SHA>` / `UA-1: APPROVE EX-01 EX-02 EX-03 EX-04` (use `REJECT` to reject). The integrator never posts it.
+
 ## Round 6 (2026-10-28 ~21:25 EDT): repairs for PR #30 (CHANGES REQUIRED on `b908a66`)
 
 PR #30 (`review/candidate-b908a66` @ `eb82d7d`) is an independent-lane findings note on `b908a669b302ff37f2c2ca79ed828f65e5a9f432`, pushed by the same GitHub account as PR #7's author. Its verdict is CHANGES REQUIRED. **It is not an AC1 approval: a same-account review can never satisfy AC1.** AC1 now comes only from the GitHub reviews API and needs a different account.
@@ -26,7 +60,7 @@ PR #30 (`review/candidate-b908a66` @ `eb82d7d`) is an independent-lane findings 
 - **New tests:**
   - `scripts/ci/tests/test_provenance_base.py`: 6 tests
   - `scripts/ci/tests/test_ac_repairs_b908a66.py`: 15 tests
-  - `scripts/ci/tests` now has 87 tests in total, run by validate-all and by the module-registry job
+  - `scripts/ci/tests` had 93 tests in total at `1fdf25a` (corrected from 87; 72 + 6 + 15), run by validate-all and by the module-registry job
 
 ## Post-candidate coverage delta pt16u (2026-10-28 ~21:15 EDT): module coverage registry
 

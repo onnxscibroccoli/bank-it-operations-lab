@@ -5,8 +5,8 @@
  "deadline": "2026-10-29T00:00:00-04:00",
  "deadline_tz": "America/New_York (EDT, UTC-4)",
  "remaining_window": {
-  "as_of": "2026-10-28T21:24:00-04:00",
-  "remaining": "2h35m",
+  "as_of": "2026-10-28T21:46:00-04:00",
+  "remaining": "2h13m",
   "note": "computed at commit time"
  },
  "base": {
@@ -155,13 +155,21 @@
       "replaced": "2026-10-28 ~21:25 EDT (PR #30 F3/R6)"
      }
     ],
-    "binding": "Evaluated by merge-eligibility in each integration-gate run from the GitHub reviews API (scripts/ci/reviews.py, read-only GITHUB_TOKEN, job permission pull-requests: read): it holds only when an account OTHER than the PR author has an APPROVED review (its latest decisive review) whose commit_id is the exact candidate SHA, the PR head is still that SHA, and no non-author has CHANGES_REQUESTED on it. Same-account reviews (e.g. the onnxscibroccoli review notes PR #14/#28/#29/#30) can never satisfy AC1. MET for AC1 in this file is rejected by the gate and by --lint-tasks."
+    "binding": "Evaluated by merge-eligibility (trusted gate) from the GitHub reviews API: an APPROVED review (latest decisive review of that account) with commit_id = the exact candidate SHA by an account that is NOT the PR author, IS on the trusted reviewer_allowlist (.github/acceptance/trusted-config.json read from main or the manifest-pinned gate commit, never the candidate) and HAS write/maintain/admin permission (GET /repos/{repo}/collaborators/{login}/permission, read-only GITHUB_TOKEN); and no non-author has an undismissed CHANGES_REQUESTED on any commit (PR #31 F4/F5). Same-account reviews never count. In-tree MET is rejected."
    },
    {
     "id": "AC2",
     "condition": "Security exceptions are recorded and approved by an owner",
-    "status": "PARTIAL",
-    "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, all PROPOSED; none approved (UA-1). B5-1 is now enforced fail-closed: scripts/ci/check_exceptions.py (validate-all + merge-eligibility) requires every applied cdk-nag suppression to name a registered EX-NN with the same rule, and reports the 5 applied suppressions tied to non-APPROVED exceptions as a BLOCKING USER ACTION; merge-eligibility keeps AC2 and AC5 UNMET until the owner approves (or the suppressions are removed). The integrator does not and cannot approve them."
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "EX-01..EX-04 are PROPOSED (not approved). 5 applied suppressions: EX-01 AccessLogsBucket (NIST S3DefaultEncryptionKMS); EX-02 AccessLogsBucket + DataBucket (NIST S3BucketReplicationEnabled); EX-03 RdsMonitoringPolicy (AwsSolutions-IAM5); EX-04 BackupPlan/Postgres/Role (AwsSolutions-IAM4). Approval path: UA-1 decision comment by the owner (see UA-1 instructions).",
+    "history": [
+     {
+      "status": "PARTIAL",
+      "detail": "EX-01..EX-04 are recorded in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, all PROPOSED; none approved (UA-1). B5-1 is now enforced fail-closed: scripts/ci/check_exceptions.py (validate-all + merge-eligibility) requires every applied cdk-nag suppression to name a registered EX-NN with the same rule, and reports the 5 applied suppressions tied to non-APPROVED exceptions as a BLOCKING USER ACTION; merge-eligibility keeps AC2 and AC5 UNMET until the owner approves (or the suppressions are removed). The integrator does not and cannot approve them.",
+      "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility (trusted gate) from authenticated runtime evidence: owner decision comment 'UA-1: APPROVE <exactly the applied EX ids>' on PR #7, bound to the exact candidate SHA, by a trusted owner login (trusted-config owner_logins) with admin permission at runtime; the register's own status text never approves anything (PR #31 F6/F7). In-tree MET is rejected."
    },
    {
     "id": "AC3",
@@ -208,14 +216,30 @@
    {
     "id": "AC4",
     "condition": "Docs match the code: READMEs, PR bodies, INTEGRATION.md and tasks.json",
-    "status": "PARTIAL",
-    "detail": "In-tree docs now match the code (pt15u). Root README covers the integrated modules, M365 and incident modules and the gate behaviour; evidence/entra/BASELINE-CHOICES-PENDING.md documents the PR #4 baseline choices as PENDING owner confirmation (not identity/entra/README.md, which is a hash-pinned evidence input); infra/aws-cdk/README.md records PR #1 as superseded. Still open, outside the tree: PR #1 is still open and its description shows the superseded design (UA-4), the PR #4 baseline choices are unconfirmed (UA-2; no confirmation is claimed), and PR #7's description predates the M365, incident and gate changes. Editing PR descriptions was not authorized."
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "Docs match code as of this candidate (README coverage 7/25, gate behaviour, path to ELIGIBLE; Entra baseline choices PENDING UA-2). Needs an authorized 'AC4: ACCEPT' decision on the exact SHA.",
+    "history": [
+     {
+      "status": "PARTIAL",
+      "detail": "In-tree docs now match the code (pt15u). Root README covers the integrated modules, M365 and incident modules and the gate behaviour; evidence/entra/BASELINE-CHOICES-PENDING.md documents the PR #4 baseline choices as PENDING owner confirmation (not identity/entra/README.md, which is a hash-pinned evidence input); infra/aws-cdk/README.md records PR #1 as superseded. Still open, outside the tree: PR #1 is still open and its description shows the superseded design (UA-4), the PR #4 baseline choices are unconfirmed (UA-2; no confirmation is claimed), and PR #7's description predates the M365, incident and gate changes. Editing PR descriptions was not authorized.",
+      "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility (trusted gate) from authenticated runtime evidence: 'AC4: ACCEPT' decision comment on PR #7 bound to the exact candidate SHA by the trusted owner (admin) or a trusted allow-listed reviewer (write+) (PR #31 F6). In-tree MET is rejected."
    },
    {
     "id": "AC5",
     "condition": "No unresolved blocking findings in integrated code",
-    "status": "UNMET",
-    "detail": "B5-2 fixed in 80f01d63659b801434c1a9e050484abc8716adcd (KMS key admin scoped to role BankItLabKmsKeyAdmin / root user, no Create*/Put*, no CreateGrant; guard + negative control). B5-1: enforced as a blocking user action (see AC2), still open until UA-1. B5-3 (conflict with PR #1): resolved in code (PR #1 superseded by PR #5; bank-aws-001 SUPERSEDED); PR #1 stays open pending UA-4. PR #30 F1 (base not verified as main) and F3/R6 (self-asserted AC1, candidate grades itself) fixed in 4e6fef4f5d05a72378f0e4c5ec75154efe821710. PR #6 stays BLOCKED (B6-1, B6-2, B6-3). Earlier: shared postgres-negatives all-NOT_RUN fix."
+    "status": "COMPUTED_AT_RUNTIME",
+    "detail": "B5-2 fixed in 80f01d63659b801434c1a9e050484abc8716adcd (KMS key admin scoped to role BankItLabKmsKeyAdmin / root user, no Create*/Put*, no CreateGrant; guard + negative control). B5-1: enforced as a blocking user action (see AC2), still open until UA-1. B5-3 (conflict with PR #1): resolved in code (PR #1 superseded by PR #5; bank-aws-001 SUPERSEDED); PR #1 stays open pending UA-4. PR #30 F1 (base not verified as main) and F3/R6 (self-asserted AC1, candidate grades itself) fixed in 4e6fef4f5d05a72378f0e4c5ec75154efe821710. PR #6 stays BLOCKED (B6-1, B6-2, B6-3). Earlier: shared postgres-negatives all-NOT_RUN fix.",
+    "history": [
+     {
+      "status": "UNMET",
+      "detail": "B5-2 fixed in 80f01d63659b801434c1a9e050484abc8716adcd (KMS key admin scoped to role BankItLabKmsKeyAdmin / root user, no Create*/Put*, no CreateGrant; guard + negative control). B5-1: enforced as a blocking user action (see AC2), still open until UA-1. B5-3 (conflict with PR #1): resolved in code (PR #1 superseded by PR #5; bank-aws-001 SUPERSEDED); PR #1 stays open pending UA-4. PR #30 F1 (base not verified as main) and F3/R6 (self-asserted AC1, candidate grades itself) fixed in 4e6fef4f5d05a72378f0e4c5ec75154efe821710. PR #6 stays BLOCKED (B6-1, B6-2, B6-3). Earlier: shared postgres-negatives all-NOT_RUN fix.",
+      "replaced": "2026-10-28 ~22:00 EDT (PR #31 F6)"
+     }
+    ],
+    "binding": "Evaluated by merge-eligibility (trusted gate) from authenticated runtime evidence: 'AC5: ACCEPT' decision comment likewise, AND AC2 met at runtime (B5-1) (PR #31 F6). In-tree MET is rejected."
    },
    {
     "id": "AC6",
@@ -370,11 +394,11 @@
    "task_id": "PR-5/AC2",
    "classification": "USER_ACTION_REQUIRED",
    "status": "OPEN",
-   "action": "Approve or reject the AWS security exceptions EX-01..EX-04 in evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md, and the cdk-nag suppressions that are already applied for them (PR #14 B5-1).",
+   "action": "Approve or reject EX-01..EX-04 for the exact candidate SHA via an owner decision comment on PR #7 (format in instructions).",
    "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
    "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded. | 2026-10-28 21:25 EDT: scripts/ci/check_exceptions.py reports 5 applied suppressions tied to PROPOSED EX-01..EX-04 as a BLOCKING USER ACTION; merge-eligibility keeps AC2/AC5 UNMET until this is decided.",
    "smallest_permission": "Owner decision (comment on PR #5 or edit SECURITY_EXCEPTIONS.md approval fields).",
-   "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/5",
+   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. To approve, post ONE new (never edited) comment on PR #7 from the owner account listed in .github/acceptance/trusted-config.json (onnxscibroccoli, admin), body exactly:\nACCEPTANCE-DECISION v1\ncandidate: <exact 40-hex candidate SHA>\nUA-1: APPROVE EX-01 EX-02 EX-03 EX-04\nAC4: ACCEPT\nAC5: ACCEPT\n(use REJECT instead of APPROVE to reject; list exactly the exceptions whose suppressions are applied: EX-01 EX-02 EX-03 EX-04). The gate verifies author, admin permission, exact SHA and IDs at runtime. The integrator never posts this.",
    "blocks": [
     "AC2",
     "merge of PR #7 into main"
@@ -403,11 +427,11 @@
    "task_id": "REPO/branch-protection",
    "classification": "USER_ACTION_REQUIRED",
    "status": "OPEN",
-   "action": "Decide whether to protect main and require the integration-gate checks final-summary and merge-eligibility.",
+   "action": "Protect main so the gate is enforced and cannot be weakened by a candidate (R6 full closure).",
    "reason": "main is unprotected (branch protection API returns 404). Repository settings changes were not delegated to this agent.",
-   "observed": "Branch not protected (HTTP 404). The owner account has admin permission, so this is a decision, not a permission gap.",
+   "observed": "Branch not protected (HTTP 404). The owner account has admin permission, so this is a decision, not a permission gap. | 2026-10-28 22:00 EDT: still unprotected (0 rulesets). R6 within the repo is hardened (manifest-pinned, hash-verified gate), but the gate job definition is in the candidate's workflow until this is done.",
    "smallest_permission": "Repository admin (already held by the owner account).",
-   "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/branches",
+   "instructions": "Settings > Rules > Rulesets > New branch ruleset (https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/rules), or Settings > Branches > Add classic branch protection rule. Exact recommended settings: Target: default branch (main); Enforcement: Active; Bypass list: empty (do not add the owner); Restrict deletions: on; Block force pushes: on; Require linear history: optional; Require a pull request before merging: on, Required approvals: 1, Dismiss stale pull request approvals when new commits are pushed: on, Require approval of the most recent reviewable push: on, Require review from Code Owners: on (after adding a CODEOWNERS file on main naming the independent reviewer for .github/ and scripts/ci/), Require conversation resolution: on; Require status checks to pass: on, Require branches to be up to date: on, required checks: 'integration-gate / final-summary' and 'integration-gate / merge-eligibility' (source: GitHub Actions); classic rule only: Do not allow bypassing the above settings (include administrators): on. Then, for full R6 closure, land the gate on main (.github/workflows/integration-gate.yml, scripts/ci, .github/acceptance/trusted-config.json and .github/acceptance/gate-manifest.json) through that protected PR flow, so the manifest and allow-list are read from main. Also add the independent reviewer as a collaborator with Write and add their login to reviewer_allowlist on main.",
    "blocks": [],
    "continuing": "The gate runs and reports regardless; without protection it is advisory.",
    "deadline_impact": "None for testing; affects whether the gate is enforced."
@@ -908,6 +932,31 @@
     "R5: main unprotected (UA-3)"
    ],
    "post_freeze_records": "evidence/acceptance branch (outside the tree)"
+  },
+  "round7_pr31_repairs": {
+   "requested": "Ian (relayed) 21:38 EDT + recovery directive 21:41 EDT: PR #31 F4/F5/F6/F7/R6/minor",
+   "review_of": "1fdf25ad10c56bb457d6242392f9305c539d1209 (PR #31 head eccac83, same GitHub account: not an AC1 approval)",
+   "reconciled_at_start": {
+    "candidate": "1fdf25ad10c56bb457d6242392f9305c539d1209 == origin/overnight/integration",
+    "main": "7f50348bf1370381615eaed91c02607fe41de2f5",
+    "tested_merge": "07eea1cefdc15873af2a579d3795af402961edd6",
+    "gate_run": "40800364073",
+    "drift": "none"
+   },
+   "gate_code_sha": "ce69f84b3333e1d8da99deb03d17f1457464d962",
+   "trusted_manifest": "evidence/acceptance:trusted-gate/gate-manifest.json (gate_sha + sha256 of scripts/ci/**, .github/acceptance/trusted-config.json, .github/workflows/integration-gate.yml); main's .github/acceptance/gate-manifest.json takes precedence once it exists",
+   "path_to_eligible": [
+    "UA-3: protect main as specified (and land the gate + manifest + trusted config on main through it)",
+    "Add an independent reviewer account as a collaborator with Write; add its login to reviewer_allowlist in the TRUSTED config (main, or a new pinned gate commit + manifest)",
+    "That reviewer submits an APPROVED GitHub review on PR #7 with commit_id = the exact candidate SHA; no undismissed CHANGES_REQUESTED from anyone else",
+    "Owner posts the UA-1 / AC4 / AC5 decision comment on PR #7 for the exact candidate SHA (format in UA-1 instructions)",
+    "Re-run integration-gate (PR run and candidate/main-validation push): AC3 MET_AT_RUNTIME with base == current main and all required jobs green -> ELIGIBLE",
+    "AC6 (final human portfolio acceptance) remains a separate gate; merging stays a human action"
+   ],
+   "residual": [
+    "R6: until UA-3 the merge-eligibility job definition lives in the candidate's workflow file (a candidate could delete the verify step); the manifest makes any verifier change visible and the gate rejects it when the step runs",
+    "F7: the owner login onnxscibroccoli is also the PR author and the account the agents push with; the decision comment proves the account, not the person. Ian should post decisions himself; a dedicated owner/reviewer account removes this ambiguity"
+   ]
   }
  },
  "checkpoints": [
