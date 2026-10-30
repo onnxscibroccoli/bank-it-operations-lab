@@ -306,7 +306,7 @@
     "changes 1 file: reports/review-pr3-pr6.md (522 lines; review notes, no code)",
     "no GitHub reviews, comments or CI checks on PR #14",
     "every PR in this repo, #14 included, is authored by the same GitHub account (onnxscibroccoli); the reviewer's independence is asserted in the file and cannot be shown from GitHub metadata",
-    "checkpoint 2 (eb8d259) verifies PR #2's harness v2 at 2aac93c/e7399fb and concludes 'priority B: remediated'. In the replay of run 40630856041, N01/N05/N06 → ERROR/version_mismatch and N04 → ERROR/environment_error; N02/N03 PASS",
+    "checkpoint 2 (eb8d259) verifies PR #2's harness v2 at 2aac93c/e7399fb and concludes 'priority B: remediated'. In the replay of run 40630856041, N01/N05/N06 \u2192 ERROR/version_mismatch and N04 \u2192 ERROR/environment_error; N02/N03 PASS",
     "subject CI: 40741329107 (push @ 2aac93c, success); 40741536430 (push @ e7399fb, success); 40741546543 (pull_request @ e7399fb, success)",
     "verdicts at exact SHAs: #3 fb36341 Approve; #4 d302c99 Approve with comments; #5 099479e REQUEST CHANGES (B5-1 suppressions applied before approval, B5-2 KMS key-admin escalation, B5-3 #1 conflict); #6 e5e7f46 REQUEST CHANGES (B6-1 self-logging, B6-2 exempt-role SCP bypass, B6-3 CDK vs Terraform)",
     "the reviewer did not run the PostgreSQL scenario locally; this agent did (PG 16.15, 38/38, VERIFIED)"
@@ -332,7 +332,7 @@
    "verified_facts": [
     "head SHA matches the claim",
     "based on overnight/integration @ 49122f2 (ancestor); adds 99 files (+13,240 lines, no deletions) on top of it; 710 files vs main",
-    "run 40749373581: workflow acceptance, push, head_sha 181bcdd…, conclusion success, 3 jobs, all success (gate self-test, acceptance @ target SHA, defect control)",
+    "run 40749373581: workflow acceptance, push, head_sha 181bcdd\u2026, conclusion success, 3 jobs, all success (gate self-test, acceptance @ target SHA, defect control)",
     "the '43 required checks' are internal checks of the acceptance job, not GitHub checks: artifact results.json overall=PASS required=43 pass=43 (45 rows: 43 required PASS + 2 non-required PASS)",
     "planted defect detected: the defect artifact has injected_defect=entra-mfa-report-only, overall=FAIL, pass 35/43; required FAILs are ENTRA-01, ENTRA-02, ENTRA-03, ENTRA-04.1, ACC-B-02, ACC-C-01, ACC-C-02, ACC-C-03; the defect-control job asserted this and succeeded. In-run DEFECT-AWS/ENTRA/HASH controls PASS",
     "other runs on 181bcdd: acceptance PR 40749387217 (3/3), aws-cdk 40749387209 (1/1), offline-validation 40749387223 (1/1), postgres-restore-evidence 40749387416 (5/5): all success",
@@ -393,12 +393,12 @@
    "id": "UA-1",
    "task_id": "PR-5/AC2",
    "classification": "USER_ACTION_REQUIRED",
-   "status": "OPEN",
-   "action": "Decide EX-01..EX-04 for the exact candidate SHA: one owner ACCEPTANCE-ATTESTATION v2 comment per exception on PR #7 (format in instructions).",
+   "status": "NOT_YET_ACTIONABLE",
+   "action": "Review EX-01 through EX-04; effective approval awaits the final bound packet and reviewed owner-authentication path.",
    "reason": "Accepting residual security risk is a material risk decision outside the delegated lab scope; automation must not self-approve.",
-   "observed": "Register lists EX-01..EX-04 as PROPOSED; 5 NagSuppressions are applied in infra/aws-cdk; no approval is recorded. | 2026-10-28 21:25 EDT: scripts/ci/check_exceptions.py reports 5 applied suppressions tied to PROPOSED EX-01..EX-04 as a BLOCKING USER ACTION; merge-eligibility keeps AC2/AC5 UNMET until this is decided.",
-   "smallest_permission": "Owner decision recorded as a login-bound comment on PR #7 by an owner login distinct from the PR author (O-5 / UA-6). Editing SECURITY_EXCEPTIONS.md never approves.",
-   "instructions": "Review evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md. For EACH applied exception post ONE new (never edited) comment on PR #7 from the SEPARATE owner login in the trusted config (after UA-6; onnxscibroccoli is the PR author / shared agent account and its decisions are INSUFFICIENT_INDEPENDENCE), body exactly:\nACCEPTANCE-ATTESTATION v2\ncandidate: <exact 40-hex candidate SHA>\nmain: <exact 40-hex main SHA>\ntested_merge: <PR merge SHA> <candidate/main-validation merge SHA>\nworkflow_run: <Actions run id of the candidate's integration-gate run>\ncriterion: EXCEPTION\ndecision: APPROVED | REJECTED | APPROVED_WITH_CONDITIONS | SUPERSEDED\nexception: EX-NN\nscope: <rule> <applied resource logical ids, sorted, exactly as in the gate's decision artifact>\nconditions: <text>   (only with APPROVED_WITH_CONDITIONS; effective only after a later CONDITIONS_VERIFIED attestation)\nevidence: <one or more refs, e.g. the run URL and SECURITY_EXCEPTIONS.md#EX-NN>\nApplied scopes on this tree: EX-01: 'NIST.800.53.R5-S3DefaultEncryptionKMS AccessLogsBucket83982689'; EX-02: 'NIST.800.53.R5-S3BucketReplicationEnabled AccessLogsBucket83982689 DataBucketE3889A50'; EX-03: 'AwsSolutions-IAM5 RdsMonitoringPolicy5DA8ACAC'; EX-04: 'AwsSolutions-IAM4 BackupPlanPostgresRole2A2CEBDF'. The gate verifies author, admin permission, exact SHAs, the run, and the scope at runtime. The integrator never posts this.",
+   "observed": "Exceptions remain proposed; EX-04 runtime role trust unverified. Delivery is PR #35; prior PR #7 evidence is historical.",
+   "smallest_permission": "Personal owner decision through a reviewed authentication mechanism; no second Admin invitation.",
+   "instructions": "Follow reports/USER_ACTIONS_REQUIRED.md section 3. Do not reuse historic EX-04 scopes or attestation SHAs.",
    "blocks": [
     "AC2",
     "merge of PR #7 into main"
@@ -428,10 +428,10 @@
    "classification": "USER_ACTION_REQUIRED",
    "status": "OPEN",
    "action": "Protect main AND evidence/acceptance so the gate and its manifest cannot be weakened by a candidate or the shared account (R6/D3 full closure).",
-   "reason": "main is unprotected (branch protection API returns 404). Repository settings changes were not delegated to this agent.",
-   "observed": "Branch not protected (HTTP 404). The owner account has admin permission, so this is a decision, not a permission gap. | 2026-10-28 22:00 EDT: still unprotected (0 rulesets). R6 within the repo is hardened (manifest-pinned, hash-verified gate), but the gate job definition is in the candidate's workflow until this is done.",
+   "reason": "Branch rules and trusted bootstrap need repository-owner configuration and independent review.",
+   "observed": "Earlier observations are historical; verify current settings in GitHub. No protection claim is made by this delivery.",
    "smallest_permission": "Repository admin (already held by the owner account).",
-   "instructions": "Settings > Rules > Rulesets > New branch ruleset (https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/rules), or Settings > Branches > Add classic branch protection rule. Exact recommended settings: Target: default branch (main); Enforcement: Active; Bypass list: empty (do not add the owner); Restrict deletions: on; Block force pushes: on; Require linear history: optional; Require a pull request before merging: on, Required approvals: 1, Dismiss stale pull request approvals when new commits are pushed: on, Require approval of the most recent reviewable push: on, Require review from Code Owners: on (after adding a CODEOWNERS file on main naming the independent reviewer for .github/ and scripts/ci/), Require conversation resolution: on; Require status checks to pass: on, Require branches to be up to date: on, required checks: 'integration-gate / final-summary' and 'integration-gate / merge-eligibility' (source: GitHub Actions); classic rule only: Do not allow bypassing the above settings (include administrators): on. Then, for full R6 closure, land the gate on main (.github/workflows/integration-gate.yml, scripts/ci, .github/acceptance/trusted-config.json and .github/acceptance/gate-manifest.json) through that protected PR flow, so the manifest and allow-list are read from main. Also add the independent reviewer as a collaborator with Write and add their login to reviewer_allowlist on main. ALSO (PR #32 D3) protect evidence/acceptance with a second ruleset: target branch evidence/acceptance; Enforcement Active; Bypass list empty; Restrict deletions on; Block force pushes on; Require a pull request before merging on with 1 approval from the independent reviewer (Code Owners for trusted-gate/); Restrict updates so the shared agent account cannot push directly. Then have the independent reviewer approve the gate commit and re-pin trusted-gate/gate-manifest.json with independent_review {pr, review_id}.",
+   "instructions": "Follow reports/USER_ACTIONS_REQUIRED.md section 2; verify actual check contexts and the independent trusted-gate bootstrap. Do not enable Restrict updates without a working reviewed route.",
    "blocks": [],
    "continuing": "The gate runs and reports regardless; without protection it is advisory.",
    "deadline_impact": "None for testing; affects whether the gate is enforced."
@@ -439,16 +439,14 @@
   {
    "id": "UA-4",
    "task_id": "PR-1",
-   "classification": "USER_ACTION_REQUIRED",
-   "status": "OPEN",
-   "action": "Close PR #1 as superseded by PR #5, or tell the integrator to keep it open.",
-   "reason": "This agent does not close PRs.",
-   "observed": "PR #1 is open and still describes the superseded self-logging design.",
-   "smallest_permission": "Owner closes the PR.",
-   "instructions": "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/1",
-   "blocks": [
-    "AC4"
-   ],
+   "classification": "AUTONOMOUS_FIX",
+   "status": "RESOLVED",
+   "action": "PR #1 closed as superseded by PR #5.",
+   "reason": "Authorized repository housekeeping completed.",
+   "observed": "PR #1 closed; not merged.",
+   "smallest_permission": "None; completed.",
+   "instructions": "No user action remains.",
+   "blocks": [],
    "continuing": "All other lanes continue.",
    "deadline_impact": "Minor (docs consistency)."
   },
@@ -473,12 +471,12 @@
    "alias": "O-5",
    "task_id": "PR-7/AC2,AC4,AC5",
    "classification": "USER_ACTION_REQUIRED",
-   "status": "OPEN",
-   "action": "Create an owner identity that agents cannot use (a separate Ian-only GitHub account, or a signing key the agents do not hold) and put it in owner_logins of the trusted config (re-reviewed and re-pinned).",
+   "status": "NOT_YET_ACTIONABLE",
+   "action": "Enroll a human-only owner signing public key after the activation design and adapter are independently reviewed.",
    "reason": "onnxscibroccoli is the PR author and the shared account every agent lane pushes and comments with; a comment from it proves the login, not Ian (PR #32 D2). Owner decisions from it are INSUFFICIENT_INDEPENDENCE.",
-   "observed": "2026-10-28 22:10 EDT: trusted-config owner_logins = [onnxscibroccoli] = PR #7 author; repository collaborators: onnxscibroccoli only.",
-   "smallest_permission": "Owner creates/invites a second account (admin for the owner identity) and edits the trusted config through the protected flow (UA-3).",
-   "instructions": "1) Create or choose an Ian-only GitHub account whose credentials no agent holds. 2) Invite it as collaborator with Admin. 3) Through the protected flow, set owner_logins to that login only (remove onnxscibroccoli) in .github/acceptance/trusted-config.json, have the independent reviewer approve the gate commit, and re-pin the manifest. 4) Post the UA-1 EXCEPTION and AC4/AC5 attestations from that account.",
+   "observed": "Verifier prototype tested. No keys enrolled and no signed-decision adapter activated. Engineering and independent policy review remain.",
+   "smallest_permission": "Owner holds private key outside agent access; no second Admin role exists for a collaborator.",
+   "instructions": "See governance/owner-auth/ADR-0008-personal-account-owner-authentication.md and reports/USER_ACTIONS_REQUIRED.md. Do not use the old second-Admin procedure.",
    "blocks": [
     "AC2",
     "AC5",
@@ -486,6 +484,22 @@
    ],
    "continuing": "All other lanes continue.",
    "deadline_impact": "Blocks a merge before 2026-10-29T00:00-04:00 if not done."
+  },
+  {
+   "id": "UA-7",
+   "task_id": "AC1",
+   "classification": "USER_ACTION_REQUIRED",
+   "status": "OPEN",
+   "action": "Invite a qualified independent human reviewer and provide their exact GitHub username.",
+   "reason": "The author account cannot supply independent approval.",
+   "observed": "No eligible reviewer is enrolled; PR #35 remains draft.",
+   "smallest_permission": "Collaborator access on this personal repository, not a second Admin role.",
+   "instructions": "Follow reports/USER_ACTIONS_REQUIRED.md section 1. Review the trusted bootstrap separately, then the frozen delivery candidate.",
+   "blocks": [
+    "AC1"
+   ],
+   "continuing": "Development and CI validation can continue.",
+   "deadline_impact": "Blocks eligible merge until independent review is recorded."
   }
  ],
  "autonomous_blockers": [
@@ -1037,10 +1051,10 @@
    ]
   },
   "delivery_a5b60ed_ci_repair": {
-    "at": "2026-10-29T00:25:00-04:00",
-    "head_repaired": "a5b60edcc886e9f389d814701b24d9d71a76df99",
-    "what": "portfolio-validation offline failed on a5b60ed. inventory/assets.json and ARCHITECTURE.md were regenerated from the EX-04 network-database template (DbBackupRole, DbBackupPolicy, PostgresSelection; template sha256 2e2d47d35668b8274ddcbd40470672d3a39df81bab5e243b249edb62b6d0a145). Coverage tests no longer require the live orgs-security status to be BLOCKED; BLOCKED reason and category are tested on a fixture copy. denominator_floor raised 26 to 27 because owner-authentication was added. The floor was not lowered.",
-    "unchanged": "AC1 AC2 AC4 AC5 remain unmet. EX-01 through EX-04 remain PROPOSED. BKP-EX-01 and BKP-EX-02 remain AWS-managed backup policies on the tag-selected plan. No reviewer was invented. No key was enrolled. PR #7 was not updated in git. PR #1 was already closed."
+   "at": "2026-10-29T00:25:00-04:00",
+   "head_repaired": "a5b60edcc886e9f389d814701b24d9d71a76df99",
+   "what": "portfolio-validation offline failed on a5b60ed. inventory/assets.json and ARCHITECTURE.md were regenerated from the EX-04 network-database template (DbBackupRole, DbBackupPolicy, PostgresSelection; template sha256 2e2d47d35668b8274ddcbd40470672d3a39df81bab5e243b249edb62b6d0a145). Coverage tests no longer require the live orgs-security status to be BLOCKED; BLOCKED reason and category are tested on a fixture copy. denominator_floor raised 26 to 27 because owner-authentication was added. The floor was not lowered.",
+   "unchanged": "AC1 AC2 AC4 AC5 remain unmet. EX-01 through EX-04 remain PROPOSED. BKP-EX-01 and BKP-EX-02 remain AWS-managed backup policies on the tag-selected plan. No reviewer was invented. No key was enrolled. PR #7 was not updated in git. PR #1 was already closed."
   },
   "round10_pr33_repairs": {
    "requested": "relayed 22:23 EDT: PR #33 CHANGES REQUIRED on 2e3041a (D3-a + nits)",
@@ -1062,5 +1076,12 @@
    "pushed": true,
    "meaning": "Bounded checkpoint of PR #26's head (C1-C4 repairs 17cfaea, assurance report 35674c4, timestamp fix eb42b23). Annotated tag; it records a point in history only. It is not a review, not an approval and not integrated. Do not move or rewrite it."
   }
- ]
+ ],
+ "delivery_checkpoint": {
+  "branch": "delivery/portfolio",
+  "pr": 35,
+  "status": "DRAFT_NOT_ACCEPTED",
+  "owner_instructions": "reports/USER_ACTIONS_REQUIRED.md",
+  "note": "Earlier round records retained as history. PR #1 closed. Old midnight target elapsed without eligible merge."
+ }
 }

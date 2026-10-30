@@ -1,3 +1,5 @@
+> CURRENT DELIVERY: [draft PR #35](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35), branch `delivery/portfolio`. See [FINAL_REPORT](FINAL_REPORT.md) and [owner instructions](USER_ACTIONS_REQUIRED.md). The chronology below describes the old PR #7 candidate; its deadlines, counts and owner-authentication instructions are historical, not current instructions. PR #1 is now closed. No release has been accepted.
+
 # Overnight integration: `overnight/integration`
 
 > **Deadline:** 2026-10-29T00:00:00-04:00 (midnight America/New_York). At commit time (2026-10-28 17:48 EDT), **6h11m** remained.

@@ -285,7 +285,8 @@
       "required_checks": {
         "present": [
           "portfolio-validation.yml:offline",
-          "portfolio-validation.yml:orgs-static"
+          "portfolio-validation.yml:orgs-static",
+          "portfolio-validation.yml:terraform-static"
         ],
         "proposed": []
       },
@@ -297,10 +298,11 @@
       ],
       "ci_jobs": [
         "portfolio-validation.yml:offline",
-        "portfolio-validation.yml:orgs-static"
+        "portfolio-validation.yml:orgs-static",
+        "portfolio-validation.yml:terraform-static"
       ],
       "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
-      "limitations": "Static synthesis and policy lint only. No Organizations API calls. Terraform is not applied."
+      "limitations": "CDK synthesis and Terraform provider-schema validation only; Terraform is partial and lacks CDK parity. No Organizations API calls, plan or apply."
     },
     {
       "id": "acceptance",
@@ -1050,7 +1052,7 @@
       "delivery_location": [
         "operations/endpoint"
       ],
-      "reason": "Python static checks of the PowerShell joiner/mover/leaver, Intune baseline, and firewall CSV. Not executed on Windows. Not a tenant change.",
+      "reason": "Python baseline validation and real PowerShell plan-generation Pester tests in Linux CI. Not run on domain-joined Windows; no tenant mutation.",
       "owner": {
         "agent": "delivery integrator",
         "pr_author": "onnxscibroccoli",
@@ -1061,7 +1063,8 @@
       ],
       "required_checks": {
         "present": [
-          "portfolio-validation.yml:offline"
+          "portfolio-validation.yml:offline",
+          "portfolio-validation.yml:endpoint-pester"
         ],
         "proposed": [
           "Pester on a domain-joined host (NOT_EXECUTED)"
@@ -1074,7 +1077,8 @@
         "portfolio offline modules"
       ],
       "ci_jobs": [
-        "portfolio-validation.yml:offline"
+        "portfolio-validation.yml:offline",
+        "portfolio-validation.yml:endpoint-pester"
       ],
       "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
     },
@@ -1151,7 +1155,7 @@
         "UA-6"
       ],
       "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
-      "limitations": "Allow-list empty. No owner key enrolled. Does not satisfy AC1, AC2, or AC4. Does not weaken merge eligibility.",
+      "limitations": "Prototype only: real Ed25519 verification tested; no enrolled key, active adapter, revocation/conflict policy or acceptance approval. AC1 remains independent.",
       "reason": "Design and fail-closed verifier for a personal GitHub account. Not an approval."
     }
   ],
