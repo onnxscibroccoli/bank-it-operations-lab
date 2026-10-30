@@ -621,7 +621,10 @@
       ],
       "paths": [
         "learning",
-        "docs/adr"
+        "docs/adr",
+        "docs/REPO_NAVIGATOR.md",
+        "docs/REVIEWER_GUIDE.md",
+        "docs/AI_PROMPTS.md"
       ],
       "category": "documentation",
       "owner": {

@@ -6,6 +6,11 @@ No cloud account, Microsoft tenant, or bank system is accessed. Cloud templates 
 
 ## Start here
 
+**One small next step:** read the [repo navigator](docs/REPO_NAVIGATOR.md#start-here-fast-mode), then choose one check. You do not need to read the entire repository.
+
+- [Reviewer checklist, short PR text and one-page status](docs/REVIEWER_GUIDE.md)
+- [20 Copilot, 10 Gemini and 10 ChatGPT prompts](docs/AI_PROMPTS.md)
+
 - [15-minute demonstration](docs/DEMO_WALKTHROUGH_15MIN.md)
 - [Job requirements and evidence](docs/JOB_REQUIREMENTS_MATRIX.md)
 - [Project case studies](portfolio/README.md)
@@ -20,6 +25,12 @@ bash scripts/validate-all.sh --python-only
 ```
 
 The offline suite needs Python 3.10+, OpenSSL 3.x, Git and Bash. No pip packages or credentials are needed. Full PostgreSQL simulation and Node/CDK checks run in GitHub Actions; local full validation additionally needs Node 20+, npm and PostgreSQL server binaries. PostgreSQL cluster initialization must run as a non-root user.
+
+## How the pieces fit
+
+AWS/CDK describes infrastructure without deploying it. Entra validates synthetic identity policies. PostgreSQL exercises backup and recovery in a lab. Shared evidence validators and integration workflows connect their results; these modules are not one running application. A passing module test and permission to merge are separate facts.
+
+AC1 requires independent exact-candidate review; AC2 requires authorized exception decisions; AC3 requires successful checks for the same candidate/base/tested merge; AC4 requires truthful documentation; AC5 requires closure of blocking findings. AC6 is separate final human acceptance. See the [plain-English acceptance table](docs/REPO_NAVIGATOR.md#4-ac1ac6-in-plain-english).
 
 ## Evidence labels
 
@@ -69,7 +80,7 @@ The machine-readable authority is [coordination/modules.json](coordination/modul
 
 [PR #35](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35) is the delivery review. [PR #7](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/7) preserves the earlier candidate and coordination record.
 
-`portfolio-validation` runs imported module suites and Backup CDK validation. The existing workflows run the base AWS static tests, PostgreSQL recovery, M365 scenarios and incident simulation. Read each run's exact commit and job conclusions; do not reuse a green result for a different revision.
+`portfolio-validation` runs offline module suites, base AWS/Backup/Organizations/network CDK, Terraform schema validation, PowerShell behavior tests and fresh PostgreSQL exercises before packaging. The existing workflows run the base AWS static tests, PostgreSQL recovery, M365 scenarios and incident simulation. Read each run's exact commit and job conclusions; do not reuse a green result for a different revision.
 
 The separate `merge-eligibility` gate remains fail-closed. Independent reviewer configuration, trusted gate review/protection, owner authentication and exception decisions remain unresolved. This branch changes trusted-file content and therefore also requires deliberate independent re-pinning. No approval or exception is inferred from this README.
 
