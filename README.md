@@ -84,4 +84,6 @@ The machine-readable authority is [coordination/modules.json](coordination/modul
 
 The separate `merge-eligibility` gate remains fail-closed. Independent reviewer configuration, trusted gate review/protection, owner authentication and exception decisions remain unresolved. This branch changes trusted-file content and therefore also requires deliberate independent re-pinning. No approval or exception is inferred from this README.
 
+The portfolio workflow also runs for PRs targeting the delivery branch. Its `run-summary` job runs after successful or failed dependencies, lists all required job results and outstanding user actions, and uploads `portfolio-run-summary.json` with the tested SHA and run identity. Missing, skipped, cancelled or failed required jobs make the summary fail. This report is validation evidence, not approval; workflow cancellation or runner failure can still prevent its delivery.
+
 Historical reports and old acceptance commands remain in their source PRs; they do not supersede the current gate. No auto-merge is enabled.

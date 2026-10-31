@@ -3,7 +3,7 @@ on:
   push:
     branches: ['delivery/**']
   pull_request:
-    branches: [main]
+    branches: [main, 'delivery/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,6 +32,26 @@ jobs:
         with:
           name: portfolio-offline-${{ github.sha }}
           path: portfolio-offline.log
+          retention-days: 7
+  run-summary:
+    if: always()
+    needs: ["offline", "backup-static", "orgs-static", "network-edge", "endpoint-pester", "base-aws", "postgres", "terraform-static", "package"]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Report every required job and outstanding user actions
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: python3 scripts/ci/portfolio_summary.py --summary "$GITHUB_STEP_SUMMARY" --out portfolio-run-summary.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: portfolio-run-summary-${{ github.sha }}-${{ github.run_attempt }}
+          path: portfolio-run-summary.json
+          if-no-files-found: error
           retention-days: 7
   backup-static:
     runs-on: ubuntu-latest
