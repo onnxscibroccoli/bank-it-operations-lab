@@ -10,13 +10,15 @@ Learn how organizations manage access, recover information, investigate outages,
 - **Learn with AI:** [portable teaching and retrieval guide](docs/knowledge/ai.md), [AGENTS.md](AGENTS.md), and [llms.txt](llms.txt).
 - **Contribute:** [documentation conventions and metadata](docs/knowledge/standards.md).
 
+The [current integration policy](docs/knowledge/integration-policy.md) defers independent review until after development integration into main. [GitHub Pages setup](docs/knowledge/publishing.md) gives the one-time owner setting and deployment steps. All 221 pre-existing indexed pages now have explicit metadata; preserved historical records receive contextual reading guides without changing their bytes.
+
 The delivery candidate and its original operational constraints remain below. The documentation portal does not approve the underlying lab or claim production deployment.
 
 ---
 
 ## Original delivery candidate overview
 
-**Delivery candidate — assembled, not independently approved or merged.** This is a personal lab developed with AI assistance. It demonstrates reproducible operational tooling and engineering judgment; it does not claim employment, banking experience, regulatory compliance, or management of real staff.
+**Development lab — independent review deferred until after integration.** This is a personal lab developed with AI assistance. It demonstrates reproducible operational tooling and engineering judgment; it does not claim employment, banking experience, regulatory compliance, or management of real staff.
 
 No cloud account, Microsoft tenant, or bank system is accessed. Cloud templates are **STATIC_VALIDATED**, tenant actions are **PLAN_ONLY**, and fictional vendor/incident examples are **SIMULATION**. A successful automated check does not establish deployment or owner acceptance.
 
@@ -34,7 +36,7 @@ No cloud account, Microsoft tenant, or bank system is accessed. Cloud templates 
 - [Remaining owner actions](reports/USER_ACTIONS_REQUIRED.md)
 
 ```bash
-git clone --branch delivery/portfolio https://github.com/onnxscibroccoli/bank-it-operations-lab.git
+git clone https://github.com/onnxscibroccoli/bank-it-operations-lab.git
 cd bank-it-operations-lab
 git rev-parse HEAD  # record the exact version you demonstrate
 bash scripts/validate-all.sh --python-only

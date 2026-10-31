@@ -122,9 +122,64 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "format": "date"
           },
           "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "last_reviewed": {
+        "type": "string",
+        "format": "date"
+      },
+      "reading_guide": {
+        "type": "object",
+        "required": [
+          "overview",
+          "why",
+          "example",
+          "mechanism",
+          "safety",
+          "terms",
+          "learning_page",
+          "kind",
+          "original_headings"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "overview": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          },
+          "example": {
+            "type": "string"
+          },
+          "mechanism": {
+            "type": "string"
+          },
+          "safety": {
+            "type": "string"
+          },
+          "learning_page": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "terms": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "original_headings": {
             "type": "array",
             "items": {
               "type": "string"

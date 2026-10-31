@@ -2,11 +2,17 @@
 
 ## Current state
 
-Audit date: 2026-10-31. Main at `7f50348bf1370381615eaed91c02607fe41de2f5` contains only README.md. The documentation branch starts from delivery/portfolio at `85fbf9d24954ecfdb5cbea30199e212c7daf2c61`, the unmerged PR #35 candidate. No acceptance gate is changed or bypassed.
+Historical discovery baseline (2026-10-31): main at `7f50348bf1370381615eaed91c02607fe41de2f5` contained only README.md. The initial documentation branch started from delivery/portfolio at `85fbf9d24954ecfdb5cbea30199e212c7daf2c61`, the then-unmerged PR #35 candidate. The owner subsequently directed development integration before independent review; see [the current policy](integration-policy.md). Acceptance evaluators remain unchanged.
 
 The initial delivery tree contains 207 Markdown documents. Discovery covers all tracked file paths, module declarations, documentation, workflows, scripts, and tests. Source inspection is prioritized for recovery, identity, observability, and documentation tooling; it is not a line-by-line audit of every module. The generated inventory preserves module claims without promoting them to new verification.
 
 See the [discovery and capability coverage report](audit.md) for the inventory and gaps.
+
+## Legacy modernization checkpoint
+
+The modernization increment catalogs all 223 current Markdown pages, including 210 formerly unstructured pages. Each legacy page receives a portal reading guide, searchable status, source relationships, terminology, operational limits, and an introductory learning link. Living source pages also receive concise introductions where doing so preserves evidence contracts. The 145 original documents listed in docs/metadata/preserved-records.json remain byte-for-byte unchanged, including evidence-bound README files; their reading guides are rendered from sidecar metadata.
+
+This is an editorial migration, not fresh operational verification of every module. Archived records retain their historical claims and dates. New explanations do not certify cloud deployment, compliance, or production readiness. Metadata validation now requires coverage of every indexed page, valid dates, and existing local evidence references. The glossary adds 68 concise terminology definitions; full expert entries and external references for every additional term remain future work.
 
 ## Design decision
 
@@ -31,11 +37,11 @@ Open `http://127.0.0.1:8000`. Stop the server with Ctrl+C. The generated output 
 
 ## Quality and publishing
 
-The documentation workflow pins Ubuntu 24.04 for compatibility with its pinned Playwright browser version, builds and tests on pull requests and documentation pushes, uploads a static-site artifact, and runs browser checks. A separate manual Pages job is restricted to main and needs GitHub Pages configured with Actions. Pages was not enabled at baseline; this document does not claim a public deployment.
+The documentation workflow pins Ubuntu 24.04 for compatibility with its pinned Playwright browser version, builds and tests on pull requests and documentation pushes, uploads a static-site artifact, and runs browser checks. Pages deployment is restricted to main, runs after validated main documentation pushes or manual deploy requests, and needs GitHub Pages configured with Actions. See [publishing steps](publishing.md). Pages was not enabled at baseline; this document does not claim a public deployment.
 
 ## Remaining work
 
-- Review legacy pages and migrate them progressively to structured status metadata.
+- Maintain the completed metadata/reading-guide migration; all indexed pages require metadata. Historical record bytes are protected by a digest manifest.
 - Expand glossary coverage, topic/audience navigation, and additional practical tutorials.
 - Complete human keyboard, TalkBack/NVDA, zoom, and cognitive-accessibility reviews; automated checks are only partial evidence.
 - Review legacy link and diagram findings, and add robust heading-anchor validation.
@@ -44,4 +50,4 @@ The documentation workflow pins Ubuntu 24.04 for compatibility with its pinned P
 
 ## Agent restrictions
 
-Do not merge this documentation branch or lab candidates automatically. Do not alter cloud infrastructure. CI build results prove documentation checks only. See the [AI contract](ai.md) and [contribution standard](standards.md).
+Follow the owner-directed [integration policy](integration-policy.md); independent review is deferred until after development integration. Do not alter cloud infrastructure. CI build results prove documentation checks only. See the [AI contract](ai.md) and [contribution standard](standards.md).

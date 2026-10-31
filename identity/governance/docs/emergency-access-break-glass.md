@@ -1,5 +1,20 @@
 # Emergency access (break-glass) operational flow
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Control who can use a system and what they are allowed to do. Reviewing access reduces unnecessary exposure of information and privileged operations.
+
+For example: A colleague changes jobs; their old administrator access should be reviewed instead of silently carried into the new role.
+
+Key terms: **Authentication** means checking a claimed identity. **Authorization** means deciding which actions an identified person or program may perform. **RBAC** means role-based access control assigns permissions through roles. **PIM** means privileged Identity Management controls eligibility and time-limited activation of powerful roles. **Conditional Access** means a policy decision based on signals such as identity, device, and sign-in conditions.
+
+**Before using this reference:** Real tenant operations require separately reviewed permissions and licensing; this document is not authorization to access employee records.
+
+Start with the [plain-English learning path](../../../docs/knowledge/identity.md) or [glossary](../../../docs/knowledge/glossary.md). [Current integration and review policy](../../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > Reference only; this repository creates and uses no account. Synthetic break-glass IDs:
 > `b9a5e000-0000-4000-8000-000000000001` and `...000000000002` (the same IDs as the `identity/entra`
 > baseline on branch `entra-ca-offline`).

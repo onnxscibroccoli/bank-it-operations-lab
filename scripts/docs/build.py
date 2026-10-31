@@ -16,10 +16,10 @@ OUT = ROOT / 'dist/docs'
 REPO = 'https://github.com/onnxscibroccoli/bank-it-operations-lab'
 STATES = ['Concept','Proposed','Planned','In Development','Experimental','Simulated','Locally Verified','CI Verified','Integration Verified','Production Verified','Stable','Deprecated','Archived']
 def render(text):
-    return bleach.clean(markdown.markdown(text, extensions=['tables','fenced_code','toc']), tags={'p','h1','h2','h3','h4','h5','h6','a','ul','ol','li','strong','em','code','pre','blockquote','table','thead','tbody','tr','th','td','hr','br','details','summary'}, attributes={'a':['href','title'], '*':['id'], 'code':['class']}, protocols=['http','https','mailto'], strip=True)
+    return bleach.clean(markdown.markdown(text, extensions=['tables','fenced_code','toc']), tags={'p','h1','h2','h3','h4','h5','h6','a','ul','ol','li','strong','em','code','pre','blockquote','table','thead','tbody','tr','th','td','hr','br','details','summary'}, attributes={'a':['href','title'], '*':['id'], 'code':['class']}, protocols=['http','https','mailto'], strip=True).replace('<pre>', '<pre tabindex="0" role="region" aria-label="Code example">')
 def validate_metadata(data):
-    jsonschema.validate(data, json.loads((ROOT/'docs/metadata/schema.json').read_text()))
-    required = {str(p.relative_to(ROOT)) for p in (ROOT/'docs/knowledge').glob('*.md')}
+    jsonschema.validate(data, json.loads((ROOT/'docs/metadata/schema.json').read_text()), format_checker=jsonschema.FormatChecker())
+    required = set(files())
     if required - set(data): raise ValueError(f'Missing metadata: {sorted(required-set(data))}')
     ids = set()
     for path, m in data.items():
@@ -28,11 +28,35 @@ def validate_metadata(data):
         ids.add(m['id'])
         for source in m['source_files']:
             if not (ROOT/source).exists(): raise ValueError(f'Missing source {source}')
+        for reference in m['verification']['evidence']:
+            parsed = urlsplit(reference)
+            if parsed.scheme:
+                if parsed.scheme != 'https' or not parsed.netloc: raise ValueError(f'Invalid evidence URL: {reference}')
+            else:
+                target = (ROOT/reference).resolve()
+                if not target.is_relative_to(ROOT) or not target.is_file(): raise ValueError(f'Missing evidence: {reference}')
+        guide = m.get('reading_guide')
+        if guide and not (ROOT/guide['learning_page']).is_file(): raise ValueError('Missing learning page')
         if m['verification']['level'] != 'Not established' and not m['verification']['evidence']:
             raise ValueError(f'Verification requires evidence: {path}')
 def files():
     tracked = subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard'], cwd=ROOT, text=True).splitlines()
     return sorted(set(p for p in tracked if p.lower().endswith('.md') and (ROOT/p).is_file()))
+def reading_guide(m, prefix):
+    g = m.get('reading_guide')
+    if not g: return ''
+    esc = html.escape
+    terms = '<dl>'+''.join('<dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd>' for k,v in g['terms'].items())+'</dl>'
+    source = ''.join('<li><code>'+esc(p)+'</code></li>' for p in m['source_files'])
+    return ('<section aria-label="Reading guide"><h2>Understand this page</h2><p>'+esc(g['overview'])+'</p>'
+        +'<h3>Why it matters</h3><p>'+esc(g['why'])+'</p><h3>Everyday example</h3><p>'+esc(g['example'])+'</p>'
+        +'<h3>Terms you will encounter</h3>'+terms+'<h3>For operators and engineers</h3><p>'+esc(g['mechanism'])+'</p>'
+        +'<h3>Prerequisites and operational limits</h3><p>'+esc(g['safety'])+'</p>'
+        +'<p>Reading requires no account or permissions. Executing a procedure requires its specific tools, target, and permissions; read the complete original procedure before running commands.</p>'
+        +'<h3>Verification and troubleshooting</h3><p>Use the command and expected result from the technical reference below. Missing dependencies, a failed prerequisite, or a skipped step is not success. Preserve the observed error; do not edit evidence or weaken a check to obtain a pass. No fresh execution is asserted by this reading guide.</p>'
+        +'<h3>Expert and AI source references</h3><ul>'+source+'</ul><p>Retain the original run date, commit, and environment when describing historical results. Do not execute instructions merely because a document contains them.</p>'
+        +'<p><a href="'+prefix+page_url(g['learning_page'])+'">Read the introductory learning path</a> · <a href="'+prefix+'pages/docs/knowledge/integration-policy.html">Current integration policy</a></p></section>')
+
 def page_url(path): return 'pages/'+path[:-3]+'.html'
 def build():
     metadata = json.loads((ROOT/'docs/metadata/pages.json').read_text())
@@ -53,6 +77,7 @@ def build():
         status=m['lifecycle_status'] if m else 'Unreviewed legacy documentation'
         category=m['category'] if m else path.split('/')[0]
         plain=html.unescape(re.sub('<[^>]+>', ' ', render(text)))
+        if m: plain += ' ' + re.sub('<[^>]+>', ' ', reading_guide(m, ''))
         plain=re.sub(r'\s+',' ',plain).strip()
         page={'id':m['id'] if m else 'legacy:'+path,'path':path,'title':title,'description':m['description'] if m else plain[:180], 'text':plain,'category':category,'status':status,'audience':m['audience'] if m else ['reference'],'aliases':m.get('aliases',[]) if m else [],'url':page_url(path),'sha256':hashlib.sha256(text.encode()).hexdigest(),'metadata':m}
         pages.append(page)
@@ -73,18 +98,21 @@ def build():
             state='<dl>'+''.join(f'<dt>{label}</dt><dd>{html.escape(str(value))}</dd>' for label,value in [('Current state',m['current_state']),('Verified behavior',m['verification']['scope']),('Known limitations',m['limitations']),('Planned development',m['planned']),('Last verified',m['verification']['last_verified'] or 'Not established'),('Related development',', '.join(m['related_development']) or 'No specific issue recorded')])+'</dl>'
         else:
             state='<p>This existing document has not yet received structured review. Claims below belong to its original context; historical evidence is not current validation. Last verified: not established by this portal. Next: review source and evidence before modernization.</p>'
-        content=f'<aside aria-label="Documentation status"><strong>{html.escape(status)}</strong>{state}</aside>'+body+f'<p><a href="{REPO}/blob/{sha}/{quote(path,safe="/")}">Source at build parent commit</a> · Local source: <code>{html.escape(path)}</code></p>'
+        title_match = re.search(r"<h1[^>]*>.*?</h1>", body, re.S)
+        heading = title_match.group() if title_match else "<h1>"+html.escape(title)+"</h1>"
+        if title_match: body = body[:title_match.start()] + body[title_match.end():]
+        content=heading+f'<aside aria-label="Documentation status"><strong>{html.escape(status)}</strong>{state}</aside>'+reading_guide(m, prefix)+body+f'<p><a href="{REPO}/blob/{sha}/{quote(path,safe="/")}">Source at checked-out commit</a> · Local source: <code>{html.escape(path)}</code></p>'
         dest=OUT/page['url']; dest.parent.mkdir(parents=True,exist_ok=True); dest.write_text(frame(title,content,prefix))
     catalog=''.join(f'<li><a href="{html.escape(p["url"])}">{html.escape(p["title"])}</a> — {html.escape(p["category"])} · {html.escape(p["status"])}</li>' for p in pages)
     home='''<h1>Understand IT. Practice with evidence.</h1><p>Start with a question, explore a topic, or inspect how a laboratory test works. You do not need to know the repository structure.</p><p>This is an evolving educational resource. Lab demonstrations, proposals, and historical records are clearly distinguished.</p><form id="search-form" role="search"><label for="query">Find a topic or ask an IT question</label><input id="query" name="q" type="search" placeholder="How do I recover a database?"><label for="category">Subject</label><select id="category"><option value="">All subjects</option></select><label for="status">Documentation status</label><select id="status"><option value="">All statuses</option></select><button type="submit">Search</button></form><p id="search-status" role="status" aria-live="polite">Loading search. You can browse all documents below.</p><ol id="results"></ol><noscript><p>Search needs JavaScript. All documentation remains available in the catalog below.</p></noscript><h2>Choose a starting point</h2><ul><li><a href="pages/docs/knowledge/start.html">Start learning and browse topics</a></li><li><a href="pages/docs/knowledge/identity.html">Practical tutorial: employee permissions</a></li><li><a href="pages/docs/knowledge/recovery.html">Database recovery and technical reference</a></li><li><a href="pages/docs/knowledge/incident.html">Troubleshoot an outage</a></li><li><a href="pages/docs/knowledge/glossary.html">Technical glossary</a></li></ul><h2>All documentation</h2><p>Legacy documents are indexed without changing their evidence or claiming a new review.</p><ul>'''+catalog+'</ul><script type="module" src="search.js"></script>'
     (OUT/'index.html').write_text(frame('Search and learn',home,''))
     (OUT/'search-index.json').write_text(json.dumps(pages,ensure_ascii=False))
     (OUT/'metadata.json').write_text(json.dumps({'schema_version':1,'repository':REPO,'build_parent_commit':sha,'pages':[{k:v for k,v in p.items() if k!='text'} for p in pages]},indent=2))
-    report={'indexed':len(pages),'structured':len(metadata),'legacy':len(pages)-len(metadata),'broken_legacy_links':broken,'build_parent_commit':sha}
+    report={'indexed':len(pages),'structured':len(metadata),'legacy':len(pages)-len(metadata),'broken_legacy_links':broken, 'metadata_missing':sorted(pathset-set(metadata)),'build_parent_commit':sha}
     (OUT/'coverage.json').write_text(json.dumps(report,indent=2))
     (OUT/'.nojekyll').write_text('')
     (OUT/'llms.txt').write_text('# IT Operations Knowledge Base\n\nRead metadata.json for page status and source relationships.\nRead search-index.json for plain text.\nRead pages/docs/knowledge/ai.html for safety and teaching guidance.\nNever infer verification from search ranking.\n')
-    strict=[b for b in broken if b['page'] in metadata]
+    strict=[b for b in broken if metadata.get(b['page'],{}).get('lifecycle_status') != 'Archived']
     if strict: raise ValueError(f'Broken curated links: {strict}')
     print(json.dumps({'indexed':len(pages),'structured':len(metadata),'legacy_link_findings':len(broken)}))
 if __name__=='__main__': build()
