@@ -1,0 +1,1 @@
+{"private":true,"type":"module","devDependencies":{"@playwright/test":"1.56.1","axe-core":"4.11.0","markdownlint-cli2":"0.17.2"},"scripts":{"test":"node --test tests/search.test.mjs","browser":"node tests/browser.mjs"}}

@@ -1160,6 +1160,34 @@
       "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
       "limitations": "Prototype only: real Ed25519 verification tested; no enrolled key, active adapter, revocation/conflict policy or acceptance approval. AC1 remains independent.",
       "reason": "Design and fail-closed verifier for a personal GitHub account. Not an approval."
+    },
+    {
+      "id": "knowledge-base",
+      "status": "INTEGRATED",
+      "category": "documentation",
+      "paths": [
+        "scripts/docs",
+        "docs/knowledge",
+        "docs/metadata",
+        "docs/index.md",
+        "AGENTS.md",
+        "llms.txt",
+        ".github/pull_request_template.md"
+      ],
+      "owner": {
+        "agent": "documentation maintainers"
+      },
+      "required_checks": {
+        "present": [
+          "documentation.yml:validate"
+        ],
+        "proposed": []
+      },
+      "ci_jobs": [
+        "documentation.yml:validate"
+      ],
+      "limitations": "Documentation platform only. Legacy migration, manual accessibility assessment, and public deployment remain incomplete.",
+      "prs": []
     }
   ],
   "required_gate_jobs": [
