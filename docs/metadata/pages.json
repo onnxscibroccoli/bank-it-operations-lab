@@ -1,0 +1,347 @@
+{
+  "docs/knowledge/start.md": {
+    "id": "start",
+    "description": "Choose a short learning path for systems, access, recovery, and operational evidence.",
+    "category": "getting-started",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "docs/REPO_NAVIGATOR.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/recovery.md": {
+    "id": "recovery",
+    "description": "Understand backups, restore verification, recovery objectives, and the PostgreSQL test harness.",
+    "category": "backup-disaster-recovery",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "tests/integration/README.md",
+      "tests/integration/postgres/run_restore_scenario.sh",
+      "tests/integration/postgres/verify_evidence.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "how do backups work",
+      "recover a database",
+      "database crashes",
+      "restore",
+      "cyberattack"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/identity.md": {
+    "id": "identity",
+    "description": "Learn least privilege, authentication, authorization, and an offline access inventory exercise.",
+    "category": "identity-access",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "identity/governance/README.md",
+      "identity/governance/inventory.py",
+      "identity/governance/graph_client.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "stop employees having too much access",
+      "least privilege",
+      "employee permissions",
+      "authentication authorization"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/incident.md": {
+    "id": "incident",
+    "description": "Learn detection, diagnosis, recovery, and safe offline health evaluation.",
+    "category": "incident-response",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "observability/README.md",
+      "observability/run_healthcheck.py",
+      "scenarios/incident/README.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "detect outages",
+      "service stopped working",
+      "investigate",
+      "monitoring",
+      "cyberattack"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/infrastructure.md": {
+    "id": "infrastructure",
+    "description": "Understand reviewable infrastructure definitions and safe automation boundaries.",
+    "category": "infrastructure-as-code",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "infra/aws-cdk/README.md",
+      "operations/patching",
+      "operations/hardening"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "infrastructure as code",
+      "automate routine IT maintenance",
+      "automation",
+      "patching"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/governance.md": {
+    "id": "governance",
+    "description": "Distinguish implementation, test evidence, authorization, and regulatory applicability.",
+    "category": "governance-compliance",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "coordination/modules.json",
+      "reports/USER_ACTIONS_REQUIRED.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/ai.md": {
+    "id": "ai",
+    "description": "Portable discovery, retrieval contracts, teaching modes, and evidence restrictions for any AI provider.",
+    "category": "ai",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "scripts/docs/build.py",
+      "docs/metadata/schema.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/standards.md": {
+    "id": "standards",
+    "description": "Maintain standalone explanations, honest maturity labels, accessible content, and source traceability.",
+    "category": "development",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "docs/metadata/schema.json",
+      "scripts/docs/build.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/development.md": {
+    "id": "development",
+    "description": "Baseline discovery, static platform decision, validation commands, and remaining release gaps.",
+    "category": "development",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "scripts/docs/build.py",
+      "scripts/docs/search-core.js",
+      "coordination/modules.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/glossary.md": {
+    "id": "glossary",
+    "description": "Definitions, examples, operational cautions, and related learning for common IT terms.",
+    "category": "glossary",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "docs/knowledge/audit.md": {
+    "id": "audit",
+    "description": "Repository discovery, attributed module coverage, documentation gaps, and modernization order.",
+    "category": "development",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Educational documentation grounded in the referenced delivery candidate files.",
+    "limitations": "Source inspection is not a fresh execution or production verification. See scope and safety notes below.",
+    "planned": "Expand examples, review legacy references, and add documented human accessibility testing.",
+    "source_files": [
+      "coordination/modules.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "capabilities",
+      "inventory",
+      "coverage"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
+      "last_verified": null,
+      "evidence": []
+    }
+  }
+}

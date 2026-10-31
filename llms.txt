@@ -1,0 +1,9 @@
+# IT Operations Knowledge Base
+
+- docs/knowledge/ai.md: retrieval contract and learning modes
+- docs/knowledge/start.md: learning pathways
+- docs/metadata/pages.json: curated metadata
+- coordination/modules.json: original module registry and limitations
+- docs/knowledge/development.md: baseline and build commands
+
+Build with python3 scripts/docs/build.py. Static output includes search-index.json and metadata.json. No llms-full.txt is maintained: the plain-text index already supplies content without a second canonical copy.

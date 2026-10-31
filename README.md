@@ -1,4 +1,20 @@
-# Bank IT operations portfolio
+# IT Operations Knowledge Base and Reference Lab
+
+Learn how organizations manage access, recover information, investigate outages, and verify infrastructure changes. This evolving resource is for curious beginners, operators, engineers, auditors, and AI assistants. Its educational content is useful beyond banking.
+
+- **Start learning:** [short learning paths](docs/knowledge/start.md).
+- **Find a topic:** [build and open the searchable documentation portal](docs/knowledge/development.md#reproduce-the-portal). A public website is not yet deployed; CI produces a downloadable site artifact. Search understands aliases such as employee permissions and database recovery.
+- **Technical reference:** [repository navigator](docs/REPO_NAVIGATOR.md) and [module registry](coordination/modules.json).
+- **Practice safely:** [offline identity tutorial](docs/knowledge/identity.md), [health evaluation](docs/knowledge/incident.md), and [restore evidence inspection](docs/knowledge/recovery.md). Read prerequisites before commands.
+- **Understand status:** [current development](docs/knowledge/development.md). Lifecycle, historical evidence, and fresh verification are separate.
+- **Learn with AI:** [portable teaching and retrieval guide](docs/knowledge/ai.md), [AGENTS.md](AGENTS.md), and [llms.txt](llms.txt).
+- **Contribute:** [documentation conventions and metadata](docs/knowledge/standards.md).
+
+The delivery candidate and its original operational constraints remain below. The documentation portal does not approve the underlying lab or claim production deployment.
+
+---
+
+## Original delivery candidate overview
 
 **Delivery candidate — assembled, not independently approved or merged.** This is a personal lab developed with AI assistance. It demonstrates reproducible operational tooling and engineering judgment; it does not claim employment, banking experience, regulatory compliance, or management of real staff.
 
