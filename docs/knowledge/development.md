@@ -31,7 +31,7 @@ Open `http://127.0.0.1:8000`. Stop the server with Ctrl+C. The generated output 
 
 ## Quality and publishing
 
-The documentation workflow builds and tests on pull requests and documentation pushes, uploads a static-site artifact, and runs browser checks. A separate manual Pages job is restricted to main and needs GitHub Pages configured with Actions. Pages was not enabled at baseline; this document does not claim a public deployment.
+The documentation workflow pins Ubuntu 24.04 for compatibility with its pinned Playwright browser version, builds and tests on pull requests and documentation pushes, uploads a static-site artifact, and runs browser checks. A separate manual Pages job is restricted to main and needs GitHub Pages configured with Actions. Pages was not enabled at baseline; this document does not claim a public deployment.
 
 ## Remaining work
 
