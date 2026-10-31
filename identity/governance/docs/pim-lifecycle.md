@@ -1,5 +1,20 @@
 # PIM lifecycle reference: Microsoft Entra roles
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Control who can use a system and what they are allowed to do. Reviewing access reduces unnecessary exposure of information and privileged operations.
+
+For example: A colleague changes jobs; their old administrator access should be reviewed instead of silently carried into the new role.
+
+Key terms: **Authentication** means checking a claimed identity. **Authorization** means deciding which actions an identified person or program may perform. **RBAC** means role-based access control assigns permissions through roles. **PIM** means privileged Identity Management controls eligibility and time-limited activation of powerful roles. **Conditional Access** means a policy decision based on signals such as identity, device, and sign-in conditions.
+
+**Before using this reference:** Real tenant operations require separately reviewed permissions and licensing; this document is not authorization to access employee records.
+
+Start with the [plain-English learning path](../../../docs/knowledge/identity.md) or [glossary](../../../docs/knowledge/glossary.md). [Current integration and review policy](../../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > Reference only; this repository configures no tenant. A real tenant needs Entra ID P2 or Entra ID
 > Governance ([licensing](licensing-prerequisites.md)); the free-tier fallback is at the end.
 > Sources: [What is PIM](https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure),

@@ -1,5 +1,20 @@
 # observability -- host health collector + synthetic probes (lab)
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Use health measurements and recorded events to understand whether a service is working. Old or incomplete measurements can give false reassurance; missing information must remain visible.
+
+For example: A saved health report is evaluated before an operator decides whether to send requests to a service.
+
+Key terms: **Probe** means a limited request used to check a particular service behavior. **Metric** means a numerical measurement such as elapsed time or free space. **Log** means a recorded event with context for later inspection. **Fail closed** means refuse the permissive outcome when required checks are missing or fail.
+
+**Before using this reference:** Offline fixture evaluation makes no probes. Live collect mode contacts configured targets and must be scoped deliberately.
+
+Start with the [plain-English learning path](../docs/knowledge/incident.md) or [glossary](../docs/knowledge/glossary.md). [Current integration and review policy](../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 Lightweight, **stdlib-only** (Python >= 3.8) host health collector with bounded synthetic probes and a
 **fail-closed** endpoint decision. Lab/reference code: it changes **no production endpoint, load
 balancer or routing**, and the tests never touch the network.

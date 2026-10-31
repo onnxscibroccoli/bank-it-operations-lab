@@ -27,3 +27,9 @@ External links are checked separately with timeouts and retries. Network failure
 ## Page template
 
 Start with a title and plain-English purpose. Add why it matters and a realistic example, then prerequisites, terminology, progressive depth, walkthrough if implemented, expected results, troubleshooting, security, source links, and agent restrictions. The generated status panel displays metadata directly, avoiding a second contradictory status declaration.
+
+## Preserved records and legacy reading guides
+
+Every indexed Markdown file needs an entry in docs/metadata/pages.json. Use reading_guide for context around preserved historical source; its fields are validated by schema.json. Keep terminology consistent with docs/metadata/terminology.json and the human glossary. last_reviewed is an editorial date, while verification.last_verified requires actual scoped evidence.
+
+Files listed in docs/metadata/preserved-records.json are historical or evidence-bound inputs. Do not update their hashes merely to silence a test. Add a current explanation in sidecar metadata or a new document, preserving the original record. Keep NOT_EXECUTED banners at the top of hybrid runbooks.

@@ -1,5 +1,20 @@
 # Endpoint and Windows automation (static)
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Describe and validate administrative changes to user devices before applying them. Plans and expected results make operational intent reviewable before permissions or devices change.
+
+For example: An operator checks a Windows configuration plan and reviews a Microsoft 365 onboarding scenario without modifying a real account.
+
+Key terms: **Endpoint** means a user or service device connected to an organization’s systems. **M365** means microsoft 365, a collection of productivity and administration services. **Intune** means microsoft’s device and application management service. **Plan-only** means produces proposed actions without executing those actions.
+
+**Before using this reference:** No actual device enrollment, mailbox change, or tenant modification is proven. Real execution needs separate permission and environment checks.
+
+Start with the [plain-English learning path](../../docs/knowledge/identity.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 PowerShell for a synthetic joiner/mover/leaver and an Intune compliance baseline.
 Nothing here runs against Active Directory, Entra, or Intune. The checker is Python and
 does not require Windows. Evidence class: **STATIC_VALIDATED**. A Pester run on a

@@ -1,5 +1,20 @@
 # infra/aws-cdk: BANK-AWS-001 secure storage stack
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Describe cloud storage, networks, databases, and their access controls before deployment. Reviewable definitions make configuration decisions visible and repeatable.
+
+For example: An engineer reviews a template to see whether a database is isolated from public traffic and how its encryption keys are used.
+
+Key terms: **CDK** means a software toolkit used to define infrastructure in programming languages. **CloudFormation** means aWS’s template-based resource provisioning service. **VPC** means a logically isolated cloud network. **RDS** means aWS’s managed relational database service. **S3** means aWS object storage for files and other objects. **KMS** means aWS’s service for managing cryptographic keys. **IAM** means identity and Access Management: controls for who may act on resources.
+
+**Before using this reference:** Cloud deployment is outside this documentation task. Existing exceptions and trust-policy gaps remain unresolved until separately addressed.
+
+Start with the [plain-English learning path](../../docs/knowledge/infrastructure.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 AWS CDK v2 (TypeScript) app that synthesizes `BankItLabSecureStorage` **without AWS credentials**. Nothing here is
 deployed; outputs are static evidence only (see `evidence/aws/aws-remediation-vpc-rds/`). Not a certification.
 

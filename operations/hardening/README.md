@@ -1,5 +1,20 @@
 # systemd service hardening -- reference drop-ins and offline inspector
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Reduce the permissions and system features available to a service. Restricting unnecessary privileges can limit the effect of a compromised or defective service.
+
+For example: A background process is given only the filesystem and operating-system access needed for its job.
+
+Key terms: **systemd** means a Linux service manager used to start and supervise processes. **Hardening** means reducing unnecessary permissions, exposure, and risky configuration. **Drop-in** means an additional configuration file that modifies a service definition.
+
+**Before using this reference:** Applying a service restriction can prevent legitimate work. Validate compatibility and recovery on an isolated host first.
+
+Start with the [plain-English learning path](../../docs/knowledge/infrastructure.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > **Example / offline.** Units and drop-ins here are review material. Nothing in this repository
 > installs them, runs `systemctl`, or changes a host.
 

@@ -1,5 +1,20 @@
 # Vendor (third-party) risk — templates and SIMULATION example
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Define responsibilities and risks when an organization depends on an external service. Clear ownership and retained evidence help an organization respond without sending unnecessary sensitive data.
+
+For example: During an outage, the team uses an escalation record to distinguish its responsibilities from the fictional vendor’s responsibilities.
+
+Key terms: **API** means an interface through which programs request operations or information. **RACI** means a responsibility table identifying who is responsible, accountable, consulted, and informed. **Mock** means a controlled substitute for a real component used in a test or demonstration.
+
+**Before using this reference:** Do not send fictional escalation examples as real messages or copy personal data into public exercise records.
+
+Start with the [plain-English learning path](../../docs/knowledge/governance.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > **SIMULATION / lab material.** Templates are generic placeholders; the filled example concerns the
 > **fictional** vendor "Acme Core Ledger SIMULATION". Control questions are *SOC 2-style
 > placeholders* written for this lab; they are not AICPA Trust Services Criteria text and do not

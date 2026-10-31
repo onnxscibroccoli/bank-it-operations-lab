@@ -1,5 +1,20 @@
 # SIMULATION — integrated incident demonstration
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Find why a service failed, restore it, and retain an honest record of what happened. An incident timeline supports recovery decisions and learning without guessing when detection or restoration occurred.
+
+For example: A checkout screen fails because the underlying database is unavailable; health observations and timestamps help identify the failure.
+
+Key terms: **Incident** means an event that disrupts or threatens expected service. **MTTD** means mean time to detect across incidents; a single run supplies one detection interval. **MTTR** means a mean recovery or repair interval whose exact definition must be stated; this lab records its own restoration interval. **Simulation** means a controlled example that does not establish production behavior.
+
+**Before using this reference:** A crash demonstration deliberately interrupts its lab database. Do not reuse its commands against a real service.
+
+Start with the [plain-English learning path](../../docs/knowledge/incident.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > **SIMULATION.** Every fault here is injected on purpose into a throwaway, loopback-only lab stack.
 > No real bank, customer, vendor, production system or person is involved, and no notification is sent.
 

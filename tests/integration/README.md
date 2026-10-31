@@ -1,5 +1,20 @@
 # Integration tests
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Check that a database backup can be restored and that the result contains the expected information. A command that exits successfully can still produce the wrong data; verification must examine the recovered result.
+
+For example: A saved ledger is restored in a disposable database and compared with the original synthetic records.
+
+Key terms: **PostgreSQL** means database software that organizes related information in tables. **Transaction** means a group of database changes treated as a unit. **Fingerprint** means a calculated summary used here to compare the lab data before and after restoration. **Negative test** means a check that intentionally invalid behavior is rejected for the expected reason.
+
+**Before using this reference:** Historical run records prove only their stated revision and environment. Full restore execution needs compatible PostgreSQL tools and an isolated non-root lab.
+
+Start with the [plain-English learning path](../../docs/knowledge/recovery.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 ## `postgres/`: backup/restore exercise (harness v2)
 
 | File | Purpose |

@@ -1,5 +1,20 @@
 # FFIEC IT Examination Handbook, "Architecture, Infrastructure, and Operations" (AIO, June 2021): lab control mapping
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Connect operational claims to evidence, responsibilities, and applicable review criteria. A passing test and an authorized release are different facts; recording both avoids accidental overstatement.
+
+For example: A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.
+
+Key terms: **Evidence** means recorded information supporting a specific claim within a stated scope. **CI** means continuous Integration: automated checks of proposed changes. **ADR** means architecture Decision Record: the context, choice, and consequences of a design decision. **Attestation** means a statement made by an identified party about a specific claim.
+
+**Before using this reference:** Independent review is deferred until after development integration by the owner’s October 31 directive. Historical gates and security exceptions are not retroactively approved.
+
+Start with the [plain-English learning path](../../docs/knowledge/governance.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > **Read this first.** `bank-it-operations-lab` is a reproducible **lab**, not a bank, a regulated entity, or a production
 > environment. This document is an engineering cross-reference from *selected* AIO booklet topics to artifacts that exist in this
 > repository. It is **not** an examination, an audit, an assurance report, a compliance certification, or a regulatory opinion,

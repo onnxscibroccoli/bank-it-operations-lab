@@ -1,5 +1,20 @@
 # Focused AI prompts for this lab
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Find reliable explanations and keep them aligned with the repository as development continues. Good navigation and explicit limitations help beginners and experienced engineers use the same material.
+
+For example: A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.
+
+Key terms: **Markdown** means a text format for readable documents with headings, links, lists, and code. **Metadata** means structured information describing a page, such as its topic and verification scope. **Static site** means prepared web files served without an application backend.
+
+**Before using this reference:** Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.
+
+Start with the [plain-English learning path](knowledge/start.md) or [glossary](knowledge/glossary.md). [Current integration and review policy](knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 Choose **one prompt per task**. Supply the branch/SHA and the relevant file or Actions log. PR #7 is the preserved integration baseline; PR #35 is the newer delivery. If the tool cannot read a source, it must say so rather than infer its contents. Research is guidance, not executed evidence or independent approval.
 
 ## 20 GitHub Copilot prompts

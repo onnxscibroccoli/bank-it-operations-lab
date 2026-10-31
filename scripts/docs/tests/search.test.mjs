@@ -1,3 +1,7 @@
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const repositoryRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');
+process.chdir(repositoryRoot);
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

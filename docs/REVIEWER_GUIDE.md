@@ -1,5 +1,20 @@
 # Reviewer guide and copy-ready PR text
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Find reliable explanations and keep them aligned with the repository as development continues. Good navigation and explicit limitations help beginners and experienced engineers use the same material.
+
+For example: A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.
+
+Key terms: **Markdown** means a text format for readable documents with headings, links, lists, and code. **Metadata** means structured information describing a page, such as its topic and verification scope. **Static site** means prepared web files served without an application backend.
+
+**Before using this reference:** Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.
+
+Start with the [plain-English learning path](knowledge/start.md) or [glossary](knowledge/glossary.md). [Current integration and review policy](knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 ## One-page status summary
 
 **Snapshot checked October 30, 2026. Draft portfolio; no eligible release or live deployment claimed.** Recheck GitHub before using this as current approval evidence.

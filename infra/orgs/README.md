@@ -1,5 +1,20 @@
 # infra/orgs: AWS Organizations security reference modules
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Organize permissions and security administration across multiple cloud accounts. Central guardrails reduce accidental drift, but their scope and exceptions must be understood.
+
+For example: A central team defines a guardrail that member accounts cannot exceed, then reviews where administration is delegated.
+
+Key terms: **SCP** means service Control Policy: an AWS Organizations guardrail that limits available permissions rather than granting them. **Delegated administrator** means an account assigned administration responsibilities for a supported service. **Terraform** means a tool that describes and manages infrastructure through configuration.
+
+**Before using this reference:** No live Organizations changes, Terraform apply, or service enablement is established by these documents.
+
+Start with the [plain-English learning path](../../docs/knowledge/infrastructure.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 **Reference only. This code is never deployed.** It synthesizes CloudFormation and lints SCPs offline, with no AWS
 credentials. Account, root and organization IDs are CloudFormation parameters, so nothing is looked up.
 

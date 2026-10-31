@@ -1,5 +1,20 @@
 # Host patching (AWS SSM Patch Manager) -- reference examples
 
+<!-- knowledge-introduction -->
+**Reading guide — In Development; operational verification is not implied.**
+
+Roll out software updates in controlled stages and decide when to stop or roll back. Early checks limit the spread of a bad update and give operators a recovery point.
+
+For example: A small test group receives a change before the organization considers a wider rollout.
+
+Key terms: **Canary** means a small first group used to observe a change before wider rollout. **Patch ring** means a group of systems assigned a particular rollout stage. **Rollback** means a deliberate return to a previous known state. **SSM** means aWS Systems Manager, including tools for managed-host operations.
+
+**Before using this reference:** Installation, service restart, and rollback instructions can disrupt systems. Read the target, permissions, and change gates before any live use.
+
+Start with the [plain-English learning path](../../docs/knowledge/infrastructure.md) or [glossary](../../docs/knowledge/glossary.md). [Current integration and review policy](../../docs/knowledge/integration-policy.md) supersedes older review-order instructions. The technical material follows in its original order.
+<!-- /knowledge-introduction -->
+
+
 > **Example / offline.** Everything here is reference material for review. Nothing in this directory
 > calls AWS, and nothing has been applied to any account or host. Identifiers are placeholders
 > (`<CANARY_WINDOW_ID>`, `EXAMPLE-...`).

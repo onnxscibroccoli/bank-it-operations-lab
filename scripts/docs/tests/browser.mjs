@@ -1,3 +1,7 @@
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const repositoryRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');
+process.chdir(repositoryRoot);
 import {chromium} from '@playwright/test';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
@@ -24,7 +28,7 @@ try{
   const result=await page.evaluate(async()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));
   report.pages.push({url:url||'index.html',violations:result.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>n.target)})),incomplete:result.incomplete.map(v=>v.id)});
  }
- await page.setViewportSize({width:320,height:700});await page.goto(root);
+ await page.setViewportSize({width:320,height:700});await page.goto(root);await page.waitForFunction(()=>document.querySelector('#search-status').textContent.includes('results.'));
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));report.mobile='320px homepage: no horizontal overflow';
  await page.screenshot({path:'dist/docs/portal-mobile.png',fullPage:false});
  await page.setViewportSize({width:1280,height:900});await page.goto(root);await page.screenshot({path:'dist/docs/portal-desktop.png',fullPage:false});
