@@ -1,0 +1,355 @@
+name: integration-gate
+
+# Aggregate gate for the combined candidate (PR #27 accelerated plan, lane B).
+# 1. user-actions: fast, dependency-free job that publishes USER ACTION REQUIRED items from
+#    coordination/tasks.json to the job summary and as annotations.
+# 2. module-registry: coordination/modules.json must match the tree, validate-all.sh and CI jobs.
+# 3. The component workflows run as reusable workflows for this exact SHA.
+# 4. Required M365 checks (scenario evaluation, unit tests, evidence verification) and PLAN_ONLY negative tests;
+#    required SIMULATION incident checks (committed runs, a FRESH run with PostgreSQL, NOT_EXECUTED negative) and
+#    a separate labeling-markers job (SIMULATION / PLAN_ONLY).
+#    They fail closed when the module is absent: a clean merge without these checks is not acceptance.
+# 5. final-summary (always runs): aggregates every job result; fails if any required job is missing, skipped or failed.
+# 6. merge-eligibility (always runs): PR #27 C6 policy check for this run's identity (candidate, base == current main,
+#    tested merge from scripts/ci/provenance.py). AC1 (reviews API, non-author APPROVED on the exact SHA) and AC3 are
+#    computed at runtime, and AC2/AC4/AC5 come from login-bound attestation comments (never the PR author) bound to the exact SHA (PR #31 F6/F7, PR #32 D1/D2); the gate pin must be independently reviewed (D3).
+#    The gate code and allow-list come BY SHA from a trusted manifest (main or evidence/acceptance) and are hash-verified;
+#    the candidate's verifier files must match it (R6). The decision is uploaded as an artifact, never committed.
+#    Residual: on pull_request the workflow file itself comes from the candidate merge; only branch protection /
+#    a ruleset requiring this workflow from main (UA-3) closes that.
+#    Expected to FAIL while AC1, AC2, AC4 or AC5 are open.
+# No secrets, no cloud credentials, nothing is deployed, nothing is merged.
+on:
+  push:
+    branches: [main, overnight/integration, 'candidate/**']
+  pull_request:
+    branches: [main, overnight/integration]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gate-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  user-actions:
+    name: user-actions (USER ACTION REQUIRED report)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            coordination
+            scripts/ci
+      - name: Publish user actions
+        run: python3 scripts/ci/user_actions.py --annotations --summary "$GITHUB_STEP_SUMMARY" --out user-actions.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: user-actions-${{ github.sha }}
+          path: user-actions.json
+          retention-days: 7
+
+  module-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Check coordination/modules.json (registry + fail-closed coverage)
+        run: python3 scripts/ci/check_modules.py --coverage-json module-coverage.json
+      - name: CI self-tests (scripts/ci/tests, incl. merge-eligibility binding + module coverage regressions)
+        run: python3 -m unittest discover -s scripts/ci/tests -v
+
+  offline-validation:
+    uses: ./.github/workflows/offline-validation.yml
+
+  aws-cdk:
+    uses: ./.github/workflows/aws-cdk.yml
+
+  postgres:
+    uses: ./.github/workflows/postgres-restore-evidence.yml
+
+  # --- REQUIRED M365 checks (PR #20 module). Fail closed: they FAIL when identity/m365 or evidence/m365 is absent.
+  m365-scenario-evaluation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Evaluate every scenario; assert PLAN_ONLY, executed=false, mutationsExecuted=0
+        run: bash scripts/ci/m365_checks.sh evaluate
+
+  m365-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: identity/m365 unittest suite
+        run: bash scripts/ci/m365_checks.sh unit
+
+  m365-evidence-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Verify committed evidence runs; assert PLAN_ONLY, executed=false, mutationsExecuted=0
+        run: bash scripts/ci/m365_checks.sh evidence
+
+  plan-only-assertions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Negative tests - every PLAN_ONLY violation, and every missing/skipped/failed required check, must fail
+        run: bash scripts/ci/m365_checks.sh plan-only-negatives
+
+  # --- REQUIRED SIMULATION incident checks (PR #22 module). Fail closed when scenarios/incident is absent.
+  incident-committed-runs:
+    name: incident-committed-runs (6 requirements + selftest on every committed run)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Committed runs - injection, detection, diagnosis, recovery, timeline, SIMULATION
+        run: bash scripts/ci/incident_checks.sh committed
+
+  incident-fresh-run:
+    name: incident-fresh-run (NEW SIMULATION scenario, apt-installed PostgreSQL server binaries; exit 3 = NOT_EXECUTED = FAIL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      injection: ${{ steps.req.outputs.injection }}
+      detection: ${{ steps.req.outputs.detection }}
+      diagnosis: ${{ steps.req.outputs.diagnosis }}
+      recovery: ${{ steps.req.outputs.recovery }}
+      timeline: ${{ steps.req.outputs.timeline }}
+      simulation: ${{ steps.req.outputs.simulation }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0   # the scenario extracts pinned component commits with git archive
+      - name: Install PostgreSQL SERVER binaries on the runner (apt; no services container) and put initdb/pg_ctl on PATH
+        run: |
+          set -u
+          sudo apt-get update -qq || echo "::warning::apt-get update failed"
+          src=""
+          if sudo apt-get install -y -qq postgresql-16 >/dev/null 2>&1 && [ -x /usr/lib/postgresql/16/bin/initdb ]; then
+            b=/usr/lib/postgresql/16/bin; src="apt postgresql-16"
+          elif sudo apt-get install -y -qq postgresql >/dev/null 2>&1; then
+            b="$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1 || true)"; src="apt postgresql (distro default; postgresql-16 unavailable)"
+          else
+            b=""; echo "::warning::apt install of PostgreSQL server packages failed; the harness will report NOT_EXECUTED (exit 3) and this check will FAIL"
+          fi
+          if [ -n "$b" ] && [ -x "$b/initdb" ] && [ -x "$b/pg_ctl" ]; then
+            echo "$b" >> "$GITHUB_PATH"; echo "PG_BIN=$b" >> "$GITHUB_ENV"
+            echo "PostgreSQL server binaries: $b ($src): $("$b/postgres" --version)"
+            echo "PostgreSQL for the fresh run: \`$b\` ($src), $("$b/postgres" --version)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "PG_BIN=/nonexistent-postgresql-server-binaries" >> "$GITHUB_ENV"
+            echo "PostgreSQL server binaries unavailable: the fresh run must report NOT_EXECUTED and FAIL" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Confirm initdb and pg_ctl resolve on PATH
+        run: |
+          command -v initdb && command -v pg_ctl || echo "initdb/pg_ctl not on PATH (expected only when installation failed; the run will be NOT_EXECUTED and fail)"
+      - name: Fresh SIMULATION incident run (runner temp dir, never over committed runs; harness exit 3 = NOT_EXECUTED fails this step)
+        env:
+          INCIDENT_OUT: ${{ runner.temp }}/incident
+        run: bash scripts/ci/incident_checks.sh fresh
+      - name: Requirement outputs
+        id: req
+        if: always()
+        env:
+          INCIDENT_OUT: ${{ runner.temp }}/incident
+        run: |
+          python3 - <<'PY'
+          import glob, json, os
+          files = sorted(glob.glob(os.path.join(os.environ["INCIDENT_OUT"], "*.requirements.json")))
+          reqs = ["injection", "detection", "diagnosis", "recovery", "timeline", "simulation"]
+          st = {r: "NOT_EXECUTED" for r in reqs}
+          if files:
+              d = json.load(open(files[-1]))
+              st = {r: str(d["requirements"].get(r, {}).get("status", "NOT_EXECUTED")) for r in reqs}
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              for r in reqs:
+                  f.write(f"{r}={st[r] if st[r] in ('PASS', 'FAIL', 'NOT_EXECUTED') else 'FAIL'}\n")
+          print(st)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: incident-fresh-run-${{ github.sha }}
+          path: ${{ runner.temp }}/incident
+          retention-days: 7
+          if-no-files-found: warn
+
+  incident-not-executed-negative:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Missing PostgreSQL binaries must give NOT_EXECUTED for every requirement and fail, never PASS
+        run: bash scripts/ci/incident_checks.sh not-executed-negative
+
+  labeling-markers:
+    name: labeling-markers (SIMULATION / PLAN_ONLY markers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Verify SIMULATION and PLAN_ONLY labeling files
+        run: python3 scripts/ci/check_labels.py
+
+  final-summary:
+    if: always()
+    needs: [user-actions, module-registry, offline-validation, aws-cdk, postgres, m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification, plan-only-assertions, incident-committed-runs, incident-fresh-run, incident-not-executed-negative, labeling-markers]
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            coordination
+            scripts/ci
+      - name: Aggregate results
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: python3 scripts/ci/final_summary.py --summary "$GITHUB_STEP_SUMMARY"
+
+  merge-eligibility:
+    if: always()
+    needs: [final-summary, user-actions, module-registry, offline-validation, aws-cdk, postgres, m365-scenario-evaluation, m365-unit-tests, m365-evidence-verification, plan-only-assertions, incident-committed-runs, incident-fresh-run, incident-not-executed-negative, labeling-markers]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read   # AC1: PR reviews; collaborator permission of allow-listed accounts (read-only GITHUB_TOKEN)
+      issues: read          # AC2/AC4/AC5: ACCEPTANCE-ATTESTATION v2 comments on the decision PR (read-only)
+      actions: read         # verify that an attestation's workflow_run is a run of the candidate (read-only)
+    # R6: neither the verifier code nor the allow-list comes from the candidate. The gate manifest (gate_sha + sha256 of
+    # every verifier file, the trusted config and this workflow file) is read from main when main carries one, else from
+    # the evidence/acceptance branch. The gate code is checked out BY SHA from the manifest and hash-verified, and the
+    # candidate's own scripts/ci, trusted config and this workflow must match the manifest (verify_trusted_gate.py).
+    # Residual until UA-3: this job definition is itself in the candidate's workflow file.
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          fetch-depth: 2   # the tested commit and its parents (PR synthetic merge / main-validation merge)
+      - name: Trusted checkout of main (current base, read at runtime)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: main
+          path: .trusted/main
+      - name: Trusted checkout of the gate manifest (evidence/acceptance)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: evidence/acceptance
+          path: .trusted/evidence
+          sparse-checkout: trusted-gate
+      - name: Select the trusted gate manifest; current main SHA
+        id: manifest
+        run: |
+          set -euo pipefail
+          main_sha=$(git -C .trusted/main rev-parse HEAD)
+          if [ -f .trusted/main/.github/acceptance/gate-manifest.json ]; then
+            m=.trusted/main/.github/acceptance/gate-manifest.json; src="main@$main_sha"
+          else
+            m=.trusted/evidence/trusted-gate/gate-manifest.json; src="evidence/acceptance@$(git -C .trusted/evidence rev-parse HEAD)"
+          fi
+          [ -f "$m" ] || { echo "::error::no trusted gate manifest"; exit 1; }
+          gsha=$(python3 -c 'import json,re,sys; s=json.load(open(sys.argv[1]))["gate_sha"]; assert re.fullmatch("[0-9a-f]{40}", s); print(s)' "$m")
+          cp "$m" "$RUNNER_TEMP/gate-manifest.json"
+          echo "gate_sha=$gsha" >> "$GITHUB_OUTPUT"
+          { echo "MANIFEST=$RUNNER_TEMP/gate-manifest.json"; echo "GATE_SOURCE=manifest $src"; echo "GATE_SHA=$gsha"; echo "TRUSTED_MAIN_SHA=$main_sha"; } >> "$GITHUB_ENV"
+      - name: Trusted checkout of the gate code BY SHA (from the manifest)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: ${{ steps.manifest.outputs.gate_sha }}
+          path: .trusted/gate
+          sparse-checkout: |
+            scripts/ci
+            .github/acceptance
+            .github/workflows
+      - name: Verify gate code, trusted config and workflow against the trusted manifest (R6)
+        id: verify
+        run: |
+          set -euo pipefail
+          echo "GATE=$GITHUB_WORKSPACE/.trusted/gate" >> "$GITHUB_ENV"
+          python3 .trusted/gate/scripts/ci/verify_trusted_gate.py --manifest "$MANIFEST" --gate-dir .trusted/gate \
+            --candidate-dir "$GITHUB_WORKSPACE" --gate-head "$(git -C .trusted/gate rev-parse HEAD)" --out "$RUNNER_TEMP/gate-verification.json"
+          { echo "### Trusted gate"; echo; echo "| field | value |"; echo "|---|---|"; echo "| manifest | $GATE_SOURCE |"
+            echo "| gate SHA | \`$GATE_SHA\` |"; echo "| current main | \`$TRUSTED_MAIN_SHA\` |"; echo "| verified | yes |"; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Run identity (candidate, base == current main, tested merge) for AC3 provenance
+        if: always() && steps.verify.outcome == 'success'
+        run: python3 "$GATE/scripts/ci/provenance.py" --out "$RUNNER_TEMP/run-identity.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: Gate pin independence (D3; TRUSTED GATE UNVERIFIED -> NOT ELIGIBLE)
+        if: always() && steps.verify.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cand=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("candidate_sha") or "")' "$RUNNER_TEMP/run-identity.json")
+          python3 "$GATE/scripts/ci/verify_trusted_gate.py" --check-pin --manifest "$MANIFEST" --gate-dir "$GATE" \
+            --candidate-sha "$cand" --workflow-repo "$GITHUB_WORKSPACE" --out "$RUNNER_TEMP/gate-trust.json"
+          st=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["status"])' "$RUNNER_TEMP/gate-trust.json")
+          { echo "| gate pin | $st (independently reviewed pin required; never the candidate) |"; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Runtime evidence from GitHub (reviews, attestations, runs, permissions; read-only GITHUB_TOKEN)
+        if: always() && steps.verify.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python3 "$GATE/scripts/ci/reviews.py" --identity "$RUNNER_TEMP/run-identity.json"
+          --config "$GATE/.github/acceptance/trusted-config.json" --out "$RUNNER_TEMP/reviews.json"
+      - name: Security exceptions vs applied suppressions (B5-1)
+        if: always() && steps.verify.outcome == 'success'
+        run: python3 "$GATE/scripts/ci/check_exceptions.py" --root "$GITHUB_WORKSPACE" --out "$RUNNER_TEMP/security-exceptions.json"
+      - name: AC1-AC5 for this exact identity (PR #27 C6) and every required check succeeded
+        if: always() && steps.verify.outcome == 'success'
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          GITHUB_TOKEN: ${{ github.token }}   # read-only: fetch the pin's independent review (D3); gate trust is recomputed here (D3-a)
+        run: >-
+          python3 "$GATE/scripts/ci/merge_eligibility.py" --root "$GITHUB_WORKSPACE"
+          --config "$GATE/.github/acceptance/trusted-config.json"
+          --identity "$RUNNER_TEMP/run-identity.json" --reviews "$RUNNER_TEMP/reviews.json"
+          --exceptions "$RUNNER_TEMP/security-exceptions.json"
+          --manifest "$MANIFEST" --gate-repo "$GATE" --workflow-repo "$GITHUB_WORKSPACE"
+          --decision-out "$RUNNER_TEMP/acceptance-decision.json" --summary "$GITHUB_STEP_SUMMARY"
+      - name: Upload the decision and all runtime evidence (outside the candidate tree)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: acceptance-decision-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/gate-manifest.json
+            ${{ runner.temp }}/gate-verification.json
+            ${{ runner.temp }}/gate-trust.json
+            ${{ runner.temp }}/run-identity.json
+            ${{ runner.temp }}/reviews.json
+            ${{ runner.temp }}/security-exceptions.json
+            ${{ runner.temp }}/acceptance-decision.json
+          retention-days: 90
+          if-no-files-found: error

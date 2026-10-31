@@ -1,0 +1,4 @@
+$ cfn-lint operations/patching/ssm/patch-baselines-and-windows.cfn.yaml
+--- stdout ---
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:56Z duration_ms=824 ---

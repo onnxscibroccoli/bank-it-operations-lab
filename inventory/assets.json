@@ -1,0 +1,791 @@
+{
+  "schema": "bank-lab/static-inventory/v1",
+  "execution_status": "NOT_DEPLOYED",
+  "sources": [
+    {
+      "template": "BankItLabNetworkDatabase.template.json",
+      "sha256": "2e2d47d35668b8274ddcbd40470672d3a39df81bab5e243b249edb62b6d0a145"
+    },
+    {
+      "template": "BankItLabSecureStorage.template.json",
+      "sha256": "9ba9be1d627acb4b2feaee130070fa099963aef07c38bee735a691ed89b247f8"
+    }
+  ],
+  "resources": [
+    {
+      "id": "BankItLabNetworkDatabase:AppSecurityGroupC396D536",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "AppSecurityGroupC396D536",
+      "type": "AWS::EC2::SecurityGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:AppSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBB5433BE79485C",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "AppSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBB5433BE79485C",
+      "type": "AWS::EC2::SecurityGroupEgress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:BackupPlanA8F64793",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "BackupPlanA8F64793",
+      "type": "AWS::Backup::BackupPlan",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:BackupVault3A9C5852",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "BackupVault3A9C5852",
+      "type": "AWS::Backup::BackupVault",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb",
+      "type": "AWS::SecretsManager::Secret",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+      "type": "AWS::Lambda::Function",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      "type": "AWS::IAM::Role",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DatabaseKey7576F140",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DatabaseKey7576F140",
+      "type": "AWS::KMS::Key",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DatabaseSecurityGroup7319C0F6",
+      "type": "AWS::EC2::SecurityGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseAppSecurityGroup920027D35433995D19B4",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DatabaseSecurityGroupfromBankItLabNetworkDatabaseAppSecurityGroup920027D35433995D19B4",
+      "type": "AWS::EC2::SecurityGroupIngress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1",
+      "type": "AWS::EC2::SecurityGroupIngress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DbBackupPolicy43A4FBCE",
+      "type": "AWS::IAM::ManagedPolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:DbBackupRoleB234430F",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "DbBackupRoleB234430F",
+      "type": "AWS::IAM::Role",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:FlowLogGroup3E25AA51",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "FlowLogGroup3E25AA51",
+      "type": "AWS::Logs::LogGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:FlowLogPolicyB9FF45F2",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "FlowLogPolicyB9FF45F2",
+      "type": "AWS::IAM::ManagedPolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:FlowLogRoleCB27E7DF",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "FlowLogRoleCB27E7DF",
+      "type": "AWS::IAM::Role",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:LogsKeyA6AB43B2",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "LogsKeyA6AB43B2",
+      "type": "AWS::KMS::Key",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "Postgres9DC8BB04",
+      "type": "AWS::RDS::DBInstance",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresLogGrouppostgresql1BAB0403",
+      "type": "AWS::Logs::LogGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresLogGroupupgrade5222D7EB",
+      "type": "AWS::Logs::LogGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresParamsCD634A70",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresParamsCD634A70",
+      "type": "AWS::RDS::DBParameterGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresRotationSingleUserA53C71BD",
+      "type": "AWS::Serverless::Application",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresSecretAttachment75CD6F6F",
+      "type": "AWS::SecretsManager::SecretTargetAttachment",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresSecretAttachmentPolicy00772C69",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresSecretAttachmentPolicy00772C69",
+      "type": "AWS::SecretsManager::ResourcePolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresSecretAttachmentRotationScheduleBF85CA02",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresSecretAttachmentRotationScheduleBF85CA02",
+      "type": "AWS::SecretsManager::RotationSchedule",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresSelection",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresSelection",
+      "type": "AWS::Backup::BackupSelection",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "PostgresSubnetGroup9F8A4D6E",
+      "type": "AWS::RDS::DBSubnetGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:RdsMonitoringPolicy5DA8ACAC",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "RdsMonitoringPolicy5DA8ACAC",
+      "type": "AWS::IAM::ManagedPolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:RdsMonitoringRole696C9BB4",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "RdsMonitoringRole696C9BB4",
+      "type": "AWS::IAM::Role",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "RotationSecurityGroup8276CF62",
+      "type": "AWS::EC2::SecurityGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:RotationSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBBIndirectPort434D1737",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "RotationSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBBIndirectPort434D1737",
+      "type": "AWS::EC2::SecurityGroupEgress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:RotationSecurityGrouptoBankItLabNetworkDatabaseSecretsManagerEndpointSecurityGroup395F6736443630B3C70",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "RotationSecurityGrouptoBankItLabNetworkDatabaseSecretsManagerEndpointSecurityGroup395F6736443630B3C70",
+      "type": "AWS::EC2::SecurityGroupEgress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroup4198229B",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "SecretsManagerEndpointSecurityGroup4198229B",
+      "type": "AWS::EC2::SecurityGroup",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3B443FFC9B240",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "SecretsManagerEndpointSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3B443FFC9B240",
+      "type": "AWS::EC2::SecurityGroupIngress",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:Vpc8378EB38",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "Vpc8378EB38",
+      "type": "AWS::EC2::VPC",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcFlowLog8FF33A73",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcFlowLog8FF33A73",
+      "type": "AWS::EC2::FlowLog",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcRestrictDefaultSecurityGroupCustomResourceC73DA2BE",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcRestrictDefaultSecurityGroupCustomResourceC73DA2BE",
+      "type": "Custom::VpcRestrictDefaultSG",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcSecretsManagerEndpoint93E49F69",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcSecretsManagerEndpoint93E49F69",
+      "type": "AWS::EC2::VPCEndpoint",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcappSubnet1RouteTable072E8E09",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcappSubnet1RouteTable072E8E09",
+      "type": "AWS::EC2::RouteTable",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcappSubnet1RouteTableAssociation168BF781",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcappSubnet1RouteTableAssociation168BF781",
+      "type": "AWS::EC2::SubnetRouteTableAssociation",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcappSubnet1SubnetAE489B2F",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcappSubnet1SubnetAE489B2F",
+      "type": "AWS::EC2::Subnet",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcappSubnet2RouteTableAssociation81E96A75",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcappSubnet2RouteTableAssociation81E96A75",
+      "type": "AWS::EC2::SubnetRouteTableAssociation",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcappSubnet2RouteTableB76BFC59",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcappSubnet2RouteTableB76BFC59",
+      "type": "AWS::EC2::RouteTable",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcappSubnet2Subnet2449FB56",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcappSubnet2Subnet2449FB56",
+      "type": "AWS::EC2::Subnet",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcdbSubnet1RouteTable04184FDD",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcdbSubnet1RouteTable04184FDD",
+      "type": "AWS::EC2::RouteTable",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcdbSubnet1RouteTableAssociation3FF66701",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcdbSubnet1RouteTableAssociation3FF66701",
+      "type": "AWS::EC2::SubnetRouteTableAssociation",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcdbSubnet1Subnet1B82B149",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcdbSubnet1Subnet1B82B149",
+      "type": "AWS::EC2::Subnet",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcdbSubnet2RouteTable7BBEF14D",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcdbSubnet2RouteTable7BBEF14D",
+      "type": "AWS::EC2::RouteTable",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcdbSubnet2RouteTableAssociation3D000840",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcdbSubnet2RouteTableAssociation3D000840",
+      "type": "AWS::EC2::SubnetRouteTableAssociation",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:VpcdbSubnet2Subnet01192A3B",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "VpcdbSubnet2Subnet01192A3B",
+      "type": "AWS::EC2::Subnet",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabSecureStorage:AccessLogsBucket83982689",
+      "stack": "BankItLabSecureStorage",
+      "logical_id": "AccessLogsBucket83982689",
+      "type": "AWS::S3::Bucket",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabSecureStorage:AccessLogsBucketPolicy7F77476F",
+      "stack": "BankItLabSecureStorage",
+      "logical_id": "AccessLogsBucketPolicy7F77476F",
+      "type": "AWS::S3::BucketPolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabSecureStorage:DataBucketE3889A50",
+      "stack": "BankItLabSecureStorage",
+      "logical_id": "DataBucketE3889A50",
+      "type": "AWS::S3::Bucket",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabSecureStorage:DataBucketPolicy3231C704",
+      "stack": "BankItLabSecureStorage",
+      "logical_id": "DataBucketPolicy3231C704",
+      "type": "AWS::S3::BucketPolicy",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabSecureStorage:DataKey17AFBB84",
+      "stack": "BankItLabSecureStorage",
+      "logical_id": "DataKey17AFBB84",
+      "type": "AWS::KMS::Key",
+      "status": "STATIC_REFERENCE"
+    }
+  ],
+  "edges": [
+    {
+      "from": "BankItLabNetworkDatabase:AppSecurityGroupC396D536",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:AppSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBB5433BE79485C",
+      "to": "BankItLabNetworkDatabase:AppSecurityGroupC396D536"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:AppSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBB5433BE79485C",
+      "to": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:BackupPlanA8F64793",
+      "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:BackupVault3A9C5852",
+      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb",
+      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+      "to": "BankItLabNetworkDatabase:CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseAppSecurityGroup920027D35433995D19B4",
+      "to": "BankItLabNetworkDatabase:AppSecurityGroupC396D536"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseAppSecurityGroup920027D35433995D19B4",
+      "to": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1",
+      "to": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1",
+      "to": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:Postgres9DC8BB04"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupRoleB234430F",
+      "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupRoleB234430F",
+      "to": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:FlowLogGroup3E25AA51",
+      "to": "BankItLabNetworkDatabase:LogsKeyA6AB43B2"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:FlowLogPolicyB9FF45F2",
+      "to": "BankItLabNetworkDatabase:FlowLogGroup3E25AA51"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:FlowLogRoleCB27E7DF",
+      "to": "BankItLabNetworkDatabase:FlowLogPolicyB9FF45F2"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:PostgresParamsCD634A70"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:Postgres9DC8BB04",
+      "to": "BankItLabNetworkDatabase:RdsMonitoringRole696C9BB4"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403",
+      "to": "BankItLabNetworkDatabase:LogsKeyA6AB43B2"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB",
+      "to": "BankItLabNetworkDatabase:LogsKeyA6AB43B2"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:VpcSecretsManagerEndpoint93E49F69"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet1SubnetAE489B2F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet2Subnet2449FB56"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F",
+      "to": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F",
+      "to": "BankItLabNetworkDatabase:Postgres9DC8BB04"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentPolicy00772C69",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentPolicy00772C69",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentPolicy00772C69",
+      "to": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentRotationScheduleBF85CA02",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentRotationScheduleBF85CA02",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentRotationScheduleBF85CA02",
+      "to": "BankItLabNetworkDatabase:PostgresRotationSingleUserA53C71BD"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSecretAttachmentRotationScheduleBF85CA02",
+      "to": "BankItLabNetworkDatabase:PostgresSecretAttachment75CD6F6F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSelection",
+      "to": "BankItLabNetworkDatabase:BackupPlanA8F64793"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSelection",
+      "to": "BankItLabNetworkDatabase:DbBackupRoleB234430F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSelection",
+      "to": "BankItLabNetworkDatabase:Postgres9DC8BB04"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E",
+      "to": "BankItLabNetworkDatabase:PostgresLogGrouppostgresql1BAB0403"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E",
+      "to": "BankItLabNetworkDatabase:PostgresLogGroupupgrade5222D7EB"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E",
+      "to": "BankItLabNetworkDatabase:VpcdbSubnet1Subnet1B82B149"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:PostgresSubnetGroup9F8A4D6E",
+      "to": "BankItLabNetworkDatabase:VpcdbSubnet2Subnet01192A3B"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:RdsMonitoringRole696C9BB4",
+      "to": "BankItLabNetworkDatabase:RdsMonitoringPolicy5DA8ACAC"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:RotationSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBBIndirectPort434D1737",
+      "to": "BankItLabNetworkDatabase:DatabaseSecurityGroup7319C0F6"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:RotationSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBBIndirectPort434D1737",
+      "to": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:RotationSecurityGrouptoBankItLabNetworkDatabaseSecretsManagerEndpointSecurityGroup395F6736443630B3C70",
+      "to": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:RotationSecurityGrouptoBankItLabNetworkDatabaseSecretsManagerEndpointSecurityGroup395F6736443630B3C70",
+      "to": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroup4198229B"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroup4198229B",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3B443FFC9B240",
+      "to": "BankItLabNetworkDatabase:RotationSecurityGroup8276CF62"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3B443FFC9B240",
+      "to": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroup4198229B"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcFlowLog8FF33A73",
+      "to": "BankItLabNetworkDatabase:FlowLogGroup3E25AA51"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcFlowLog8FF33A73",
+      "to": "BankItLabNetworkDatabase:FlowLogRoleCB27E7DF"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcFlowLog8FF33A73",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcRestrictDefaultSecurityGroupCustomResourceC73DA2BE",
+      "to": "BankItLabNetworkDatabase:CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcRestrictDefaultSecurityGroupCustomResourceC73DA2BE",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcSecretsManagerEndpoint93E49F69",
+      "to": "BankItLabNetworkDatabase:SecretsManagerEndpointSecurityGroup4198229B"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcSecretsManagerEndpoint93E49F69",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcSecretsManagerEndpoint93E49F69",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet1SubnetAE489B2F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcSecretsManagerEndpoint93E49F69",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet2Subnet2449FB56"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet1RouteTable072E8E09",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet1RouteTableAssociation168BF781",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet1RouteTable072E8E09"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet1RouteTableAssociation168BF781",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet1SubnetAE489B2F"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet1SubnetAE489B2F",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet2RouteTableAssociation81E96A75",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet2RouteTableB76BFC59"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet2RouteTableAssociation81E96A75",
+      "to": "BankItLabNetworkDatabase:VpcappSubnet2Subnet2449FB56"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet2RouteTableB76BFC59",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcappSubnet2Subnet2449FB56",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet1RouteTable04184FDD",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet1RouteTableAssociation3FF66701",
+      "to": "BankItLabNetworkDatabase:VpcdbSubnet1RouteTable04184FDD"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet1RouteTableAssociation3FF66701",
+      "to": "BankItLabNetworkDatabase:VpcdbSubnet1Subnet1B82B149"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet1Subnet1B82B149",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet2RouteTable7BBEF14D",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet2RouteTableAssociation3D000840",
+      "to": "BankItLabNetworkDatabase:VpcdbSubnet2RouteTable7BBEF14D"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet2RouteTableAssociation3D000840",
+      "to": "BankItLabNetworkDatabase:VpcdbSubnet2Subnet01192A3B"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:VpcdbSubnet2Subnet01192A3B",
+      "to": "BankItLabNetworkDatabase:Vpc8378EB38"
+    },
+    {
+      "from": "BankItLabSecureStorage:AccessLogsBucketPolicy7F77476F",
+      "to": "BankItLabSecureStorage:AccessLogsBucket83982689"
+    },
+    {
+      "from": "BankItLabSecureStorage:AccessLogsBucketPolicy7F77476F",
+      "to": "BankItLabSecureStorage:DataBucketE3889A50"
+    },
+    {
+      "from": "BankItLabSecureStorage:DataBucketE3889A50",
+      "to": "BankItLabSecureStorage:AccessLogsBucket83982689"
+    },
+    {
+      "from": "BankItLabSecureStorage:DataBucketE3889A50",
+      "to": "BankItLabSecureStorage:DataKey17AFBB84"
+    },
+    {
+      "from": "BankItLabSecureStorage:DataBucketPolicy3231C704",
+      "to": "BankItLabSecureStorage:DataBucketE3889A50"
+    }
+  ]
+}

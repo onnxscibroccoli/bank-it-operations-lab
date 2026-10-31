@@ -1,0 +1,49 @@
+{
+  "collected_at": "2026-10-28T12:00:00Z",
+  "expected_probes": [
+    "app-http",
+    "db-tcp",
+    "resolver-dns"
+  ],
+  "host": {
+    "collected_at": "2026-10-28T12:00:00Z",
+    "cpu_count": 4,
+    "disk_free_bytes": 4000000000,
+    "disk_path": "/",
+    "disk_total_bytes": 100000000000,
+    "errors": [],
+    "load_avg_1m": 0.42,
+    "mem_available_ratio": 0.55,
+    "uptime_s": 86400.0
+  },
+  "probes": [
+    {
+      "detail": "HTTP 503 not in [200]",
+      "kind": "http",
+      "latency_ms": 12.5,
+      "name": "app-http",
+      "observed_at": "2026-10-28T12:00:00Z",
+      "status": "FAIL",
+      "target": "https://status.example.com/healthz"
+    },
+    {
+      "detail": "connected",
+      "kind": "tcp",
+      "latency_ms": 3.1,
+      "name": "db-tcp",
+      "observed_at": "2026-10-28T12:00:00Z",
+      "status": "OK",
+      "target": "db.example.internal:5432"
+    },
+    {
+      "detail": "2 answers",
+      "kind": "dns",
+      "latency_ms": 1.7,
+      "name": "resolver-dns",
+      "observed_at": "2026-10-28T12:00:00Z",
+      "status": "OK",
+      "target": "app.example.com"
+    }
+  ],
+  "schema": "bank-it-lab/observability/health-payload/v1"
+}

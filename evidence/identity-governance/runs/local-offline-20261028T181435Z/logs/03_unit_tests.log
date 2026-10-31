@@ -1,0 +1,74 @@
+$ python3 -m unittest discover -s identity/governance/tests -v
+--- stdout ---
+--- stderr ---
+test_auth_failure_fails_closed (test_access_review.TestAccessReview.test_auth_failure_fails_closed) ... ok
+test_baseline_decisions_across_pages (test_access_review.TestAccessReview.test_baseline_decisions_across_pages) ... ok
+test_summarize_malformed_and_justification (test_access_review.TestAccessReview.test_summarize_malformed_and_justification) ... ok
+test_unknown_instance_is_404_error (test_access_review.TestAccessReview.test_unknown_instance_is_404_error) ... ok
+test_401_not_retried (test_graph_client.TestAuthorizationFailures.test_401_not_retried) ... ok
+test_403_not_retried (test_graph_client.TestAuthorizationFailures.test_403_not_retried) ... ok
+test_403_on_second_page_aborts_whole_collection (test_graph_client.TestAuthorizationFailures.test_403_on_second_page_aborts_whole_collection) ... ok
+test_other_4xx_is_response_error (test_graph_client.TestAuthorizationFailures.test_other_4xx_is_response_error) ... ok
+test_inherit_overrides_parent_route (test_graph_client.TestFixtureTransport.test_inherit_overrides_parent_route) ... ok
+test_refuses_non_graph_url (test_graph_client.TestFixtureTransport.test_refuses_non_graph_url) ... ok
+test_sequence_last_response_repeats (test_graph_client.TestFixtureTransport.test_sequence_last_response_repeats) ... ok
+test_unknown_route_is_graph_404 (test_graph_client.TestFixtureTransport.test_unknown_route_is_graph_404) ... ok
+test_empty_collection (test_graph_client.TestPaging.test_empty_collection) ... ok
+test_follows_next_link_across_three_pages (test_graph_client.TestPaging.test_follows_next_link_across_three_pages) ... ok
+test_missing_value_array_fails_closed (test_graph_client.TestPaging.test_missing_value_array_fails_closed) ... ok
+test_next_link_loop_fails_closed (test_graph_client.TestPaging.test_next_link_loop_fails_closed) ... ok
+test_non_object_body (test_graph_client.TestPaging.test_non_object_body) ... ok
+test_non_string_next_link (test_graph_client.TestPaging.test_non_string_next_link) ... ok
+test_page_limit (test_graph_client.TestPaging.test_page_limit) ... ok
+test_429_honours_retry_after_then_succeeds (test_graph_client.TestThrottling.test_429_honours_retry_after_then_succeeds) ... ok
+test_429_without_retry_after_uses_exponential_backoff (test_graph_client.TestThrottling.test_429_without_retry_after_uses_exponential_backoff) ... ok
+test_503_and_504_are_retried (test_graph_client.TestThrottling.test_503_and_504_are_retried) ... ok
+test_retry_after_is_capped (test_graph_client.TestThrottling.test_retry_after_is_capped) ... ok
+test_retry_budget_exhausted (test_graph_client.TestThrottling.test_retry_budget_exhausted) ... ok
+test_throttle_mid_pagination_resumes_same_page (test_graph_client.TestThrottling.test_throttle_mid_pagination_resumes_same_page) ... ok
+test_unparseable_retry_after_falls_back (test_graph_client.TestThrottling.test_unparseable_retry_after_falls_back) ... ok
+test_break_glass_permanent_ga_is_allowed (test_inventory.TestBaseline.test_break_glass_permanent_ga_is_allowed) ... ok
+test_group_assignment_resolved (test_inventory.TestBaseline.test_group_assignment_resolved) ... ok
+test_non_privileged_roles_not_counted_as_privileged (test_inventory.TestBaseline.test_non_privileged_roles_not_counted_as_privileged) ... ok
+test_pagination_collected_every_page (test_inventory.TestBaseline.test_pagination_collected_every_page) ... ok
+test_pass_without_findings (test_inventory.TestBaseline.test_pass_without_findings) ... ok
+test_tier_zero_sorted_first (test_inventory.TestBaseline.test_tier_zero_sorted_first) ... ok
+test_ga_count_threshold_boundary (test_inventory.TestBuildUnit.test_ga_count_threshold_boundary) ... ok
+test_non_object_record (test_inventory.TestBuildUnit.test_non_object_record) ... ok
+test_error_markdown (test_inventory.TestCli.test_error_markdown) ... ok
+test_outputs_and_exit_codes (test_inventory.TestCli.test_outputs_and_exit_codes) ... ok
+test_activation_expires_when_clock_moves (test_inventory.TestExpiry.test_activation_expires_when_clock_moves) ... ok
+test_everything_expired (test_inventory.TestExpiry.test_everything_expired) ... ok
+test_future_dated_schedule_not_effective (test_inventory.TestExpiry.test_future_dated_schedule_not_effective) ... ok
+test_naive_as_of_rejected (test_inventory.TestExpiry.test_naive_as_of_rejected) ... ok
+test_401 (test_inventory.TestFailClosed.test_401) ... ok
+test_403 (test_inventory.TestFailClosed.test_403) ... ok
+test_missing_scenario_dir (test_inventory.TestFailClosed.test_missing_scenario_dir) ... ok
+test_paging_loop_and_malformed (test_inventory.TestFailClosed.test_paging_loop_and_malformed) ... ok
+test_throttled_exhausted (test_inventory.TestFailClosed.test_throttled_exhausted) ... ok
+test_throttled_recover_waits_retry_after (test_inventory.TestFailClosed.test_throttled_recover_waits_retry_after) ... ok
+test_expired_assignments_excluded_from_inventory (test_inventory.TestFindings.test_expired_assignments_excluded_from_inventory) ... ok
+test_findings_sorted_by_severity (test_inventory.TestFindings.test_findings_sorted_by_severity) ... ok
+test_global_admin_count (test_inventory.TestFindings.test_global_admin_count) ... ok
+test_missing_break_glass_reported (test_inventory.TestFindings.test_missing_break_glass_reported) ... ok
+test_rules_fired (test_inventory.TestFindings.test_rules_fired) ... ok
+test_free_mode_uses_role_assignments_only (test_inventory.TestFreeTier.test_free_mode_uses_role_assignments_only) ... ok
+test_pim_mode_on_free_tier_fails_closed_403 (test_inventory.TestFreeTier.test_pim_mode_on_free_tier_fails_closed_403) ... ok
+test_bad_timestamp_treated_conservatively_as_permanent (test_inventory.TestMissingFields.test_bad_timestamp_treated_conservatively_as_permanent) ... ok
+test_does_not_crash_and_reports_data_quality (test_inventory.TestMissingFields.test_does_not_crash_and_reports_data_quality) ... ok
+test_missing_optional_user_fields (test_inventory.TestMissingFields.test_missing_optional_user_fields) ... ok
+test_records_missing_required_fields_are_skipped (test_inventory.TestMissingFields.test_records_missing_required_fields_are_skipped) ... ok
+test_unknown_role_treated_as_privileged (test_inventory.TestMissingFields.test_unknown_role_treated_as_privileged) ... ok
+test_every_scenario_is_covered (test_inventory.TestScenarioExitCodes.test_every_scenario_is_covered) ... ok
+test_expected_exit_codes (test_inventory.TestScenarioExitCodes.test_expected_exit_codes) ... ok
+test_no_network_or_identity_sdk_imports (test_synthetic_guard.TestNoNetwork.test_no_network_or_identity_sdk_imports) ... ok
+test_every_email_domain_is_reserved (test_synthetic_guard.TestSynthetic.test_every_email_domain_is_reserved) ... ok
+test_every_guid_is_synthetic_or_published_constant (test_synthetic_guard.TestSynthetic.test_every_guid_is_synthetic_or_published_constant) ... ok
+test_fixtures_in_sync_with_generator (test_synthetic_guard.TestSynthetic.test_fixtures_in_sync_with_generator) ... ok
+test_only_graph_urls (test_synthetic_guard.TestSynthetic.test_only_graph_urls) ... ok
+
+----------------------------------------------------------------------
+Ran 65 tests in 0.140s
+
+OK
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:14:35Z duration_ms=210 ---

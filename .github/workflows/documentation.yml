@@ -1,0 +1,76 @@
+name: Documentation knowledge base
+on:
+  pull_request:
+  push:
+    branches: [main, 'docs/**']
+    paths: ['**/*.md', 'llms.txt', 'docs/metadata/**', 'scripts/docs/**', 'coordination/modules.json', '.github/workflows/documentation.yml']
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Publish documentation only (requires Pages configured for Actions and main)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: scripts/docs/package-lock.json
+      - run: python -m pip install -r scripts/docs/requirements.txt
+      - run: npm ci --prefix scripts/docs --ignore-scripts --no-audit --no-fund
+      - run: python -m unittest discover -s scripts/docs/tests
+      - run: node --test scripts/docs/tests/search.test.mjs
+      - run: node scripts/docs/node_modules/markdownlint-cli2/markdownlint-cli2-bin.mjs --config scripts/docs/knowledge.markdownlint-cli2.jsonc
+      - run: python scripts/docs/audit.py
+      - run: python scripts/docs/impact.py
+        env:
+          DOCS_BASE: ${{ github.event.pull_request.base.sha }}
+      - run: npx --prefix scripts/docs playwright install --with-deps chromium
+      - name: Browser search, keyboard, mobile and accessibility checks
+        run: |
+          python -m http.server 8000 --bind 127.0.0.1 --directory dist/docs > /tmp/docs-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          node scripts/docs/tests/browser.mjs
+      - name: External links (advisory network report)
+        run: python scripts/docs/external_links.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: knowledge-base-preview-and-reports
+          path: dist/docs
+          if-no-files-found: error
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+        with:
+          path: dist/docs
+  deploy:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+    needs: validate
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - uses: actions/deploy-pages@v4
+        id: deployment

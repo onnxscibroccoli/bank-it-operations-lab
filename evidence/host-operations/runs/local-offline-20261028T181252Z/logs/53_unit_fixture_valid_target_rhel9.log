@@ -1,0 +1,283 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --distro rhel9 --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "mode": "offline-read-only",
+  "hostModified": false,
+  "unit": "valid-hardened-inline.service",
+  "dropins": [],
+  "targetSystemd": 252,
+  "threshold": 4.0,
+  "declaredExposure": 0.3,
+  "effectiveExposure": 0.3,
+  "rating": "GOOD",
+  "unsupported": [],
+  "regressions": [],
+  "checks": [
+    {
+      "id": "RunsAsNonRoot",
+      "directive": "User",
+      "weight": 10,
+      "description": "service runs as a dedicated non-root user (User= or DynamicUser=yes)",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:6"
+    },
+    {
+      "id": "NoNewPrivileges",
+      "directive": "NoNewPrivileges",
+      "weight": 8,
+      "description": "NoNewPrivileges=yes blocks setuid/file-capability escalation",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:7"
+    },
+    {
+      "id": "CapabilityBoundingSet",
+      "directive": "CapabilityBoundingSet",
+      "weight": 9,
+      "description": "bounding set excludes dangerous capabilities",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:26"
+    },
+    {
+      "id": "AmbientCapabilities",
+      "directive": "AmbientCapabilities",
+      "weight": 5,
+      "description": "no dangerous ambient capabilities granted",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": null
+    },
+    {
+      "id": "ProtectSystem",
+      "directive": "ProtectSystem",
+      "weight": 7,
+      "description": "ProtectSystem=strict (full=partial)",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:8"
+    },
+    {
+      "id": "ProtectHome",
+      "directive": "ProtectHome",
+      "weight": 5,
+      "description": "ProtectHome=yes (read-only=partial)",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:9"
+    },
+    {
+      "id": "PrivateTmp",
+      "directive": "PrivateTmp",
+      "weight": 5,
+      "description": "PrivateTmp=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:10"
+    },
+    {
+      "id": "PrivateDevices",
+      "directive": "PrivateDevices",
+      "weight": 5,
+      "description": "PrivateDevices=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:11"
+    },
+    {
+      "id": "ProtectKernelTunables",
+      "directive": "ProtectKernelTunables",
+      "weight": 5,
+      "description": "ProtectKernelTunables=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:12"
+    },
+    {
+      "id": "ProtectKernelModules",
+      "directive": "ProtectKernelModules",
+      "weight": 5,
+      "description": "ProtectKernelModules=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:13"
+    },
+    {
+      "id": "ProtectKernelLogs",
+      "directive": "ProtectKernelLogs",
+      "weight": 3,
+      "description": "ProtectKernelLogs=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:14"
+    },
+    {
+      "id": "ProtectControlGroups",
+      "directive": "ProtectControlGroups",
+      "weight": 4,
+      "description": "ProtectControlGroups=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:15"
+    },
+    {
+      "id": "ProtectClock",
+      "directive": "ProtectClock",
+      "weight": 3,
+      "description": "ProtectClock=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:16"
+    },
+    {
+      "id": "ProtectHostname",
+      "directive": "ProtectHostname",
+      "weight": 2,
+      "description": "ProtectHostname=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:17"
+    },
+    {
+      "id": "ProtectProc",
+      "directive": "ProtectProc",
+      "weight": 3,
+      "description": "ProtectProc=invisible",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:18"
+    },
+    {
+      "id": "ProcSubset",
+      "directive": "ProcSubset",
+      "weight": 2,
+      "description": "ProcSubset=pid",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:19"
+    },
+    {
+      "id": "RestrictSUIDSGID",
+      "directive": "RestrictSUIDSGID",
+      "weight": 4,
+      "description": "RestrictSUIDSGID=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:20"
+    },
+    {
+      "id": "RestrictRealtime",
+      "directive": "RestrictRealtime",
+      "weight": 2,
+      "description": "RestrictRealtime=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:21"
+    },
+    {
+      "id": "RestrictNamespaces",
+      "directive": "RestrictNamespaces",
+      "weight": 5,
+      "description": "RestrictNamespaces=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:22"
+    },
+    {
+      "id": "RestrictAddressFamilies",
+      "directive": "RestrictAddressFamilies",
+      "weight": 5,
+      "description": "address families allow-listed, no AF_PACKET/AF_NETLINK",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:23"
+    },
+    {
+      "id": "LockPersonality",
+      "directive": "LockPersonality",
+      "weight": 2,
+      "description": "LockPersonality=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:24"
+    },
+    {
+      "id": "MemoryDenyWriteExecute",
+      "directive": "MemoryDenyWriteExecute",
+      "weight": 4,
+      "description": "MemoryDenyWriteExecute=yes",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:25"
+    },
+    {
+      "id": "SystemCallFilter",
+      "directive": "SystemCallFilter",
+      "weight": 7,
+      "description": "system calls allow-listed (e.g. @system-service)",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:27"
+    },
+    {
+      "id": "SystemCallArchitectures",
+      "directive": "SystemCallArchitectures",
+      "weight": 3,
+      "description": "SystemCallArchitectures=native",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:28"
+    },
+    {
+      "id": "RemoveIPC",
+      "directive": "RemoveIPC",
+      "weight": 1,
+      "description": "RemoveIPC=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "PrivateNetwork",
+      "directive": "PrivateNetwork",
+      "weight": 4,
+      "description": "PrivateNetwork=yes (only for services with no network needs)",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:30"
+    },
+    {
+      "id": "PrivateUsers",
+      "directive": "PrivateUsers",
+      "weight": 3,
+      "description": "PrivateUsers=yes",
+      "declaredScore": 0.0,
+      "effectiveScore": 0.0,
+      "setAt": null
+    },
+    {
+      "id": "IPAddressDeny",
+      "directive": "IPAddressDeny",
+      "weight": 3,
+      "description": "IPAddressDeny=any with explicit IPAddressAllow=",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:31"
+    },
+    {
+      "id": "UMask",
+      "directive": "UMask",
+      "weight": 2,
+      "description": "UMask=0027 or stricter",
+      "declaredScore": 1.0,
+      "effectiveScore": 1.0,
+      "setAt": "valid-hardened-inline.service:29"
+    }
+  ],
+  "findings": [],
+  "overall": "PASS"
+}
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:12:55Z duration_ms=22 ---

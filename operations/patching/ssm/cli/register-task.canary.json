@@ -1,0 +1,27 @@
+{
+  "WindowId": "<CANARY_WINDOW_ID>",
+  "Name": "canary-run-patch-baseline",
+  "Description": "EXAMPLE ONLY - AWS-RunPatchBaseline for the canary ring",
+  "Targets": [
+    {"Key": "WindowTargetIds", "Values": ["<CANARY_WINDOW_TARGET_ID>"]}
+  ],
+  "TaskArn": "AWS-RunPatchBaseline",
+  "TaskType": "RUN_COMMAND",
+  "Priority": 1,
+  "MaxConcurrency": "1",
+  "MaxErrors": "0",
+  "CutoffBehavior": "CANCEL_TASK",
+  "TaskInvocationParameters": {
+    "RunCommand": {
+      "TimeoutSeconds": 3600,
+      "CloudWatchOutputConfig": {
+        "CloudWatchOutputEnabled": true,
+        "CloudWatchLogGroupName": "/bank-lab/patching/canary"
+      },
+      "Parameters": {
+        "Operation": ["Install"],
+        "RebootOption": ["RebootIfNeeded"]
+      }
+    }
+  }
+}

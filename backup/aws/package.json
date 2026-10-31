@@ -1,0 +1,32 @@
+{
+  "name": "bank-it-lab-aws-backup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Credential-free CDK synthesis: AWS Backup vaults, plans, cross-region copy, vault lock and restore testing (static evidence only, never deployed).",
+  "bin": {
+    "bank-it-lab-aws-backup": "bin/app.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --ci",
+    "synth": "cdk synth --no-lookups --no-version-reporting --path-metadata false",
+    "validate-config": "ts-node scripts/validate-config.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.275.0",
+    "cdk-nag": "2.38.2",
+    "constructs": "10.8.1"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "@types/node": "20.19.43",
+    "aws-cdk": "2.1146.1",
+    "jest": "30.5.2",
+    "ts-jest": "29.4.15",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
+  }
+}

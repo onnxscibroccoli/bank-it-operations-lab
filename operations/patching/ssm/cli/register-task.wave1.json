@@ -1,0 +1,27 @@
+{
+  "WindowId": "<WAVE1_WINDOW_ID>",
+  "Name": "wave1-run-patch-baseline",
+  "Description": "EXAMPLE ONLY - AWS-RunPatchBaseline for the wave1 ring",
+  "Targets": [
+    {"Key": "WindowTargetIds", "Values": ["<WAVE1_WINDOW_TARGET_ID>"]}
+  ],
+  "TaskArn": "AWS-RunPatchBaseline",
+  "TaskType": "RUN_COMMAND",
+  "Priority": 1,
+  "MaxConcurrency": "10%",
+  "MaxErrors": "5%",
+  "CutoffBehavior": "CANCEL_TASK",
+  "TaskInvocationParameters": {
+    "RunCommand": {
+      "TimeoutSeconds": 3600,
+      "CloudWatchOutputConfig": {
+        "CloudWatchOutputEnabled": true,
+        "CloudWatchLogGroupName": "/bank-lab/patching/wave1"
+      },
+      "Parameters": {
+        "Operation": ["Scan"],
+        "RebootOption": ["RebootIfNeeded"]
+      }
+    }
+  }
+}

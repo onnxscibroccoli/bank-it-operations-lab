@@ -1,0 +1,21 @@
+{
+  "description": "403 Authorization_RequestDenied on eligibility (missing permission/role or license). Expected exit 2, no retry.",
+  "inherit": "baseline",
+  "routes": {
+    "/roleManagement/directory/roleEligibilityScheduleInstances": [
+      {
+        "body": {
+          "error": {
+            "code": "Authorization_RequestDenied",
+            "innerError": {
+              "date": "2026-10-28T12:00:00Z",
+              "request-id": "synthetic-403-Authorization_RequestDenied"
+            },
+            "message": "Insufficient privileges to complete the operation. (synthetic)"
+          }
+        },
+        "status": 403
+      }
+    ]
+  }
+}

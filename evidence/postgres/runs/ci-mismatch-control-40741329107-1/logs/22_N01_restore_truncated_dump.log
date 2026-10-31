@@ -1,0 +1,1 @@
+# step=N01_restore_truncated_dump NOT RUN: dependency S_N01_createdb is NOT_RUN

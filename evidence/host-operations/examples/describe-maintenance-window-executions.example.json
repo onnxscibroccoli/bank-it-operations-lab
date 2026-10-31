@@ -1,0 +1,20 @@
+{
+  "_exampleData": "EXAMPLE DATA - illustrative shape of `aws ssm describe-maintenance-window-executions --window-id <CANARY_WINDOW_ID>` output. Not from any AWS account.",
+  "WindowExecutions": [
+    {
+      "WindowId": "mw-EXAMPLE-canary",
+      "WindowExecutionId": "EXAMPLE-0000-1111-2222-canary-2026-11-10",
+      "Status": "SUCCESS",
+      "StartTime": "2026-11-10T07:00:00Z",
+      "EndTime": "2026-11-10T07:31:58Z"
+    },
+    {
+      "WindowId": "mw-EXAMPLE-canary",
+      "WindowExecutionId": "EXAMPLE-0000-1111-2222-canary-2026-10-13",
+      "Status": "FAILED",
+      "StatusDetails": "EXAMPLE: one invocation failed; MaxErrors=0 stopped the ring (see rollback-drill.example.md)",
+      "StartTime": "2026-10-13T06:00:00Z",
+      "EndTime": "2026-10-13T06:19:07Z"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleAssignments",
+  "value": [
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000401",
+      "principalId": "b9a5e000-0000-4000-8000-000000000001",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/"
+    },
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000402",
+      "principalId": "b9a5e000-0000-4000-8000-000000000002",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/"
+    },
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000403",
+      "principalId": "b9a5e000-0000-4000-8000-000000000010",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "directoryScopeId": "/"
+    },
+    {
+      "id": "ra-b9a5e000-0000-4000-8000-000000000404",
+      "principalId": "b9a5e000-0000-4000-8000-000000000011",
+      "roleDefinitionId": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+      "directoryScopeId": "/"
+    }
+  ],
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?$skiptoken=SYNTHETIC-ASSIGNMENTS-PAGE-2"
+}

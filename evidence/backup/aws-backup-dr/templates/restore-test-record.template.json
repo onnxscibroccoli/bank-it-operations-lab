@@ -1,0 +1,30 @@
+{
+  "label": "RESTORE_TEST_RECORD",
+  "template": true,
+  "status": "NOT_EXECUTED",
+  "allowed_status": ["NOT_EXECUTED", "EXECUTED_PASS", "EXECUTED_FAIL", "ABORTED"],
+  "run_label": null,
+  "scenario_id": null,
+  "change_ticket": null,
+  "operator": null,
+  "verifier": null,
+  "region": null,
+  "vault_name": null,
+  "recovery_point_arn": null,
+  "recovery_point_created_utc": null,
+  "restore_job_id": null,
+  "restore_target_identifier": null,
+  "timestamps_utc": { "declared_R0": null, "restore_started_R3": null, "restore_completed_R4": null, "validated_V6": null, "incident_or_target_time": null, "latest_restored_commit": null },
+  "observed": { "rpo_minutes": null, "rto_minutes": null, "copy_lag_minutes": null },
+  "validation": {
+    "V1_properties": { "status": "NOT_EXECUTED", "log": null },
+    "V2_connectivity_tls": { "status": "NOT_EXECUTED", "log": null },
+    "V3_fingerprints_match": { "status": "NOT_EXECUTED", "log": null },
+    "V4_rpo_measured": { "status": "NOT_EXECUTED", "log": null },
+    "V5_app_smoke": { "status": "NOT_EXECUTED", "log": null },
+    "V7_negative_check": { "status": "NOT_EXECUTED", "log": null }
+  },
+  "cleanup": { "C1_restored_resource_deleted": { "status": "NOT_EXECUTED", "log": null }, "C2_no_leftovers": { "status": "NOT_EXECUTED", "log": null } },
+  "commands_tsv": null,
+  "sha256sums": null
+}

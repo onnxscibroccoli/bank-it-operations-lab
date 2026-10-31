@@ -1,0 +1,9 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py does-not-exist.service --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "overall": "MALFORMED",
+  "error": "cannot read does-not-exist.service: [Errno 2] No such file or directory: 'does-not-exist.service'"
+}
+--- stderr ---
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:12:56Z duration_ms=32 ---

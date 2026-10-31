@@ -1,0 +1,65 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ProtectCloudTrail",
+      "Effect": "Deny",
+      "Action": [
+        "cloudtrail:DeleteTrail",
+        "cloudtrail:StopLogging",
+        "cloudtrail:UpdateTrail",
+        "cloudtrail:PutEventSelectors",
+        "cloudtrail:PutInsightSelectors",
+        "cloudtrail:DeleteEventDataStore"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ProtectGuardDuty",
+      "Effect": "Deny",
+      "Action": [
+        "guardduty:DeleteDetector",
+        "guardduty:UpdateDetector",
+        "guardduty:DisassociateFromAdministratorAccount",
+        "guardduty:DisassociateFromMasterAccount",
+        "guardduty:DisassociateMembers",
+        "guardduty:DeleteMembers",
+        "guardduty:StopMonitoringMembers",
+        "guardduty:DeletePublishingDestination",
+        "guardduty:UpdatePublishingDestination",
+        "guardduty:CreateFilter",
+        "guardduty:UpdateFilter",
+        "guardduty:CreateIPSet",
+        "guardduty:UpdateIPSet"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ProtectSecurityHub",
+      "Effect": "Deny",
+      "Action": [
+        "securityhub:DisableSecurityHub",
+        "securityhub:DisassociateFromAdministratorAccount",
+        "securityhub:DisassociateFromMasterAccount",
+        "securityhub:DisassociateMembers",
+        "securityhub:DeleteMembers",
+        "securityhub:BatchDisableStandards",
+        "securityhub:UpdateStandardsControl",
+        "securityhub:DisableImportFindingsForProduct",
+        "securityhub:DeleteFindingAggregator"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ProtectConfig",
+      "Effect": "Deny",
+      "Action": [
+        "config:DeleteConfigurationRecorder",
+        "config:StopConfigurationRecorder",
+        "config:DeleteDeliveryChannel",
+        "config:DeleteConfigurationAggregator"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

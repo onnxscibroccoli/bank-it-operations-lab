@@ -1,0 +1,55 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identityGovernance/accessReviews/definitions('b9a5e000-0000-4000-8000-000000000500')/instances('b9a5e000-0000-4000-8000-000000000501')/decisions",
+  "value": [
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000604",
+      "accessReviewId": "b9a5e000-0000-4000-8000-000000000501",
+      "decision": "NotReviewed",
+      "recommendation": "NoInfoAvailable",
+      "justification": "",
+      "reviewedBy": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "displayName": "",
+        "userPrincipalName": ""
+      },
+      "reviewedDateTime": null,
+      "applyResult": "New",
+      "appliedDateTime": null,
+      "principal": {
+        "@odata.type": "#microsoft.graph.userIdentity",
+        "id": "b9a5e000-0000-4000-8000-000000000012",
+        "displayName": "Casey Helpdesk (synthetic)"
+      },
+      "resource": {
+        "id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "displayName": "Security Administrator",
+        "type": "directoryRole"
+      }
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000605",
+      "accessReviewId": "b9a5e000-0000-4000-8000-000000000501",
+      "decision": "Approve",
+      "recommendation": "Approve",
+      "justification": "self",
+      "reviewedBy": {
+        "id": "b9a5e000-0000-4000-8000-000000000014",
+        "displayName": "Emery Identity (synthetic)",
+        "userPrincipalName": "emery.identity@bankitlab.example"
+      },
+      "reviewedDateTime": "2026-10-20T15:00:00Z",
+      "applyResult": "AppliedSuccessfully",
+      "appliedDateTime": "2026-10-27T00:05:00Z",
+      "principal": {
+        "@odata.type": "#microsoft.graph.userIdentity",
+        "id": "b9a5e000-0000-4000-8000-000000000014",
+        "displayName": "Emery Identity (synthetic)"
+      },
+      "resource": {
+        "id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "displayName": "Security Administrator",
+        "type": "directoryRole"
+      }
+    }
+  ]
+}

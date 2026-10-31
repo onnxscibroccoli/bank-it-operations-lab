@@ -1,0 +1,5 @@
+$ python3 identity/governance/make_fixtures.py --check
+--- stdout ---
+fixtures OK (37 files)
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:14:35Z duration_ms=23 ---

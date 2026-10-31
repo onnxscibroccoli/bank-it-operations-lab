@@ -1,0 +1,12 @@
+{
+  "run_label": "local-offline-20261028T041038Z",
+  "mode": "offline",
+  "overall": "PASS",
+  "steps": 30,
+  "passed": 30,
+  "failed": 0,
+  "finished_utc": "2026-10-28T04:10:39Z",
+  "commands_tsv": "COMMANDS.tsv",
+  "hashes": "SHA256SUMS",
+  "artifact_hashes": "ARTIFACTS.sha256"
+}

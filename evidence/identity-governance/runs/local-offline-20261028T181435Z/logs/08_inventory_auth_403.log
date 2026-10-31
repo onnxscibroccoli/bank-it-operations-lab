@@ -1,0 +1,6 @@
+$ python3 identity/governance/inventory.py --scenario auth-403 --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-auth-403.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-auth-403.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-auth-403.csv --quiet
+--- stdout ---
+ERROR scenario=auth-403 mode=pim exit=2
+--- stderr ---
+ERROR scenario=auth-403 {"kind": "authorization", "status": 403, "code": "Authorization_RequestDenied", "requestId": "synthetic-403-Authorization_RequestDenied", "url": "https://graph.microsoft.com/v1.0/roleManagement/directory/roleEligibilityScheduleInstances", "message": "HTTP 403 Authorization_RequestDenied: Insufficient privileges to complete the operation. (synthetic)"}
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:14:36Z duration_ms=27 ---

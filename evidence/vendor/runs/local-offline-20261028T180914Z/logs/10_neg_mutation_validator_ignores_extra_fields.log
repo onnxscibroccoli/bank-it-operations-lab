@@ -1,0 +1,55 @@
+# SIMULATION evidence log
+# step: neg_mutation_validator_ignores_extra_fields (negative)
+# cwd: $TMP/vendor-mock-mutant
+# command: /usr/bin/python3 -m unittest discover -s tests -t .
+# started_utc: 2026-10-28T18:09:14.841193+00:00
+
+--- stdout ---
+
+--- stderr ---
+............FFF...................F...........
+======================================================================
+FAIL: test_every_malformed_scenario_fails_closed (tests.test_client.MalformedResponses.test_every_malformed_scenario_fails_closed) (scenario='malformed_extra_field', call='get_account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/vendor-sim-nawpfy2m/vendor-mock-mutant/tests/test_client.py", line 162, in test_every_malformed_scenario_fails_closed
+    with self.assertRaises(vc.MalformedResponseError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: MalformedResponseError not raised
+
+======================================================================
+FAIL: test_every_malformed_scenario_fails_closed (tests.test_client.MalformedResponses.test_every_malformed_scenario_fails_closed) (scenario='malformed_extra_field', call='list_transactions')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/vendor-sim-nawpfy2m/vendor-mock-mutant/tests/test_client.py", line 162, in test_every_malformed_scenario_fails_closed
+    with self.assertRaises(vc.MalformedResponseError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: MalformedResponseError not raised
+
+======================================================================
+FAIL: test_extra_pii_field_is_rejected_not_passed_through (tests.test_client.MalformedResponses.test_extra_pii_field_is_rejected_not_passed_through)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/vendor-sim-nawpfy2m/vendor-mock-mutant/tests/test_client.py", line 167, in test_extra_pii_field_is_rejected_not_passed_through
+    with self.assertRaises(vc.MalformedResponseError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: MalformedResponseError not raised
+
+======================================================================
+FAIL: test_additional_property (tests.test_contract.ValidatorNegatives.test_additional_property)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/vendor-sim-nawpfy2m/vendor-mock-mutant/tests/test_contract.py", line 115, in test_additional_property
+    a = acct(); a["ssn"] = "x"; self.bad(S["Account"], a)
+                                ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/tmp/vendor-sim-nawpfy2m/vendor-mock-mutant/tests/test_contract.py", line 108, in bad
+    with self.assertRaises(ContractError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: ContractError not raised
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.015s
+
+FAILED (failures=4)
+
+--- exit_code: 1 (expected 1) -> PASS ---

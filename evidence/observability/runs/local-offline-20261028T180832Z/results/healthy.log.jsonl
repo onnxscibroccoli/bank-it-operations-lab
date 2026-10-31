@@ -1,0 +1,2 @@
+{"bytes":1152,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"15f25e314d3cae9295c6ea6a960d5a552ba326c53068cdb5878f3dbf77417d26","source":"observability/fixtures/healthy.json","ts":"2026-10-28T12:01:00Z"}
+{"component":"healthcheck","event":"health.decision","exit_code":0,"failed_checks":[],"http_status":200,"level":"INFO","overall":"HEALTHY","ts":"2026-10-28T12:01:00Z"}

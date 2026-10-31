@@ -1,0 +1,186 @@
+name: portfolio-validation
+on:
+  push:
+    branches: ['delivery/**']
+  pull_request:
+    branches: [main, 'delivery/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: portfolio-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Full offline portfolio suite
+        shell: bash
+        run: |
+          set -o pipefail
+          bash scripts/validate-all.sh --python-only 2>&1 | tee portfolio-offline.log
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: portfolio-offline-${{ github.sha }}
+          path: portfolio-offline.log
+          retention-days: 7
+  run-summary:
+    if: always()
+    needs: ["offline", "backup-static", "orgs-static", "network-edge", "endpoint-pester", "base-aws", "postgres", "terraform-static", "package"]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Report every required job and outstanding user actions
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: python3 scripts/ci/portfolio_summary.py --summary "$GITHUB_STEP_SUMMARY" --out portfolio-run-summary.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: portfolio-run-summary-${{ github.sha }}-${{ github.run_attempt }}
+          path: portfolio-run-summary.json
+          if-no-files-found: error
+          retention-days: 7
+  backup-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AWS_EC2_METADATA_DISABLED: 'true'
+      AWS_CONFIG_FILE: /dev/null
+      AWS_SHARED_CREDENTIALS_FILE: /dev/null
+    defaults:
+      run:
+        working-directory: backup/aws
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
+      - run: npm run synth
+  orgs-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: infra/orgs
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
+      - run: npm run synth
+      - run: npm run export:policies
+      - name: Exported SCP documents are committed
+        run: git diff --exit-code -- ../../evidence/orgs/policies
+  network-edge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: infra/aws-network
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
+      - run: npm run synth
+  endpoint-pester:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Install pinned Pester
+        shell: pwsh
+        run: |
+          Install-Module Pester -RequiredVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+          Import-Module Pester -RequiredVersion 5.7.1
+      - name: Execute offline PowerShell behavior tests
+        shell: pwsh
+        run: |
+          Import-Module Pester -RequiredVersion 5.7.1
+          Invoke-Pester -Path operations/endpoint/powershell/tests -CI -Output Detailed
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: endpoint-pester-${{ github.sha }}
+          path: testResults.xml
+          retention-days: 7
+  base-aws:
+    uses: ./.github/workflows/aws-cdk.yml
+  postgres:
+    uses: ./.github/workflows/postgres-restore-evidence.yml
+  terraform-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: infra/orgs/terraform
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_version: '1.9.8'
+          terraform_wrapper: false
+      - run: terraform init -backend=false -input=false
+      - name: Validate against the provider schema without cloud calls
+        run: terraform validate -no-color
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: terraform-provider-lock-${{ github.sha }}
+          path: infra/orgs/terraform/.terraform.lock.hcl
+          include-hidden-files: true
+          retention-days: 7
+  package:
+    needs: [offline, backup-static, orgs-static, network-edge, endpoint-pester, base-aws, postgres, terraform-static]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Package exact validated source tree
+        shell: bash
+        run: |
+          mkdir -p delivery-artifact
+          git archive --format=zip --prefix=bank-it-operations-lab/ HEAD > delivery-artifact/portfolio.zip
+          git rev-parse HEAD > delivery-artifact/COMMIT.txt
+          printf '%s\n' 'DRAFT PORTFOLIO: validated by portfolio-validation only; not independently approved or merge-eligible. No live deployment.' > delivery-artifact/STATUS.txt
+          cd delivery-artifact
+          sha256sum portfolio.zip COMMIT.txt STATUS.txt > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: portfolio-package-${{ github.sha }}
+          path: delivery-artifact/
+          retention-days: 7

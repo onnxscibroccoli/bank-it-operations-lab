@@ -1,0 +1,20 @@
+{
+  "label": "ACTUAL_BILLING_OBSERVATION",
+  "status": "NOT_OBSERVED",
+  "reason": "Nothing deployed; no Cost Explorer, CUR, or billing API was read. Values may only come from billing data for a real deployment, with the query and export attached.",
+  "aws_api_calls_made": false,
+  "period": null,
+  "source": null,
+  "currency": null,
+  "lines": [
+    { "driver": "backup warm storage (us-east-1)", "status": "NOT_OBSERVED", "quantity": null, "unit": "GB-month", "amount": null },
+    { "driver": "backup warm storage (us-west-2)", "status": "NOT_OBSERVED", "quantity": null, "unit": "GB-month", "amount": null },
+    { "driver": "backup cold storage (us-east-1)", "status": "NOT_OBSERVED", "quantity": null, "unit": "GB-month", "amount": null },
+    { "driver": "backup cold storage (us-west-2)", "status": "NOT_OBSERVED", "quantity": null, "unit": "GB-month", "amount": null },
+    { "driver": "inter-region data transfer us-east-1 -> us-west-2", "status": "NOT_OBSERVED", "quantity": null, "unit": "GB", "amount": null },
+    { "driver": "restore charges", "status": "NOT_OBSERVED", "quantity": null, "unit": "GB", "amount": null },
+    { "driver": "restore testing restored-resource runtime", "status": "NOT_OBSERVED", "quantity": null, "unit": "instance-hour", "amount": null },
+    { "driver": "KMS keys", "status": "NOT_OBSERVED", "quantity": null, "unit": "key-month", "amount": null },
+    { "driver": "KMS requests", "status": "NOT_OBSERVED", "quantity": null, "unit": "10k requests", "amount": null }
+  ]
+}

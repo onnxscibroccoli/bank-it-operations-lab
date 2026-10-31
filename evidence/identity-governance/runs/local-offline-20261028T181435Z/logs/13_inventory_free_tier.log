@@ -1,0 +1,5 @@
+$ python3 identity/governance/inventory.py --scenario free-tier --json-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-free-tier.json --md-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-free-tier.md --csv-out evidence/identity-governance/runs/local-offline-20261028T181435Z/reports/inventory-free-tier.csv --quiet
+--- stdout ---
+PASS scenario=free-tier mode=free exit=0
+--- stderr ---
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:14:36Z duration_ms=27 ---

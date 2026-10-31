@@ -1,0 +1,16 @@
+# SIMULATION evidence log
+# step: simulation_label_scan (check)
+# cwd: $REPO
+# command: /usr/bin/python3 -c import pathlib,sys
+bad=[str(p) for d in sys.argv[1:] for p in sorted(pathlib.Path(d).rglob('*'))
+     if p.is_file() and '__pycache__' not in p.parts and p.stat().st_size
+     and 'SIMULATION' not in p.read_text(encoding='utf-8')]
+print('files missing SIMULATION label:', bad or 'none'); sys.exit(1 if bad else 0) $REPO/integrations/vendor-mock $REPO/governance/vendor-risk
+# started_utc: 2026-10-28T18:09:14.599033+00:00
+
+--- stdout ---
+files missing SIMULATION label: none
+
+--- stderr ---
+
+--- exit_code: 0 (expected 0) -> PASS ---

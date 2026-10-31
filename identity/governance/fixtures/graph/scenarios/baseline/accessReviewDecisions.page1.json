@@ -1,0 +1,81 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identityGovernance/accessReviews/definitions('b9a5e000-0000-4000-8000-000000000500')/instances('b9a5e000-0000-4000-8000-000000000501')/decisions",
+  "value": [
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000601",
+      "accessReviewId": "b9a5e000-0000-4000-8000-000000000501",
+      "decision": "Approve",
+      "recommendation": "Approve",
+      "justification": "on-call SOC",
+      "reviewedBy": {
+        "id": "b9a5e000-0000-4000-8000-000000000014",
+        "displayName": "Emery Identity (synthetic)",
+        "userPrincipalName": "emery.identity@bankitlab.example"
+      },
+      "reviewedDateTime": "2026-10-20T15:00:00Z",
+      "applyResult": "AppliedSuccessfully",
+      "appliedDateTime": "2026-10-27T00:05:00Z",
+      "principal": {
+        "@odata.type": "#microsoft.graph.userIdentity",
+        "id": "b9a5e000-0000-4000-8000-000000000011",
+        "displayName": "Blake Security (synthetic)"
+      },
+      "resource": {
+        "id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "displayName": "Security Administrator",
+        "type": "directoryRole"
+      }
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000602",
+      "accessReviewId": "b9a5e000-0000-4000-8000-000000000501",
+      "decision": "Deny",
+      "recommendation": "Deny",
+      "justification": "no use 90d",
+      "reviewedBy": {
+        "id": "b9a5e000-0000-4000-8000-000000000014",
+        "displayName": "Emery Identity (synthetic)",
+        "userPrincipalName": "emery.identity@bankitlab.example"
+      },
+      "reviewedDateTime": "2026-10-20T15:00:00Z",
+      "applyResult": "AppliedSuccessfully",
+      "appliedDateTime": "2026-10-27T00:05:00Z",
+      "principal": {
+        "@odata.type": "#microsoft.graph.userIdentity",
+        "id": "b9a5e000-0000-4000-8000-000000000015",
+        "displayName": "Finley Messaging (synthetic)"
+      },
+      "resource": {
+        "id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "displayName": "Security Administrator",
+        "type": "directoryRole"
+      }
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000603",
+      "accessReviewId": "b9a5e000-0000-4000-8000-000000000501",
+      "decision": "Deny",
+      "recommendation": "Deny",
+      "justification": "role moved to APP admin",
+      "reviewedBy": {
+        "id": "b9a5e000-0000-4000-8000-000000000014",
+        "displayName": "Emery Identity (synthetic)",
+        "userPrincipalName": "emery.identity@bankitlab.example"
+      },
+      "reviewedDateTime": "2026-10-20T15:00:00Z",
+      "applyResult": "New",
+      "appliedDateTime": null,
+      "principal": {
+        "@odata.type": "#microsoft.graph.userIdentity",
+        "id": "b9a5e000-0000-4000-8000-000000000013",
+        "displayName": "Devon Apps (synthetic)"
+      },
+      "resource": {
+        "id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "displayName": "Security Administrator",
+        "type": "directoryRole"
+      }
+    }
+  ],
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/identityGovernance/accessReviews/definitions/b9a5e000-0000-4000-8000-000000000500/instances/b9a5e000-0000-4000-8000-000000000501/decisions?$skiptoken=SYNTHETIC-ACCESSREVIEWDECISIONS-PAGE-2"
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "bank-lab/required-checks/v1",
+  "workflow": ".github/workflows/integration-gate.yml",
+  "checks": [
+    "user-actions",
+    "module-registry",
+    "offline-validation",
+    "aws-cdk",
+    "postgres",
+    "m365-scenario-evaluation",
+    "m365-unit-tests",
+    "m365-evidence-verification",
+    "plan-only-assertions",
+    "incident-committed-runs",
+    "incident-fresh-run",
+    "incident-not-executed-negative",
+    "labeling-markers",
+    "final-summary",
+    "merge-eligibility"
+  ]
+}

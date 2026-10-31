@@ -1,0 +1,9 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-line.service --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "overall": "MALFORMED",
+  "error": "malformed-bad-line.service:6: not a key=value line: 'NoNewPrivileges'"
+}
+--- stderr ---
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:12:55Z duration_ms=32 ---

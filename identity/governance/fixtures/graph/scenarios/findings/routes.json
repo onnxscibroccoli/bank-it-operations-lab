@@ -1,0 +1,54 @@
+{
+  "description": "Seeded governance violations (INV-001..009). Expected exit 1.",
+  "inherit": "baseline",
+  "routes": {
+    "/roleManagement/directory/roleAssignmentScheduleInstances": [
+      {
+        "bodyFile": "active.page1.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleAssignmentScheduleInstances?$skiptoken=SYNTHETIC-ACTIVE-PAGE-2": [
+      {
+        "bodyFile": "active.page2.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleAssignmentScheduleInstances?$skiptoken=SYNTHETIC-ACTIVE-PAGE-3": [
+      {
+        "bodyFile": "active.page3.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleEligibilityScheduleInstances": [
+      {
+        "bodyFile": "eligible.page1.json",
+        "status": 200
+      }
+    ],
+    "/roleManagement/directory/roleEligibilityScheduleInstances?$skiptoken=SYNTHETIC-ELIGIBLE-PAGE-2": [
+      {
+        "bodyFile": "eligible.page2.json",
+        "status": 200
+      }
+    ],
+    "/servicePrincipals?$select=id,displayName,appId,servicePrincipalType": [
+      {
+        "bodyFile": "servicePrincipals.page1.json",
+        "status": 200
+      }
+    ],
+    "/users?$select=id,displayName,userPrincipalName,userType,accountEnabled": [
+      {
+        "bodyFile": "users.page1.json",
+        "status": 200
+      }
+    ],
+    "/users?$select=id,displayName,userPrincipalName,userType,accountEnabled&$skiptoken=SYNTHETIC-USERS-PAGE-2": [
+      {
+        "bodyFile": "users.page2.json",
+        "status": 200
+      }
+    ]
+  }
+}

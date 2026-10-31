@@ -1,0 +1,2 @@
+{"bytes":1179,"component":"healthcheck","event":"payload.loaded","level":"INFO","sha256":"622374430300573f789be441e9cca96e0c91eb613c4fead123be4751a4c02a8a","source":"observability/fixtures/timeout.json","ts":"2026-10-28T12:01:00Z"}
+{"component":"healthcheck","event":"health.decision","exit_code":1,"failed_checks":["probe:db-tcp"],"http_status":503,"level":"ERROR","overall":"UNHEALTHY","ts":"2026-10-28T12:01:00Z"}

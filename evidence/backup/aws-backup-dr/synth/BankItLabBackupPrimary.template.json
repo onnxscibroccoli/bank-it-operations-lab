@@ -1,0 +1,598 @@
+{
+ "Description": "AWS Backup vault, plan, cross-region copy and restore testing, intended region us-east-1 (static synthesis lab; not deployed)",
+ "Rules": {
+  "PinRegion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Equals": [
+       {
+        "Ref": "AWS::Region"
+       },
+       "us-east-1"
+      ]
+     },
+     "AssertDescription": "This stack may only be deployed in us-east-1."
+    }
+   ]
+  },
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ },
+ "Resources": {
+  "PrimaryVaultKey22F77B03": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "CMK for bank-it-lab-primary-vault (fully managed resource types: S3, EFS, DynamoDB advanced)",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:Create*",
+        "kms:Describe*",
+        "kms:Enable*",
+        "kms:List*",
+        "kms:Put*",
+        "kms:Update*",
+        "kms:Revoke*",
+        "kms:Disable*",
+        "kms:Get*",
+        "kms:Delete*",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "KeyAdministrationByAccountRoot"
+      },
+      {
+       "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "CryptoViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:RevokeGrant"
+       ],
+       "Condition": {
+        "Bool": {
+         "kms:GrantIsForAWSResource": "true"
+        },
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "GrantsForAwsResourcesViaApprovedServicesOnly"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PendingWindowInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "PrimaryVault9BBEBB0D": {
+   "Type": "AWS::Backup::BackupVault",
+   "Properties": {
+    "AccessPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "backup:DeleteRecoveryPoint",
+        "backup:UpdateRecoveryPointLifecycle",
+        "backup:PutBackupVaultLockConfiguration",
+        "backup:DeleteBackupVaultLockConfiguration",
+        "backup:DeleteBackupVault",
+        "backup:DeleteBackupVaultAccessPolicy",
+        "backup:PutBackupVaultAccessPolicy"
+       ],
+       "Condition": {
+        "ArnNotLike": {
+         "aws:PrincipalArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":iam::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":role/OrgBreakGlass"
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "DenyRecoveryPointAndLockChangesExceptBreakGlass"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "BackupVaultName": "bank-it-lab-primary-vault",
+    "EncryptionKeyArn": {
+     "Fn::GetAtt": [
+      "PrimaryVaultKey22F77B03",
+      "Arn"
+     ]
+    },
+    "LockConfiguration": {
+     "MaxRetentionDays": 400,
+     "MinRetentionDays": 30
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "BackupServiceRole3CD57978": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "backup.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Assumed by AWS Backup for backup and copy jobs of the bank-it-lab plan",
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AWSBackupServiceRolePolicyForS3Backup"
+       ]
+      ]
+     }
+    ],
+    "MaxSessionDuration": 3600,
+    "RoleName": "bank-it-lab-backup-role"
+   },
+   "Metadata": {
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "BKP-EX-01: AWS Backup documented service-role policies for backup/copy (incl. S3); hand-written copies need snapshot wildcards and drift from AWS updates.",
+       "id": "AwsSolutions-IAM4",
+       "applies_to": [
+        "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup",
+        "Policy::arn:<AWS::Partition>:iam::aws:policy/AWSBackupServiceRolePolicyForS3Backup"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "RestoreServiceRole4E0C0388": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "backup.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Assumed by AWS Backup for restore jobs and restore testing (separate from the backup role)",
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AWSBackupServiceRolePolicyForS3Restore"
+       ]
+      ]
+     }
+    ],
+    "MaxSessionDuration": 3600,
+    "RoleName": "bank-it-lab-restore-role"
+   },
+   "Metadata": {
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "BKP-EX-02: AWS Backup documented service-role policies for restores (incl. S3); restore needs iam:PassRole and per-service create APIs maintained by AWS.",
+       "id": "AwsSolutions-IAM4",
+       "applies_to": [
+        "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
+        "Policy::arn:<AWS::Partition>:iam::aws:policy/AWSBackupServiceRolePolicyForS3Restore"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "BackupPlanA8F64793": {
+   "Type": "AWS::Backup::BackupPlan",
+   "Properties": {
+    "BackupPlan": {
+     "BackupPlanName": "bank-it-lab-standard-plan",
+     "BackupPlanRule": [
+      {
+       "CompletionWindowMinutes": 480,
+       "CopyActions": [
+        {
+         "DestinationBackupVaultArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":backup:us-west-2:",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":backup-vault:bank-it-lab-dr-copy-vault"
+           ]
+          ]
+         },
+         "Lifecycle": {
+          "DeleteAfterDays": 35
+         }
+        }
+       ],
+       "EnableContinuousBackup": true,
+       "Lifecycle": {
+        "DeleteAfterDays": 35
+       },
+       "RuleName": "daily-35d-pitr",
+       "ScheduleExpression": "cron(0 5 * * ? *)",
+       "StartWindowMinutes": 60,
+       "TargetBackupVault": {
+        "Fn::GetAtt": [
+         "PrimaryVault9BBEBB0D",
+         "BackupVaultName"
+        ]
+       }
+      },
+      {
+       "CompletionWindowMinutes": 720,
+       "CopyActions": [
+        {
+         "DestinationBackupVaultArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":backup:us-west-2:",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":backup-vault:bank-it-lab-dr-copy-vault"
+           ]
+          ]
+         },
+         "Lifecycle": {
+          "DeleteAfterDays": 365,
+          "MoveToColdStorageAfterDays": 90
+         }
+        }
+       ],
+       "EnableContinuousBackup": false,
+       "Lifecycle": {
+        "DeleteAfterDays": 365,
+        "MoveToColdStorageAfterDays": 90
+       },
+       "RuleName": "monthly-365d-cold",
+       "ScheduleExpression": "cron(0 6 1 * ? *)",
+       "StartWindowMinutes": 60,
+       "TargetBackupVault": {
+        "Fn::GetAtt": [
+         "PrimaryVault9BBEBB0D",
+         "BackupVaultName"
+        ]
+       }
+      }
+     ]
+    }
+   }
+  },
+  "BackupPlanTaggedResources69C360B4": {
+   "Type": "AWS::Backup::BackupSelection",
+   "Properties": {
+    "BackupPlanId": {
+     "Fn::GetAtt": [
+      "BackupPlanA8F64793",
+      "BackupPlanId"
+     ]
+    },
+    "BackupSelection": {
+     "IamRoleArn": {
+      "Fn::GetAtt": [
+       "BackupServiceRole3CD57978",
+       "Arn"
+      ]
+     },
+     "ListOfTags": [
+      {
+       "ConditionKey": "backup-plan",
+       "ConditionType": "STRINGEQUALS",
+       "ConditionValue": "bank-it-lab-standard"
+      }
+     ],
+     "SelectionName": "bank-it-lab-tagged"
+    }
+   }
+  },
+  "RestoreTestingPlan": {
+   "Type": "AWS::Backup::RestoreTestingPlan",
+   "Properties": {
+    "RecoveryPointSelection": {
+     "Algorithm": "LATEST_WITHIN_WINDOW",
+     "IncludeVaults": [
+      {
+       "Fn::GetAtt": [
+        "PrimaryVault9BBEBB0D",
+        "BackupVaultArn"
+       ]
+      }
+     ],
+     "RecoveryPointTypes": [
+      "SNAPSHOT"
+     ],
+     "SelectionWindowDays": 30
+    },
+    "RestoreTestingPlanName": "bank_it_lab_monthly_restore_test",
+    "ScheduleExpression": "cron(0 8 15 * ? *)",
+    "ScheduleExpressionTimezone": "Etc/UTC",
+    "StartWindowHours": 24
+   }
+  },
+  "RestoreTestingSelection": {
+   "Type": "AWS::Backup::RestoreTestingSelection",
+   "Properties": {
+    "IamRoleArn": {
+     "Fn::GetAtt": [
+      "RestoreServiceRole4E0C0388",
+      "Arn"
+     ]
+    },
+    "ProtectedResourceConditions": {
+     "StringEquals": [
+      {
+       "Key": "aws:ResourceTag/backup-plan",
+       "Value": "bank-it-lab-standard"
+      }
+     ]
+    },
+    "ProtectedResourceType": "RDS",
+    "RestoreTestingPlanName": "bank_it_lab_monthly_restore_test",
+    "RestoreTestingSelectionName": "bank_it_lab_monthly_restore_test_rds",
+    "ValidationWindowHours": 24
+   },
+   "DependsOn": [
+    "RestoreTestingPlan"
+   ]
+  }
+ },
+ "Outputs": {
+  "PrimaryVaultArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PrimaryVault9BBEBB0D",
+     "BackupVaultArn"
+    ]
+   }
+  },
+  "BackupPlanId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "BackupPlanA8F64793",
+     "BackupPlanId"
+    ]
+   }
+  },
+  "RestoreRoleArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "RestoreServiceRole4E0C0388",
+     "Arn"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ }
+}

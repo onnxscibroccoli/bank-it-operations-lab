@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-BG-002",
+  "type": "break-glass-usage",
+  "title": "Break-glass Alpha used during the MFA push/SMS outage (MFA-LAB-0003)",
+  "narrative": "During MFA-LAB-0003 the admins could not complete push or SMS MFA. Two custodians retrieved the FIDO2 key for bg.alpha, signed in (SOC alert fired), and paused a failing CA rollout. Post-use: incident INC-LAB-6001 linked, credentials rotated within 6 hours, and a second admin reviewed every directory audit entry from the session the next morning.",
+  "input": {
+    "userId": "b9a5e000-0000-4000-8000-000000000001",
+    "signInId": "SI-LAB-6001",
+    "timeUtc": "2026-09-14T09:40:00Z",
+    "incidentRef": "INC-LAB-6001",
+    "justificationIssueId": "MFA-LAB-0003",
+    "credentialRotatedUtc": "2026-09-14T15:10:00Z",
+    "auditReviewedUtc": "2026-09-15T13:00:00Z"
+  },
+  "auditEvidence": [
+    {"category": "sign-in-log", "ref": "AUD-LAB-6101", "source": "Entra sign-in log SI-LAB-6001 (synthetic)"},
+    {"category": "incident-ticket", "ref": "INC-LAB-6001", "source": "Major incident record (synthetic)"},
+    {"category": "credential-rotation", "ref": "AUD-LAB-6102", "source": "Dual-custody rotation form (synthetic)"},
+    {"category": "audit-review", "ref": "AUD-LAB-6103", "source": "Directory audit review sign-off (synthetic)"}
+  ],
+  "expected": {"verdict": "POST_USE_COMPLETE", "findings": []}
+}

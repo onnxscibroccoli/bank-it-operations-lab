@@ -1,0 +1,9 @@
+$ (cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-boolean.service --json)
+--- stdout ---
+{
+  "tool": "score_units",
+  "overall": "MALFORMED",
+  "error": "NoNewPrivileges=maybe is not a boolean"
+}
+--- stderr ---
+--- exit_code=2 expected=2 started_utc=2026-10-28T18:12:55Z duration_ms=22 ---

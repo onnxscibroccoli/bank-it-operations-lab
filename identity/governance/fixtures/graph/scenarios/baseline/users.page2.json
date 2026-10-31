@@ -1,0 +1,33 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(id,displayName,userPrincipalName,userType,accountEnabled)",
+  "value": [
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000013",
+      "displayName": "Devon Apps (synthetic)",
+      "userPrincipalName": "devon.apps@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000014",
+      "displayName": "Emery Identity (synthetic)",
+      "userPrincipalName": "emery.identity@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000015",
+      "displayName": "Finley Messaging (synthetic)",
+      "userPrincipalName": "finley.messaging@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000016",
+      "displayName": "Gray Auditor (synthetic)",
+      "userPrincipalName": "gray.auditor@bankitlab.example",
+      "userType": "Member",
+      "accountEnabled": true
+    }
+  ]
+}

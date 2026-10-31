@@ -1,0 +1,32 @@
+# SIMULATION evidence log
+# step: neg_mutation_client_ignores_retry_after_cap (negative)
+# cwd: $TMP/vendor-mock-mutant-retry
+# command: /usr/bin/python3 -m unittest discover -s tests -t .
+# started_utc: 2026-10-28T18:04:54.979318+00:00
+
+--- stdout ---
+
+--- stderr ---
+...................F.........................
+======================================================================
+FAIL: test_retry_after_above_cap_fails_fast_without_sleeping (tests.test_client.RateLimiting.test_retry_after_above_cap_fails_fast_without_sleeping)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/vendor-sim-wj8lkomr/vendor-mock-mutant-retry/tests/test_client.py", line 138, in test_retry_after_above_cap_fails_fast_without_sleeping
+    self.assertEqual(c.sleeps, [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: Lists differ: [3600, 3600] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+3600
+
+- [3600, 3600]
++ []
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.014s
+
+FAILED (failures=1)
+
+--- exit_code: 1 (expected 1) -> PASS ---

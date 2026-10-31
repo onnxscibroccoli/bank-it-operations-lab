@@ -1,0 +1,6 @@
+[Unit]
+Description=fixture
+
+[Service]
+ExecStart=/usr/bin/sleep infinity
+NoNewPrivileges=maybe

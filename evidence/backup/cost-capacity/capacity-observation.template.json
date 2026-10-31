@@ -1,0 +1,16 @@
+{
+  "label": "CAPACITY_OBSERVATION",
+  "template": true,
+  "status": "NOT_OBSERVED",
+  "allowed_status": ["NOT_OBSERVED", "OBSERVED_OK", "OBSERVED_ISSUE"],
+  "source": "docs/runbooks/aws-backup/cost-capacity/CAPACITY_TROUBLESHOOTING_EXERCISE.md",
+  "run_label": null,
+  "change_ticket": null,
+  "checks": [
+    { "id": "C1-window-overrun", "status": "NOT_OBSERVED", "value": null, "log": null },
+    { "id": "C2-concurrency-quotas", "status": "NOT_OBSERVED", "value": null, "log": null },
+    { "id": "C3-vault-growth", "status": "NOT_OBSERVED", "value": null, "log": null },
+    { "id": "C4-restore-throughput", "status": "NOT_OBSERVED", "value": null, "log": null },
+    { "id": "C5-copy-lag", "status": "NOT_OBSERVED", "value": null, "log": null }
+  ]
+}

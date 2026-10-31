@@ -1,0 +1,17 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#servicePrincipals(id,displayName,appId,servicePrincipalType)",
+  "value": [
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000030",
+      "displayName": "svc-directory-sync-reader (synthetic)",
+      "appId": "b9a5e000-0000-4000-8000-000000000130",
+      "servicePrincipalType": "Application"
+    },
+    {
+      "id": "b9a5e000-0000-4000-8000-000000000031",
+      "displayName": "svc-legacy-automation (synthetic)",
+      "appId": "b9a5e000-0000-4000-8000-000000000131",
+      "servicePrincipalType": "Application"
+    }
+  ]
+}

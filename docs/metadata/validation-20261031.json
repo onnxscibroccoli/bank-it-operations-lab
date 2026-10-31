@@ -1,0 +1,164 @@
+{
+  "date": "2026-10-31",
+  "base_commit": "85fbf9d24954ecfdb5cbea30199e212c7daf2c61",
+  "environment": {
+    "python": "3.12.14",
+    "system": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "node": "24.22.1",
+    "browser": "Playwright 1.56.1 Chromium 141"
+  },
+  "results": {
+    "python_portal_tests": "3 passed",
+    "search_regressions": "14 passed; ten natural-language queries return expected curated topic in top five",
+    "markdownlint": "14 new/curated Markdown files; zero findings",
+    "module_registry": "28 modules; all tracked paths claimed",
+    "existing_offline_regression": "bash scripts/validate-all.sh --python-only: PASS (34 steps)",
+    "identity_tutorial": "baseline exit 0; findings exit 1 at 2026-10-28T12:00:00Z",
+    "health_tutorial": "HEALTHY; exit 0",
+    "postgres_committed_evidence": "38 cases, zero problems; dump artifacts not checked"
+  },
+  "coverage": {
+    "indexed": 221,
+    "structured": 11,
+    "legacy": 210,
+    "broken_legacy_links": [],
+    "build_parent_commit": "85fbf9d24954ecfdb5cbea30199e212c7daf2c61"
+  },
+  "accessibility": {
+    "environment": "Playwright Chromium, automated WCAG 2.2 AA subset",
+    "pages": [
+      {
+        "url": "index.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/ai.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/audit.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/development.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/glossary.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/governance.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/identity.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/incident.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/infrastructure.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/recovery.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/standards.html",
+        "violations": [],
+        "incomplete": []
+      },
+      {
+        "url": "pages/docs/knowledge/start.html",
+        "violations": [],
+        "incomplete": []
+      }
+    ],
+    "keyboard": [
+      "Skip link focuses main",
+      "Search submit, filters and result link reachable by keyboard"
+    ],
+    "queries": [
+      {
+        "query": "How do backups work?",
+        "expected": "recovery",
+        "result": "PASS"
+      },
+      {
+        "query": "What happens when a database crashes?",
+        "expected": "recovery",
+        "result": "PASS"
+      },
+      {
+        "query": "What does least privilege mean?",
+        "expected": "identity",
+        "result": "PASS"
+      },
+      {
+        "query": "How do I control employee permissions?",
+        "expected": "identity",
+        "result": "PASS"
+      },
+      {
+        "query": "How can a company recover from a cyberattack?",
+        "expected": "recovery",
+        "result": "PASS"
+      },
+      {
+        "query": "What is infrastructure as code?",
+        "expected": "infrastructure",
+        "result": "PASS"
+      },
+      {
+        "query": "How do IT departments detect outages?",
+        "expected": "incident",
+        "result": "PASS"
+      },
+      {
+        "query": "How do I investigate why a service stopped working?",
+        "expected": "incident",
+        "result": "PASS"
+      },
+      {
+        "query": "What is the difference between authentication and authorization?",
+        "expected": "identity",
+        "result": "PASS"
+      },
+      {
+        "query": "How do I automate routine IT maintenance?",
+        "expected": "infrastructure",
+        "result": "PASS"
+      }
+    ],
+    "manualScreenReader": "NOT RUN",
+    "mobile": "320px homepage: no horizontal overflow",
+    "errorState": "Search load failure exposes catalog fallback"
+  },
+  "resolved_findings": [
+    "Initial module check failed before new files were staged and workflow existed; final staged registry passes.",
+    "Identity tutorial at 13:00 UTC correctly found an expired assignment; corrected teaching baseline to 12:00 UTC and reran.",
+    "320px search excerpts overflowed on long commit ids; added wrapping and reran browser test.",
+    "Corrected markdownlint executable and supported config filename; final lint passes."
+  ],
+  "limitations": [
+    "No human screen-reader test; no WCAG conformance claim.",
+    "Legacy documents are indexed but not individually modernized or accessibility-audited.",
+    "No fresh cloud, tenant, Windows, full CDK, or PostgreSQL server execution for this documentation change.",
+    "No public deployment or merge. GitHub Actions validation is pending publication.",
+    "External HTTP availability does not establish factual correctness."
+  ]
+}

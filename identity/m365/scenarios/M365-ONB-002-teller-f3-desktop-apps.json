@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M365-ONB-002",
+  "type": "onboarding",
+  "title": "Branch teller on F3 asks for desktop Outlook/Excel; usageLocation missing",
+  "narrative": "Branch 014 requests a frontline (F3) license for a new teller plus the desktop Office apps used by the cash-reconciliation workbook. F3 has no desktop-app entitlement, so the request is blocked until the manager either accepts web/mobile apps or funds an E3 seat. The HR feed also left usageLocation empty, so group-based licensing would silently inherit the tenant country.",
+  "input": {
+    "userId": "0a110000-0000-4000-8000-000000000002",
+    "approvalRef": "HR-LAB-1002",
+    "assignGroups": ["GRP-LIC-F3-BRANCH"],
+    "requiredWorkloads": ["mailbox", "teams", "desktop-apps", "intune"]
+  },
+  "auditEvidence": [
+    {"category": "approval", "ref": "HR-LAB-1002", "source": "HR joiner ticket (synthetic)"},
+    {"category": "identity-change", "ref": "AUD-LAB-1201", "source": "Entra audit log: Add user (sync) (synthetic)"},
+    {"category": "license-assignment", "ref": "AUD-LAB-1202", "source": "License request held pending decision (synthetic)"},
+    {"category": "mfa-registration", "ref": "AUD-LAB-1203", "source": "TAP issuance deferred until license decision (synthetic)"}
+  ],
+  "expected": {"verdict": "BLOCKED", "findings": ["LIC-USAGE-LOCATION-INHERITED", "LIC-WORKLOAD-MISSING", "ONB-MFA-TAP"]}
+}

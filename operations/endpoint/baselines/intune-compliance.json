@@ -1,0 +1,17 @@
+{
+  "schema": "bank-lab/intune-compliance-baseline/v1",
+  "evidenceClass": "STATIC_VALIDATED",
+  "executed": false,
+  "scope": "Synthetic Windows endpoint baseline. Not assigned in a tenant.",
+  "settings": {
+    "bitLocker": true,
+    "secureBoot": true,
+    "codeIntegrity": true,
+    "defenderRealTime": true,
+    "firewallDomain": true,
+    "firewallPrivate": true,
+    "firewallPublic": true,
+    "osMinimumBuild": "10.0.22631",
+    "passwordMinimumLength": 14
+  }
+}

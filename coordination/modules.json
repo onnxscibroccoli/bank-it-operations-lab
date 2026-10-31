@@ -1,0 +1,1241 @@
+{
+  "schema": "bank-it-operations-lab/coordination/modules@1",
+  "description": "Registry of every lab module. Source of truth for scripts/ci/check_modules.py. Statuses: INTEGRATED (on this branch, with executable checks), NOT_INTEGRATED (open PR, not on this branch), BLOCKED (planned, open PR, technical blocker recorded), SUPERSEDED (replaced by another module; superseded_by required), NOT_STARTED (planned, no PR yet; proposed delivery_location), EXCLUDED (legacy; still counted in the denominator). INTEGRATED module paths must exist and must be covered by validate-all steps or CI jobs. EXCLUDED/NOT_INTEGRATED paths must NOT exist on this branch. Every top-level path in the tree must belong to a module. Every module counts in the portfolio denominator; nothing is removed to make coverage look complete (coverage.denominator_floor). Functional modules must declare a delivery_location inside their paths.",
+  "evidence_classes": [
+    "EXECUTED_LOCAL",
+    "EXECUTED_CI",
+    "STATIC_VALIDATED",
+    "SIMULATION",
+    "PLAN_ONLY",
+    "NOT_EXECUTED"
+  ],
+  "modules": [
+    {
+      "id": "integration-infra",
+      "status": "INTEGRATED",
+      "prs": [
+        7
+      ],
+      "paths": [
+        ".github/workflows",
+        ".github/acceptance",
+        "scripts/validate-all.sh",
+        "scripts/ci",
+        "coordination",
+        "reports/INTEGRATION.md",
+        "README.md",
+        ".gitignore"
+      ],
+      "evidence_class": [
+        "EXECUTED_CI"
+      ],
+      "validate_all_steps": [
+        "module registry"
+      ],
+      "ci_jobs": [
+        "integration-gate.yml:user-actions",
+        "integration-gate.yml:module-registry",
+        "integration-gate.yml:final-summary",
+        "integration-gate.yml:merge-eligibility"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        ".github/workflows",
+        "scripts/ci",
+        "scripts/validate-all.sh",
+        "coordination"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab Integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "overnight/integration"
+      },
+      "plan_sources": [
+        "ACP:DoD-3",
+        "ACP:Lane-B"
+      ],
+      "required_checks": {
+        "present": [
+          "integration-gate.yml:user-actions",
+          "integration-gate.yml:module-registry",
+          "integration-gate.yml:final-summary",
+          "integration-gate.yml:merge-eligibility"
+        ],
+        "proposed": []
+      }
+    },
+    {
+      "id": "shared-evidence-validator",
+      "status": "INTEGRATED",
+      "prs": [
+        3
+      ],
+      "paths": [
+        "evidence/shared",
+        "reports/review-pr1-pr2.md"
+      ],
+      "evidence_class": [
+        "EXECUTED_LOCAL",
+        "EXECUTED_CI"
+      ],
+      "validate_all_steps": [
+        "shared validator unit tests",
+        "shared postgres-negatives"
+      ],
+      "ci_jobs": [
+        "offline-validation.yml:validate"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "evidence/shared"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab PR Reviewer",
+        "pr_author": "Bank IT Lab Review",
+        "branch": "review/pr1-pr2-evidence-audit"
+      },
+      "plan_sources": [
+        "INT:PR#3",
+        "JRM:B9"
+      ],
+      "required_checks": {
+        "present": [
+          "offline-validation.yml:validate"
+        ],
+        "proposed": []
+      }
+    },
+    {
+      "id": "entra-offline",
+      "status": "INTEGRATED",
+      "prs": [
+        4
+      ],
+      "paths": [
+        "identity/entra",
+        "tests/entra",
+        "evidence/entra"
+      ],
+      "evidence_class": [
+        "EXECUTED_LOCAL",
+        "EXECUTED_CI",
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "entra unit tests",
+        "entra validator on baseline",
+        "entra fixture drift",
+        "entra evidence verify"
+      ],
+      "ci_jobs": [
+        "offline-validation.yml:validate"
+      ],
+      "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-3).",
+      "category": "functional",
+      "delivery_location": [
+        "identity/entra",
+        "tests/entra"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "Bank IT Lab Entra CA",
+        "branch": "entra-ca-offline"
+      },
+      "plan_sources": [
+        "ACP:DoD-1",
+        "JRM:C6,C9"
+      ],
+      "required_checks": {
+        "present": [
+          "offline-validation.yml:validate"
+        ],
+        "proposed": []
+      }
+    },
+    {
+      "id": "aws-cdk",
+      "status": "INTEGRATED",
+      "prs": [
+        5
+      ],
+      "superseded_prs": [
+        1
+      ],
+      "paths": [
+        "infra/aws-cdk",
+        "evidence/aws"
+      ],
+      "evidence_class": [
+        "EXECUTED_LOCAL",
+        "EXECUTED_CI",
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "aws-cdk tsc",
+        "aws-cdk jest",
+        "aws-cdk synth",
+        "aws-cdk nag gate",
+        "s3 self-logging",
+        "synth drift",
+        "aws evidence SHA256SUMS"
+      ],
+      "ci_jobs": [
+        "aws-cdk.yml:synth-and-test"
+      ],
+      "limitations": "Static synth only; nothing deployed. Exceptions EX-01..EX-04 unapproved (UA-1). PR #14 B5-1/B5-2 open.",
+      "category": "functional",
+      "delivery_location": [
+        "infra/aws-cdk"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab AWS Remediation",
+        "pr_author": "Bank IT Lab AWS CDK",
+        "branch": "aws-remediation-vpc-rds"
+      },
+      "plan_sources": [
+        "ACP:DoD-1",
+        "JRM:A1,A3,B3,C3"
+      ],
+      "required_checks": {
+        "present": [
+          "aws-cdk.yml:synth-and-test"
+        ],
+        "proposed": []
+      },
+      "review_findings": {
+        "B5-1": "enforced: scripts/ci/check_exceptions.py; applied suppressions tied to non-APPROVED EX-01..EX-04 are a blocking user action (UA-1); AC2/AC5 stay UNMET until the owner decides",
+        "B5-2": "fixed in 80f01d63659b801434c1a9e050484abc8716adcd (least-privilege-key.ts KeyAdministrationByKeyAdminRoleOnly)",
+        "B5-3": "resolved in code: PR #1's infra/aws-cdk is superseded by PR #5 (bank-aws-001 SUPERSEDED, superseded_by aws-cdk); PR #1 itself stays open pending UA-4"
+      }
+    },
+    {
+      "id": "postgres-recovery",
+      "status": "INTEGRATED",
+      "prs": [
+        2
+      ],
+      "paths": [
+        "tests/integration",
+        "evidence/postgres"
+      ],
+      "evidence_class": [
+        "EXECUTED_LOCAL",
+        "EXECUTED_CI"
+      ],
+      "validate_all_steps": [
+        "postgres v2 verify",
+        "postgres harness self-test",
+        "postgres restore exercise v2 (offline)",
+        "postgres fresh-run v2 verifier"
+      ],
+      "ci_jobs": [
+        "postgres-restore-evidence.yml:harness-selftest",
+        "postgres-restore-evidence.yml:restore-exercise-service",
+        "postgres-restore-evidence.yml:restore-exercise-offline",
+        "postgres-restore-evidence.yml:version-mismatch-control"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "tests/integration",
+        "evidence/postgres"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab Backup DR",
+        "pr_author": "Ian Cossette",
+        "branch": "ci-evidence-postgres"
+      },
+      "plan_sources": [
+        "ACP:DoD-1",
+        "JRM:B15a"
+      ],
+      "required_checks": {
+        "present": [
+          "postgres-restore-evidence.yml:harness-selftest",
+          "postgres-restore-evidence.yml:restore-exercise-service",
+          "postgres-restore-evidence.yml:restore-exercise-offline",
+          "postgres-restore-evidence.yml:version-mismatch-control"
+        ],
+        "proposed": []
+      }
+    },
+    {
+      "id": "orgs-security",
+      "status": "INTEGRATED",
+      "prs": [
+        6
+      ],
+      "paths": [
+        "infra/orgs",
+        "evidence/orgs"
+      ],
+      "reason": "B6-1 fixed: TrailAccessLogsBucket is a terminal sink (no self-log prefix). B6-2 fixed: SCP documents no longer exempt any IAM role; break-glass is a management-account operation. B6-3 delivered as infra/orgs/terraform reading evidence/orgs/policies. Not deployed. Not independently accepted. Terraform apply is out of scope.",
+      "category": "functional",
+      "delivery_location": [
+        "infra/orgs"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab AWS Remediation",
+        "pr_author": "Bank IT Lab AWS CDK",
+        "branch": "orgs-security-refs"
+      },
+      "plan_sources": [
+        "ACP:Lane-C(orgs)",
+        "JRM:A4,C9,gap-6"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline",
+          "portfolio-validation.yml:orgs-static",
+          "portfolio-validation.yml:terraform-static"
+        ],
+        "proposed": []
+      },
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:offline",
+        "portfolio-validation.yml:orgs-static",
+        "portfolio-validation.yml:terraform-static"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "limitations": "CDK synthesis and Terraform provider-schema validation only; Terraform is partial and lacks CDK parity. No Organizations API calls, plan or apply."
+    },
+    {
+      "id": "acceptance",
+      "status": "NOT_INTEGRATED",
+      "prs": [
+        23,
+        24,
+        25,
+        26
+      ],
+      "paths": [
+        "scripts/acceptance",
+        "schemas/acceptance",
+        "tools/acceptance",
+        "acceptance",
+        "tests/acceptance-contract",
+        "reports/ACCEPTANCE.md"
+      ],
+      "reason": "PR #27 CHANGES REQUIRED (C1-C5) at 181bcdd; PR #26 head moved to eb42b23 (C1-C4 repairs reported at 17cfaea), pending exact-SHA re-review. PR #23 (6a28847) and #24 (838d537) are ancestors of #26 (superseded into it). PR #25 (ce39504) diverged: #26 drops acceptance/modules/emit_shared.py and its test; needs a disposition.",
+      "category": "functional",
+      "delivery_location": [
+        "scripts/acceptance",
+        "acceptance",
+        "tools/acceptance",
+        "schemas/acceptance"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "onnxscibroccoli (Worker D)",
+        "branch": "acceptance/vertical-slice"
+      },
+      "plan_sources": [
+        "ACP:DoD-3",
+        "ACP:Lane-A"
+      ],
+      "required_checks": {
+        "present": [],
+        "proposed": [
+          "python3 -m unittest discover -s scripts/acceptance/tests",
+          "acceptance/modules tests",
+          "tests/acceptance-contract",
+          "acceptance run: OVERALL=PASS, decision != naked APPROVED without bound review"
+        ]
+      },
+      "superseded_prs": [
+        23,
+        24
+      ],
+      "head": {
+        "pr": 26,
+        "sha": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+        "base": "overnight/integration@49122f2 (stale; 14 commits not in integration)"
+      }
+    },
+    {
+      "id": "review-notes",
+      "status": "NOT_INTEGRATED",
+      "prs": [
+        14,
+        27,
+        28,
+        29
+      ],
+      "paths": [
+        "reports/review-pr3-pr6.md",
+        "reports/independent",
+        "reports/review-candidate-08cdf11.md",
+        "reports/review-acceptance-vertical-slice.md"
+      ],
+      "reason": "Review records; kept on their own branches as audit records (plan: do not commit reviews onto the candidate).",
+      "category": "review_record",
+      "owner": {
+        "agent": "Bank IT Lab PR Reviewer",
+        "pr_author": "onnxscibroccoli",
+        "branch": "review/pr3-pr6, review/chatgpt-acceptance-181bcdd, review/candidate-08cdf11, review/acceptance-vertical-slice"
+      },
+      "plan_sources": [
+        "ACP:Lane-E"
+      ],
+      "required_checks": {
+        "present": [],
+        "proposed": []
+      }
+    },
+    {
+      "id": "portfolio-cases",
+      "status": "INTEGRATED",
+      "prs": [
+        8
+      ],
+      "paths": [
+        "portfolio"
+      ],
+      "category": "documentation",
+      "owner": {
+        "agent": "Bank IT Lab Portfolio Cases",
+        "pr_author": "onnxscibroccoli",
+        "branch": "portfolio-cases"
+      },
+      "plan_sources": [
+        "ACP:DoD-5"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "7010d05a366758132799a76b20088ddf9b6169e8",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "vendor-mock",
+      "status": "INTEGRATED",
+      "prs": [
+        9
+      ],
+      "paths": [
+        "integrations",
+        "evidence/vendor",
+        "governance/vendor-risk"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "integrations/vendor-mock",
+        "governance/vendor-risk"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "Bank IT Lab Host Ops",
+        "branch": "vendor-mock"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(vendors)",
+        "JRM:B6,B4"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "d6efb825b00a559be01cb2f329d6a7d0fd9f19a4",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "observability",
+      "status": "INTEGRATED",
+      "prs": [
+        10
+      ],
+      "paths": [
+        "observability",
+        "evidence/observability"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "observability"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "observability"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(monitoring)",
+        "JRM:B5,C8"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "3e40e39d73da3f0d20bced68651a54ee6c63846c",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "final-report",
+      "status": "INTEGRATED",
+      "prs": [
+        11
+      ],
+      "paths": [
+        "reports/FINAL_REPORT.md",
+        "reports/EVIDENCE_MANIFEST.md",
+        "reports/USER_ACTIONS_REQUIRED.md",
+        "reports/user-actions.json",
+        "docs/DEMO_WALKTHROUGH_15MIN.md"
+      ],
+      "category": "documentation",
+      "owner": {
+        "agent": "Bank IT Lab Final Report",
+        "pr_author": "Ian Cossette",
+        "branch": "reports/final-report"
+      },
+      "plan_sources": [
+        "ACP:DoD-3,DoD-5(demo)",
+        "ACP:Lane-D"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "shared_paths": [
+        "README.md"
+      ],
+      "source_commit": "d500ccf41b4338a17a4f2f02e98de89f34ca89a7",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "job-requirements-matrix",
+      "status": "INTEGRATED",
+      "prs": [
+        12
+      ],
+      "paths": [
+        "docs/JOB_REQUIREMENTS_MATRIX.md"
+      ],
+      "category": "documentation",
+      "owner": {
+        "agent": "Bank IT Lab Job Matrix",
+        "pr_author": "onnxscibroccoli",
+        "branch": "job-requirements-matrix (+ docs/job-matrix-addendum 9fb49fa, no PR)"
+      },
+      "plan_sources": [
+        "ACP:DoD-5",
+        "JRM"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "head": {
+        "pr": 12,
+        "sha": "31b69db90838f59bfe28f8214dfc51a1c4ffd429",
+        "addendum_sha": "9fb49fa96903bf5b0de58dad7c5741c30d6a7d3d"
+      },
+      "source_commit": "31b69db90838f59bfe28f8214dfc51a1c4ffd429",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "team-management",
+      "status": "INTEGRATED",
+      "prs": [
+        13
+      ],
+      "paths": [
+        "docs/management",
+        "operations/team"
+      ],
+      "category": "documentation",
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "team-management"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(management)",
+        "JRM:B1,B11,B14,C2"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "9dc8f1f587a69d85b05af0fc28d76f4ed5925d44",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "learning-guide",
+      "status": "INTEGRATED",
+      "prs": [
+        15
+      ],
+      "paths": [
+        "learning",
+        "docs/adr",
+        "docs/REPO_NAVIGATOR.md",
+        "docs/REVIEWER_GUIDE.md",
+        "docs/AI_PROMPTS.md"
+      ],
+      "category": "documentation",
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "learning-guide"
+      },
+      "plan_sources": [
+        "ACP:DoD-5(learning continues later)",
+        "JRM:B11,C10"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "39728dbe5223140e676ff5ac0e5cbd1b6893b719",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "control-mapping",
+      "status": "INTEGRATED",
+      "prs": [
+        16
+      ],
+      "paths": [
+        "governance/controls",
+        "evidence/control-review"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "governance/controls"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "control-mapping"
+      },
+      "plan_sources": [
+        "JRM:C9,B9,gap-7"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "3f8269758fe768a499e3bef01e4909ebf35747a0",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "patch-hardening",
+      "status": "INTEGRATED",
+      "prs": [
+        17
+      ],
+      "paths": [
+        "operations/hardening",
+        "operations/patching",
+        "evidence/host-operations"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "operations/patching",
+        "operations/hardening"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "Bank IT Lab Host Ops",
+        "branch": "patch-hardening"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(patching)",
+        "JRM:B12,C8,gap-8"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "5605b78893465e04caf1ab275c3608ef2a634584",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "identity-governance",
+      "status": "INTEGRATED",
+      "prs": [
+        18
+      ],
+      "paths": [
+        "identity/governance",
+        "docs/federation",
+        "evidence/identity-governance"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "identity/governance"
+      ],
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "Bank IT Lab Identity Governance",
+        "branch": "identity-governance"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(identity governance)",
+        "JRM:C6,C9,B10"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "f48e7e3fbd01423b15646fee64a66073f813e484",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "hybrid-operations",
+      "status": "INTEGRATED",
+      "prs": [
+        19
+      ],
+      "paths": [
+        "operations/hybrid",
+        "docs/runbooks/hybrid"
+      ],
+      "category": "documentation",
+      "owner": {
+        "agent": "unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "hybrid-operations"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(hybrid operations)",
+        "JRM:A2,B2,B11,C6,C7,gap-3"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "source_commit": "3397dac99bde6ca9504fb2c2d9a2f322c20c19b6",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "m365-endpoint",
+      "status": "INTEGRATED",
+      "prs": [
+        20
+      ],
+      "paths": [
+        "identity/m365",
+        "evidence/m365"
+      ],
+      "reason": "Integrated at the exact SHA on Ian's instruction (20:03 EDT). PR #20 itself is still a draft with 0 reviews; independent review of the combined candidate is pending (AC1).",
+      "required": true,
+      "source": {
+        "pr": 20,
+        "exact_sha": "1b3c240374285d7b0760b946e861dee15197dcf3",
+        "merge": "--no-ff merge of the exact commit (not the branch tip), per Ian 20:03 EDT"
+      },
+      "evidence_class": [
+        "EXECUTED_LOCAL",
+        "EXECUTED_CI",
+        "PLAN_ONLY"
+      ],
+      "validate_all_steps": [
+        "m365 scenario evaluation",
+        "m365 unit tests",
+        "m365 evidence verification",
+        "plan-only negative tests"
+      ],
+      "ci_jobs": [
+        "integration-gate.yml:m365-scenario-evaluation",
+        "integration-gate.yml:m365-unit-tests",
+        "integration-gate.yml:m365-evidence-verification",
+        "integration-gate.yml:plan-only-assertions"
+      ],
+      "plan_only_assertions": "scripts/ci/check_plan_only.py: every plan step mode PLAN_ONLY and executed false; every executed key false; mutationsExecuted integer 0; at least one plan step. Negative tests: scripts/ci/tests/test_check_plan_only.py (14).",
+      "counts": {
+        "scenarios": "13 scenario files evaluated; each must match its recorded expected verdict AND expected finding codes (totals.passed=13)",
+        "plan_steps": "43 = total PLAN_ONLY remediation plan steps emitted across the 13 scenarios (totals.plannedSteps), each executed:false; these are NOT assertions or tests",
+        "findings": "28 findings across the 13 scenarios",
+        "unit_tests": "29 unittest cases in identity/m365/tests",
+        "evidence_commands": "15 recorded commands in the committed run (python version, unit tests, evaluation, 9 malformed + 3 mismatch negative fixtures), all with the expected exit code"
+      },
+      "category": "functional",
+      "delivery_location": [
+        "identity/m365"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab Integrator (integrated exact SHA); author unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "m365-endpoint"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(M365)",
+        "JRM:C6,B2,B11"
+      ],
+      "required_checks": {
+        "present": [
+          "integration-gate.yml:m365-scenario-evaluation",
+          "integration-gate.yml:m365-unit-tests",
+          "integration-gate.yml:m365-evidence-verification",
+          "integration-gate.yml:plan-only-assertions"
+        ],
+        "proposed": []
+      }
+    },
+    {
+      "id": "backup-dr-aws",
+      "status": "INTEGRATED",
+      "prs": [
+        21
+      ],
+      "paths": [
+        "backup",
+        "evidence/backup",
+        "docs/runbooks/aws-backup"
+      ],
+      "category": "functional",
+      "delivery_location": [
+        "backup",
+        "docs/runbooks/aws-backup/cost-capacity"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab Backup DR",
+        "pr_author": "Bank IT Lab AWS Backup",
+        "branch": "backup-dr-aws"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(backup references)",
+        "JRM:B15b,B12,C3,gap-5"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline",
+          "portfolio-validation.yml:backup-static"
+        ],
+        "proposed": []
+      },
+      "source_commit": "10da54f8965ea7695cffe0f3ce0dad207c66285b",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "ci_jobs": [
+        "portfolio-validation.yml:offline",
+        "portfolio-validation.yml:backup-static"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ]
+    },
+    {
+      "id": "incident-demo",
+      "status": "INTEGRATED",
+      "prs": [
+        22
+      ],
+      "paths": [
+        "scenarios",
+        "evidence/incident"
+      ],
+      "reason": "Integrated at the exact SHA on Ian's instruction (20:03 EDT). PR #22 has no reviews; independent review of the combined candidate is pending (AC1).",
+      "required": true,
+      "source": {
+        "pr": 22,
+        "exact_sha": "9f21329f0e796362c4498d49687fd0f99ce3a042",
+        "merge": "--no-ff merge of the exact commit (not the branch tip), per Ian 20:03 EDT"
+      },
+      "evidence_class": [
+        "EXECUTED_LOCAL",
+        "EXECUTED_CI",
+        "SIMULATION"
+      ],
+      "validate_all_steps": [
+        "incident committed runs",
+        "incident NOT_EXECUTED negative",
+        "labeling markers",
+        "incident fresh run"
+      ],
+      "ci_jobs": [
+        "integration-gate.yml:incident-committed-runs",
+        "integration-gate.yml:incident-fresh-run",
+        "integration-gate.yml:incident-not-executed-negative",
+        "integration-gate.yml:labeling-markers"
+      ],
+      "requirements": [
+        "injection",
+        "detection",
+        "diagnosis",
+        "recovery",
+        "timeline",
+        "simulation"
+      ],
+      "runs": {
+        "local-20261028T181818Z": "original (PR #22), preserved unmodified",
+        "local-20261029T000545Z": "fresh integrator run 2026-10-28 20:05 EDT, PostgreSQL 16.15, added alongside"
+      },
+      "category": "functional",
+      "delivery_location": [
+        "scenarios"
+      ],
+      "owner": {
+        "agent": "Bank IT Lab Integrator (integrated exact SHA); author unassigned",
+        "pr_author": "onnxscibroccoli",
+        "branch": "incident-demo"
+      },
+      "plan_sources": [
+        "ACP:DoD-2(incident response)",
+        "ACP:Job alignment priorities",
+        "JRM:B13,B15b,B5,B8"
+      ],
+      "required_checks": {
+        "present": [
+          "integration-gate.yml:incident-committed-runs",
+          "integration-gate.yml:incident-fresh-run",
+          "integration-gate.yml:incident-not-executed-negative",
+          "integration-gate.yml:labeling-markers"
+        ],
+        "proposed": []
+      }
+    },
+    {
+      "id": "bank-aws-001",
+      "status": "SUPERSEDED",
+      "category": "superseded",
+      "prs": [
+        1
+      ],
+      "paths": [
+        "reports/MORNING_REPORT.md",
+        "infra/aws-cdk/lib/evidence-validator.ts",
+        "infra/aws-cdk/scripts/validate-evidence.ts"
+      ],
+      "superseded_by": "aws-cdk",
+      "reason": "PR #1 @ e494bcfc3986c2d21a4cf92453857f69dbf69ce3: first planned module (BANK-AWS-001). infra/aws-cdk superseded by PR #5 (S3 self-logging fixed there); CI workflow adapted into aws-cdk.yml; listed paths are the parts NOT carried. Close only on owner decision (UA-4).",
+      "owner": {
+        "agent": "Bank IT Lab AWS Remediation",
+        "pr_author": "Bank IT Lab AWS CDK",
+        "branch": "bank-aws-001"
+      },
+      "plan_sources": [
+        "INT:PR#1",
+        "JRM:A3,A4"
+      ],
+      "required_checks": {
+        "present": [],
+        "proposed": []
+      }
+    },
+    {
+      "id": "aws-network-edge",
+      "status": "INTEGRATED",
+      "category": "functional",
+      "prs": [],
+      "paths": [
+        "infra/aws-network"
+      ],
+      "delivery_location": [
+        "infra/aws-network"
+      ],
+      "reason": "Delivered as a credential-free CDK app: internal ALB, no IGW/NAT, SSM via interface endpoints, no SSH, IMDSv2, private zone, documentation-range VPN peer 203.0.113.10, monthly budget, required tags. NE-01 and NE-02 are proposed suppressions, not approved exceptions. Not deployed.",
+      "owner": {
+        "agent": "delivery integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "delivery/portfolio"
+      },
+      "plan_sources": [
+        "JRM:C3,section E,gap-2"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:network-edge"
+        ],
+        "proposed": []
+      },
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:network-edge"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
+    },
+    {
+      "id": "endpoint-windows-automation",
+      "status": "INTEGRATED",
+      "category": "functional",
+      "prs": [],
+      "paths": [
+        "operations/endpoint"
+      ],
+      "delivery_location": [
+        "operations/endpoint"
+      ],
+      "reason": "Python baseline validation and real PowerShell plan-generation Pester tests in Linux CI. Not run on domain-joined Windows; no tenant mutation.",
+      "owner": {
+        "agent": "delivery integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "delivery/portfolio"
+      },
+      "plan_sources": [
+        "JRM:A2,B2,C6,C7,gap-3"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline",
+          "portfolio-validation.yml:endpoint-pester"
+        ],
+        "proposed": [
+          "Pester on a domain-joined host (NOT_EXECUTED)"
+        ]
+      },
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:offline",
+        "portfolio-validation.yml:endpoint-pester"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
+    },
+    {
+      "id": "inventory-diagrams",
+      "status": "INTEGRATED",
+      "category": "functional",
+      "prs": [
+        35
+      ],
+      "paths": [
+        "inventory"
+      ],
+      "delivery_location": [
+        "inventory"
+      ],
+      "owner": {
+        "agent": "ChatGPT delivery integrator",
+        "branch": "delivery/portfolio",
+        "pr_author": "onnxscibroccoli"
+      },
+      "plan_sources": [
+        "JRM:B11,C10,gap-4"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE"
+    },
+    {
+      "id": "owner-authentication",
+      "status": "INTEGRATED",
+      "category": "functional",
+      "prs": [],
+      "paths": [
+        "governance/owner-auth"
+      ],
+      "delivery_location": [
+        "governance/owner-auth"
+      ],
+      "evidence_class": [
+        "STATIC_VALIDATED"
+      ],
+      "validate_all_steps": [
+        "portfolio offline modules"
+      ],
+      "ci_jobs": [
+        "portfolio-validation.yml:offline"
+      ],
+      "required_checks": {
+        "present": [
+          "portfolio-validation.yml:offline"
+        ],
+        "proposed": []
+      },
+      "owner": {
+        "agent": "delivery integrator",
+        "pr_author": "onnxscibroccoli",
+        "branch": "delivery/portfolio"
+      },
+      "plan_sources": [
+        "UA-6"
+      ],
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "limitations": "Prototype only: real Ed25519 verification tested; no enrolled key, active adapter, revocation/conflict policy or acceptance approval. AC1 remains independent.",
+      "reason": "Design and fail-closed verifier for a personal GitHub account. Not an approval."
+    },
+    {
+      "id": "knowledge-base",
+      "status": "INTEGRATED",
+      "category": "documentation",
+      "paths": [
+        "scripts/docs",
+        "docs/knowledge",
+        "docs/metadata",
+        "docs/index.md",
+        "AGENTS.md",
+        "llms.txt",
+        ".github/pull_request_template.md"
+      ],
+      "owner": {
+        "agent": "documentation maintainers"
+      },
+      "required_checks": {
+        "present": [
+          "documentation.yml:validate"
+        ],
+        "proposed": []
+      },
+      "ci_jobs": [
+        "documentation.yml:validate"
+      ],
+      "limitations": "Documentation platform only. Legacy migration, manual accessibility assessment, and public deployment remain incomplete.",
+      "prs": []
+    }
+  ],
+  "required_gate_jobs": [
+    "user-actions",
+    "module-registry",
+    "offline-validation",
+    "aws-cdk",
+    "postgres",
+    "m365-scenario-evaluation",
+    "m365-unit-tests",
+    "m365-evidence-verification",
+    "plan-only-assertions",
+    "incident-committed-runs",
+    "incident-fresh-run",
+    "incident-not-executed-negative",
+    "labeling-markers"
+  ],
+  "required_gate_jobs_note": "final-summary and merge-eligibility fail if any of these jobs is missing from the run, skipped, cancelled or failed. A clean merge without these checks is not acceptance.",
+  "required_gate_outputs": {
+    "incident-fresh-run": [
+      "injection",
+      "detection",
+      "diagnosis",
+      "recovery",
+      "timeline",
+      "simulation"
+    ]
+  },
+  "required_gate_outputs_note": "Each output must be exactly PASS. NOT_EXECUTED (e.g. no PostgreSQL binaries), FAIL, empty or missing fail final-summary and merge-eligibility.",
+  "categories": {
+    "functional": "Executable code or IaC with tests/validators; must have delivery_location and, once INTEGRATED, required_checks.present.",
+    "documentation": "Runbooks, guides, reports, matrices; may have doc linters.",
+    "review_record": "Independent review notes; kept on audit branches, not committed onto the candidate.",
+    "superseded": "Replaced by another module (superseded_by); counted in the denominator, resolved by its successor.",
+    "blocked": "Planned module with a recorded technical blocker; counted in the denominator."
+  },
+  "plan_sources": {
+    "ACP": "reports/independent/chatgpt/accelerated-completion-plan-20261028.md @ PR #27 72aa8b7 (Definition of done 1-5; Lane C module list)",
+    "JRM": "docs/JOB_REQUIREMENTS_MATRIX.md @ PR #12 31b69db (sections A-F, 'Top gaps and suggested lab work' 1-8) + addendum G @ docs/job-matrix-addendum 9fb49fa",
+    "INT": "coordination/tasks.json + reports/INTEGRATION.md on overnight/integration",
+    "PR": "PR descriptions #1-#29"
+  },
+  "coverage": {
+    "denominator_floor": 27,
+    "denominator_rule": "Every planned module counts. Completion = INTEGRATED / (all modules - SUPERSEDED). SUPERSEDED modules stay listed and count as resolved by superseded_by. BLOCKED, NOT_INTEGRATED and NOT_STARTED count as incomplete. check_modules.py fails if the module count drops below denominator_floor; lowering the floor needs an owner decision recorded in tasks.json. The floor was raised from 26 to 27 when owner-authentication was added. It has not been lowered.",
+    "out_of_scope_by_plan": [
+      "Live AWS deployment / Entra or Graph tenant calls (ACP: 'Live AWS/Entra validation is intentionally out of scope'; JRM gap-1 requires owner decision and spend)",
+      "Non-lab-demonstrable job rows A2,A5,A6,B1,B6,B14,B16,C2,C11,C12,D1-D4 (JRM G4) - answered from real history, not modules"
+    ]
+  }
+}

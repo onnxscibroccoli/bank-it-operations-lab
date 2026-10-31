@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0.0",
+  "exampleData": true,
+  "manifestId": "bank-lab-2026-11-monthly",
+  "description": "EXAMPLE patch cycle manifest: ring order, gates, rollback and escalation. Read by tools/inspect_patch_manifest.py (dry-run only).",
+  "changeRecord": "CHG-EXAMPLE-0001",
+  "baselines": [
+    {
+      "id": "al2023-security",
+      "operatingSystem": "AMAZON_LINUX_2023",
+      "source": "../../ssm/cli/create-patch-baseline.al2023.json",
+      "patchGroups": [
+        "canary",
+        "wave1",
+        "wave2"
+      ]
+    },
+    {
+      "id": "rhel-security",
+      "operatingSystem": "REDHAT_ENTERPRISE_LINUX",
+      "source": "../../ssm/cli/create-patch-baseline.rhel.json",
+      "patchGroups": [
+        "canary-rhel",
+        "wave1-rhel",
+        "wave2-rhel"
+      ]
+    }
+  ],
+  "rings": [
+    {
+      "name": "canary",
+      "order": 1,
+      "patchGroups": [
+        "canary",
+        "canary-rhel"
+      ],
+      "operation": "Install",
+      "maxConcurrency": "1",
+      "maxErrors": "0",
+      "rebootOption": "RebootIfNeeded",
+      "preSnapshot": true,
+      "soakHours": 48,
+      "gate": null
+    },
+    {
+      "name": "wave1",
+      "order": 2,
+      "patchGroups": [
+        "wave1",
+        "wave1-rhel"
+      ],
+      "operation": "Install",
+      "maxConcurrency": "10%",
+      "maxErrors": "5%",
+      "rebootOption": "RebootIfNeeded",
+      "preSnapshot": true,
+      "soakHours": 48,
+      "gate": {
+        "requires": "canary",
+        "minSoakHours": 48,
+        "approvers": [
+          "service-owner",
+          "change-advisory-board"
+        ],
+        "evidence": [
+          "compliance-summary",
+          "canary-signoff"
+        ]
+      }
+    },
+    {
+      "name": "wave2",
+      "order": 3,
+      "patchGroups": [
+        "wave2",
+        "wave2-rhel"
+      ],
+      "operation": "Install",
+      "maxConcurrency": "25%",
+      "maxErrors": "5%",
+      "rebootOption": "RebootIfNeeded",
+      "preSnapshot": true,
+      "soakHours": 24,
+      "gate": {
+        "requires": "wave1",
+        "minSoakHours": 48,
+        "approvers": [
+          "change-advisory-board"
+        ],
+        "evidence": [
+          "compliance-summary"
+        ]
+      }
+    }
+  ],
+  "rollback": {
+    "procedure": "../../procedures/ROLLBACK.md",
+    "strategies": [
+      "package-downgrade",
+      "snapshot-restore"
+    ],
+    "maxRollbackMinutes": 60
+  },
+  "escalation": {
+    "procedure": "../../procedures/ESCALATION.md",
+    "contacts": [
+      {
+        "role": "on-call-sre",
+        "channel": "EXAMPLE-pager-rotation"
+      },
+      {
+        "role": "change-manager",
+        "channel": "EXAMPLE-change-desk"
+      }
+    ]
+  }
+}

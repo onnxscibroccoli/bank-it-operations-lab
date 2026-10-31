@@ -1,0 +1,36 @@
+{
+  "disk_path": "/",
+  "expected_probes": [
+    "app-http",
+    "db-tcp",
+    "resolver-dns"
+  ],
+  "policy": {
+    "max_age_s": 300
+  },
+  "probes": [
+    {
+      "expect_status": [
+        200
+      ],
+      "kind": "http",
+      "max_bytes": 4096,
+      "name": "app-http",
+      "timeout_s": 2,
+      "url": "https://status.example.com/healthz"
+    },
+    {
+      "host": "db.example.internal",
+      "kind": "tcp",
+      "name": "db-tcp",
+      "port": 5432,
+      "timeout_s": 2
+    },
+    {
+      "hostname": "app.example.com",
+      "kind": "dns",
+      "name": "resolver-dns",
+      "timeout_s": 2
+    }
+  ]
+}

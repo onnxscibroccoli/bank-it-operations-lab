@@ -1,0 +1,5 @@
+cdk.out/AwsSolutions--BankItLabBackupDrVault-NagReport.csv rows 1 non_compliant 0 suppressed 0
+cdk.out/AwsSolutions--BankItLabBackupPrimary-NagReport.csv rows 7 non_compliant 0 suppressed 4
+cdk.out/NIST.800.53.R5--BankItLabBackupDrVault-NagReport.csv rows 1 non_compliant 0 suppressed 0
+cdk.out/NIST.800.53.R5--BankItLabBackupPrimary-NagReport.csv rows 7 non_compliant 0 suppressed 0
+TOTAL_NON_COMPLIANT 0

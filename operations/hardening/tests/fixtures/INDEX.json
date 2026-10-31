@@ -1,0 +1,33 @@
+{
+  "tool": "operations/hardening/tools/score_units.py",
+  "note": "args are relative to this fixtures directory; expectedExit 0 pass, 1 findings, 2 malformed",
+  "cases": [
+    {"id": "valid-hardened-inline", "args": ["valid-hardened-inline.service"], "expectedExit": 0},
+    {"id": "valid-continuation", "args": ["valid-continuation.service"], "expectedExit": 0},
+    {"id": "valid-dropin-strong", "args": ["base-for-dropins.service", "--dropin", "dropin-10-strong.conf"], "expectedExit": 0},
+    {"id": "valid-target-rhel9", "args": ["valid-hardened-inline.service", "--distro", "rhel9"], "expectedExit": 0},
+    {"id": "valid-target-debian13", "args": ["valid-hardened-inline.service", "--distro", "debian13"], "expectedExit": 0},
+    {"id": "neg-unhardened", "args": ["neg-unhardened.service"], "expectedExit": 1},
+    {"id": "neg-root-full-caps", "args": ["neg-root-full-caps.service"], "expectedExit": 1},
+    {"id": "neg-dropin-weakens", "args": ["base-for-dropins.service", "--dropin", "dropin-10-strong.conf", "--dropin", "dropin-90-weaken.conf"], "expectedExit": 1},
+    {"id": "neg-dropin-weakens-arg-order", "args": ["base-for-dropins.service", "--dropin", "dropin-90-weaken.conf", "--dropin", "dropin-10-strong.conf"], "expectedExit": 1},
+    {"id": "neg-dropin-adds-sysadmin", "args": ["base-for-dropins.service", "--dropin", "dropin-10-strong.conf", "--dropin", "dropin-50-add-sysadmin.conf"], "expectedExit": 1},
+    {"id": "neg-target-219", "args": ["valid-hardened-inline.service", "--target-systemd", "219"], "expectedExit": 1},
+    {"id": "neg-target-rhel8", "args": ["valid-hardened-inline.service", "--distro", "rhel8"], "expectedExit": 1},
+    {"id": "neg-threshold-tight", "args": ["valid-continuation.service", "--threshold", "1.0"], "expectedExit": 1},
+    {"id": "malformed-no-section", "args": ["malformed-no-section.service"], "expectedExit": 2},
+    {"id": "malformed-no-service", "args": ["malformed-no-service.service"], "expectedExit": 2},
+    {"id": "malformed-no-execstart", "args": ["malformed-no-execstart.service"], "expectedExit": 2},
+    {"id": "malformed-bad-line", "args": ["malformed-bad-line.service"], "expectedExit": 2},
+    {"id": "malformed-bad-header", "args": ["malformed-bad-header.service"], "expectedExit": 2},
+    {"id": "malformed-unknown-section", "args": ["malformed-unknown-section.service"], "expectedExit": 2},
+    {"id": "malformed-bad-boolean", "args": ["malformed-bad-boolean.service"], "expectedExit": 2},
+    {"id": "malformed-bad-protectsystem", "args": ["malformed-bad-protectsystem.service"], "expectedExit": 2},
+    {"id": "malformed-unknown-capability", "args": ["malformed-unknown-capability.service"], "expectedExit": 2},
+    {"id": "malformed-bad-umask", "args": ["malformed-bad-umask.service"], "expectedExit": 2},
+    {"id": "malformed-dropin-value", "args": ["base-for-dropins.service", "--dropin", "dropin-malformed.conf"], "expectedExit": 2},
+    {"id": "malformed-dropin-suffix", "args": ["base-for-dropins.service", "--dropin", "dropin-wrong-suffix.txt"], "expectedExit": 2},
+    {"id": "malformed-unknown-distro", "args": ["valid-hardened-inline.service", "--distro", "bogus"], "expectedExit": 2},
+    {"id": "malformed-missing-file", "args": ["does-not-exist.service"], "expectedExit": 2}
+  ]
+}

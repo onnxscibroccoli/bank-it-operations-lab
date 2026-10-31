@@ -1,0 +1,38 @@
+$ python3 -m unittest discover -s identity/m365/tests -v
+--- stdout ---
+--- stderr ---
+test_each_mapped_code_yields_root_cause (test_m365_ops.TestAccessAndServiceHealth.test_each_mapped_code_yields_root_cause) ... ok
+test_no_incident_many_reports_escalates (test_m365_ops.TestAccessAndServiceHealth.test_no_incident_many_reports_escalates) ... ok
+test_signin_code_map_is_closed (test_m365_ops.TestAccessAndServiceHealth.test_signin_code_map_is_closed) ... ok
+test_ca_exclusion_removed (test_m365_ops.TestBreakGlass.test_ca_exclusion_removed) ... ok
+test_synced_federated_no_fido (test_m365_ops.TestBreakGlass.test_synced_federated_no_fido) ... ok
+test_usage_without_rotation_or_ticket (test_m365_ops.TestBreakGlass.test_usage_without_rotation_or_ticket) ... ok
+test_all_scenarios_match_expectations (test_m365_ops.TestCorpus.test_all_scenarios_match_expectations) ... ok
+test_engine_has_no_network_or_subprocess_imports (test_m365_ops.TestCorpus.test_engine_has_no_network_or_subprocess_imports) ... ok
+test_every_scenario_type_covered (test_m365_ops.TestCorpus.test_every_scenario_type_covered) ... ok
+test_nothing_is_ever_executed (test_m365_ops.TestCorpus.test_nothing_is_ever_executed) ... ok
+test_compliant_device (test_m365_ops.TestDevices.test_compliant_device) ... ok
+test_missing_fact_fails_closed (test_m365_ops.TestDevices.test_missing_fact_fails_closed) ... ok
+test_noncompliant_past_grace (test_m365_ops.TestDevices.test_noncompliant_past_grace) ... ok
+test_stale_checkin_and_unmanaged (test_m365_ops.TestDevices.test_stale_checkin_and_unmanaged) ... ok
+test_within_grace_period (test_m365_ops.TestDevices.test_within_grace_period) ... ok
+test_fixtures_exit_codes (test_m365_ops.TestFailClosed.test_fixtures_exit_codes) ... ok
+test_malformed_json_out_records_error (test_m365_ops.TestFailClosed.test_malformed_json_out_records_error) ... ok
+test_non_synthetic_tenant_rejected (test_m365_ops.TestFailClosed.test_non_synthetic_tenant_rejected) ... ok
+test_direct_license_without_usage_location_is_error (test_m365_ops.TestLicensing.test_direct_license_without_usage_location_is_error) ... ok
+test_e3_staff_satisfies_all_standard_workloads (test_m365_ops.TestLicensing.test_e3_staff_satisfies_all_standard_workloads) ... ok
+test_f3_lacks_desktop_apps (test_m365_ops.TestLicensing.test_f3_lacks_desktop_apps) ... ok
+test_no_seats_blocks (test_m365_ops.TestLicensing.test_no_seats_blocks) ... ok
+test_prereq_disabled_by_group (test_m365_ops.TestLicensing.test_prereq_disabled_by_group) ... ok
+test_break_glass_cannot_be_offboarded_by_runbook (test_m365_ops.TestOffboarding.test_break_glass_cannot_be_offboarded_by_runbook) ... ok
+test_corporate_retire_warns (test_m365_ops.TestOffboarding.test_corporate_retire_warns) ... ok
+test_good_runbook_approved (test_m365_ops.TestOffboarding.test_good_runbook_approved) ... ok
+test_involuntary_must_disable_first (test_m365_ops.TestOffboarding.test_involuntary_must_disable_first) ... ok
+test_missing_evidence_and_approval (test_m365_ops.TestOffboarding.test_missing_evidence_and_approval) ... ok
+test_synced_user_cloud_disable (test_m365_ops.TestOffboarding.test_synced_user_cloud_disable) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.049s
+
+OK
+--- exit_code=0 expected=0 started_utc=2026-10-28T18:18:45Z duration_ms=102 ---

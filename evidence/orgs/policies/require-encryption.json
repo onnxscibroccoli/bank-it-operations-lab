@@ -1,0 +1,76 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyUnencryptedEbs",
+      "Effect": "Deny",
+      "Action": "ec2:CreateVolume",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "ec2:Encrypted": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyDisableEbsDefaultEncryption",
+      "Effect": "Deny",
+      "Action": "ec2:DisableEbsEncryptionByDefault",
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyUnencryptedRds",
+      "Effect": "Deny",
+      "Action": [
+        "rds:CreateDBInstance",
+        "rds:CreateDBCluster"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "rds:StorageEncrypted": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyUnencryptedEfs",
+      "Effect": "Deny",
+      "Action": "elasticfilesystem:CreateFileSystem",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "elasticfilesystem:Encrypted": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyS3WithoutTls",
+      "Effect": "Deny",
+      "Action": "s3:*",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyUnsupportedS3Sse",
+      "Effect": "Deny",
+      "Action": "s3:PutObject",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:x-amz-server-side-encryption": [
+            "aws:kms",
+            "aws:kms:dsse",
+            "AES256"
+          ]
+        },
+        "Null": {
+          "s3:x-amz-server-side-encryption": "false"
+        }
+      }
+    }
+  ]
+}

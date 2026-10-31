@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+
+node_modules/
+cdk.out/
+dist/
+
+.terraform/
+*.tfstate
+*.tfstate.*

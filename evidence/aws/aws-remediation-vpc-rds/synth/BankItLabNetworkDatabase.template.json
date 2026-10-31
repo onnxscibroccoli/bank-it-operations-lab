@@ -1,0 +1,2035 @@
+{
+ "Description": "Private VPC + private PostgreSQL (static synthesis lab; not deployed)",
+ "Transform": "AWS::Serverless-2016-10-31",
+ "Resources": {
+  "LogsKeyA6AB43B2": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "CMK for VPC flow log and RDS log groups (CloudWatch Logs only)",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:CreateAlias",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:ListAliases",
+        "kms:ListKeyPolicies",
+        "kms:ListResourceTags",
+        "kms:PutKeyPolicy",
+        "kms:UpdateAlias",
+        "kms:UpdateKeyDescription",
+        "kms:EnableKey",
+        "kms:EnableKeyRotation",
+        "kms:DisableKey",
+        "kms:DisableKeyRotation",
+        "kms:DeleteAlias",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":role/BankItLabKmsKeyAdmin"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":root"
+            ]
+           ]
+          }
+         ]
+        },
+        "BoolIfExists": {
+         "kms:BypassPolicyLockoutSafetyCheck": "false"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "KeyAdministrationByKeyAdminRoleOnly"
+      },
+      {
+       "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "logs.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "CryptoViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:RevokeGrant"
+       ],
+       "Condition": {
+        "Bool": {
+         "kms:GrantIsForAWSResource": "true"
+        },
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "logs.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "GrantsForAwsResourcesViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:Encrypt*",
+        "kms:Decrypt*",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:Describe*"
+       ],
+       "Condition": {
+        "ArnLike": {
+         "kms:EncryptionContext:aws:logs:arn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":logs:",
+            {
+             "Ref": "AWS::Region"
+            },
+            ":",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":log-group:*"
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": {
+         "Fn::Join": [
+          "",
+          [
+           "logs.",
+           {
+            "Ref": "AWS::Region"
+           },
+           ".amazonaws.com"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "CloudWatchLogsForThisAccountOnly"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PendingWindowInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "DatabaseKey7576F140": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "CMK for RDS storage, Performance Insights and the DB credentials secret",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:CreateAlias",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:ListAliases",
+        "kms:ListKeyPolicies",
+        "kms:ListResourceTags",
+        "kms:PutKeyPolicy",
+        "kms:UpdateAlias",
+        "kms:UpdateKeyDescription",
+        "kms:EnableKey",
+        "kms:EnableKeyRotation",
+        "kms:DisableKey",
+        "kms:DisableKeyRotation",
+        "kms:DeleteAlias",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":role/BankItLabKmsKeyAdmin"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":root"
+            ]
+           ]
+          }
+         ]
+        },
+        "BoolIfExists": {
+         "kms:BypassPolicyLockoutSafetyCheck": "false"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "KeyAdministrationByKeyAdminRoleOnly"
+      },
+      {
+       "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "rds.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "secretsmanager.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "CryptoViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:RevokeGrant"
+       ],
+       "Condition": {
+        "Bool": {
+         "kms:GrantIsForAWSResource": "true"
+        },
+        "StringEquals": {
+         "kms:CallerAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "rds.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "secretsmanager.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*",
+       "Sid": "GrantsForAwsResourcesViaApprovedServicesOnly"
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:ViaService": {
+          "Fn::Join": [
+           "",
+           [
+            "secretsmanager.",
+            {
+             "Ref": "AWS::Region"
+            },
+            ".amazonaws.com"
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:DescribeKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:ViaService": {
+          "Fn::Join": [
+           "",
+           [
+            "secretsmanager.",
+            {
+             "Ref": "AWS::Region"
+            },
+            ".amazonaws.com"
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PendingWindowInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "Vpc8378EB38": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.40.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc"
+     }
+    ]
+   }
+  },
+  "VpcappSubnet1SubnetAE489B2F": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.40.0.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "app"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/appSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcappSubnet1RouteTable072E8E09": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/appSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcappSubnet1RouteTableAssociation168BF781": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VpcappSubnet1RouteTable072E8E09"
+    },
+    "SubnetId": {
+     "Ref": "VpcappSubnet1SubnetAE489B2F"
+    }
+   }
+  },
+  "VpcappSubnet2Subnet2449FB56": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.40.1.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "app"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/appSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcappSubnet2RouteTableB76BFC59": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/appSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcappSubnet2RouteTableAssociation81E96A75": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VpcappSubnet2RouteTableB76BFC59"
+    },
+    "SubnetId": {
+     "Ref": "VpcappSubnet2Subnet2449FB56"
+    }
+   }
+  },
+  "VpcdbSubnet1Subnet1B82B149": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.40.2.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "db"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/dbSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcdbSubnet1RouteTable04184FDD": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/dbSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcdbSubnet1RouteTableAssociation3FF66701": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VpcdbSubnet1RouteTable04184FDD"
+    },
+    "SubnetId": {
+     "Ref": "VpcdbSubnet1Subnet1B82B149"
+    }
+   }
+  },
+  "VpcdbSubnet2Subnet01192A3B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.40.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "db"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/dbSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcdbSubnet2RouteTable7BBEF14D": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/dbSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "VpcdbSubnet2RouteTableAssociation3D000840": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "VpcdbSubnet2RouteTable7BBEF14D"
+    },
+    "SubnetId": {
+     "Ref": "VpcdbSubnet2Subnet01192A3B"
+    }
+   }
+  },
+  "VpcRestrictDefaultSecurityGroupCustomResourceC73DA2BE": {
+   "Type": "Custom::VpcRestrictDefaultSG",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+      "Arn"
+     ]
+    },
+    "DefaultSecurityGroupId": {
+     "Fn::GetAtt": [
+      "Vpc8378EB38",
+      "DefaultSecurityGroup"
+     ]
+    },
+    "Account": {
+     "Ref": "AWS::AccountId"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "VpcFlowLog8FF33A73": {
+   "Type": "AWS::EC2::FlowLog",
+   "Properties": {
+    "DeliverLogsPermissionArn": {
+     "Fn::GetAtt": [
+      "FlowLogRoleCB27E7DF",
+      "Arn"
+     ]
+    },
+    "LogDestinationType": "cloud-watch-logs",
+    "LogGroupName": {
+     "Ref": "FlowLogGroup3E25AA51"
+    },
+    "ResourceId": {
+     "Ref": "Vpc8378EB38"
+    },
+    "ResourceType": "VPC",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc/FlowLog"
+     }
+    ],
+    "TrafficType": "ALL"
+   }
+  },
+  "VpcSecretsManagerEndpoint93E49F69": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "SecretsManagerEndpointSecurityGroup4198229B",
+       "GroupId"
+      ]
+     }
+    ],
+    "ServiceName": {
+     "Fn::Join": [
+      "",
+      [
+       "com.amazonaws.",
+       {
+        "Ref": "AWS::Region"
+       },
+       ".secretsmanager"
+      ]
+     ]
+    },
+    "SubnetIds": [
+     {
+      "Ref": "VpcappSubnet1SubnetAE489B2F"
+     },
+     {
+      "Ref": "VpcappSubnet2Subnet2449FB56"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "BankItLabNetworkDatabase/Vpc"
+     }
+    ],
+    "VpcEndpointType": "Interface",
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ],
+    "Policies": [
+     {
+      "PolicyName": "Inline",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupEgress"
+         ],
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":ec2:",
+             {
+              "Ref": "AWS::Region"
+             },
+             ":",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":security-group/",
+             {
+              "Fn::GetAtt": [
+               "Vpc8378EB38",
+               "DefaultSecurityGroup"
+              ]
+             }
+            ]
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "02b51ab524e7bcf8f477de3e71e5f9a72e448301b26ba62e9e75a14f9c55a093.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "__entrypoint__.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs24.x",
+    "Description": "Lambda function for removing all inbound/outbound rules from the VPC default security group"
+   },
+   "DependsOn": [
+    "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0"
+   ],
+   "Metadata": {
+    "aws:asset:path": "asset.02b51ab524e7bcf8f477de3e71e5f9a72e448301b26ba62e9e75a14f9c55a093",
+    "aws:asset:property": "Code"
+   }
+  },
+  "FlowLogGroup3E25AA51": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "KmsKeyId": {
+     "Fn::GetAtt": [
+      "LogsKeyA6AB43B2",
+      "Arn"
+     ]
+    },
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "FlowLogRoleCB27E7DF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "vpc-flow-logs.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Ref": "FlowLogPolicyB9FF45F2"
+     }
+    ]
+   }
+  },
+  "FlowLogPolicyB9FF45F2": {
+   "Type": "AWS::IAM::ManagedPolicy",
+   "Properties": {
+    "Description": "",
+    "Path": "/",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "FlowLogGroup3E25AA51",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "AppSecurityGroupC396D536": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Application tier: egress only to the database SG on the DB port",
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "AppSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBB5433BE79485C": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "app tier to PostgreSQL",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "DatabaseSecurityGroup7319C0F6",
+      "GroupId"
+     ]
+    },
+    "FromPort": 5433,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "AppSecurityGroupC396D536",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 5433
+   }
+  },
+  "DatabaseSecurityGroup7319C0F6": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "PostgreSQL: ingress only from the application SG on the DB port; no egress",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "Disallow all traffic",
+      "FromPort": 252,
+      "IpProtocol": "icmp",
+      "ToPort": 86
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "DatabaseSecurityGroupfromBankItLabNetworkDatabaseAppSecurityGroup920027D35433995D19B4": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "app tier to PostgreSQL",
+    "FromPort": 5433,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "DatabaseSecurityGroup7319C0F6",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "AppSecurityGroupC396D536",
+      "GroupId"
+     ]
+    },
+    "ToPort": 5433
+   }
+  },
+  "DatabaseSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3BIndirectPortF4767FC1": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "from BankItLabNetworkDatabaseRotationSecurityGroup745D3E3B:{IndirectPort}",
+    "FromPort": 5433,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "DatabaseSecurityGroup7319C0F6",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "RotationSecurityGroup8276CF62",
+      "GroupId"
+     ]
+    },
+    "ToPort": 5433
+   }
+  },
+  "RdsMonitoringRole696C9BB4": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "monitoring.rds.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Ref": "RdsMonitoringPolicy5DA8ACAC"
+     }
+    ]
+   }
+  },
+  "RdsMonitoringPolicy5DA8ACAC": {
+   "Type": "AWS::IAM::ManagedPolicy",
+   "Properties": {
+    "Description": "",
+    "Path": "/",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:PutRetentionPolicy"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":logs:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":log-group:RDSOSMetrics"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":logs:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":log-group:RDSOSMetrics:log-stream:*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "EX-03: RDS enhanced monitoring creates log streams with service-chosen names inside the single RDSOSMetrics log group of this account/region; the wildcard is limited to that group's log streams.",
+       "id": "AwsSolutions-IAM5",
+       "applies_to": [
+        "Resource::arn:<AWS::Partition>:logs:<AWS::Region>:<AWS::AccountId>:log-group:RDSOSMetrics:log-stream:*"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "PostgresLogGrouppostgresql1BAB0403": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "KmsKeyId": {
+     "Fn::GetAtt": [
+      "LogsKeyA6AB43B2",
+      "Arn"
+     ]
+    },
+    "LogGroupName": "/aws/rds/instance/bank-it-lab-postgres/postgresql",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "PostgresLogGroupupgrade5222D7EB": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "KmsKeyId": {
+     "Fn::GetAtt": [
+      "LogsKeyA6AB43B2",
+      "Arn"
+     ]
+    },
+    "LogGroupName": "/aws/rds/instance/bank-it-lab-postgres/upgrade",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "PostgresParamsCD634A70": {
+   "Type": "AWS::RDS::DBParameterGroup",
+   "Properties": {
+    "Description": "Parameter group for postgres17",
+    "Family": "postgres17",
+    "Parameters": {
+     "rds.force_ssl": "1",
+     "log_connections": "1",
+     "log_disconnections": "1"
+    }
+   }
+  },
+  "PostgresSubnetGroup9F8A4D6E": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnet group for Postgres database",
+    "SubnetIds": [
+     {
+      "Ref": "VpcdbSubnet1Subnet1B82B149"
+     },
+     {
+      "Ref": "VpcdbSubnet2Subnet01192A3B"
+     }
+    ]
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"bankadmin\"}"
+    },
+    "KmsKeyId": {
+     "Fn::GetAtt": [
+      "DatabaseKey7576F140",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "PostgresSecretAttachment75CD6F6F": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb"
+    },
+    "TargetId": {
+     "Ref": "Postgres9DC8BB04"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ]
+  },
+  "PostgresSecretAttachmentRotationScheduleBF85CA02": {
+   "Type": "AWS::SecretsManager::RotationSchedule",
+   "Properties": {
+    "RotationLambdaARN": {
+     "Fn::GetAtt": [
+      "PostgresRotationSingleUserA53C71BD",
+      "Outputs.RotationLambdaARN"
+     ]
+    },
+    "RotationRules": {
+     "ScheduleExpression": "rate(30 days)"
+    },
+    "SecretId": {
+     "Ref": "PostgresSecretAttachment75CD6F6F"
+    }
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ]
+  },
+  "PostgresSecretAttachmentPolicy00772C69": {
+   "Type": "AWS::SecretsManager::ResourcePolicy",
+   "Properties": {
+    "ResourcePolicy": {
+     "Statement": [
+      {
+       "Action": "secretsmanager:DeleteSecret",
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "SecretId": {
+     "Ref": "PostgresSecretAttachment75CD6F6F"
+    }
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ]
+  },
+  "Postgres9DC8BB04": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "50",
+    "AutoMinorVersionUpgrade": true,
+    "BackupRetentionPeriod": 14,
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t4g.medium",
+    "DBInstanceIdentifier": "bank-it-lab-postgres",
+    "DBParameterGroupName": {
+     "Ref": "PostgresParamsCD634A70"
+    },
+    "DBSubnetGroupName": {
+     "Ref": "PostgresSubnetGroup9F8A4D6E"
+    },
+    "DeletionProtection": true,
+    "EnableCloudwatchLogsExports": [
+     "postgresql",
+     "upgrade"
+    ],
+    "EnableIAMDatabaseAuthentication": true,
+    "EnablePerformanceInsights": true,
+    "Engine": "postgres",
+    "EngineVersion": "17.9",
+    "KmsKeyId": {
+     "Fn::GetAtt": [
+      "DatabaseKey7576F140",
+      "Arn"
+     ]
+    },
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": "bankadmin",
+    "MaxAllocatedStorage": 200,
+    "MonitoringInterval": 60,
+    "MonitoringRoleArn": {
+     "Fn::GetAtt": [
+      "RdsMonitoringRole696C9BB4",
+      "Arn"
+     ]
+    },
+    "MultiAZ": true,
+    "PerformanceInsightsKMSKeyId": {
+     "Fn::GetAtt": [
+      "DatabaseKey7576F140",
+      "Arn"
+     ]
+    },
+    "PerformanceInsightsRetentionPeriod": 7,
+    "Port": "5433",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "StorageType": "gp3",
+    "VPCSecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "DatabaseSecurityGroup7319C0F6",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "PostgresRotationSingleUserA53C71BD": {
+   "Type": "AWS::Serverless::Application",
+   "Properties": {
+    "Location": {
+     "ApplicationId": {
+      "Fn::FindInMap": [
+       "PostgresRotationSingleUserSARMapping381A21FE",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "applicationId"
+      ]
+     },
+     "SemanticVersion": {
+      "Fn::FindInMap": [
+       "PostgresRotationSingleUserSARMapping381A21FE",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "semanticVersion"
+      ]
+     }
+    },
+    "Parameters": {
+     "endpoint": {
+      "Fn::Join": [
+       "",
+       [
+        "https://",
+        {
+         "Ref": "VpcSecretsManagerEndpoint93E49F69"
+        },
+        ".secretsmanager.",
+        {
+         "Ref": "AWS::Region"
+        },
+        ".",
+        {
+         "Ref": "AWS::URLSuffix"
+        }
+       ]
+      ]
+     },
+     "functionName": "BankItLabNetworkDatabasePostgresRotationSingleUserA1221A37",
+     "vpcSubnetIds": {
+      "Fn::Join": [
+       "",
+       [
+        {
+         "Ref": "VpcappSubnet1SubnetAE489B2F"
+        },
+        ",",
+        {
+         "Ref": "VpcappSubnet2Subnet2449FB56"
+        }
+       ]
+      ]
+     },
+     "vpcSecurityGroupIds": {
+      "Fn::GetAtt": [
+       "RotationSecurityGroup8276CF62",
+       "GroupId"
+      ]
+     },
+     "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "kmsKeyArn": {
+      "Fn::GetAtt": [
+       "DatabaseKey7576F140",
+       "Arn"
+      ]
+     }
+    }
+   },
+   "DependsOn": [
+    "PostgresLogGrouppostgresql1BAB0403",
+    "PostgresLogGroupupgrade5222D7EB"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "SecretsManagerEndpointSecurityGroup4198229B": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Secrets Manager interface endpoint: ingress 443 only from the rotation function; no egress",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "255.255.255.255/32",
+      "Description": "Disallow all traffic",
+      "FromPort": 252,
+      "IpProtocol": "icmp",
+      "ToPort": 86
+     }
+    ],
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "SecretsManagerEndpointSecurityGroupfromBankItLabNetworkDatabaseRotationSecurityGroup745D3E3B443FFC9B240": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "rotation function to Secrets Manager endpoint",
+    "FromPort": 443,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "SecretsManagerEndpointSecurityGroup4198229B",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "RotationSecurityGroup8276CF62",
+      "GroupId"
+     ]
+    },
+    "ToPort": 443
+   }
+  },
+  "RotationSecurityGroup8276CF62": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Secret rotation function: egress only to the Secrets Manager endpoint (443) and the DB port",
+    "VpcId": {
+     "Ref": "Vpc8378EB38"
+    }
+   }
+  },
+  "RotationSecurityGrouptoBankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBBIndirectPort434D1737": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "to BankItLabNetworkDatabaseDatabaseSecurityGroupA915ECBB:{IndirectPort}",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "DatabaseSecurityGroup7319C0F6",
+      "GroupId"
+     ]
+    },
+    "FromPort": 5433,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "RotationSecurityGroup8276CF62",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 5433
+   }
+  },
+  "RotationSecurityGrouptoBankItLabNetworkDatabaseSecretsManagerEndpointSecurityGroup395F6736443630B3C70": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "rotation function to Secrets Manager endpoint",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "SecretsManagerEndpointSecurityGroup4198229B",
+      "GroupId"
+     ]
+    },
+    "FromPort": 443,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "RotationSecurityGroup8276CF62",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 443
+   }
+  },
+  "BackupVault3A9C5852": {
+   "Type": "AWS::Backup::BackupVault",
+   "Properties": {
+    "BackupVaultName": "BankItLabNetworkDatabaseBackupVault926AB747",
+    "EncryptionKeyArn": {
+     "Fn::GetAtt": [
+      "DatabaseKey7576F140",
+      "Arn"
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "BackupPlanA8F64793": {
+   "Type": "AWS::Backup::BackupPlan",
+   "Properties": {
+    "BackupPlan": {
+     "BackupPlanName": "BackupPlan",
+     "BackupPlanRule": [
+      {
+       "Lifecycle": {
+        "DeleteAfterDays": 35
+       },
+       "RuleName": "daily-35d",
+       "ScheduleExpression": "cron(0 5 * * ? *)",
+       "TargetBackupVault": {
+        "Fn::GetAtt": [
+         "BackupVault3A9C5852",
+         "BackupVaultName"
+        ]
+       }
+      }
+     ]
+    }
+   }
+  },
+  "DbBackupRoleB234430F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         }
+        },
+        "ArnEquals": {
+         "aws:SourceArn": {
+          "Fn::GetAtt": [
+           "BackupVault3A9C5852",
+           "BackupVaultArn"
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "backup.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Lab PostgreSQL backups only. Trust bound to this account and this vault.",
+    "ManagedPolicyArns": [
+     {
+      "Ref": "DbBackupPolicy43A4FBCE"
+     }
+    ]
+   }
+  },
+  "DbBackupPolicy43A4FBCE": {
+   "Type": "AWS::IAM::ManagedPolicy",
+   "Properties": {
+    "Description": "",
+    "Path": "/",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "rds:AddTagsToResource",
+        "rds:CopyDBSnapshot",
+        "rds:CreateDBSnapshot",
+        "rds:DeleteDBSnapshot",
+        "rds:DescribeDBInstances",
+        "rds:DescribeDBSnapshotAttributes",
+        "rds:DescribeDBSnapshots",
+        "rds:ListTagsForResource",
+        "rds:ModifyDBSnapshotAttribute"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":rds:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":db:",
+           {
+            "Ref": "Postgres9DC8BB04"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":rds:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":snapshot:awsbackup-*"
+          ]
+         ]
+        }
+       ],
+       "Sid": "SnapshotThisInstance"
+      },
+      {
+       "Action": [
+        "backup:CopyIntoBackupVault",
+        "backup:DescribeBackupVault"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "BackupVault3A9C5852",
+         "BackupVaultArn"
+        ]
+       },
+       "Sid": "UseThisVault"
+      },
+      {
+       "Action": [
+        "kms:CreateGrant",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:GenerateDataKey"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "kms:ViaService": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "rds.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             "backup.",
+             {
+              "Ref": "AWS::Region"
+             },
+             ".amazonaws.com"
+            ]
+           ]
+          }
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "DatabaseKey7576F140",
+         "Arn"
+        ]
+       },
+       "Sid": "UseDbKeyViaBackupAndRds"
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "EX-04: AWS Backup names RDS snapshots awsbackup-<job> at runtime. The wildcard is only that prefix in this account. The role trust requires aws:SourceAccount and aws:SourceArn of this vault. This replaces the AWS-managed backup policy.",
+       "id": "AwsSolutions-IAM5",
+       "applies_to": [
+        "Resource::arn:<AWS::Partition>:rds:<AWS::Region>:<AWS::AccountId>:snapshot:awsbackup-*"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "PostgresSelection": {
+   "Type": "AWS::Backup::BackupSelection",
+   "Properties": {
+    "BackupPlanId": {
+     "Fn::GetAtt": [
+      "BackupPlanA8F64793",
+      "BackupPlanId"
+     ]
+    },
+    "BackupSelection": {
+     "IamRoleArn": {
+      "Fn::GetAtt": [
+       "DbBackupRoleB234430F",
+       "Arn"
+      ]
+     },
+     "Resources": [
+      {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":rds:",
+         {
+          "Ref": "AWS::Region"
+         },
+         ":",
+         {
+          "Ref": "AWS::AccountId"
+         },
+         ":db:",
+         {
+          "Ref": "Postgres9DC8BB04"
+         }
+        ]
+       ]
+      }
+     ],
+     "SelectionName": "postgres"
+    }
+   }
+  }
+ },
+ "Mappings": {
+  "PostgresRotationSingleUserSARMapping381A21FE": {
+   "aws": {
+    "applicationId": "arn:aws:serverlessrepo:us-east-1:297356227824:applications/SecretsManagerRDSPostgreSQLRotationSingleUser",
+    "semanticVersion": "1.1.671"
+   },
+   "aws-cn": {
+    "applicationId": "arn:aws-cn:serverlessrepo:cn-north-1:193023089310:applications/SecretsManagerRDSPostgreSQLRotationSingleUser",
+    "semanticVersion": "1.1.440"
+   },
+   "aws-us-gov": {
+    "applicationId": "arn:aws-us-gov:serverlessrepo:us-gov-west-1:023102451235:applications/SecretsManagerRDSPostgreSQLRotationSingleUser",
+    "semanticVersion": "1.1.383"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

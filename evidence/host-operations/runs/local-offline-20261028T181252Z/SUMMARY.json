@@ -1,0 +1,1810 @@
+{
+  "schemaVersion": "1.0.0",
+  "runLabel": "local-offline-20261028T181252Z",
+  "mode": "offline",
+  "disclaimer": "OFFLINE EVIDENCE. Generated from files in this repository only. No AWS API was called, no host was patched, and no systemd unit was installed, reloaded or started. Example data is marked EXAMPLE DATA. Nothing here describes the state of any account or host.",
+  "awsCallsMade": false,
+  "hostsModified": false,
+  "git": {
+    "commitSha": "d86a9dd11b153158da9aa7a0eb559bc73a90758b",
+    "branch": "patch-hardening",
+    "scopedTreeClean": true
+  },
+  "startedUtc": "2026-10-28T18:12:52Z",
+  "finishedUtc": "2026-10-28T18:12:57Z",
+  "environment": {
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "versions": {
+      "python": "3.13.5",
+      "cfn-lint": "cfn-lint 1.58.0",
+      "yamllint": "yamllint 1.38.0",
+      "shellcheck": "version: 0.11.0",
+      "systemd-analyze": "systemd 257 (257.13-1~deb13u1)"
+    }
+  },
+  "inputHashes": [
+    {
+      "path": "evidence/host-operations/check_examples.py",
+      "sha256": "73cba39a16323fd2e5f204740df5b5e8d7fd2f986f691155f298e342ee77a466",
+      "bytes": 1627
+    },
+    {
+      "path": "evidence/host-operations/examples/canary-signoff.example.md",
+      "sha256": "178a05336f2aac04c090238a7acbda5605b02822b6905fa7ee51546d33d2a50e",
+      "bytes": 962
+    },
+    {
+      "path": "evidence/host-operations/examples/describe-instance-patch-states.canary.example.json",
+      "sha256": "046e73a0e3323bf6721e43f4836e7c21ca249795708482084f1941a12dc025bc",
+      "bytes": 1619
+    },
+    {
+      "path": "evidence/host-operations/examples/describe-maintenance-window-executions.example.json",
+      "sha256": "a76bed7909bec53161df8f4d411baa312ded50fdf8e551a53ccfe3f9d98e02b7",
+      "bytes": 787
+    },
+    {
+      "path": "evidence/host-operations/examples/list-compliance-summaries.example.json",
+      "sha256": "d85e1a066dbada562a0c21c73efd06533ba5f265a9f23065702902bababdf4f6",
+      "bytes": 792
+    },
+    {
+      "path": "evidence/host-operations/examples/rollback-drill.example.md",
+      "sha256": "6490f300689ab1c06b58698c39dd8a5f7304f48a6eb9b78563b43cae0f20399f",
+      "bytes": 818
+    },
+    {
+      "path": "evidence/host-operations/examples/run-patch-baseline-output.example.txt",
+      "sha256": "b77ba3336acadb717408a1e26293182255dcfe641e7e8e2fb9d68ca24519f22f",
+      "bytes": 683
+    },
+    {
+      "path": "evidence/host-operations/generate_evidence.py",
+      "sha256": "da0464eba2757656867abe2e17728fdb49c70beecfe2adfb2325020d9efba2f5",
+      "bytes": 17307
+    },
+    {
+      "path": "operations/hardening/COMPATIBILITY.md",
+      "sha256": "95743986d600ea3e24ff06fb8758ef4a2dc9db9e287d98ef1085ab5fcb83b62e",
+      "bytes": 6778
+    },
+    {
+      "path": "operations/hardening/README.md",
+      "sha256": "be4b6090fdf448df8ec3f488afe9266278acbe3e4838b0295c608ce538976c3e",
+      "bytes": 3262
+    },
+    {
+      "path": "operations/hardening/compat/systemd-directives.json",
+      "sha256": "ba9ab890202bb8d61e83328e65f9ee1d2d9222fdc2a05438acac805ff713241b",
+      "bytes": 3785
+    },
+    {
+      "path": "operations/hardening/systemd/dropins/05-hardening-legacy-219.conf",
+      "sha256": "6ffaf263dee304df1c63e9f190c75183f68efefeed25e609d9355c4774d613d5",
+      "bytes": 785
+    },
+    {
+      "path": "operations/hardening/systemd/dropins/10-hardening-baseline.conf",
+      "sha256": "0295552e5c51bd5e3a2947490b5afa55ae3ac8bd59155d2c3e13347c93c58609",
+      "bytes": 618
+    },
+    {
+      "path": "operations/hardening/systemd/dropins/20-hardening-strict.conf",
+      "sha256": "e92e095155a13f438c851ab81665fd5fdd6590af0f5381c7df17b5f0d94024fe",
+      "bytes": 955
+    },
+    {
+      "path": "operations/hardening/systemd/dropins/30-net-bind-service.conf",
+      "sha256": "b87be4d02cd18f1d73499ebf965d7f868e69f455d7ff6e3feea3a20714453b3b",
+      "bytes": 354
+    },
+    {
+      "path": "operations/hardening/systemd/units/bank-lab-app.service",
+      "sha256": "6b5206bca0c8eaeab5793ee0eebfd63958ce16aafb4e3852b57608ece41f150e",
+      "bytes": 629
+    },
+    {
+      "path": "operations/hardening/systemd/units/bank-lab-root-agent.service",
+      "sha256": "5a6dc0a110997eb68fb305b9d5133e196a6ce4bb17193511183eb9ee15818aa7",
+      "bytes": 363
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/INDEX.json",
+      "sha256": "84d39f84a41a3c4b1cd7bba64579710a9988870ae35d5e2051179a3c3471dc32",
+      "bytes": 3278
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/base-for-dropins.service",
+      "sha256": "a92f5e5b0746f1b0f8a52e93ed9ab78ce4e71915fa49f66d53d0803c18adfac3",
+      "bytes": 85
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/dropin-10-strong.conf",
+      "sha256": "2aa59dd10ab7e126caabf81bff6810d10030efa5ec176dd54093e250a6db5c6d",
+      "bytes": 550
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/dropin-50-add-sysadmin.conf",
+      "sha256": "f75bbd6e84617fc6e0397f3c9f887a3484e99a3a8270b70697adeea4c89fb57a",
+      "bytes": 126
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/dropin-90-weaken.conf",
+      "sha256": "b026aa5f415206182eb1bbb96636e77ea059e178887ab556970be975f883cab4",
+      "bytes": 206
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/dropin-malformed.conf",
+      "sha256": "4a40cc6fd6be81e1d6b81ffa86a5a7ced002e6827414e226f5f6694a7732ffcb",
+      "bytes": 32
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/dropin-wrong-suffix.txt",
+      "sha256": "b0d55083c0e6f97514a6d811e8324d31258a821c774095ba3c7f1df881a4bc6a",
+      "bytes": 30
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-bad-boolean.service",
+      "sha256": "33656d2a6de4ab3222fc122590854cd8690926b87aa9cc6369dc9b799afb8e70",
+      "bytes": 94
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-bad-header.service",
+      "sha256": "c32b072a55fde658c6437ac6b11d69864004f658637bf1c4ad8781563615e173",
+      "bytes": 43
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-bad-line.service",
+      "sha256": "58e555cf7ab7bea8eaa726af4cd7d17777d2316f3f94041740b3b81efa9b563c",
+      "bytes": 88
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-bad-protectsystem.service",
+      "sha256": "44a204eb69ed3678e10a91d5e99ca0f7bfff6b767f646b3eabda254558cf2d1f",
+      "bytes": 95
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-bad-umask.service",
+      "sha256": "e5235885d53eba70ca6a60cba1ecc46bfe8b7e68a9b70ea506b58fb4392238c7",
+      "bytes": 88
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-no-execstart.service",
+      "sha256": "01a50ca1cae428178e612952228de54413fb57521a744fb649b09a8e20cbe3f2",
+      "bytes": 45
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-no-section.service",
+      "sha256": "f36ab9e57f59e928a6e8efb04f81becf9f04961fa85e0d71c557dfc0b6a050ca",
+      "bytes": 34
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-no-service.service",
+      "sha256": "8fd1147d21f67ab363ae25f4bcf54a7dd02023f437f8d3b9d4032a47a8334bb1",
+      "bytes": 38
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-unknown-capability.service",
+      "sha256": "69133c907614ca31c77080acf2d55cb56257503f845149c6289ea63adcc3a706",
+      "bytes": 109
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/malformed-unknown-section.service",
+      "sha256": "6ba688ff46daba34f4fafe8f4d6e2c41e1c5863ddc079cbf26e64d8c26ddff64",
+      "bytes": 103
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/neg-root-full-caps.service",
+      "sha256": "164ef7cae774f871f2f2a15465824b5d9d88962ed6800cc5ab54bb8eed14c66a",
+      "bytes": 128
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/neg-unhardened.service",
+      "sha256": "3e93b64407cd8dde513181cc345b0499d767c9c2e608eedc1ee42ffa4795a3c3",
+      "bytes": 72
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/valid-continuation.service",
+      "sha256": "76440be6813f6c3774601ff1ae025300c92fa8df8d73e0fa0d951fb52c62ced1",
+      "bytes": 567
+    },
+    {
+      "path": "operations/hardening/tests/fixtures/valid-hardened-inline.service",
+      "sha256": "52e06917c62ec842b3613e2fb261d18dff013d13519ebd3a669861502ffabeb6",
+      "bytes": 627
+    },
+    {
+      "path": "operations/hardening/tests/test_score_units.py",
+      "sha256": "6ec2035896a47753b1c59c7e2da8549f09224ba7b58e484870df95e2d6fd2e2b",
+      "bytes": 6276
+    },
+    {
+      "path": "operations/hardening/tools/score_units.py",
+      "sha256": "322891e323a0d95afcb98c690a253699f3e55f5648bb0980b629b502a45d0eb5",
+      "bytes": 21365
+    },
+    {
+      "path": "operations/patching/README.md",
+      "sha256": "286f4b7a15e7ec38af36fa0d52e700c46eb71245da733af0c3f0ec92c6e98cfe",
+      "bytes": 2704
+    },
+    {
+      "path": "operations/patching/manifests/patch-manifest.example.json",
+      "sha256": "c9880683498538c7c693b03246f3052fac442e8d57ed2e252afd8f35af4abca7",
+      "bytes": 2843
+    },
+    {
+      "path": "operations/patching/procedures/APPROVAL.md",
+      "sha256": "a35adde3df72b47e684cadb0593d91806b7aab7b9f45fa67df531f550c5bdc73",
+      "bytes": 2085
+    },
+    {
+      "path": "operations/patching/procedures/CANARY.md",
+      "sha256": "782ebbce1bc225c35322a18ca138c18da049922d4f40b332d1f42fe1d1b594b6",
+      "bytes": 2764
+    },
+    {
+      "path": "operations/patching/procedures/ESCALATION.md",
+      "sha256": "2319e7d3d1bee4cab699f49a51150ee93e29e1ed86aeb983d48b6fcca0a48bc1",
+      "bytes": 1264
+    },
+    {
+      "path": "operations/patching/procedures/ROLLBACK.md",
+      "sha256": "965ef19a56f6a1db4ef9b348ec893f663b8f4f0292cec4c42de4196d8cc7ce7f",
+      "bytes": 2062
+    },
+    {
+      "path": "operations/patching/ssm/cli/create-maintenance-window.canary.json",
+      "sha256": "67880b46433bb81732def75ee754c7d3e4b97d53e8adccaf98e8fafa1de8528e",
+      "bytes": 422
+    },
+    {
+      "path": "operations/patching/ssm/cli/create-maintenance-window.wave1.json",
+      "sha256": "d7cc58bddc6b0908be63140b1725f48e62a8c8aa559cca9d50d4cb118481424e",
+      "bytes": 420
+    },
+    {
+      "path": "operations/patching/ssm/cli/create-maintenance-window.wave2.json",
+      "sha256": "ca81c651d01da6947b51cd4abc78174fa62c6681ecc53f88b81460efe0fc045c",
+      "bytes": 422
+    },
+    {
+      "path": "operations/patching/ssm/cli/create-patch-baseline.al2023.json",
+      "sha256": "fc03b4affa01e7273c4d0b0c64fec4c3e908dda1cee0af999291541d73c1b235",
+      "bytes": 1195
+    },
+    {
+      "path": "operations/patching/ssm/cli/create-patch-baseline.rhel.json",
+      "sha256": "35a88579215397fb179b3284581484c7fef5c262d709f45856550ecf090b2464",
+      "bytes": 1063
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-patch-group.canary-rhel.json",
+      "sha256": "86466d14e68a5dcaf95f3869f2ad3455e20b6370756a05c007f9e5c2da880582",
+      "bytes": 78
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-patch-group.canary.json",
+      "sha256": "ea03427ce7349cc9cea5f2c3a7a86b05fc1da783021943f39f8648964e3b9038",
+      "bytes": 75
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-patch-group.wave1-rhel.json",
+      "sha256": "12cb32c5e59c8e581fb56f0c224c2134c2ac2f748b47f5be7bd0e41147de8b52",
+      "bytes": 77
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-patch-group.wave1.json",
+      "sha256": "d6a5a186b6957a3f3ba95e87564b33062f13d0d57ef2f138d0f42783db3ed923",
+      "bytes": 74
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-patch-group.wave2-rhel.json",
+      "sha256": "0146e7a2dcff19affa8e13f3d35c76a7f64e9e215730a39e65301956ae87430d",
+      "bytes": 77
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-patch-group.wave2.json",
+      "sha256": "ea882aaef6e4f4652f5b769f1e9b0086b7ccbc1c13e3b35dde70ac5335574a5d",
+      "bytes": 74
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-target.canary.json",
+      "sha256": "c468424a3b93a0ca1d1c354edc88b46f25ee068b2faa59cde5417254f41156a8",
+      "bytes": 224
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-target.wave1.json",
+      "sha256": "7d4b9971dda43dd5f13225e8f6b9981aff7c85376b9c6f9212fe20857ef97be9",
+      "bytes": 220
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-target.wave2.json",
+      "sha256": "01a3b94a9fd165dfe7c2e659065b24ff81244e53493b9a0686c9e2e65799f44f",
+      "bytes": 220
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-task.canary.json",
+      "sha256": "2aea1f0f75b12c36fdef27cc0e13c9623c7c32f910da71ee3fd023eef150c852",
+      "bytes": 755
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-task.wave1.json",
+      "sha256": "8d0d0945463f505a1392eb0a90504f344c64fc31caac5d87b44f5de17ec7afda",
+      "bytes": 750
+    },
+    {
+      "path": "operations/patching/ssm/cli/register-task.wave2.json",
+      "sha256": "7ceebd375b7001dca130178b353c37720a375c97ca49ba89eec6bb03a6a2ec5c",
+      "bytes": 750
+    },
+    {
+      "path": "operations/patching/ssm/patch-baselines-and-windows.cfn.yaml",
+      "sha256": "5d74122aeb6f87860532f0529cceed51e1b8289d943a58a2e8ece3a878d51a04",
+      "bytes": 7890
+    },
+    {
+      "path": "operations/patching/tests/fixtures/INDEX.json",
+      "sha256": "a92f55994503a99aff173dcce8f4b4e9a80bbb8b47e3155e9c50c70c539946ab",
+      "bytes": 5305
+    },
+    {
+      "path": "operations/patching/tests/fixtures/baseline-no-delay.json",
+      "sha256": "c6dfb7b929288a557b9ad7f4f783459b01fb2bb31a366892d870fbafb483cddc",
+      "bytes": 1526
+    },
+    {
+      "path": "operations/patching/tests/fixtures/baseline-truncated.json",
+      "sha256": "6395c841f4fe5c176f0edcb47de7c82ee6b7be416d5afc45b47bd478c8c933a4",
+      "bytes": 201
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-absolute-path.json",
+      "sha256": "93e900efb511f75c364fcad41e1f2e1ce9ddb9fab1e483ea4179a84a71fa4e11",
+      "bytes": 2828
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-bad-percent.json",
+      "sha256": "5cbcadd72e8cb150d3df794f3f780981508d28fcc580284387ab0f30612c3533",
+      "bytes": 2865
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-baseline-truncated.json",
+      "sha256": "3c0b72f90d6396a469da41b196cc0e9f4d7c529e215f968aff5ecf337bd8cd6e",
+      "bytes": 2840
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-bool-as-int.json",
+      "sha256": "c1579ea78fb4b2f1693f49ca4f2f5ca4fc66210cceac3dd3e061a31c21c521a0",
+      "bytes": 2866
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-duplicate-key.json",
+      "sha256": "0471458e2964e51ce7cff1e7a10c77517915a232c9485466403550c3d0e9b907",
+      "bytes": 2892
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-empty-rings.json",
+      "sha256": "aef0aef12c7e3f559a98a4c7b1674fa4aa3f932c5e0e5e379c97ae8101562000",
+      "bytes": 1276
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-missing-rings.json",
+      "sha256": "d60364f6e38cfaafed20793767687dde811962ef8c3c17acc06e57e90c62da2b",
+      "bytes": 1261
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-nan.json",
+      "sha256": "adf99c5c0e6586c7db3e7e6131fc5732977a7d139c3735e43c4522ac5556579c",
+      "bytes": 2865
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-not-object.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-percent-over-100.json",
+      "sha256": "495ee997f56594401cc3429f2291be61b2e965afc45f7a22f16aee6f343ed1b1",
+      "bytes": 2866
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-schema-version.json",
+      "sha256": "54af271bfd35636849a9b34ea0dea8848af0b313ad3e251469c16996161c152e",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-truncated.json",
+      "sha256": "69668eb69939c730e3176c6b3ba0db7f9b3cccf196fabafc4b725738792ff00e",
+      "bytes": 1432
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-unknown-ring-key.json",
+      "sha256": "b30c482a44a1c935002d11cc578d77305157410ef5ae15b38b05830fa00230e0",
+      "bytes": 2890
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-unknown-top-key.json",
+      "sha256": "273c651c94625b394575f1093b53d9b7935347b9f7eaf9bbc8631ae78e9fe276",
+      "bytes": 2897
+    },
+    {
+      "path": "operations/patching/tests/fixtures/malformed-wrong-type.json",
+      "sha256": "e0fd64a7698134ca911b4590eb1156f6def882e77adaeb8b238bd2010c2237c6",
+      "bytes": 2866
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-bad-operation.json",
+      "sha256": "6110ca2c7a3d6e06e35ee578be5c634b3b187191602040479143f32318e65d74",
+      "bytes": 2867
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-bad-reboot.json",
+      "sha256": "e6d59db7f528f073419a5d34d5c99322a98ba14979ce4981265b99a18f9094b0",
+      "bytes": 2856
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-baseline-no-delay.json",
+      "sha256": "f71a095350c336af32f485de15eab9ee2392c73b2168ceb8309803ee857e3320",
+      "bytes": 2839
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-baseline-os-mismatch.json",
+      "sha256": "68b2a4f2c1197da2dfc45c18f6ffcf843403f0e4c2cceb27e5c8931a40389a8d",
+      "bytes": 2853
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-canary-concurrency-5.json",
+      "sha256": "61556ec72f746dd14299987caafbb9505ae945a709af956ce3b02a2b0c053874",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-canary-concurrency-percent.json",
+      "sha256": "5ee2ad5014cd3a2ea71c24b190598f08fb30d4319bd681a79f46c1d22ebaaba9",
+      "bytes": 2866
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-canary-errors.json",
+      "sha256": "a6c25cd5dbc3169e26efce693e781d1be83b528d6a8b997bb67d5f35ec4ac9eb",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-canary-gated.json",
+      "sha256": "77b2099db8e2cc1f5001c6c8b4d99fd2727206d4892784e662a0836d0d4438d7",
+      "bytes": 3037
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-duplicate-patchgroup.json",
+      "sha256": "e3be05c53ae1a07e6c5f57350ba1b61416d7832abe41cd8cda8efbb733e19f15",
+      "bytes": 2882
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-gate-no-compliance-evidence.json",
+      "sha256": "7ac84aef370ccff1440e112edcee0b8f9e84d81bddba0bbf6514b3191c8252fc",
+      "bytes": 2832
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-gate-wrong-order.json",
+      "sha256": "8d111e389fa7255c0cba36fce22e113f8a50ed4f252f7d7b3b72efc76c2b8a71",
+      "bytes": 2865
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-gated-task-install.json",
+      "sha256": "9a242db05b4adb760f2bd59af26b7cc2f303bcf8a9b4438d283a32c26f406de2",
+      "bytes": 2862
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-missing-baseline-file.json",
+      "sha256": "109a9fcbc92ecc72c83defa95197eada4e80dc0b389d31f3fa173f7dc373dcb2",
+      "bytes": 2836
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-missing-gate.json",
+      "sha256": "e0540f8b7b74c31f7dda3bbd15863f21a540a30240fe4a50479b8e8c478347a6",
+      "bytes": 2615
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-no-approver.json",
+      "sha256": "301a96db1f795ffd06635054907d405c71b8bfb6c7d9f8523625ac50877d94db",
+      "bytes": 2794
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-no-escalation-contacts.json",
+      "sha256": "ad6ba4d00d617f8e5943ec807f552aeef457f84bffc7629d1d7dad566210d235",
+      "bytes": 2676
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-no-presnapshot.json",
+      "sha256": "a788f840ebc9253b9d5c5fa9a5048f1634b5c8dc59ad644526f6797e7b196b76",
+      "bytes": 2865
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-real-account-id.json",
+      "sha256": "2cbdcb7d0d89db574d168104fbd040c5eea32fc4ecba763e48f6501e8a0044ad",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-ring-order-gap.json",
+      "sha256": "a0a3a0f050ac6901d2c3a8be62a9a1bf7ca80f4507d7a8653b73850676864aab",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-rollback-no-procedure.json",
+      "sha256": "f99ad6ad5b5c7cff2ac6fed2eb2f59cca60f1279cd8e772220e10053d34c0e4b",
+      "bytes": 2860
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-rollback-too-slow.json",
+      "sha256": "817139b08bba48c3d8b129effcf55419eb9eb9f6125df1bae08b39e4ae176601",
+      "bytes": 2865
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-rollback-unknown-strategy.json",
+      "sha256": "145b30bfb1866123c009b675ca7f7448017ead3a562a3a1a0b2794fd1d24a596",
+      "bytes": 2825
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-short-soak.json",
+      "sha256": "e0445bf4d1982df38f7525679c2c1b38e45028d063c309fac280ad23ac3e3833",
+      "bytes": 2863
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-task-rate-mismatch.json",
+      "sha256": "de20c21f7d522c12a5085cf325e75d781d1dd871879cd947da676a6a6e5d9f6e",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/neg-unknown-patchgroup.json",
+      "sha256": "a938ac5fc04074e1e1d382b23d5469d0b1ce45a7dfc005ad3984f18557c919b0",
+      "bytes": 2881
+    },
+    {
+      "path": "operations/patching/tests/fixtures/valid-example-manifest.json",
+      "sha256": "c1346f32f68dd069d3ee74956316fa30e65f3d9a455f174b41cc9e568844262e",
+      "bytes": 2864
+    },
+    {
+      "path": "operations/patching/tests/fixtures/valid-no-window-task.json",
+      "sha256": "f730e6e010e1255ca13c67a4b7b78e8221066a8420d62ce6f324ca7d459c1f02",
+      "bytes": 2677
+    },
+    {
+      "path": "operations/patching/tests/make_fixtures.py",
+      "sha256": "952d91967680e4e4fd83f23d908d1465b0f9d12c20601aaedabc7d2f89f4b18c",
+      "bytes": 9230
+    },
+    {
+      "path": "operations/patching/tests/test_inspect_patch_manifest.py",
+      "sha256": "113586a0e9543ee7b2cc6c39e0b626bf1043a507510629e4482ea4cd58e7e8c0",
+      "bytes": 5590
+    },
+    {
+      "path": "operations/patching/tools/inspect_patch_manifest.py",
+      "sha256": "cf79ebc69fbaa8198d735e8893ee54652f0a64ba3e84f25b3c0a17ff1ef4fa70",
+      "bytes": 16621
+    },
+    {
+      "path": "operations/patching/tools/print-cli-commands.sh",
+      "sha256": "dea1cc3bb9364309da7c5cc5a8886d8e66f1f189461c8d17ddc14bc04fea3f8e",
+      "bytes": 1413
+    }
+  ],
+  "steps": [
+    {
+      "seq": 1,
+      "stepId": "python_version",
+      "kind": "env",
+      "command": "python3 --version",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:52Z",
+      "durationMs": 1,
+      "log": "logs/01_python_version.log"
+    },
+    {
+      "seq": 2,
+      "stepId": "patching_fixture_drift",
+      "kind": "drift",
+      "command": "python3 operations/patching/tests/make_fixtures.py --check",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:52Z",
+      "durationMs": 28,
+      "log": "logs/02_patching_fixture_drift.log"
+    },
+    {
+      "seq": 3,
+      "stepId": "patching_unit_tests",
+      "kind": "test",
+      "command": "python3 -m unittest discover -s operations/patching/tests -v",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:52Z",
+      "durationMs": 1091,
+      "log": "logs/03_patching_unit_tests.log"
+    },
+    {
+      "seq": 4,
+      "stepId": "hardening_unit_tests",
+      "kind": "test",
+      "command": "python3 -m unittest discover -s operations/hardening/tests -v",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:53Z",
+      "durationMs": 693,
+      "log": "logs/04_hardening_unit_tests.log"
+    },
+    {
+      "seq": 5,
+      "stepId": "examples_marked",
+      "kind": "check",
+      "command": "python3 evidence/host-operations/check_examples.py",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 15,
+      "log": "logs/05_examples_marked.log"
+    },
+    {
+      "seq": 6,
+      "stepId": "inspect_example_manifest",
+      "kind": "inspect",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/manifests/patch-manifest.example.json --plan",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/06_inspect_example_manifest.log"
+    },
+    {
+      "seq": 7,
+      "stepId": "print_cli_commands",
+      "kind": "dry-run",
+      "command": "bash operations/patching/tools/print-cli-commands.sh",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 3,
+      "log": "logs/07_print_cli_commands.log"
+    },
+    {
+      "seq": 8,
+      "stepId": "patch_fixture_malformed_absolute_path",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-absolute-path.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/08_patch_fixture_malformed_absolute_path.log"
+    },
+    {
+      "seq": 9,
+      "stepId": "patch_fixture_malformed_bad_percent",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-bad-percent.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/09_patch_fixture_malformed_bad_percent.log"
+    },
+    {
+      "seq": 10,
+      "stepId": "patch_fixture_malformed_baseline_truncated",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-baseline-truncated.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/10_patch_fixture_malformed_baseline_truncated.log"
+    },
+    {
+      "seq": 11,
+      "stepId": "patch_fixture_malformed_bool_as_int",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-bool-as-int.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/11_patch_fixture_malformed_bool_as_int.log"
+    },
+    {
+      "seq": 12,
+      "stepId": "patch_fixture_malformed_duplicate_key",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-duplicate-key.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/12_patch_fixture_malformed_duplicate_key.log"
+    },
+    {
+      "seq": 13,
+      "stepId": "patch_fixture_malformed_empty_rings",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-empty-rings.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/13_patch_fixture_malformed_empty_rings.log"
+    },
+    {
+      "seq": 14,
+      "stepId": "patch_fixture_malformed_missing_rings",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-missing-rings.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 23,
+      "log": "logs/14_patch_fixture_malformed_missing_rings.log"
+    },
+    {
+      "seq": 15,
+      "stepId": "patch_fixture_malformed_nan",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-nan.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/15_patch_fixture_malformed_nan.log"
+    },
+    {
+      "seq": 16,
+      "stepId": "patch_fixture_malformed_not_object",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-not-object.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 20,
+      "log": "logs/16_patch_fixture_malformed_not_object.log"
+    },
+    {
+      "seq": 17,
+      "stepId": "patch_fixture_malformed_percent_over_100",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-percent-over-100.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/17_patch_fixture_malformed_percent_over_100.log"
+    },
+    {
+      "seq": 18,
+      "stepId": "patch_fixture_malformed_schema_version",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-schema-version.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/18_patch_fixture_malformed_schema_version.log"
+    },
+    {
+      "seq": 19,
+      "stepId": "patch_fixture_malformed_truncated",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-truncated.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/19_patch_fixture_malformed_truncated.log"
+    },
+    {
+      "seq": 20,
+      "stepId": "patch_fixture_malformed_unknown_ring_key",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-unknown-ring-key.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 25,
+      "log": "logs/20_patch_fixture_malformed_unknown_ring_key.log"
+    },
+    {
+      "seq": 21,
+      "stepId": "patch_fixture_malformed_unknown_top_key",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-unknown-top-key.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/21_patch_fixture_malformed_unknown_top_key.log"
+    },
+    {
+      "seq": 22,
+      "stepId": "patch_fixture_malformed_wrong_type",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/malformed-wrong-type.json --json",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/22_patch_fixture_malformed_wrong_type.log"
+    },
+    {
+      "seq": 23,
+      "stepId": "patch_fixture_neg_bad_operation",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-bad-operation.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/23_patch_fixture_neg_bad_operation.log"
+    },
+    {
+      "seq": 24,
+      "stepId": "patch_fixture_neg_bad_reboot",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-bad-reboot.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/24_patch_fixture_neg_bad_reboot.log"
+    },
+    {
+      "seq": 25,
+      "stepId": "patch_fixture_neg_baseline_no_delay",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-baseline-no-delay.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 24,
+      "log": "logs/25_patch_fixture_neg_baseline_no_delay.log"
+    },
+    {
+      "seq": 26,
+      "stepId": "patch_fixture_neg_baseline_os_mismatch",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-baseline-os-mismatch.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 21,
+      "log": "logs/26_patch_fixture_neg_baseline_os_mismatch.log"
+    },
+    {
+      "seq": 27,
+      "stepId": "patch_fixture_neg_canary_concurrency_5",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-canary-concurrency-5.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 27,
+      "log": "logs/27_patch_fixture_neg_canary_concurrency_5.log"
+    },
+    {
+      "seq": 28,
+      "stepId": "patch_fixture_neg_canary_concurrency_percent",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-canary-concurrency-percent.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 22,
+      "log": "logs/28_patch_fixture_neg_canary_concurrency_percent.log"
+    },
+    {
+      "seq": 29,
+      "stepId": "patch_fixture_neg_canary_errors",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-canary-errors.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:54Z",
+      "durationMs": 27,
+      "log": "logs/29_patch_fixture_neg_canary_errors.log"
+    },
+    {
+      "seq": 30,
+      "stepId": "patch_fixture_neg_canary_gated",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-canary-gated.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/30_patch_fixture_neg_canary_gated.log"
+    },
+    {
+      "seq": 31,
+      "stepId": "patch_fixture_neg_duplicate_patchgroup",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-duplicate-patchgroup.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/31_patch_fixture_neg_duplicate_patchgroup.log"
+    },
+    {
+      "seq": 32,
+      "stepId": "patch_fixture_neg_gate_no_compliance_evidence",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-gate-no-compliance-evidence.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/32_patch_fixture_neg_gate_no_compliance_evidence.log"
+    },
+    {
+      "seq": 33,
+      "stepId": "patch_fixture_neg_gate_wrong_order",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-gate-wrong-order.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/33_patch_fixture_neg_gate_wrong_order.log"
+    },
+    {
+      "seq": 34,
+      "stepId": "patch_fixture_neg_gated_task_install",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-gated-task-install.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/34_patch_fixture_neg_gated_task_install.log"
+    },
+    {
+      "seq": 35,
+      "stepId": "patch_fixture_neg_missing_baseline_file",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-missing-baseline-file.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/35_patch_fixture_neg_missing_baseline_file.log"
+    },
+    {
+      "seq": 36,
+      "stepId": "patch_fixture_neg_missing_gate",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-missing-gate.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/36_patch_fixture_neg_missing_gate.log"
+    },
+    {
+      "seq": 37,
+      "stepId": "patch_fixture_neg_no_approver",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-no-approver.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/37_patch_fixture_neg_no_approver.log"
+    },
+    {
+      "seq": 38,
+      "stepId": "patch_fixture_neg_no_escalation_contacts",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-no-escalation-contacts.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/38_patch_fixture_neg_no_escalation_contacts.log"
+    },
+    {
+      "seq": 39,
+      "stepId": "patch_fixture_neg_no_presnapshot",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-no-presnapshot.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/39_patch_fixture_neg_no_presnapshot.log"
+    },
+    {
+      "seq": 40,
+      "stepId": "patch_fixture_neg_real_account_id",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-real-account-id.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 26,
+      "log": "logs/40_patch_fixture_neg_real_account_id.log"
+    },
+    {
+      "seq": 41,
+      "stepId": "patch_fixture_neg_ring_order_gap",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-ring-order-gap.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 24,
+      "log": "logs/41_patch_fixture_neg_ring_order_gap.log"
+    },
+    {
+      "seq": 42,
+      "stepId": "patch_fixture_neg_rollback_no_procedure",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-rollback-no-procedure.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/42_patch_fixture_neg_rollback_no_procedure.log"
+    },
+    {
+      "seq": 43,
+      "stepId": "patch_fixture_neg_rollback_too_slow",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-rollback-too-slow.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 25,
+      "log": "logs/43_patch_fixture_neg_rollback_too_slow.log"
+    },
+    {
+      "seq": 44,
+      "stepId": "patch_fixture_neg_rollback_unknown_strategy",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-rollback-unknown-strategy.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/44_patch_fixture_neg_rollback_unknown_strategy.log"
+    },
+    {
+      "seq": 45,
+      "stepId": "patch_fixture_neg_short_soak",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-short-soak.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/45_patch_fixture_neg_short_soak.log"
+    },
+    {
+      "seq": 46,
+      "stepId": "patch_fixture_neg_task_rate_mismatch",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-task-rate-mismatch.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/46_patch_fixture_neg_task_rate_mismatch.log"
+    },
+    {
+      "seq": 47,
+      "stepId": "patch_fixture_neg_unknown_patchgroup",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/neg-unknown-patchgroup.json --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/47_patch_fixture_neg_unknown_patchgroup.log"
+    },
+    {
+      "seq": 48,
+      "stepId": "patch_fixture_valid_example_manifest",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/valid-example-manifest.json --json",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 21,
+      "log": "logs/48_patch_fixture_valid_example_manifest.log"
+    },
+    {
+      "seq": 49,
+      "stepId": "patch_fixture_valid_no_window_task",
+      "kind": "fixture",
+      "command": "python3 operations/patching/tools/inspect_patch_manifest.py operations/patching/tests/fixtures/valid-no-window-task.json --json",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/49_patch_fixture_valid_no_window_task.log"
+    },
+    {
+      "seq": 50,
+      "stepId": "unit_fixture_valid_hardened_inline",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --json)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 21,
+      "log": "logs/50_unit_fixture_valid_hardened_inline.log"
+    },
+    {
+      "seq": 51,
+      "stepId": "unit_fixture_valid_continuation",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-continuation.service --json)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/51_unit_fixture_valid_continuation.log"
+    },
+    {
+      "seq": 52,
+      "stepId": "unit_fixture_valid_dropin_strong",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-10-strong.conf --json)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/52_unit_fixture_valid_dropin_strong.log"
+    },
+    {
+      "seq": 53,
+      "stepId": "unit_fixture_valid_target_rhel9",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --distro rhel9 --json)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/53_unit_fixture_valid_target_rhel9.log"
+    },
+    {
+      "seq": 54,
+      "stepId": "unit_fixture_valid_target_debian13",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --distro debian13 --json)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/54_unit_fixture_valid_target_debian13.log"
+    },
+    {
+      "seq": 55,
+      "stepId": "unit_fixture_neg_unhardened",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py neg-unhardened.service --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/55_unit_fixture_neg_unhardened.log"
+    },
+    {
+      "seq": 56,
+      "stepId": "unit_fixture_neg_root_full_caps",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py neg-root-full-caps.service --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 21,
+      "log": "logs/56_unit_fixture_neg_root_full_caps.log"
+    },
+    {
+      "seq": 57,
+      "stepId": "unit_fixture_neg_dropin_weakens",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-10-strong.conf --dropin dropin-90-weaken.conf --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/57_unit_fixture_neg_dropin_weakens.log"
+    },
+    {
+      "seq": 58,
+      "stepId": "unit_fixture_neg_dropin_weakens_arg_order",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-90-weaken.conf --dropin dropin-10-strong.conf --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 25,
+      "log": "logs/58_unit_fixture_neg_dropin_weakens_arg_order.log"
+    },
+    {
+      "seq": 59,
+      "stepId": "unit_fixture_neg_dropin_adds_sysadmin",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-10-strong.conf --dropin dropin-50-add-sysadmin.conf --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/59_unit_fixture_neg_dropin_adds_sysadmin.log"
+    },
+    {
+      "seq": 60,
+      "stepId": "unit_fixture_neg_target_219",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --target-systemd 219 --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/60_unit_fixture_neg_target_219.log"
+    },
+    {
+      "seq": 61,
+      "stepId": "unit_fixture_neg_target_rhel8",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --distro rhel8 --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 21,
+      "log": "logs/61_unit_fixture_neg_target_rhel8.log"
+    },
+    {
+      "seq": 62,
+      "stepId": "unit_fixture_neg_threshold_tight",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-continuation.service --threshold 1.0 --json)",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/62_unit_fixture_neg_threshold_tight.log"
+    },
+    {
+      "seq": 63,
+      "stepId": "unit_fixture_malformed_no_section",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-no-section.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/63_unit_fixture_malformed_no_section.log"
+    },
+    {
+      "seq": 64,
+      "stepId": "unit_fixture_malformed_no_service",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-no-service.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 21,
+      "log": "logs/64_unit_fixture_malformed_no_service.log"
+    },
+    {
+      "seq": 65,
+      "stepId": "unit_fixture_malformed_no_execstart",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-no-execstart.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/65_unit_fixture_malformed_no_execstart.log"
+    },
+    {
+      "seq": 66,
+      "stepId": "unit_fixture_malformed_bad_line",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-line.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 32,
+      "log": "logs/66_unit_fixture_malformed_bad_line.log"
+    },
+    {
+      "seq": 67,
+      "stepId": "unit_fixture_malformed_bad_header",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-header.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 23,
+      "log": "logs/67_unit_fixture_malformed_bad_header.log"
+    },
+    {
+      "seq": 68,
+      "stepId": "unit_fixture_malformed_unknown_section",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-unknown-section.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/68_unit_fixture_malformed_unknown_section.log"
+    },
+    {
+      "seq": 69,
+      "stepId": "unit_fixture_malformed_bad_boolean",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-boolean.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/69_unit_fixture_malformed_bad_boolean.log"
+    },
+    {
+      "seq": 70,
+      "stepId": "unit_fixture_malformed_bad_protectsystem",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-protectsystem.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/70_unit_fixture_malformed_bad_protectsystem.log"
+    },
+    {
+      "seq": 71,
+      "stepId": "unit_fixture_malformed_unknown_capability",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-unknown-capability.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/71_unit_fixture_malformed_unknown_capability.log"
+    },
+    {
+      "seq": 72,
+      "stepId": "unit_fixture_malformed_bad_umask",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py malformed-bad-umask.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:55Z",
+      "durationMs": 22,
+      "log": "logs/72_unit_fixture_malformed_bad_umask.log"
+    },
+    {
+      "seq": 73,
+      "stepId": "unit_fixture_malformed_dropin_value",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-malformed.conf --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 22,
+      "log": "logs/73_unit_fixture_malformed_dropin_value.log"
+    },
+    {
+      "seq": 74,
+      "stepId": "unit_fixture_malformed_dropin_suffix",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py base-for-dropins.service --dropin dropin-wrong-suffix.txt --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 34,
+      "log": "logs/74_unit_fixture_malformed_dropin_suffix.log"
+    },
+    {
+      "seq": 75,
+      "stepId": "unit_fixture_malformed_unknown_distro",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py valid-hardened-inline.service --distro bogus --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 25,
+      "log": "logs/75_unit_fixture_malformed_unknown_distro.log"
+    },
+    {
+      "seq": 76,
+      "stepId": "unit_fixture_malformed_missing_file",
+      "kind": "fixture",
+      "command": "(cd operations/hardening/tests/fixtures && python3 ../../tools/score_units.py does-not-exist.service --json)",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 32,
+      "log": "logs/76_unit_fixture_malformed_missing_file.log"
+    },
+    {
+      "seq": 77,
+      "stepId": "score_root_agent",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-root-agent.service --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 22,
+      "log": "logs/77_score_root_agent.log"
+    },
+    {
+      "seq": 78,
+      "stepId": "score_app_unhardened",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 24,
+      "log": "logs/78_score_app_unhardened.log"
+    },
+    {
+      "seq": 79,
+      "stepId": "score_app_baseline",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --json",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/79_score_app_baseline.log"
+    },
+    {
+      "seq": 80,
+      "stepId": "score_app_strict",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --json",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 24,
+      "log": "logs/80_score_app_strict.log"
+    },
+    {
+      "seq": 81,
+      "stepId": "score_app_strict_rhel7",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro rhel7",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/81_score_app_strict_rhel7.log"
+    },
+    {
+      "seq": 82,
+      "stepId": "score_app_strict_rhel8",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro rhel8",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/82_score_app_strict_rhel8.log"
+    },
+    {
+      "seq": 83,
+      "stepId": "score_app_strict_ubuntu2004",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro ubuntu2004",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/83_score_app_strict_ubuntu2004.log"
+    },
+    {
+      "seq": 84,
+      "stepId": "score_app_strict_rhel9",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro rhel9",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/84_score_app_strict_rhel9.log"
+    },
+    {
+      "seq": 85,
+      "stepId": "score_app_strict_al2023",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro al2023",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 26,
+      "log": "logs/85_score_app_strict_al2023.log"
+    },
+    {
+      "seq": 86,
+      "stepId": "score_app_strict_ubuntu2404",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/10-hardening-baseline.conf --dropin operations/hardening/systemd/dropins/20-hardening-strict.conf --dropin operations/hardening/systemd/dropins/30-net-bind-service.conf --distro ubuntu2404",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 25,
+      "log": "logs/86_score_app_strict_ubuntu2404.log"
+    },
+    {
+      "seq": 87,
+      "stepId": "score_app_legacy_rhel7_threshold6",
+      "kind": "score",
+      "command": "python3 operations/hardening/tools/score_units.py operations/hardening/systemd/units/bank-lab-app.service --dropin operations/hardening/systemd/dropins/05-hardening-legacy-219.conf --distro rhel7 --threshold 6.0",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/87_score_app_legacy_rhel7_threshold6.log"
+    },
+    {
+      "seq": 88,
+      "stepId": "compat_matrix_render",
+      "kind": "render",
+      "command": "python3 operations/hardening/tools/score_units.py --render-matrix",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 23,
+      "log": "logs/88_compat_matrix_render.log"
+    },
+    {
+      "seq": 89,
+      "stepId": "cfn_lint",
+      "kind": "analyzer",
+      "command": "cfn-lint operations/patching/ssm/patch-baselines-and-windows.cfn.yaml",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:56Z",
+      "durationMs": 824,
+      "log": "logs/89_cfn_lint.log"
+    },
+    {
+      "seq": 90,
+      "stepId": "yamllint",
+      "kind": "analyzer",
+      "command": "yamllint -d '{extends: default, rules: {line-length: {max: 120}}}' operations/patching/ssm/patch-baselines-and-windows.cfn.yaml",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 85,
+      "log": "logs/90_yamllint.log"
+    },
+    {
+      "seq": 91,
+      "stepId": "shellcheck",
+      "kind": "analyzer",
+      "command": "shellcheck operations/patching/tools/print-cli-commands.sh",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 15,
+      "log": "logs/91_shellcheck.log"
+    },
+    {
+      "seq": 92,
+      "stepId": "sd_verify_root_agent",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user verify <tmp>/config/systemd/user/bank-lab-root-agent.service (+ no drop-ins)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 14,
+      "log": "logs/92_sd_verify_root_agent.log"
+    },
+    {
+      "seq": 93,
+      "stepId": "sd_security_root_agent",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user security --offline=true --no-pager <tmp>/config/systemd/user/bank-lab-root-agent.service (+ no drop-ins)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 10,
+      "log": "logs/93_sd_security_root_agent.log"
+    },
+    {
+      "seq": 94,
+      "stepId": "sd_verify_app_unhardened",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user verify <tmp>/config/systemd/user/bank-lab-app.service (+ no drop-ins)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 12,
+      "log": "logs/94_sd_verify_app_unhardened.log"
+    },
+    {
+      "seq": 95,
+      "stepId": "sd_security_app_unhardened",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user security --offline=true --no-pager <tmp>/config/systemd/user/bank-lab-app.service (+ no drop-ins)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 11,
+      "log": "logs/95_sd_security_app_unhardened.log"
+    },
+    {
+      "seq": 96,
+      "stepId": "sd_verify_app_baseline",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user verify <tmp>/config/systemd/user/bank-lab-app.service (+ 10-hardening-baseline.conf)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 13,
+      "log": "logs/96_sd_verify_app_baseline.log"
+    },
+    {
+      "seq": 97,
+      "stepId": "sd_security_app_baseline",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user security --offline=true --no-pager <tmp>/config/systemd/user/bank-lab-app.service (+ 10-hardening-baseline.conf)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 10,
+      "log": "logs/97_sd_security_app_baseline.log"
+    },
+    {
+      "seq": 98,
+      "stepId": "sd_verify_app_strict",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user verify <tmp>/config/systemd/user/bank-lab-app.service (+ 10-hardening-baseline.conf, 20-hardening-strict.conf)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 15,
+      "log": "logs/98_sd_verify_app_strict.log"
+    },
+    {
+      "seq": 99,
+      "stepId": "sd_security_app_strict",
+      "kind": "analyzer",
+      "command": "XDG_CONFIG_HOME=<tmp>/config XDG_RUNTIME_DIR=<tmp>/runtime systemd-analyze --user security --offline=true --no-pager <tmp>/config/systemd/user/bank-lab-app.service (+ 10-hardening-baseline.conf, 20-hardening-strict.conf)",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "result": "PASS",
+      "startedUtc": "2026-10-28T18:12:57Z",
+      "durationMs": 10,
+      "log": "logs/99_sd_security_app_strict.log"
+    }
+  ],
+  "counts": {
+    "PASS": 99,
+    "FAIL": 0,
+    "SKIPPED": 0
+  },
+  "exposureComparison": {
+    "root_agent": {
+      "scoreUnits": 9.6,
+      "systemdAnalyze": 9.6,
+      "systemdRating": "UNSAFE"
+    },
+    "app_unhardened": {
+      "scoreUnits": 8.8,
+      "systemdAnalyze": 9.2,
+      "systemdRating": "UNSAFE"
+    },
+    "app_baseline": {
+      "scoreUnits": 4.8,
+      "systemdAnalyze": 6.8,
+      "systemdRating": "MEDIUM"
+    },
+    "app_strict": {
+      "scoreUnits": 0.6,
+      "systemdAnalyze": 1.3,
+      "systemdRating": "OK"
+    }
+  },
+  "overall": "PASS"
+}

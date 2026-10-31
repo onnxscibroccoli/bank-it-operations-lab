@@ -1,0 +1,12 @@
+# SIMULATION evidence log
+# step: python_version (env)
+# cwd: $REPO
+# command: /usr/bin/python3 --version
+# started_utc: 2026-10-28T18:09:14.486707+00:00
+
+--- stdout ---
+Python 3.13.5
+
+--- stderr ---
+
+--- exit_code: 0 (expected 0) -> PASS ---
