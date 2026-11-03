@@ -31,7 +31,8 @@ class Coverage(unittest.TestCase):
             if m["status"] not in ("INTEGRATED", "SUPERSEDED")
         )
         self.assertEqual(c["incomplete"], expected)
-        self.assertEqual(c["incomplete"], ["review-notes(NOT_INTEGRATED)"])  # acceptance INTEGRATED by acceptance/integration-v2
+        # candidate-20261103b: review-notes INTEGRATED (acceptance by PR #40); nothing is incomplete.
+        self.assertEqual(c["incomplete"], [])
         # BLOCKED stays in the denominator and is incomplete. The fixture is a copy; orgs-security is INTEGRATED.
         r = copy.deepcopy(REG)
         blocked = mod(r, "orgs-security")
