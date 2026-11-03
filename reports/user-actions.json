@@ -173,5 +173,42 @@
       "acceptance(NOT_INTEGRATED)",
       "review-notes(NOT_INTEGRATED)"
     ]
+  },
+  "completion_pass_2026_11_03": {
+    "checked_at": "2026-11-03T13:25:00-05:00",
+    "main_sha": "30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6",
+    "top_line": "USER ACTION REQUIRED: 3 \u2014 UA-2; UA-3; UA-7",
+    "ci_reference_run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41242239019",
+    "open": [
+      {
+        "id": "UA-2",
+        "evidence": "evidence/entra/BASELINE-CHOICES-PENDING.md on main: not confirmed by the owner; PR #4 has 0 comments"
+      },
+      {
+        "id": "UA-3",
+        "evidence": "GET branches/main/protection 404; GET branches/evidence%2Facceptance/protection 404; rulesets []"
+      },
+      {
+        "id": "UA-7",
+        "evidence": "collaborators: onnxscibroccoli only; invitations []; 0 reviews on PRs #1-#38"
+      }
+    ],
+    "not_yet_actionable": [
+      {
+        "id": "UA-1",
+        "evidence": "SECURITY_EXCEPTIONS.md on main: all EX-01..EX-04 PROPOSED; EX-04 re-scoped to AwsSolutions-IAM5 snapshot:awsbackup-* on DbBackupPolicy"
+      },
+      {
+        "id": "UA-5",
+        "evidence": "AC6 after AC1-AC5"
+      },
+      {
+        "id": "UA-6",
+        "evidence": "tasks.json NOT_YET_ACTIONABLE"
+      }
+    ],
+    "acceptance_decision_comments": 0,
+    "independent_reviews": 0,
+    "merge_eligibility_on_main": "failure (trusted gate af49a27: candidate scripts/ci files differ from trusted manifest)"
   }
 }
