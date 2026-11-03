@@ -8,7 +8,9 @@
   "overnight/integration": "a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45",
   "acceptance/vertical-slice": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
   "evidence/acceptance(before T-01)": "7f047e8638ee8cfc3dae9c7c359103835be91f4f",
-  "integration_branch": "integration/completion-20261103"
+  "evidence/acceptance(after T-01)": "750de1c694c4912f12bb5bb76a20ba74bc208213",
+  "trusted_gate_pin(gate_sha)": "ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae",
+  "integration_branch": "integration/completion-20261103 (head = records-only child of the gate commit)"
  },
  "ancestry": "delivery/portfolio and overnight/integration are ancestors of main (main is 1 ahead of delivery/portfolio, 17 ahead of overnight/integration). acceptance/vertical-slice had 14 commits not in main (merge-base 49122f2); merged cleanly.",
  "drift": "modules.json has 28 modules (not 26): aws-network-edge, endpoint-windows-automation, inventory-diagrams, owner-authentication, knowledge-base added by delivery; acceptance and review-notes move to INTEGRATED on the integration branch.",
