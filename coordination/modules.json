@@ -1225,7 +1225,7 @@
       "ci_jobs": [
         "documentation.yml:validate"
       ],
-      "limitations": "Documentation platform. GitHub Pages is enabled (build_type workflow) and deployed from main by documentation.yml. Includes draft PR #41 (docs-platform 70535c5, owner review requested): dot-directory pages are renamed so they no longer 404 on Pages, and the axe-core scan covers every generated page. Automated WCAG 2.2 AA subset only; no human screen-reader or manual accessibility assessment; no WCAG conformance claim.",
+      "limitations": "Documentation platform. GitHub Pages is enabled (build_type workflow) and deployed from main by documentation.yml. Includes draft PR #41 (docs-platform d2247fe, owner review requested): dot-directory pages are renamed so they no longer 404 on Pages, and the axe-core scan covers every generated page. Automated WCAG 2.2 AA subset only; no human screen-reader or manual accessibility assessment; no WCAG conformance claim.",
       "prs": []
     }
   ],

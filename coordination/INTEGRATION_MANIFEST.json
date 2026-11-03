@@ -6,13 +6,13 @@
   "branch": "integration/candidate-20261103c",
   "base": "8e2df97b558e69032e52a50ed0adfd311ad04578",
   "gate_commit": "39c71f9eebf8bb72663515a29b52609d02dceea4",
-  "tested_sha": "3327bbeaae338daf1e0dcb7c7b249e7303ad36fb"
+  "tested_sha": "see report (head of this branch at test time)"
  },
  "source_refs": {
   "main": "8e2df97b558e69032e52a50ed0adfd311ad04578",
   "reports/completion-pass-20261103 (PR #39; merged b6e23ba, then 0ee1e97, then head 95765e9; DRAFT)": "95765e99425601e7d9aeec307c73573085c8ebef",
   "acceptance/t16-pin-review (PR #42, not merged; compared only)": "9589d891",
-  "docs-platform (PR #41 @ 70535c5, DRAFT)": "70535c5c81c10696f177de1eb05a9933146f5bf2",
+  "docs-platform (PR #41; merged 70535c5, then head d2247fe; DRAFT)": "d2247fe98391998f234c445b549ff102c385e5d4",
   "integration/candidate-20261103b (previous candidate, not merged)": "caa9ce7c1b1538d8da920463db77c93c05fe882b",
   "integration/completion-20261103 (history, not merged)": "3c417d91f97bb806ca48e5eee2e833333b9dff70",
   "evidence/acceptance (current pin ea0c235, not changed)": "750de1c694c4912f12bb5bb76a20ba74bc208213"
@@ -20,7 +20,7 @@
  "merge_bases_with_main": {
   "reports/completion-pass-20261103 (PR #39; merged b6e23ba, then 0ee1e97, then head 95765e9; DRAFT)": "8e2df97 = main (7 ahead at 95765e9; main merged in by 9462c5b, not rebased)",
   "acceptance/t16-pin-review (PR #42, not merged; compared only)": "8e2df97 = main",
-  "docs-platform (PR #41 @ 70535c5, DRAFT)": "8e2df97 = main (3 ahead, 0 behind; main merged in by fea62ec, not rebased)",
+  "docs-platform (PR #41; merged 70535c5, then head d2247fe; DRAFT)": "8e2df97 = main (4 ahead at d2247fe; main merged in by fea62ec, not rebased)",
   "integration/candidate-20261103b (previous candidate, not merged)": "8e2df97 = main",
   "integration/completion-20261103 (history, not merged)": "8c662d76834ecb2de99afebc83d31a2bb0fd3dd1",
   "evidence/acceptance (current pin ea0c235, not changed)": "none (orphan evidence branch)"
@@ -78,7 +78,7 @@
   {
    "source": "PR #41 docs-platform @ 70535c5 (DRAFT, owner review requested)",
    "taken": "all 25 files (knowledge-base sections, Pages dot-directory fix, builder/search/a11y tests, ADR status, learning page)",
-   "how": "ordinary --no-ff merge FIRST (it owns the docs builder and pages.json schema that #39's entries must satisfy); clean"
+   "how": "ordinary --no-ff merge FIRST (it owns the docs builder and pages.json schema that #39's entries must satisfy); clean. Later an ordinary merge of 70535c5..d2247fe (17:40 EST: status-language edits in 6 docs pages); clean. Every #41 file byte-identical to d2247fe except browser.mjs (candidate fix kept) and pages.json (superset)"
   },
   {
    "source": "PR #39 reports/completion-pass-20261103 @ b6e23ba (DRAFT, owner review requested)",
@@ -101,8 +101,8 @@
    "how": "new commit; trust delta vs current pin is then only 4 added files (see coordination/T16_RECONCILIATION.md)"
   },
   {
-   "source": "PR #41 @ 70535c5 per-file decisions",
-   "taken": "scripts/docs/tests/browser.mjs: CANDIDATE fix kept (70535c5 still has the non-null-safe predicate that failed Documentation run 41729590108; fix verified 3/3 locally and in run 41731137053). docs/metadata/pages.json: candidate is a strict superset of 70535c5 (all #41 keys byte-equal; +#39 keys, +10 review records, +3 coordination pages). Every other #41 file byte-identical to 70535c5",
+   "source": "PR #41 @ 70535c5/d2247fe per-file decisions",
+   "taken": "scripts/docs/tests/browser.mjs: CANDIDATE fix kept (70535c5 and d2247fe still have the non-null-safe predicate that failed Documentation run 41729590108; fix verified 3/3 locally and in run 41731137053). docs/metadata/pages.json: candidate is a strict superset of 70535c5 (all #41 keys byte-equal; +#39 keys, +10 review records, +3 coordination pages). Every other #41 file byte-identical to 70535c5",
    "how": "recorded decision; owner of browser.mjs: docs-platform / PR #41"
   },
   {
@@ -200,48 +200,7 @@
    "portfolio-validation.yml",
    "documentation.yml (deploy=false)"
   ],
-  "runs": [
-   {
-    "workflow": "acceptance",
-    "id": 41733743560,
-    "conclusion": "success (EXECUTION_PASS + REVIEW_PENDING; never ACCEPTED)"
-   },
-   {
-    "workflow": "integration-gate",
-    "id": 41733746409,
-    "conclusion": "failure in merge-eligibility only, by design: GATE HASHES REJECTED, 1 error (4 added scripts/ci files not in current pin ea0c235; test_module_coverage now matches the pin). Proposal UNREVIEWED and not applied; 18/19 other jobs success"
-   },
-   {
-    "workflow": "offline-validation",
-    "id": 41733749851,
-    "conclusion": "success"
-   },
-   {
-    "workflow": "aws-cdk",
-    "id": 41733752733,
-    "conclusion": "success"
-   },
-   {
-    "workflow": "postgres-restore-evidence",
-    "id": 41733757147,
-    "conclusion": "success"
-   },
-   {
-    "workflow": "portfolio-validation",
-    "id": 41733760441,
-    "conclusion": "success"
-   },
-   {
-    "workflow": "Documentation knowledge base (deploy=false)",
-    "id": 41733821933,
-    "conclusion": "success"
-   },
-   {
-    "workflow": "local validate-all.sh with PostgreSQL 16 (box)",
-    "id": null,
-    "conclusion": "PASS (54 steps)"
-   }
-  ]
+  "runs": "pending at commit time; recorded in a later records-only commit"
  },
  "reviews_required_before_main": [
   "PENDING - AC1: independent reviewer approves the exact candidate SHA (UA-7)",
