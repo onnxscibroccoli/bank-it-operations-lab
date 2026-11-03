@@ -55,5 +55,6 @@ Metadata lives in this sidecar file rather than in front matter inside each Mark
 ## Reports and records
 
 - [Acceptance packet](../../reports/ACCEPTANCE.md) (its header still says DRAFT and not merged, but it reached main with PR #40), [acceptance invariant assurance](../../reports/ACCEPTANCE_INVARIANT_ASSURANCE.md).
-- [Final report](../../reports/FINAL_REPORT.md), [evidence manifest](../../reports/EVIDENCE_MANIFEST.md), [owner actions](../../reports/USER_ACTIONS_REQUIRED.md), [integration record](../../reports/INTEGRATION.md).
+- Dated completion-pass and human-decision records for 2026-11-03 are proposed in draft [PR #39](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39). They are not on main.
+- [Final report](../../reports/FINAL_REPORT.md) (preserved; its module counts predate PR #40), [evidence manifest](../../reports/EVIDENCE_MANIFEST.md), [owner actions](../../reports/USER_ACTIONS_REQUIRED.md), [integration record](../../reports/INTEGRATION.md).
 - [Reviewer guide](../REVIEWER_GUIDE.md), [fifteen-minute walkthrough](../DEMO_WALKTHROUGH_15MIN.md), [job requirements matrix](../JOB_REQUIREMENTS_MATRIX.md).

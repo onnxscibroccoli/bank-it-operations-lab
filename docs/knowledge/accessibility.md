@@ -2,7 +2,7 @@
 
 The target is WCAG 2.2 Level AA. **No conformance claim is made.** Automated tools can detect only part of WCAG, and the manual reviews that cover the rest have not been done. This page lists what was checked, how, and with what result, and what remains unchecked.
 
-Latest run: 2026-11-03, about 17:05 EST, on a local build of docs-platform after merging main `8e2df97` (238 pages plus the home page). The build was served over `http://127.0.0.1` and checked with Playwright's headless Chromium 141 and axe-core 4.11.0. An earlier run on the same day, before the merge, gave the same results on 233 pages. The live site at <https://onnxscibroccoli.github.io/bank-it-operations-lab/> was checked only where stated.
+Latest run: 2026-11-03, about 17:38 EST, with identical results to the 17:05 EST run, on a local build of docs-platform after merging main `8e2df97` (238 pages plus the home page). The build was served over `http://127.0.0.1` and checked with Playwright's headless Chromium 141 and axe-core 4.11.0. An earlier run on the same day, before the merge, gave the same results on 233 pages. The live site at <https://onnxscibroccoli.github.io/bank-it-operations-lab/> was checked only where stated.
 
 ## Automated checks that ran
 
@@ -11,12 +11,12 @@ Latest run: 2026-11-03, about 17:05 EST, on a local build of docs-platform after
 | axe rules tagged wcag2a, wcag2aa, wcag21aa, wcag22aa | [browser.mjs](../../scripts/docs/tests/browser.mjs) on every page | 239 pages, 0 violations |
 | axe "needs review" items | same run | `color-contrast` incomplete on 3 pages (`acceptance/modules/README.md`, archived `docs/management/project-checkpoint.md`, archived `evidence/incident/INTEGRATION-NOTES.md`). axe reported "Element content contains only non-text characters" for table cells holding arrows or symbols. Reviewed: these cells use the default text colour |
 | Skip link | scripted keyboard | First Tab focuses "Skip to content". Enter moves focus to `main` |
-| Keyboard order on a content page | 12 scripted Tab presses on Tutorials | Skip link, the 8 navigation links in visual order, header search field, Search button, then the first link in the content |
+| Keyboard order on a content page | 12 scripted Tab presses on Tutorials and on `pages/dot-github/pull_request_template.html` | Skip link, the 8 navigation links in visual order, header search field, Search button, then the first link in the content |
 | Search keyboard path | scripted keyboard on the home page | Query, Subject, Status, Depth level, Search button and first result are reached in order |
 | Site search from any page | scripted | The header form on a content page submits to the home page and returns results |
 | Navigation | scripted, 7 hub pages | 8 primary links on each page. Exactly one has `aria-current="page"` |
 | Reflow (1.4.10) | 320 px viewport, **all 239 pages** | No horizontal page overflow |
-| Text spacing (1.4.12) | injected WCAG spacing values at 320 px, 15 hub and companion pages | No horizontal overflow |
+| Text spacing (1.4.12) | injected WCAG spacing values at 320 px, 15 hub, companion and dot-github pages | No horizontal overflow |
 | Resize text (1.4.4) | root font size 200% at 640 px, the same 15 pages | No horizontal overflow |
 | Forced colours | `forced-colors: active` emulation and axe, the same 15 pages | 0 violations. axe could not compute button contrast under emulation and flagged it for review. Visual appearance was not inspected |
 | Search failure state | index request blocked | Status message announces the failure and points to the catalog |
