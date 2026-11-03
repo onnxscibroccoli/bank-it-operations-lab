@@ -1,3 +1,4 @@
+import './ambient.test.mjs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const repositoryRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');
