@@ -73,7 +73,7 @@ PENDING = "required PASS lacks an independent reviewer concurrence"
 def stage_bundle(out, sha, stage):
     rel = f"evidence/acceptance/runs/{sha}"
     root = os.path.join(stage, rel)
-    shutil.copytree(out, root, ignore=shutil.ignore_patterns("postgres-run", "SHA256SUMS"))
+    shutil.copytree(out, root, ignore=shutil.ignore_patterns("postgres-run", "adapters-shared", "SHA256SUMS"))
     rows = vr.verify(out, quiet=True)[1]["checks"]
     with open(os.path.join(root, "logs", "COMMANDS.tsv"), "w") as f:  # aws-3col: log, exit_code, description
         for r in rows:

@@ -193,7 +193,7 @@ else unknown ACC-B-01 yes "tools/acceptance/runner.py (worker B) not present at 
 
 if [ -f acceptance/modules/run.py ]; then
   check ACC-C-01 yes "acceptance-adapters (C) unit tests incl. reason-asserting negatives" -- python3 -m unittest discover -s acceptance/modules/tests
-  check ACC-C-02 yes "acceptance-adapters (C) static-evidence: aws-cdk, postgres, entra-offline" -- python3 acceptance/modules/run.py all --mode static-evidence --json-out "$OUT/adapters-static.json"
+  check ACC-C-02 yes "acceptance-adapters (C) static-evidence: aws-cdk, postgres, entra-offline" -- python3 acceptance/modules/run.py all --mode static-evidence --json-out "$OUT/adapters-static.json" --shared-out "$OUT/adapters-shared"
   if [ -n "${PGBIN:-}" ] && [ -x "${PGBIN:-}/initdb" ] && [ -d infra/aws-cdk/node_modules ]; then
     log=logs/ACC-C-03.log
     { echo "# check: ACC-C-03 - adapters live-offline (exit 4 = NOT_EXECUTED -> UNKNOWN)"; echo "# cmd: PG_BIN=$PGBIN python3 acceptance/modules/run.py all --mode live-offline"; } > "$OUT/$log"
