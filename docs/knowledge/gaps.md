@@ -32,8 +32,11 @@ These files are byte-locked by [preserved-records.json](../metadata/preserved-re
 | `docs/knowledge/tutorials.md` | No executable Terraform walkthrough (`infra/orgs/terraform`). No live PostgreSQL restore or incident crash run, because the workstation had no PostgreSQL server binaries |
 | `docs/knowledge/troubleshooting.md` | Nothing yet for the Terraform track, hybrid Windows runbooks or screen reader problems |
 | `docs/knowledge/accessibility.md` | Manual keyboard, screen reader, zoom, forced-colour visual and cognitive reviews not done |
+| `scripts/docs/search-core.js` / indexed reading guides | Search recall is broad. Sample questions match 165–238 of 238 pages, because the shared reading-guide text is indexed for every page. Ranking puts the intended page first for the tested queries, but filtering by relevance is weak |
 | `docs/knowledge/topics.md` | Subject categories come from metadata. Some legacy categories are broad (61 governance-compliance pages) |
 | `reports/ACCEPTANCE.md` | Header says "DRAFT candidate. Not merged to main", but it is on main since PR #40. Not a documentation-owned path |
+| `reports/FINAL_REPORT.md` (preserved) | Says the registry reports "24/26 integrated". At `8e2df97` the module-registry job prints `26/27 integrated`. [PR #39](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39) (open draft, not merged) adds dated sidecar records (`reports/COMPLETION_PASS_2026-11-03.md`, `HUMAN_DECISION_PACKET_2026-11-03.md`) instead of editing it. Until #39 merges, main has no current status record for these reports |
+| `.github/workflows/integration-gate.yml` / trusted manifest on `evidence/acceptance` | `merge-eligibility` fails on main `8e2df97` and on every PR, because `scripts/ci/tests/test_module_coverage.py` (changed by PR #40) differs from the trusted manifest at `750de1c`. Integrator work, recorded in PR #39 |
 | `docs/AI_PROMPTS.md` | Prompts reference PR #7 and #35 as moving targets. Not re-checked against main |
 
 ## Publishing
@@ -52,3 +55,4 @@ These files are byte-locked by [preserved-records.json](../metadata/preserved-re
 - Review PR #41 (owner review required by its description), merge it if acceptable, then confirm the push deploys Pages, or run **Documentation knowledge base → Run workflow → deploy** on main.
 - Close or keep PR #15, now that its content is on main.
 - Arrange a human accessibility review (keyboard and at least one screen reader).
+- The user actions open in `coordination/tasks.json` at `8e2df97` are outside documentation: UA-2 (Entra baseline), UA-3 (protect `main` and `evidence/acceptance`) and UA-7 (invite an independent reviewer). [PR #39](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39) sets out the options.
