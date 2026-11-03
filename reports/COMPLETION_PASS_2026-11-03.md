@@ -9,7 +9,47 @@ This is a dated status record for the repository. It does not replace any earlie
 
 Sections are newest first. The 16:55–17:05 EST read and the 13:22–13:26 EST read at `main` `30e0a83` are kept below without changes to their facts.
 
-## Latest update at `main` `8e2df97` (17:36–17:45 EST)
+## Latest update: three-phase model, `main` `8e2df97`, candidate `-c` `0ad0468` (18:15–18:30 EST)
+
+### Main and candidate (STATIC + EXECUTED)
+
+- **`main`** is still `8e2df97b558e69032e52a50ed0adfd311ad04578` (`GET /repos/onnxscibroccoli/bank-it-operations-lab/commits/main`, 18:15 EST). Runs at that SHA are unchanged: integration-gate failure (`merge-eligibility`), plus acceptance, offline-validation and Documentation success.
+- **Newest candidate:** `integration/candidate-20261103c` @ `0ad046825855f2c3e90861981624e2fb8373c24d`, status **CANDIDATE, not integrated**.
+  - It has no PR (`GET /pulls?state=all&head=onnxscibroccoli:integration/candidate-20261103c` → `[]`). It is 46 commits ahead of `main` and 0 behind.
+  - It was created under owner directives t26u/t27u: do not merge to `main`, do not apply the proposed pin (`coordination/tasks.json@0ad0468` `rules`; `coordination/INTEGRATION_MANIFEST.md@0ad0468`).
+  - Branch `docs/engineering-first-governance-deferral-20261103` points at the same commit and has no PR.
+- **Candidate runs:**
+  - **Tested SHA `614d006ae049aed269dc404aa5b84a7c04b55d8e`:**
+    - integration-gate [41734504240](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734504240): failure, 18 of 19 jobs succeed. `merge-eligibility`: "files in scripts/ci not in the trusted manifest".
+    - success: acceptance [41734499746](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734499746), offline-validation [41734507318](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734507318), aws-cdk [41734510352](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734510352), postgres [41734513752](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734513752), portfolio [41734516468](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734516468), Documentation [41734575819](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41734575819).
+  - **Head `0ad0468`** (records-only commits after `614d006`): Documentation push [41735193146](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41735193146) success.
+- **Our sidecars on the candidate** (`git rev-parse 0ad0468:<path>` vs PR #39 `95765e9`):
+  - The packet (`32c6aebb`), COMPLETION_PASS md (`40382000`) and json (`9846c950`) are **byte-identical**.
+  - The `final-report` paths and both `pages.json` entries are identical.
+  - Not yet on the candidate: this pass's revisions and `reports/PHASE_C_REVIEW_PACKAGE_PREP_2026-11-03.md`.
+- **Locked files on the candidate:** `FINAL_REPORT.md`, `USER_ACTIONS_REQUIRED.md` and `user-actions.json` are identical to `main`. `preserved-records.json` keeps all 145 `main` entries unchanged and adds 10 (155 in total).
+- **New PRs since the last read:** #43 `ci-workflow-hardening`, #44 `aws-remediation-backup-kms`, #45 and #46 (`design/*`). PR #42 moved to `8065a44`. Totals: 46 PRs, 0 reviews. 12 issue comments; the newest is a PR #15 disposition note by `onnxscibroccoli`, and none is an `ACCEPTANCE-*` decision.
+
+### Locked files (STATIC, 18:20 EST)
+
+sha256 is identical on `main@8e2df97` and on the PR #39 branch for each file:
+
+- `reports/FINAL_REPORT.md`: `79462a8e4eaa941050e32e4b2fb605287ca275273bde39a2652a46fb7a55d8e6`. Matches `preserved-records.json`.
+- `reports/USER_ACTIONS_REQUIRED.md`: `70762916c660dc0266ed95cb95cef67002e6af0bcf63c40e9402e2bd1222453a`. Matches.
+- `reports/user-actions.json`: `4d5efd2f4a883b4084de5e3a1a59f44be574728286c9024d3a0305d910562391`. Not listed in the manifest.
+- `docs/metadata/preserved-records.json`: `7ce2f2e6f927f3d6dfa07883e43275c659c8046a2ee6ecc0e1d19aa2e68922bc`.
+
+### Three-phase status
+
+- **Phase A (engineering):** B1 (T-16 pin, prepared, not applied), B3 (review-notes, done on the candidate), B7 and B8.
+- **Phase B (completion):** the owner items UA-7, UA-3 baseline and UA-2, all actionable now; plus the autonomous tasks B2, B4, B5, B6, B9 and B10.
+- **Phase C (independent acceptance):** UA-3 full rules, UA-1, UA-6 and UA-5, all blocked; plus the reviewer's pin re-review and SHA review.
+- **Sequencing correction** (baseline ruleset now; approvals and required checks deferred until Phase C readiness): **Owner directive relayed to Final Report worker on 2026-11-03 18:13 ET via orchestration chat; not yet recorded in repo.** No matching record exists in `coordination/tasks.json@0ad0468`, `coordination/INTEGRATION_MANIFEST.*@0ad0468`, `coordination/PR_DISPOSITIONS.md@0ad0468`, `coordination/T16_RECONCILIATION.md@0ad0468` or the PR #42 body. It is not a signed approval.
+- **Live owner-item recheck:** `GET /rulesets` → `[]`. Both branches are unprotected. Collaborators `["onnxscibroccoli"]`. Invitations: 0. PR #4 has 0 comments.
+
+**USER ACTION REQUIRED: 3 — UA-7 invite an independent reviewer; UA-3 baseline ruleset; UA-2 confirm the Entra baseline.** Details are in [HUMAN_DECISION_PACKET_2026-11-03.md](HUMAN_DECISION_PACKET_2026-11-03.md). Reviewer materials are in [PHASE_C_REVIEW_PACKAGE_PREP_2026-11-03.md](PHASE_C_REVIEW_PACKAGE_PREP_2026-11-03.md).
+
+## Update at `main` `8e2df97` (17:36–17:45 EST, kept for history)
 
 ### Main (STATIC)
 
