@@ -6,7 +6,7 @@ Created 2026-11-03 (EST, America/New_York) under owner directive t26u (17:00 EST
 
 - Branch: `integration/candidate-20261103b`, base `main` `8e2df97b558e69032e52a50ed0adfd311ad04578`
 - Gate commit (pinned by the proposal): `a518b03e204d4b77a67e16ed83652acdbdd7b8d5`
-- Tested SHA: `see report (head of this branch at test time)`
+- Tested SHA: `308512714690ba20a6d9003fcd0731b88fffd596`
 
 ## Source refs and merge bases
 
@@ -76,7 +76,16 @@ Created 2026-11-03 (EST, America/New_York) under owner directive t26u (17:00 EST
 
 ## Checks and runs
 
-The runs are recorded in a later records-only commit.
+| Workflow | Run | Result |
+|---|---|---|
+| acceptance | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731058945 | success |
+| integration-gate | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731062507 | failure (merge-eligibility only, by design: GATE HASHES REJECTED vs pin ea0c235 because the a518b03 proposal is UNREVIEWED and unapplied; all 18 other jobs success) |
+| offline-validation | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731065623 | success |
+| aws-cdk | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731069473 | success |
+| postgres-restore-evidence | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731073799 | success |
+| portfolio-validation | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731076403 | success |
+| Documentation knowledge base (deploy=false) | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731137053 | success |
+| local validate-all.sh with PostgreSQL 16 (box) | https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/None | PASS (54 steps) |
 
 ## Reviews required before main
 
