@@ -1,0 +1,28 @@
+FAIL test/backup-kms.test.ts (19.891 s)
+  ● negative: mutating the real template is caught › adding a crypto action to the real vault-key admin statement is caught
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 0
+    + Received  + 1
+
+      Array [
+        "KMS_ADMIN_OPERATIONAL_MIX",
+    +   "KMS_CRYPTO_NOT_VIA_SERVICE",
+      ]
+
+      193 |     const admin = j.Resources[lid(stack.backupVaultKey)].Properties.KeyPolicy.Statement.find((s: any) => s.Sid === 'KeyAdministrationByKeyAdminRoleOnly');
+      194 |     admin.Action.push('kms:Decrypt');
+    > 195 |     expect(kmsSeparation(j).map((v) => v.rule)).toEqual(['KMS_ADMIN_OPERATIONAL_MIX']);
+          |                                                 ^
+      196 |   });
+      197 |   test('removing kms:ViaService from the real vault-key crypto statement is caught', () => {
+      198 |     const j = clone();
+
+      at Object.<anonymous> (test/backup-kms.test.ts:195:49)
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 76 passed, 77 total
+Snapshots:   0 total
+Time:        20.448 s
+Ran all test suites.

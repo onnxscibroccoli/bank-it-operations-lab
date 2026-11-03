@@ -1,0 +1,4 @@
+AI agent detected
+Successfully synthesized to /tmp/co-source-account-only
+Supply a stack id (BankItLabSecureStorage, BankItLabNetworkDatabase) to display its template.
+84 feature flags are not configured. Run 'cdk flags --unstable=flags' to learn more.

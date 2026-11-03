@@ -54,6 +54,12 @@ export interface LeastPrivilegeKeyProps {
   readonly allowCloudWatchLogs?: boolean;
   /** IAM role name allowed to administer the key (in addition to the account root user as break-glass). */
   readonly keyAdminRoleName?: string;
+  /**
+   * Add the AWS Backup documented confused-deputy Deny for backup-storage.amazonaws.com (Decrypt, RetireGrant,
+   * GenerateDataKey unless aws:SourceAccount is this account / aws:SourceArn is a backup vault of this account and
+   * region). Verbatim pattern from https://docs.aws.amazon.com/aws-backup/latest/devguide/cross-service-confused-deputy-prevention.html
+   */
+  readonly denyBackupStorageConfusedDeputy?: boolean;
 }
 
 /**
@@ -121,6 +127,21 @@ export function leastPrivilegeKey(scope: Construct, id: string, props: LeastPriv
           ArnLike: {
             'kms:EncryptionContext:aws:logs:arn': `arn:${stack.partition}:logs:${stack.region}:${stack.account}:log-group:*`,
           },
+        },
+      }),
+    );
+  }
+  if (props.denyBackupStorageConfusedDeputy) {
+    statements.push(
+      new iam.PolicyStatement({
+        sid: 'DenyBackupStorageConfusedDeputy',
+        effect: iam.Effect.DENY,
+        principals: [new iam.ServicePrincipal('backup-storage.amazonaws.com')],
+        actions: ['kms:Decrypt', 'kms:RetireGrant', 'kms:GenerateDataKey'],
+        resources: ['*'],
+        conditions: {
+          StringNotEquals: { 'aws:SourceAccount': stack.account },
+          ArnNotLike: { 'aws:SourceArn': `arn:${stack.partition}:backup:${stack.region}:${stack.account}:backup-vault:*` },
         },
       }),
     );

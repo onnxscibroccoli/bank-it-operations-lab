@@ -12556,5 +12556,197 @@
       "evidence": []
     },
     "last_reviewed": "2026-11-03"
+  },
+  "evidence/aws/aws-remediation-backup-kms/CORRECTION_PASSES.md": {
+    "id": "page-fa3e4ebb25eb7933",
+    "description": "Correction passes (limit: 3) for the backup KMS remediation; failure output is kept in logs/.",
+    "category": "cloud-infrastructure",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Proposed",
+    "current_state": "Proposed static evidence from branch aws-remediation-backup-kms; nothing deployed; static checks do not prove runtime AWS behavior.",
+    "limitations": "Credential-free CDK synthesis, Jest and cdk-nag only. EX-04 is deployment-blocking until the non-production runtime test passes and the owner approves.",
+    "planned": "Owner review of the draft pull request; runtime verification in a disposable non-production account under a separate approval.",
+    "source_files": [
+      "evidence/aws/aws-remediation-backup-kms/CORRECTION_PASSES.md",
+      "infra/aws-cdk"
+    ],
+    "related_development": [],
+    "aliases": [
+      "KMS",
+      "IAM",
+      "AWS Backup",
+      "EX-04",
+      "confused deputy"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Static template analysis only; no runtime evidence.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "evidence/aws/aws-remediation-backup-kms/README.md": {
+    "id": "page-89a66c810ae5613c",
+    "description": "Static evidence index and findings for the backup KMS key and EX-04 remediation (branch aws-remediation-backup-kms).",
+    "category": "cloud-infrastructure",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Proposed",
+    "current_state": "Proposed static evidence from branch aws-remediation-backup-kms; nothing deployed; static checks do not prove runtime AWS behavior.",
+    "limitations": "Credential-free CDK synthesis, Jest and cdk-nag only. EX-04 is deployment-blocking until the non-production runtime test passes and the owner approves.",
+    "planned": "Owner review of the draft pull request; runtime verification in a disposable non-production account under a separate approval.",
+    "source_files": [
+      "evidence/aws/aws-remediation-backup-kms/README.md",
+      "infra/aws-cdk"
+    ],
+    "related_development": [],
+    "aliases": [
+      "KMS",
+      "IAM",
+      "AWS Backup",
+      "EX-04",
+      "confused deputy"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Static template analysis only; no runtime evidence.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "evidence/aws/aws-remediation-backup-kms/RESEARCH_EX04.md": {
+    "id": "page-03581b5015562ebe",
+    "description": "Research with AWS documentation citations on aws:SourceArn and aws:SourceAccount in the AWS Backup service-role trust policy.",
+    "category": "cloud-infrastructure",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Proposed",
+    "current_state": "Proposed static evidence from branch aws-remediation-backup-kms; nothing deployed; static checks do not prove runtime AWS behavior.",
+    "limitations": "Credential-free CDK synthesis, Jest and cdk-nag only. EX-04 is deployment-blocking until the non-production runtime test passes and the owner approves.",
+    "planned": "Owner review of the draft pull request; runtime verification in a disposable non-production account under a separate approval.",
+    "source_files": [
+      "evidence/aws/aws-remediation-backup-kms/RESEARCH_EX04.md",
+      "infra/aws-cdk"
+    ],
+    "related_development": [],
+    "aliases": [
+      "KMS",
+      "IAM",
+      "AWS Backup",
+      "EX-04",
+      "confused deputy"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Static template analysis only; no runtime evidence.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "evidence/aws/aws-remediation-backup-kms/RESIDUAL_RISK.md": {
+    "id": "page-38464c6717aca911",
+    "description": "Residual risks remaining after the backup KMS and EX-04 remediation, with compensating controls and exit criteria.",
+    "category": "cloud-infrastructure",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Proposed",
+    "current_state": "Proposed static evidence from branch aws-remediation-backup-kms; nothing deployed; static checks do not prove runtime AWS behavior.",
+    "limitations": "Credential-free CDK synthesis, Jest and cdk-nag only. EX-04 is deployment-blocking until the non-production runtime test passes and the owner approves.",
+    "planned": "Owner review of the draft pull request; runtime verification in a disposable non-production account under a separate approval.",
+    "source_files": [
+      "evidence/aws/aws-remediation-backup-kms/RESIDUAL_RISK.md",
+      "infra/aws-cdk"
+    ],
+    "related_development": [],
+    "aliases": [
+      "KMS",
+      "IAM",
+      "AWS Backup",
+      "EX-04",
+      "confused deputy"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Static template analysis only; no runtime evidence.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "evidence/aws/aws-remediation-backup-kms/SECURITY_EXCEPTIONS_EX04_UPDATE.md": {
+    "id": "page-b6596c8349971305",
+    "description": "Proposed replacement text for the frozen EX-04 security exception register row (pending owner approval).",
+    "category": "cloud-infrastructure",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Proposed",
+    "current_state": "Proposed static evidence from branch aws-remediation-backup-kms; nothing deployed; static checks do not prove runtime AWS behavior.",
+    "limitations": "Credential-free CDK synthesis, Jest and cdk-nag only. EX-04 is deployment-blocking until the non-production runtime test passes and the owner approves.",
+    "planned": "Owner review of the draft pull request; runtime verification in a disposable non-production account under a separate approval.",
+    "source_files": [
+      "evidence/aws/aws-remediation-backup-kms/SECURITY_EXCEPTIONS_EX04_UPDATE.md",
+      "infra/aws-cdk"
+    ],
+    "related_development": [],
+    "aliases": [
+      "KMS",
+      "IAM",
+      "AWS Backup",
+      "EX-04",
+      "confused deputy"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Static template analysis only; no runtime evidence.",
+      "last_verified": null,
+      "evidence": []
+    }
+  },
+  "evidence/aws/aws-remediation-backup-kms/VERIFICATION_PROCEDURE.md": {
+    "id": "page-b301dbeb55e635fc",
+    "description": "Non-production runtime verification steps (not executed) required before EX-04 stops being deployment-blocking.",
+    "category": "cloud-infrastructure",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Proposed",
+    "current_state": "Proposed static evidence from branch aws-remediation-backup-kms; nothing deployed; static checks do not prove runtime AWS behavior.",
+    "limitations": "Credential-free CDK synthesis, Jest and cdk-nag only. EX-04 is deployment-blocking until the non-production runtime test passes and the owner approves.",
+    "planned": "Owner review of the draft pull request; runtime verification in a disposable non-production account under a separate approval.",
+    "source_files": [
+      "evidence/aws/aws-remediation-backup-kms/VERIFICATION_PROCEDURE.md",
+      "infra/aws-cdk"
+    ],
+    "related_development": [],
+    "aliases": [
+      "KMS",
+      "IAM",
+      "AWS Backup",
+      "EX-04",
+      "confused deputy"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Static template analysis only; no runtime evidence.",
+      "last_verified": null,
+      "evidence": []
+    }
   }
 }

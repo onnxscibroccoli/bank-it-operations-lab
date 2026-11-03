@@ -8,6 +8,7 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
+import { backupTrustConditions, resolveBackupTrustMode } from './backup-trust';
 import { leastPrivilegeKey } from './least-privilege-key';
 
 export const DB_PORT = 5433; // non-default port (AwsSolutions-RDS11)
@@ -29,6 +30,8 @@ export class NetworkDatabaseStack extends Stack {
   public readonly vpc: ec2.Vpc;
   public readonly dbKey: kms.Key;
   public readonly logsKey: kms.Key;
+  /** Dedicated CMK for the AWS Backup vault (not shared with RDS storage / Secrets Manager). */
+  public readonly backupVaultKey: kms.Key;
   public readonly appSecurityGroup: ec2.SecurityGroup;
   public readonly dbSecurityGroup: ec2.SecurityGroup;
   public readonly database: rds.DatabaseInstance;
@@ -207,9 +210,18 @@ export class NetworkDatabaseStack extends Stack {
       }
     }
 
-    // AWS Backup (NIST RDSInBackupPlan): CMK-encrypted vault, daily backups kept 35 days.
+    // AWS Backup (NIST RDSInBackupPlan): vault encrypted with its own CMK, daily backups kept 35 days.
+    // aws-remediation-backup-kms: the vault no longer shares DatabaseKey. RDS snapshots taken by AWS Backup stay
+    // encrypted with the source DB key (RDS is not a "fully managed" AWS Backup resource type); the vault key covers
+    // vault-level encryption only, is usable only via backup.<region> in this account, and carries the AWS-documented
+    // backup-storage confused-deputy Deny.
+    this.backupVaultKey = leastPrivilegeKey(this, 'BackupVaultKey', {
+      description: 'CMK for the lab AWS Backup vault only (via backup.<region>; no RDS / Secrets Manager use)',
+      viaServices: ['backup'],
+      denyBackupStorageConfusedDeputy: true,
+    });
     const vault = new backup.BackupVault(this, 'BackupVault', {
-      encryptionKey: this.dbKey,
+      encryptionKey: this.backupVaultKey,
       removalPolicy: RemovalPolicy.RETAIN,
     });
     const plan = new backup.BackupPlan(this, 'BackupPlan', { backupVault: vault });
@@ -220,7 +232,7 @@ export class NetworkDatabaseStack extends Stack {
         deleteAfter: Duration.days(35),
       }),
     );
-    const role = backupRole(this, vault, this.database, this.dbKey);
+    const role = backupRole(this, vault, this.database, this.dbKey, this.backupVaultKey);
     new backup.CfnBackupSelection(this, 'PostgresSelection', {
       backupPlanId: plan.backupPlanId,
       backupSelection: {
@@ -244,37 +256,41 @@ export class NetworkDatabaseStack extends Stack {
 }
 
 /**
- * Customer-managed backup role. Trust is limited to backup.amazonaws.com in this account,
- * and only when the source is this vault. DEPLOYMENT BLOCKED: the availability of
- * that SourceArn context during service-role AssumeRole is NOT VERIFIED. AWS vault
- * examples for SNS/KMS do not establish this behavior. The policy is this instance
- * and awsbackup-* snapshots, not the
- * AWS-managed AWSBackupServiceRolePolicyForBackup (that policy was EX-04).
+ * Customer-managed AWS Backup role for the lab PostgreSQL instance (backup jobs only; no restore permissions).
  *
- * Snapshot names are chosen by AWS Backup at job time, so the snapshot ARN has a prefix
- * wildcard. That is the remaining EX-04, and it is narrower than the managed policy.
+ * Trust: backup.amazonaws.com with aws:SourceAccount = this account (StringEquals) AND, in the default mode, aws:SourceArn
+ * = this vault (ArnEquals). See lib/backup-trust.ts and evidence/aws/aws-remediation-backup-kms/RESEARCH_EX04.md:
+ * AWS Backup does not document which aws:SourceArn value (if any) it sends when it assumes a customer service role,
+ * so EX-04 is DEPLOYMENT-BLOCKING until the non-prod runtime test in VERIFICATION_PROCEDURE.md passes.
+ *
+ * Permissions (customer-managed, replaces AWSBackupServiceRolePolicyForBackup):
+ *  - RDS snapshot actions on this instance and on AWS Backup-named snapshots. AWS Backup names RDS snapshots
+ *    `awsbackup:job-<id>`; the AWS-managed policy scopes them as `snapshot:awsbackup:*`. The pre-remediation
+ *    `snapshot:awsbackup-*` (hyphen) did not match that documented name (finding F-06).
+ *  - KMS split into crypto (Decrypt/GenerateDataKey/DescribeKey via rds|backup) and grant delegation (CreateGrant only
+ *    with kms:GrantIsForAWSResource=true via rds|backup). No admin KMS actions, no Resource "*".
  */
 function backupRole(
   scope: NetworkDatabaseStack,
   vault: backup.BackupVault,
   database: rds.DatabaseInstance,
-  key: kms.Key,
+  dbKey: kms.Key,
+  vaultKey: kms.Key,
 ): iam.Role {
   const stack = Stack.of(scope);
   const snapshotArn = stack.formatArn({
     service: 'rds',
     resource: 'snapshot',
     arnFormat: ArnFormat.COLON_RESOURCE_NAME,
-    resourceName: 'awsbackup-*',
+    resourceName: 'awsbackup:*',
   });
+  const via = [`rds.${stack.region}.amazonaws.com`, `backup.${stack.region}.amazonaws.com`];
+  const mode = resolveBackupTrustMode(scope);
   const role = new iam.Role(scope, 'DbBackupRole', {
     assumedBy: new iam.ServicePrincipal('backup.amazonaws.com', {
-      conditions: {
-        StringEquals: { 'aws:SourceAccount': stack.account },
-        ArnEquals: { 'aws:SourceArn': vault.backupVaultArn },
-      },
+      conditions: backupTrustConditions(stack, mode, vault.backupVaultArn),
     }),
-    description: 'Lab PostgreSQL backups only. Trust bound to this account and this vault.',
+    description: `Lab PostgreSQL backup jobs only. Trust mode ${mode} (EX-04, deployment-blocking until runtime-verified).`,
   });
   const policy = new iam.ManagedPolicy(scope, 'DbBackupPolicy', {
     document: new iam.PolicyDocument({
@@ -300,16 +316,18 @@ function backupRole(
           resources: [vault.backupVaultArn],
         }),
         new iam.PolicyStatement({
-          sid: 'UseDbKeyViaBackupAndRds',
-          actions: ['kms:CreateGrant', 'kms:Decrypt', 'kms:DescribeKey', 'kms:GenerateDataKey'],
-          resources: [key.keyArn],
+          sid: 'CryptoDbAndVaultKeysViaRdsAndBackupOnly',
+          actions: ['kms:Decrypt', 'kms:DescribeKey', 'kms:GenerateDataKey'],
+          resources: [dbKey.keyArn, vaultKey.keyArn],
+          conditions: { StringEquals: { 'kms:ViaService': via } },
+        }),
+        new iam.PolicyStatement({
+          sid: 'GrantsForAwsResourcesViaRdsAndBackupOnly',
+          actions: ['kms:CreateGrant'],
+          resources: [dbKey.keyArn, vaultKey.keyArn],
           conditions: {
-            StringEquals: {
-              'kms:ViaService': [
-                `rds.${stack.region}.amazonaws.com`,
-                `backup.${stack.region}.amazonaws.com`,
-              ],
-            },
+            Bool: { 'kms:GrantIsForAWSResource': 'true' },
+            StringEquals: { 'kms:ViaService': via },
           },
         }),
       ],
@@ -320,13 +338,13 @@ function backupRole(
     {
       id: 'AwsSolutions-IAM5',
       reason:
-        'EX-04: AWS Backup names RDS snapshots awsbackup-<job> at runtime. The wildcard is only that prefix in this account. ' +
-        'The role trust requires aws:SourceAccount and aws:SourceArn of this vault. This replaces the AWS-managed backup policy.',
+        'EX-04: AWS Backup names RDS snapshots awsbackup:job-<id> at runtime (AWS-managed policy scope snapshot:awsbackup:*). ' +
+        'The wildcard is only that prefix in this account/region. Trust: aws:SourceAccount + trust mode per backup-trust.ts. ' +
+        'DEPLOYMENT-BLOCKING until runtime-verified. Replaces the AWS-managed backup policy.',
       appliesTo: [
-        'Resource::arn:<AWS::Partition>:rds:<AWS::Region>:<AWS::AccountId>:snapshot:awsbackup-*',
+        'Resource::arn:<AWS::Partition>:rds:<AWS::Region>:<AWS::AccountId>:snapshot:awsbackup:*',
       ],
     },
   ]);
   return role;
 }
-

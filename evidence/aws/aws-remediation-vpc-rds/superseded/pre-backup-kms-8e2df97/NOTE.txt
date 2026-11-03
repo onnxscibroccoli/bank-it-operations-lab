@@ -1,0 +1,5 @@
+Outputs from main@8e2df97 (pass 4 / B5-2: synth, cdk-nag, jest-results.json, 36 tests), moved here unmodified by
+branch aws-remediation-backup-kms, which refreshed ../../synth, ../../cdk-nag and ../../jest-results.json so that the
+CI "synth drift vs committed evidence" step keeps comparing against the current code.
+Full logs for the refresh: evidence/aws/aws-remediation-backup-kms/. The frozen .md records in this directory
+(README.md, SECURITY_EXCEPTIONS.md, CORRECTION_PASSES.md) were intentionally NOT edited (docs preserved-records hashes).

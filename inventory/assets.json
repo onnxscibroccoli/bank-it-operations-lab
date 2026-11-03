@@ -4,7 +4,7 @@
   "sources": [
     {
       "template": "BankItLabNetworkDatabase.template.json",
-      "sha256": "2e2d47d35668b8274ddcbd40470672d3a39df81bab5e243b249edb62b6d0a145"
+      "sha256": "c1fe742a83a01ea5a6d5b8609b28f644c80524cc3cc9d57509db8613668de46a"
     },
     {
       "template": "BankItLabSecureStorage.template.json",
@@ -38,6 +38,13 @@
       "stack": "BankItLabNetworkDatabase",
       "logical_id": "BackupVault3A9C5852",
       "type": "AWS::Backup::BackupVault",
+      "status": "STATIC_REFERENCE"
+    },
+    {
+      "id": "BankItLabNetworkDatabase:BackupVaultKey6DBC0EC5",
+      "stack": "BankItLabNetworkDatabase",
+      "logical_id": "BackupVaultKey6DBC0EC5",
+      "type": "AWS::KMS::Key",
       "status": "STATIC_REFERENCE"
     },
     {
@@ -417,7 +424,7 @@
     },
     {
       "from": "BankItLabNetworkDatabase:BackupVault3A9C5852",
-      "to": "BankItLabNetworkDatabase:DatabaseKey7576F140"
+      "to": "BankItLabNetworkDatabase:BackupVaultKey6DBC0EC5"
     },
     {
       "from": "BankItLabNetworkDatabase:BankItLabNetworkDatabasePostgresSecretA3DF6E373fdaad7efa858a3daf9490cf0a702aeb",
@@ -462,6 +469,10 @@
     {
       "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
       "to": "BankItLabNetworkDatabase:BackupVault3A9C5852"
+    },
+    {
+      "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",
+      "to": "BankItLabNetworkDatabase:BackupVaultKey6DBC0EC5"
     },
     {
       "from": "BankItLabNetworkDatabase:DbBackupPolicy43A4FBCE",

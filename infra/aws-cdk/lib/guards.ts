@@ -98,6 +98,149 @@ export function openSecurityGroupRules(t: TemplateJson): Violation[] {
   return out;
 }
 
+/* ------------------------------------------------------------------------------------------------------------------
+ * KMS admin / operational separation (aws-remediation-backup-kms). Static template checks only: they prove what the
+ * synthesized policy text says, NOT how AWS evaluates it at runtime.
+ *  - crypto (operational): Encrypt, Decrypt, ReEncrypt*, GenerateDataKey*
+ *  - grant delegation (operational, must be GrantIsForAWSResource / ViaService scoped): CreateGrant
+ *  - grant lifecycle (kept with CreateGrant, same conditions): ListGrants, RevokeGrant, RetireGrant
+ *  - neutral (allowed anywhere): DescribeKey
+ *  - administrative: everything else (Create*, Put*, Update*, Enable*, Disable*, Delete*, Get*, List*, Tag/Untag,
+ *    ScheduleKeyDeletion, CancelKeyDeletion, Import*, Replicate*, ...)
+ * ---------------------------------------------------------------------------------------------------------------- */
+const lc = (a: unknown) => String(a).toLowerCase();
+const asArray = <T>(v: T | T[] | undefined): T[] => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+const CRYPTO_RE = /^kms:(encrypt\*?|decrypt\*?|reencrypt\*?|reencryptfrom|reencryptto|generatedatakey[a-z]*\*?)$/;
+const GRANT_LIFECYCLE = ['kms:listgrants', 'kms:revokegrant', 'kms:retiregrant'];
+const NEUTRAL = ['kms:describekey', 'kms:describe*'];
+/** Administrative verbs that must never be granted as a wildcard (kms:Delete*, kms:Get*, ...). Describe* and the
+ *  operational wildcards (Encrypt*, Decrypt*, ReEncrypt*, GenerateDataKey*) are excluded on purpose. */
+const ADMIN_WILDCARD_VERBS = ['create', 'put', 'update', 'enable', 'disable', 'delete', 'get', 'list', 'revoke', 'schedule',
+  'cancel', 'tag', 'untag', 'import', 'replicate', 'retire', 'connect', 'disconnect', 'rotate', 'sign', 'verify', 'derive'];
+
+export type KmsActionClass = 'crypto' | 'grant' | 'grant-lifecycle' | 'neutral' | 'admin' | 'wildcard';
+export function classifyKmsAction(action: string): KmsActionClass {
+  const a = lc(action);
+  if (a === '*' || a === 'kms:*') return 'wildcard';
+  if (CRYPTO_RE.test(a)) return 'crypto';
+  if (a === 'kms:creategrant') return 'grant';
+  if (GRANT_LIFECYCLE.includes(a)) return 'grant-lifecycle';
+  if (NEUTRAL.includes(a)) return 'neutral';
+  return 'admin';
+}
+const condKeys = (c: any): string[] => Object.values(c ?? {}).flatMap((v: any) => Object.keys(v ?? {}).map(lc));
+const condOps = (c: any): string[] => Object.keys(c ?? {});
+const grantIsForAwsResource = (c: any): boolean => String(c?.Bool?.['kms:GrantIsForAWSResource']) === 'true';
+const isAwsPrincipal = (p: any): boolean => !!p && typeof p === 'object' && 'AWS' in p;
+const isServicePrincipal = (p: any): boolean => !!p && typeof p === 'object' && 'Service' in p && !('AWS' in p);
+
+/** Key-policy separation-of-duties checks (complements kmsWildcards). */
+export function kmsSeparation(t: TemplateJson): Violation[] {
+  const out: Violation[] = [];
+  for (const [id, r] of Object.entries(t.Resources ?? {})) {
+    if (r.Type !== 'AWS::KMS::Key') continue;
+    for (const s of r.Properties?.KeyPolicy?.Statement ?? []) {
+      if (s.Effect !== 'Allow') continue;
+      const actions: string[] = asArray(s.Action);
+      const cls = actions.map(classifyKmsAction);
+      const keys = condKeys(s.Condition);
+      const sid = s.Sid ?? '(no Sid)';
+      const adminWild = actions.filter((a) => {
+        const m = /^kms:([a-z]+)\*$/.exec(lc(a));
+        return !!m && ADMIN_WILDCARD_VERBS.includes(m[1]);
+      });
+      if (adminWild.length) out.push({ rule: 'KMS_ADMIN_VERB_WILDCARD', resource: id, detail: `${sid}: ${adminWild.join(',')}` });
+      const hasAdmin = cls.includes('admin');
+      const hasOperational = cls.includes('crypto') || cls.includes('grant');
+      if (hasAdmin && hasOperational) {
+        out.push({ rule: 'KMS_ADMIN_OPERATIONAL_MIX', resource: id, detail: `${sid}: ${actions.join(',')}` });
+      }
+      if (isAwsPrincipal(s.Principal)) {
+        if (hasAdmin && !keys.includes('aws:principalarn')) {
+          out.push({ rule: 'KMS_ADMIN_UNSCOPED_PRINCIPAL', resource: id, detail: `${sid}: admin actions for an account principal without aws:PrincipalArn` });
+        }
+        if (cls.includes('crypto') && !keys.includes('kms:viaservice')) {
+          out.push({ rule: 'KMS_CRYPTO_NOT_VIA_SERVICE', resource: id, detail: `${sid}: crypto for an account principal without kms:ViaService` });
+        }
+        if (cls.includes('grant') && !(grantIsForAwsResource(s.Condition) || keys.includes('kms:viaservice'))) {
+          out.push({ rule: 'KMS_GRANT_UNSCOPED', resource: id, detail: `${sid}: CreateGrant without kms:GrantIsForAWSResource=true or kms:ViaService` });
+        }
+        if (actions.some((a) => ['kms:putkeypolicy', 'kms:put*'].includes(lc(a))) && !keys.includes('kms:bypasspolicylockoutsafetycheck')) {
+          out.push({ rule: 'KMS_PUTKEYPOLICY_LOCKOUT_BYPASS_ALLOWED', resource: id, detail: `${sid}: PutKeyPolicy without BypassPolicyLockoutSafetyCheck=false` });
+        }
+      }
+      if (isServicePrincipal(s.Principal) && keys.length === 0) {
+        out.push({ rule: 'KMS_SERVICE_PRINCIPAL_UNCONDITIONED', resource: id, detail: `${sid}: ${JSON.stringify(s.Principal)}` });
+      }
+    }
+  }
+  return out;
+}
+
+/** KMS permissions in identity policies (managed or inline, incl. Role.Policies). */
+export function iamKmsPermissions(t: TemplateJson): Violation[] {
+  const out: Violation[] = [];
+  const docs: { id: string; doc: any }[] = [];
+  for (const [id, r] of Object.entries(t.Resources ?? {})) {
+    if (r.Type === 'AWS::IAM::ManagedPolicy' || r.Type === 'AWS::IAM::Policy') docs.push({ id, doc: r.Properties?.PolicyDocument });
+    if (r.Type === 'AWS::IAM::Role') for (const p of r.Properties?.Policies ?? []) docs.push({ id, doc: p.PolicyDocument });
+  }
+  for (const { id, doc } of docs) {
+    for (const s of doc?.Statement ?? []) {
+      if (s.Effect !== 'Allow') continue;
+      const actions: string[] = asArray(s.Action).map(String);
+      const kmsActions = actions.filter((a) => a === '*' || lc(a).startsWith('kms:'));
+      if (!kmsActions.length) continue;
+      const cls = kmsActions.map(classifyKmsAction);
+      const sid = s.Sid ?? '(no Sid)';
+      if (cls.includes('wildcard')) out.push({ rule: 'IAM_KMS_WILDCARD', resource: id, detail: `${sid}: ${kmsActions.join(',')}` });
+      if (cls.includes('admin')) out.push({ rule: 'IAM_KMS_ADMIN_IN_WORKLOAD_POLICY', resource: id, detail: `${sid}: ${kmsActions.join(',')}` });
+      if (cls.includes('grant') && !grantIsForAwsResource(s.Condition)) {
+        out.push({ rule: 'IAM_KMS_GRANT_NOT_FOR_AWS_RESOURCE', resource: id, detail: `${sid}: CreateGrant without kms:GrantIsForAWSResource=true` });
+      }
+      if (cls.includes('grant') && cls.includes('crypto')) {
+        out.push({ rule: 'IAM_KMS_GRANT_MIXED_WITH_CRYPTO', resource: id, detail: `${sid}: ${kmsActions.join(',')}` });
+      }
+      if ((cls.includes('crypto') || cls.includes('grant')) && !condKeys(s.Condition).includes('kms:viaservice')) {
+        out.push({ rule: 'IAM_KMS_NOT_VIA_SERVICE', resource: id, detail: `${sid}: ${kmsActions.join(',')}` });
+      }
+      if (asArray(s.Resource).some((x) => x === '*')) {
+        out.push({ rule: 'IAM_KMS_RESOURCE_WILDCARD', resource: id, detail: `${sid}: Resource "*"` });
+      }
+    }
+  }
+  return out;
+}
+
+/** Trust policies of roles assumable by AWS Backup: must pin aws:SourceAccount with a non-IfExists operator, must
+ *  not use IfExists on the source keys (that would silently pass when AWS omits the key), and must not trust any
+ *  other principal in the same statement. */
+export function backupRoleTrust(t: TemplateJson): Violation[] {
+  const out: Violation[] = [];
+  for (const [id, r] of Object.entries(t.Resources ?? {})) {
+    if (r.Type !== 'AWS::IAM::Role') continue;
+    for (const s of r.Properties?.AssumeRolePolicyDocument?.Statement ?? []) {
+      const svc = asArray(s.Principal?.Service).map(String);
+      if (s.Effect !== 'Allow' || !svc.some((x) => x.startsWith('backup.'))) continue;
+      const ops = condOps(s.Condition);
+      const sa = ops.filter((o) => Object.keys(s.Condition[o] ?? {}).some((k) => lc(k) === 'aws:sourceaccount'));
+      if (!sa.some((o) => o === 'StringEquals')) out.push({ rule: 'BACKUP_TRUST_NO_SOURCE_ACCOUNT', resource: id, detail: JSON.stringify(s.Condition ?? {}) });
+      for (const o of ops) {
+        if (/IfExists$/.test(o) && Object.keys(s.Condition[o] ?? {}).some((k) => lc(k).startsWith('aws:source'))) {
+          out.push({ rule: 'BACKUP_TRUST_IFEXISTS', resource: id, detail: `${o} on ${Object.keys(s.Condition[o]).join(',')}` });
+        }
+      }
+      if (svc.length > 1 || s.Principal?.AWS !== undefined || s.Principal === '*') {
+        out.push({ rule: 'BACKUP_TRUST_EXTRA_PRINCIPAL', resource: id, detail: JSON.stringify(s.Principal) });
+      }
+    }
+  }
+  return out;
+}
+
 export function allViolations(t: TemplateJson): Violation[] {
-  return [...rdsPublicOrUnencrypted(t), ...selfLoggingBuckets(t), ...kmsWildcards(t), ...openSecurityGroupRules(t)];
+  return [
+    ...rdsPublicOrUnencrypted(t), ...selfLoggingBuckets(t), ...kmsWildcards(t), ...openSecurityGroupRules(t),
+    ...kmsSeparation(t), ...iamKmsPermissions(t), ...backupRoleTrust(t),
+  ];
 }

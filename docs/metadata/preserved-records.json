@@ -100,7 +100,7 @@
   "infra/orgs/docs/adr/ADR-0001-credential-free-org-reference.md": "795319d0414b8400fe245e404401763650ae6f74ff2908430b704b87b8bb80b8",
   "infra/orgs/docs/adr/ADR-0002-delegated-admin-coverage.md": "12ab80186e740b78fd6547931c29088e179235abf3c56298bfd7bdcd8cd3124c",
   "infra/orgs/docs/adr/ADR-0003-scp-linting-and-quotas.md": "a0ba249cf36e22d94d16e03362b420ab7b255bd7288f11ecb47e5cfae31f2aa0",
-  "inventory/ARCHITECTURE.md": "1040b13bb8d1d11977a6017f2d76d80898af41c5e256c5fc17f60ddd5f047151",
+  "inventory/ARCHITECTURE.md": "379c0e9466e877e4acc1f4d0f32bc9214529217cf1e5ab7c781458a3bea12f54",
   "learning/INVENTORY.md": "14413ef46ddf9fcd165e6fa689939c83f55e0492b481afce40c9c8d1a9083f66",
   "learning/README.md": "fe6b480fa86714c9792f2348af2dfb340d53a5696388b68356353167b44e39d5",
   "learning/SETUP.md": "c12dac92485809e5ec41ce26e2f7cb6345b68671f0c68fefdcd06fbcd2056f44",

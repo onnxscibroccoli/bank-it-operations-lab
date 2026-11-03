@@ -1,0 +1,2 @@
+Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info
+"NIST.800.53.R5-KMSBackingKeyRotationEnabled","BankItLabBackupDrVault/DrVaultKey/Resource","Compliant","N/A","Error","The KMS Symmetric key does not have automatic key rotation enabled - (Control IDs: CM-6a, CM-9b, SA-9(6), SC-12, SC-12(2), SC-12(6))."
