@@ -12059,6 +12059,68 @@
       ]
     }
   },
+  "reports/COMPLETION_PASS_2026-11-03.md": {
+    "id": "page-2f28b6e20d141cc0",
+    "description": "Completion pass, 2026-11-03. Dated read of main 30e0a83: merged PRs, Actions runs on main, reviews, protection, exceptions, identity baseline, decisions and remaining user actions.",
+    "category": "governance-compliance",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Point-in-time status record of main 30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6, read through the GitHub API on 2026-11-03 13:22-13:26 EST. Adds to, and does not edit, the preserved FINAL_REPORT.md, USER_ACTIONS_REQUIRED.md and user-actions.json.",
+    "limitations": "Not a review, approval, attestation or production verification. Independent review remains deferred under the owner's October 31 directive; EX-01..EX-04 remain PROPOSED. Controls are mapped to frameworks only; no certification or compliance is claimed.",
+    "planned": "Superseded by a later dated record when the remaining user actions (UA-2, UA-3, UA-7) change state.",
+    "source_files": [
+      "reports/COMPLETION_PASS_2026-11-03.md",
+      "reports/completion-pass-2026-11-03.json",
+      "reports/FINAL_REPORT.md",
+      "reports/USER_ACTIONS_REQUIRED.md",
+      "reports/user-actions.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39"
+    ],
+    "aliases": [
+      "governance",
+      "historical record",
+      "Evidence",
+      "CI",
+      "ADR",
+      "Attestation"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Read-only repository and Actions state at the stated revision and time. Cited runs apply to their own SHA and environment.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03",
+    "reading_guide": {
+      "overview": "Connect operational claims to evidence, responsibilities, and applicable review criteria.",
+      "why": "A passing test and an authorized release are different facts; recording both avoids accidental overstatement.",
+      "example": "A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.",
+      "mechanism": "Control mappings, evidence validators, and acceptance records organize claims and checks. They do not grant regulatory certification.",
+      "safety": "Independent review is deferred until after development integration by the owner\u2019s October 31 directive. Historical gates and security exceptions are not retroactively approved.",
+      "terms": {
+        "Evidence": "Recorded information supporting a specific claim within a stated scope.",
+        "CI": "Continuous Integration: automated checks of proposed changes.",
+        "ADR": "Architecture Decision Record: the context, choice, and consequences of a design decision.",
+        "Attestation": "A statement made by an identified party about a specific claim."
+      },
+      "learning_page": "docs/knowledge/governance.md",
+      "kind": "status record",
+      "original_headings": [
+        "Main and what merged since `7f50348`",
+        "Actions runs on `main` at `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6` (post-merge verification)",
+        "Review, protection, exceptions, identity and decisions",
+        "Remaining human steps"
+      ]
+    }
+  },
   "reports/review-pr1-pr2.md": {
     "id": "page-42e58d65c40d4911",
     "description": "Review: PR #1 and PR #2 (evidence and correctness audit). Connect operational claims to evidence, responsibilities, and applicable review criteria.",
