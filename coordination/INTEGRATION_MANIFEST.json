@@ -6,7 +6,7 @@
   "branch": "integration/candidate-20261103c",
   "base": "8e2df97b558e69032e52a50ed0adfd311ad04578",
   "gate_commit": "39c71f9eebf8bb72663515a29b52609d02dceea4",
-  "tested_sha": "see report (head of this branch at test time)"
+  "tested_sha": "614d006ae049aed269dc404aa5b84a7c04b55d8e"
  },
  "source_refs": {
   "main": "8e2df97b558e69032e52a50ed0adfd311ad04578",
@@ -200,7 +200,48 @@
    "portfolio-validation.yml",
    "documentation.yml (deploy=false)"
   ],
-  "runs": "pending at commit time; recorded in a later records-only commit"
+  "runs": [
+   {
+    "workflow": "acceptance",
+    "id": 41734499746,
+    "conclusion": "success (EXECUTION_PASS + REVIEW_PENDING; never ACCEPTED)"
+   },
+   {
+    "workflow": "integration-gate",
+    "id": 41734504240,
+    "conclusion": "failure in merge-eligibility only, by design: GATE HASHES REJECTED, 1 error (4 added scripts/ci files not in current pin ea0c235; test_module_coverage now matches the pin). Proposal UNREVIEWED and not applied; 18/19 other jobs success"
+   },
+   {
+    "workflow": "offline-validation",
+    "id": 41734507318,
+    "conclusion": "success"
+   },
+   {
+    "workflow": "aws-cdk",
+    "id": 41734510352,
+    "conclusion": "success"
+   },
+   {
+    "workflow": "postgres-restore-evidence",
+    "id": 41734513752,
+    "conclusion": "success"
+   },
+   {
+    "workflow": "portfolio-validation",
+    "id": 41734516468,
+    "conclusion": "success"
+   },
+   {
+    "workflow": "Documentation knowledge base (deploy=false)",
+    "id": 41734575819,
+    "conclusion": "success"
+   },
+   {
+    "workflow": "local validate-all.sh with PostgreSQL 16 (box)",
+    "id": null,
+    "conclusion": "PASS (54 steps)"
+   }
+  ]
  },
  "reviews_required_before_main": [
   "PENDING - AC1: independent reviewer approves the exact candidate SHA (UA-7)",
