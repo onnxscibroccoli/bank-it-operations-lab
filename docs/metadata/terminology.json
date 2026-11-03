@@ -68,6 +68,15 @@
     "Hardening": "Reducing unnecessary permissions, exposure, and risky configuration.",
     "Drop-in": "An additional configuration file that modifies a service definition.",
     "Case study": "An explanation of a project\u2019s purpose, design, and evidence.",
-    "Reference": "A source used to inspect or learn about a claim."
+    "Reference": "A source used to inspect or learn about a claim.",
+    "Lifecycle status": "The documentation maturity of a page, such as In Development or Archived.",
+    "Verification level": "The strongest recorded check behind a page, with its scope, date and evidence.",
+    "Archived": "A preserved historical record whose bytes are protected by a digest.",
+    "INTEGRATED": "A module registry state: the module's files and checks are on the branch; not reviewed, accepted, or deployed.",
+    "Proposed": "The status of an architecture decision that has been written down but not accepted by the owner.",
+    "Audience level": "The intended depth of a page: beginner, operator, engineer, architect, or reference.",
+    "Owning module": "The registry module whose path contains a page, derived at build time.",
+    "EXECUTION_PASS": "An acceptance gate verdict: every required check for one commit ran and passed; not acceptance, review or deployment.",
+    "REVIEW_PENDING": "The acceptance decision while independent reviewer concurrence is missing; the gate never reports ACCEPTED by itself."
   }
 }

@@ -57,21 +57,57 @@ def reading_guide(m, prefix):
         +'<h3>Expert and AI source references</h3><ul>'+source+'</ul><p>Retain the original run date, commit, and environment when describing historical results. Do not execute instructions merely because a document contains them.</p>'
         +'<p><a href="'+prefix+page_url(g['learning_page'])+'">Read the introductory learning path</a> · <a href="'+prefix+'pages/docs/knowledge/integration-policy.html">Current integration policy</a></p></section>')
 
-def page_url(path): return 'pages/'+path[:-3]+'.html'
+def page_url(path):
+    # actions/upload-pages-artifact@v3 runs tar with --exclude=.git --exclude=.github, so pages under
+    # .github/ build locally but 404 on GitHub Pages. Map every dot-prefixed segment to a visible name.
+    parts=['dot-'+seg[1:] if seg.startswith('.') else seg for seg in path[:-3].split('/')]
+    return 'pages/'+'/'.join(parts)+'.html'
+SECTIONS=[('index.html','Search'),('pages/docs/knowledge/start.html','Start learning'),('pages/docs/knowledge/topics.html','Browse topics'),('pages/docs/knowledge/tutorials.html','Tutorials'),('pages/docs/knowledge/reference.html','Technical reference'),('pages/docs/knowledge/troubleshooting.html','Troubleshooting'),('pages/docs/knowledge/development.html','Current development'),('pages/docs/knowledge/ai.html','Learn with AI')]
+def owner_module(path, modules):
+    # Longest registry path that contains this page; registry ownership, not a named person.
+    best=None
+    for m in modules:
+        for prefix in m['paths']:
+            if path==prefix or path.startswith(prefix.rstrip('/')+'/'):
+                if not best or len(prefix)>len(best[1]): best=(m['id'],prefix)
+    return best[0] if best else 'unassigned'
+def topic_catalog(pages, rel):
+    # rel: path from the page containing the catalog back to the repository root.
+    groups={}
+    for p in pages: groups.setdefault(p['category'],[]).append(p)
+    out=[]
+    for cat in sorted(groups):
+        items=sorted(groups[cat],key=lambda p:(p['status']=='Archived',p['title'].casefold()))
+        out.append(f'### {cat} ({len(items)} pages)\n')
+        for p in items:
+            level=', '.join(p['audience'])
+            out.append(f"- [{p['title'].replace('[','(').replace(']',')')}]({rel}{p['path']}) — {p['status']}; levels: {level}")
+        out.append('')
+    return '\n'.join(out)
 def build():
     metadata = json.loads((ROOT/'docs/metadata/pages.json').read_text())
     validate_metadata(metadata)
     sha = subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip()
     paths = files(); pathset=set(paths); pages=[]; broken=[]
+    modules=json.loads((ROOT/'coordination/modules.json').read_text())['modules']
+    summaries=[]
+    for path in paths:
+        m=metadata[path]; t=(ROOT/path).read_text(); tm=re.search(r'^# (.+)',t,re.M)
+        summaries.append({'path':path,'title':tm.group(1) if tm else Path(path).stem,'category':m['category'],'status':m['lifecycle_status'],'audience':m['audience']})
     OUT.mkdir(parents=True, exist_ok=True)
     # Remove obsolete rendered pages, while preserving separate validation reports.
     if (OUT/'pages').exists(): shutil.rmtree(OUT/'pages')
     for asset in ['style.css','search.js','search-core.js']:
         shutil.copyfile(ROOT/'scripts/docs'/asset, OUT/asset)
-    def frame(title, content, prefix):
-        return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="IT operations learning and source-backed lab reference"><title>{html.escape(title)} · IT Operations Knowledge Base</title><link rel="stylesheet" href="{prefix}style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><p class="brand">IT Operations Knowledge Base</p><nav aria-label="Primary"><a href="{prefix}index.html">Search and browse</a><a href="{prefix}pages/docs/knowledge/start.html">Start learning</a><a href="{prefix}pages/docs/knowledge/development.html">Current development</a><a href="{prefix}pages/docs/knowledge/ai.html">Learn with AI</a></nav></header><main id="main" tabindex="-1">{content}</main><footer>Living laboratory • Evidence has a scope • No production verification implied</footer></body></html>'''
+    def frame(title, content, prefix, current=''):
+        nav=''.join(f'<a href="{prefix}{u}"'+(' aria-current="page"' if u==current else '')+f'>{label}</a>' for u,label in SECTIONS)
+        site_search='' if current=='index.html' else f'<form class="site-search" role="search" aria-label="Site" action="{prefix}index.html"><label for="site-q">Search the knowledge base</label><input id="site-q" name="q" type="search"><button type="submit">Search</button></form>'
+        return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="IT operations learning and source-backed lab reference"><title>{html.escape(title)} · IT Operations Knowledge Base</title><link rel="stylesheet" href="{prefix}style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><p class="brand">IT Operations Knowledge Base</p><nav aria-label="Primary">{nav}</nav>{site_search}</header><main id="main" tabindex="-1">{content}</main><footer>Living laboratory • Evidence has a scope • No production verification implied</footer></body></html>'''
     for path in paths:
-        text=(ROOT/path).read_text(); title=re.search(r'^# (.+)',text,re.M)
+        text=(ROOT/path).read_text()
+        if '<!-- generated:topic-catalog -->' in text:
+            text=text.replace('<!-- generated:topic-catalog -->',topic_catalog(summaries,'../'*path.count('/')))
+        title=re.search(r'^# (.+)',text,re.M)
         title=title.group(1) if title else Path(path).stem
         m=metadata.get(path)
         status=m['lifecycle_status'] if m else 'Unreviewed legacy documentation'
@@ -79,7 +115,7 @@ def build():
         plain=html.unescape(re.sub('<[^>]+>', ' ', render(text)))
         if m: plain += ' ' + re.sub('<[^>]+>', ' ', reading_guide(m, ''))
         plain=re.sub(r'\s+',' ',plain).strip()
-        page={'id':m['id'] if m else 'legacy:'+path,'path':path,'title':title,'description':m['description'] if m else plain[:180], 'text':plain,'category':category,'status':status,'audience':m['audience'] if m else ['reference'],'aliases':m.get('aliases',[]) if m else [],'url':page_url(path),'sha256':hashlib.sha256(text.encode()).hexdigest(),'metadata':m}
+        page={'id':m['id'] if m else 'legacy:'+path,'path':path,'title':title,'description':m['description'] if m else plain[:180], 'text':plain,'category':category,'status':status,'audience':m['audience'] if m else ['reference'],'aliases':m.get('aliases',[]) if m else [],'url':page_url(path),'sha256':hashlib.sha256((ROOT/path).read_bytes()).hexdigest(),'owner_module':owner_module(path,modules),'last_reviewed':m.get('last_reviewed') if m else None,'metadata':m}
         pages.append(page)
         prefix=posixpath.relpath('.',posixpath.dirname(page['url']))+'/'
         def link(match):
@@ -95,17 +131,17 @@ def build():
             return 'href="'+html.escape(dest,quote=True)+'"'
         body=re.sub(r'href="([^"]*)"',link,render(text))
         if m:
-            state='<dl>'+''.join(f'<dt>{label}</dt><dd>{html.escape(str(value))}</dd>' for label,value in [('Current state',m['current_state']),('Verified behavior',m['verification']['scope']),('Known limitations',m['limitations']),('Planned development',m['planned']),('Last verified',m['verification']['last_verified'] or 'Not established'),('Related development',', '.join(m['related_development']) or 'No specific issue recorded')])+'</dl>'
+            state='<dl>'+''.join(f'<dt>{label}</dt><dd>{html.escape(str(value))}</dd>' for label,value in [('Current state',m['current_state']),('Verified behavior',m['verification']['scope']),('Known limitations',m['limitations']),('Planned development',m['planned']),('Last verified',m['verification']['last_verified'] or 'Not established'),('Last editorial review',m.get('last_reviewed') or 'Not recorded'),('Owning module',page['owner_module']+' (coordination/modules.json)'),('Audience levels',', '.join(m['audience'])),('Related development',', '.join(m['related_development']) or 'No specific issue recorded')])+'</dl>'
         else:
             state='<p>This existing document has not yet received structured review. Claims below belong to its original context; historical evidence is not current validation. Last verified: not established by this portal. Next: review source and evidence before modernization.</p>'
         title_match = re.search(r"<h1[^>]*>.*?</h1>", body, re.S)
         heading = title_match.group() if title_match else "<h1>"+html.escape(title)+"</h1>"
         if title_match: body = body[:title_match.start()] + body[title_match.end():]
         content=heading+f'<aside aria-label="Documentation status"><strong>{html.escape(status)}</strong>{state}</aside>'+reading_guide(m, prefix)+body+f'<p><a href="{REPO}/blob/{sha}/{quote(path,safe="/")}">Source at checked-out commit</a> · Local source: <code>{html.escape(path)}</code></p>'
-        dest=OUT/page['url']; dest.parent.mkdir(parents=True,exist_ok=True); dest.write_text(frame(title,content,prefix))
+        dest=OUT/page['url']; dest.parent.mkdir(parents=True,exist_ok=True); dest.write_text(frame(title,content,prefix,page['url']))
     catalog=''.join(f'<li><a href="{html.escape(p["url"])}">{html.escape(p["title"])}</a> — {html.escape(p["category"])} · {html.escape(p["status"])}</li>' for p in pages)
-    home='''<h1>Understand IT. Practice with evidence.</h1><p>Start with a question, explore a topic, or inspect how a laboratory test works. You do not need to know the repository structure.</p><p>This is an evolving educational resource. Lab demonstrations, proposals, and historical records are clearly distinguished.</p><form id="search-form" role="search"><label for="query">Find a topic or ask an IT question</label><input id="query" name="q" type="search" placeholder="How do I recover a database?"><label for="category">Subject</label><select id="category"><option value="">All subjects</option></select><label for="status">Documentation status</label><select id="status"><option value="">All statuses</option></select><button type="submit">Search</button></form><p id="search-status" role="status" aria-live="polite">Loading search. You can browse all documents below.</p><ol id="results"></ol><noscript><p>Search needs JavaScript. All documentation remains available in the catalog below.</p></noscript><h2>Choose a starting point</h2><ul><li><a href="pages/docs/knowledge/start.html">Start learning and browse topics</a></li><li><a href="pages/docs/knowledge/identity.html">Practical tutorial: employee permissions</a></li><li><a href="pages/docs/knowledge/recovery.html">Database recovery and technical reference</a></li><li><a href="pages/docs/knowledge/incident.html">Troubleshoot an outage</a></li><li><a href="pages/docs/knowledge/glossary.html">Technical glossary</a></li></ul><h2>All documentation</h2><p>Legacy documents are indexed without changing their evidence or claiming a new review.</p><ul>'''+catalog+'</ul><script type="module" src="search.js"></script>'
-    (OUT/'index.html').write_text(frame('Search and learn',home,''))
+    home='''<h1>Understand IT. Practice with evidence.</h1><p>Start with a question, explore a topic, or inspect how a laboratory test works. You do not need to know the repository structure.</p><p>This is an evolving educational resource. Lab demonstrations, proposals, and historical records are clearly distinguished.</p><form id="search-form" role="search"><label for="query">Find a topic or ask an IT question</label><input id="query" name="q" type="search" placeholder="How do I recover a database?"><label for="category">Subject</label><select id="category"><option value="">All subjects</option></select><label for="status">Documentation status</label><select id="status"><option value="">All statuses</option></select><label for="level">Depth level</label><select id="level"><option value="">All levels</option></select><button type="submit">Search</button></form><p id="search-status" role="status" aria-live="polite">Loading search. You can browse all documents below.</p><ol id="results"></ol><noscript><p>Search needs JavaScript. All documentation remains available in the catalog below.</p></noscript><h2>Choose a starting point</h2><ul><li><a href="pages/docs/knowledge/start.html">Start learning</a>: short paths from everyday language to expert reference.</li><li><a href="pages/docs/knowledge/topics.html">Browse topics</a>: every page grouped by subject, status and depth.</li><li><a href="pages/docs/knowledge/tutorials.html">Tutorials</a>: offline exercises with prerequisites and expected results.</li><li><a href="pages/docs/knowledge/reference.html">Technical reference</a>: modules, ADRs, metadata and the status vocabulary.</li><li><a href="pages/docs/knowledge/troubleshooting.html">Troubleshooting</a>: what a failed build, search or exercise usually means.</li><li><a href="pages/docs/knowledge/development.html">Current development</a>: what is on main and what remains.</li><li><a href="pages/docs/knowledge/ai.html">Learn with AI</a>: the static retrieval contract and safe prompts.</li><li><a href="pages/docs/knowledge/glossary.html">Technical glossary</a></li></ul><h2>All documentation</h2><p>Legacy documents are indexed without changing their evidence or claiming a new review.</p><ul>'''+catalog+'</ul><script type="module" src="search.js"></script>'
+    (OUT/'index.html').write_text(frame('Search and learn',home,'','index.html'))
     (OUT/'search-index.json').write_text(json.dumps(pages,ensure_ascii=False))
     (OUT/'metadata.json').write_text(json.dumps({'schema_version':1,'repository':REPO,'build_parent_commit':sha,'pages':[{k:v for k,v in p.items() if k!='text'} for p in pages]},indent=2))
     report={'indexed':len(pages),'structured':len(metadata),'legacy':len(pages)-len(metadata),'broken_legacy_links':broken, 'metadata_missing':sorted(pathset-set(metadata)),'build_parent_commit':sha}

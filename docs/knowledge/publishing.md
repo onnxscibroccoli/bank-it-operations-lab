@@ -2,6 +2,14 @@
 
 GitHub Pages serves prepared website files. This project builds those files with its own documentation workflow, so the publishing source must be GitHub Actions rather than a branch folder.
 
+## Current state (checked 2026-11-03)
+
+- `gh api repos/onnxscibroccoli/bank-it-operations-lab/pages` reports `build_type: workflow`, `public: true`, `https_enforced: true` and `html_url` <https://onnxscibroccoli.github.io/bank-it-operations-lab/>. The one-time setting below has already been done.
+- The github-pages environment has deployments for main `30e0a83` created on 2026-10-31 at 17:11, 17:14 and 17:25 EDT (the last from manual run 41243377081). The latest is for main `8e2df97`, created on 2026-11-03 at 14:32 EST by push run 41703901979, after PR #40 merged.
+- The live home page returns HTTP 200. On 2026-10-31 its `search-index.json` matched a local build of `30e0a83` (223 pages). On 2026-11-03 after the `8e2df97` deployment it lists 229 pages.
+- The live browser check found one defect: `pages/.github/pull_request_template.html` returns 404. The Pages artifact step (`actions/upload-pages-artifact@v3`) runs `tar --exclude=.git --exclude=.github`. The docs-platform branch (PR #41) changes the builder to write such pages under `pages/dot-github/`. That change is not on main or the live site yet; both URLs return 404 live until it is merged and deployed.
+- The site will update only when documentation changes reach main, or when someone runs the workflow manually with **deploy** enabled. Pull requests never deploy.
+
 ## One-time repository setting
 
 1. Open <https://github.com/onnxscibroccoli/bank-it-operations-lab/settings/pages> while signed in as the repository owner.
