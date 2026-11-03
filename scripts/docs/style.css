@@ -10,7 +10,7 @@
   --border:#56738f; --border-subtle:#293a53;
   --text:#edf4ff; --text-secondary:#c3d2e7; --muted:#a9bbd2;
   --accent:#7ce8ed; --accent-hover:#c4fbff; --accent-deep:#053e52;
-  --focus:#ffd37d; --radius:.8rem; --radius-lg:1.15rem;
+  --focus:#ffd37d; --radius:.8rem; --ambient-image:none; --radius-lg:1.15rem;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:100%; line-height:1.65;
   color:var(--text); background:var(--canvas);
@@ -23,7 +23,11 @@ body {
   background:
     radial-gradient(ellipse 42rem 28rem at 8% -8%,rgba(45,131,169,.16),transparent 72%),
     radial-gradient(ellipse 36rem 22rem at 100% 2%,rgba(65,96,170,.13),transparent 76%),
+    linear-gradient(rgba(9,15,28,.48),rgba(9,15,28,.82)),
+    var(--ambient-image),
     var(--canvas);
+  background-repeat:no-repeat;
+  background-size:cover;
 }
 header,main,footer {width:min(100%,78rem);margin-inline:auto}
 header {
@@ -204,4 +208,21 @@ hr {border:0;border-top:1px solid var(--border);margin-block:2rem}
 @media (forced-colors:active) {
   nav a[aria-current="page"],aside,pre,#search-form,#results li {border:1px solid CanvasText}
   nav a[aria-current="page"] {text-decoration:underline}
+}
+
+/* Optional decorative layer: a single seed-based snapshot behind the UI.
+ * Documentation remains opaque/readable. Visitors can disable this locally. */
+nav .ambient-toggle {
+  min-height:44px;padding:.6rem .85rem;
+  margin-inline-start:auto;border:1px solid var(--border);
+  border-radius:.55rem;background:var(--surface);
+  color:var(--text-secondary);font-size:.88rem;font-weight:650;
+}
+nav .ambient-toggle:hover {background:var(--surface-raised);color:var(--text)}
+nav .ambient-toggle[aria-pressed="false"] {border-style:dashed}
+@media (max-width:48rem) {
+  nav .ambient-toggle {margin-inline-start:0}
+}
+@media (forced-colors:active), (prefers-contrast:more), (prefers-reduced-transparency:reduce) {
+  body {background-image:none;background-color:Canvas}
 }

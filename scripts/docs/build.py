@@ -97,12 +97,12 @@ def build():
     OUT.mkdir(parents=True, exist_ok=True)
     # Remove obsolete rendered pages, while preserving separate validation reports.
     if (OUT/'pages').exists(): shutil.rmtree(OUT/'pages')
-    for asset in ['style.css','search.js','search-core.js']:
+    for asset in ['style.css','search.js','search-core.js','ambient-backdrop.js']:
         shutil.copyfile(ROOT/'scripts/docs'/asset, OUT/asset)
     def frame(title, content, prefix, current=''):
         nav=''.join(f'<a href="{prefix}{u}"'+(' aria-current="page"' if u==current else '')+f'>{label}</a>' for u,label in SECTIONS)
         site_search='' if current=='index.html' else f'<form class="site-search" role="search" aria-label="Site" action="{prefix}index.html"><label for="site-q">Search the knowledge base</label><input id="site-q" name="q" type="search"><button type="submit">Search</button></form>'
-        return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="IT operations learning and source-backed lab reference"><title>{html.escape(title)} · IT Operations Knowledge Base</title><link rel="stylesheet" href="{prefix}style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><p class="brand">IT Operations Knowledge Base</p><nav aria-label="Primary">{nav}</nav>{site_search}</header><main id="main" tabindex="-1">{content}</main><footer>Living laboratory • Evidence has a scope • No production verification implied</footer></body></html>'''
+        return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="IT operations learning and source-backed lab reference"><title>{html.escape(title)} · IT Operations Knowledge Base</title><link rel="stylesheet" href="{prefix}style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><p class="brand">IT Operations Knowledge Base</p><nav aria-label="Primary">{nav}</nav>{site_search}</header><main id="main" tabindex="-1">{content}</main><footer>Living laboratory • Evidence has a scope • No production verification implied</footer><script type="module" src="{prefix}ambient-backdrop.js"></script></body></html>'''
     for path in paths:
         text=(ROOT/path).read_text()
         if '<!-- generated:topic-catalog -->' in text:
