@@ -32,6 +32,14 @@ The repository contains separate tools rather than a single deployed application
 
 Reading needs no account, installation, or permissions. Follow a tutorial only after reading its prerequisites and side effects. Do not paste commands from old evidence records as if they were current instructions.
 
+## Other ways in
+
+- [Browse topics](topics.md): every page grouped by subject, with its status and depth levels.
+- [Tutorials](tutorials.md): offline exercises with commands, expected results and failure injection.
+- [Technical reference](reference.md): modules, ADRs, metadata files and the [status vocabulary](lifecycle.md).
+- [Troubleshooting](troubleshooting.md): what common errors mean.
+- [Twelve-week guide](../../learning/CURRENT.md): a structured course across AWS, identity, resilience and architecture.
+
 ## Further learning and agent guidance
 
 Use the [glossary](glossary.md) for definitions and [AI learning guide](ai.md) for source-based teaching. Ask an assistant to explain one paragraph and identify which facts are lab-specific.

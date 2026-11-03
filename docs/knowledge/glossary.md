@@ -192,7 +192,7 @@ Related learning and terminology: [governance](governance.md).
 
 ## Coverage limitation
 
-This initial glossary covers fifteen terms. Per-entry authoritative and Wikipedia references, machine-readable individual entries, and the broader terminology inventory remain incomplete. Do not guess article URLs to fill those fields.
+This initial glossary covers fifteen terms in full, plus shorter definitions below. Per-entry authoritative and Wikipedia references, machine-readable individual entries, and the broader terminology inventory remain incomplete. Do not guess article URLs to fill those fields.
 
 ## Additional terminology used in the reading guides
 
@@ -469,3 +469,43 @@ An additional checkout sharing a Git repository’s history.
 ### systemd
 
 A Linux service manager used to start and supervise processes.
+
+## Status and documentation terms
+
+These terms describe the documentation and the repository's records rather than IT concepts. The [status vocabulary](lifecycle.md) explains how they relate.
+
+### Lifecycle status
+
+The documentation maturity of a page, such as In Development or Archived. It is shown in every page's status panel and does not describe the module the page covers.
+
+### Verification level
+
+The strongest recorded check behind a page, with its scope, date and evidence. "Not established" means no such record exists.
+
+### Archived
+
+A preserved historical record whose bytes are protected by a digest; current explanation lives in sidecar metadata or a companion page.
+
+### INTEGRATED
+
+A module registry state: the module's files and checks are on the branch. It does not mean reviewed, accepted, or deployed.
+
+### Proposed
+
+The status of an architecture decision that has been written down but not accepted by the owner.
+
+### Audience level
+
+The intended depth of a page: beginner, operator, engineer, architect, or reference.
+
+### Owning module
+
+The registry module whose path contains a page, derived at build time from coordination/modules.json.
+
+### EXECUTION_PASS
+
+An acceptance gate verdict: every required check for one commit ran and passed. It is not acceptance, review or deployment.
+
+### REVIEW_PENDING
+
+The acceptance decision while independent reviewer concurrence is missing. The gate never reports ACCEPTED by itself.

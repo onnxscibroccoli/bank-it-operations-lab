@@ -6,16 +6,22 @@ const groups = [
  ['authentication','authorization','login','identity'],
  ['outages','outage','stopped','incident','investigate','detect','monitoring','observability','cyberattack'],
  ['infrastructure','iac','code','cdk','terraform'],
- ['automate','automation','routine','maintenance','patching']
+ ['automate','automation','routine','maintenance','patching'],
+ ['troubleshoot','troubleshooting','error','errors','fails','failed','failing','broken','fix','problem'],
+ ['accessible','accessibility','wcag','a11y','keyboard','screen','reader','contrast'],
+ ['acceptance','accepted','gate','execution','review','pending'],
+ ['status','lifecycle','proposed','archived','delivered','executed','pending','integrated','simulation']
 ];
 export function tokens(s){return (s.toLowerCase().match(/[a-z0-9]+/g)||[]).filter(t=>!stop.has(t));}
-export function search(pages,query,category='',status=''){
+export function search(pages,query,category='',status='',level=''){
  const original=tokens(query), expanded=new Set(original);
  for(const group of groups) if(group.some(t=>original.includes(t))) group.forEach(t=>expanded.add(t));
- return pages.filter(p=>(!category||p.category===category)&&(!status||p.status===status)).map(p=>{
+ return pages.filter(p=>(!category||p.category===category)&&(!status||p.status===status)&&(!level||(p.audience||[]).includes(level))).map(p=>{
  const heading=new Set(tokens(p.title+' '+p.description+' '+p.aliases.join(' '))),body=new Set(tokens(p.text));
  let score=0; for(const t of expanded) score+=(heading.has(t)?(original.includes(t)?8:2):0)+(body.has(t)?(original.includes(t)?2:0.4):0);
  if(score && p.metadata)score+=3;
+ // Title containing every query word is the strongest signal for short navigational queries.
+ const title=new Set(tokens(p.title)); if(score && original.length && original.every(t=>title.has(t)))score+=6;
  return {...p,score};
  }).filter(p=>!original.length||p.score>0).sort((a,b)=>b.score-a.score||a.path.localeCompare(b.path));
 }
