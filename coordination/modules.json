@@ -306,7 +306,7 @@
     },
     {
       "id": "acceptance",
-      "status": "NOT_INTEGRATED",
+      "status": "INTEGRATED",
       "prs": [
         23,
         24,
@@ -319,43 +319,57 @@
         "tools/acceptance",
         "acceptance",
         "tests/acceptance-contract",
-        "reports/ACCEPTANCE.md"
+        "reports/ACCEPTANCE.md",
+        "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md"
       ],
-      "reason": "PR #27 CHANGES REQUIRED (C1-C5) at 181bcdd; PR #26 head moved to eb42b23 (C1-C4 repairs reported at 17cfaea), pending exact-SHA re-review. PR #23 (6a28847) and #24 (838d537) are ancestors of #26 (superseded into it). PR #25 (ce39504) diverged: #26 drops acceptance/modules/emit_shared.py and its test; needs a disposition.",
       "category": "functional",
       "delivery_location": [
-        "scripts/acceptance",
-        "acceptance",
+        "tools/acceptance/gate",
+        "acceptance/modules",
         "tools/acceptance",
         "schemas/acceptance"
       ],
       "owner": {
-        "agent": "unassigned",
+        "agent": "Worker D (independent integrator)",
         "pr_author": "onnxscibroccoli (Worker D)",
-        "branch": "acceptance/vertical-slice"
+        "branch": "acceptance/integration-v2"
       },
       "plan_sources": [
         "ACP:DoD-3",
         "ACP:Lane-A"
       ],
       "required_checks": {
-        "present": [],
+        "present": [
+          "acceptance.yml:gate-selftest",
+          "acceptance.yml:acceptance",
+          "acceptance.yml:defect-control"
+        ],
         "proposed": [
-          "python3 -m unittest discover -s scripts/acceptance/tests",
-          "acceptance/modules tests",
-          "tests/acceptance-contract",
-          "acceptance run: OVERALL=PASS, decision != naked APPROVED without bound review"
+          "authenticated independent review binding (PR #29 R1/R3)",
+          "base-branch gate for candidates (PR #29 R6)"
         ]
       },
       "superseded_prs": [
         23,
-        24
+        24,
+        25,
+        26
       ],
       "head": {
-        "pr": 26,
-        "sha": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
-        "base": "overnight/integration@49122f2 (stale; 14 commits not in integration)"
-      }
+        "branch": "acceptance/integration-v2",
+        "base": "main@30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6",
+        "record": "acceptance/INTEGRATION-V2.md"
+      },
+      "ci_jobs": [
+        "acceptance.yml:gate-selftest",
+        "acceptance.yml:acceptance",
+        "acceptance.yml:defect-control"
+      ],
+      "evidence_class": [
+        "EXECUTED_CI",
+        "EXECUTED_LOCAL"
+      ],
+      "limitations": "Offline lab gate; ends at EXECUTION_PASS + REVIEW_PENDING and never reports ACCEPTED. Independent review of the exact SHA and AC6 remain separate."
     },
     {
       "id": "review-notes",

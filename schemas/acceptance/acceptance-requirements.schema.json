@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/onnxscibroccoli/bank-it-operations-lab/schemas/acceptance/acceptance-requirements.schema.json",
+  "title": "Machine-readable acceptance requirements",
+  "description": "A set of acceptance requirements, each tied to an exact tested source commit, a check command, evidence artifacts inside bundles described by evidence/shared/evidence-manifest.schema.json, and a result. Structure is checked with the shared stdlib checker in evidence/shared/validate_evidence.py (_check); relationships (evidence resolution, result rules, exceptions, reviewer independence, aggregate decision) are checked by schemas/acceptance/check_acceptance.py. Lab artifact only: automatic technical acceptance is not an audit, certification or production sign-off.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "document", "requirements"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "repository", "tested_source_commit", "recorded_by"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+        "title": { "type": "string", "pattern": "\\S" },
+        "repository": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+        "tested_source_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "Full 40-hex SHA of the exact commit tested. Branch names, short SHAs and 'HEAD' are rejected." },
+        "recorded_by": { "type": "string", "pattern": "\\S", "description": "Who recorded results. Reviewers and exception approvers must be someone else." },
+        "synthetic": { "type": "boolean", "description": "true for test fixtures; a synthetic document never represents a real acceptance decision." }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "scope", "rationale", "required", "source", "tested_source_commit", "check", "evidence_refs", "assumptions", "exclusions", "verification_method", "result", "reviewer_findings"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^ACC-[A-Z0-9]+(-[A-Z0-9]+)*-[0-9]{3}$", "description": "Stable ID; never reused for a different requirement." },
+          "scope": { "type": "string", "pattern": "\\S" },
+          "rationale": { "type": "string", "pattern": "\\S" },
+          "required": { "type": "boolean", "description": "true: a FAIL or UNKNOWN blocks automatic technical acceptance. false: advisory; only FAIL blocks." },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "reference"],
+            "properties": {
+              "type": { "enum": ["job_description", "vendor_guidance", "project_decision", "standard"] },
+              "reference": { "type": "string", "pattern": "\\S", "description": "Citation: posting/section, vendor doc URL, ADR or coordination file path, or standard + clause." },
+              "locator": { "type": "string", "description": "Optional finer pointer (section, clause, line, anchor)." }
+            }
+          },
+          "tested_source_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "Must equal document.tested_source_commit." },
+          "check": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["command", "expected", "execution"],
+            "properties": {
+              "command": { "type": "string", "pattern": "\\S", "description": "Exact command, run from the repo root at tested_source_commit." },
+              "expected": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["exit_code"],
+                "properties": {
+                  "exit_code": { "type": "integer" },
+                  "output_contains": { "type": "string", "description": "Literal text the check output must contain for PASS." }
+                }
+              },
+              "execution": { "enum": ["executed", "skipped", "unavailable", "not_run"], "description": "Anything other than 'executed' forces result UNKNOWN." },
+              "observed": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["exit_code"],
+                "properties": {
+                  "exit_code": { "type": "integer" },
+                  "output_contains_matched": { "type": "boolean" }
+                }
+              }
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "description": "PASS and FAIL need at least one. Each must resolve to an artifact covered by a valid evidence bundle MANIFEST.json.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["manifest", "artifact", "sha256"],
+              "properties": {
+                "manifest": { "type": "string", "pattern": "^evidence/[A-Za-z0-9._/-]+/MANIFEST\\.json$", "description": "Repo-relative path of the bundle manifest (evidence/shared/evidence-manifest.schema.json)." },
+                "artifact": { "type": "string", "pattern": "^evidence/[A-Za-z0-9._/-]+$", "description": "Repo-relative path of the artifact; must be under the bundle root and listed in its hashes file." },
+                "sha256": { "$ref": "../../evidence/shared/evidence-manifest.schema.json#/properties/anchors/items/properties/sha256" }
+              }
+            }
+          },
+          "assumptions": { "type": "array", "items": { "type": "string", "pattern": "\\S" } },
+          "exclusions": { "type": "array", "items": { "type": "string", "pattern": "\\S" } },
+          "verification_method": { "enum": ["automated_test", "inspection", "analysis", "demonstration"] },
+          "result": { "enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"] },
+          "result_rationale": { "type": "string", "description": "Required (non-blank) for NOT_APPLICABLE and UNKNOWN." },
+          "exception": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["disposition", "approver", "approved_on", "rationale", "reference"],
+            "description": "Only on FAIL or UNKNOWN. Records a human disposition; it never converts the result and never enables automatic acceptance.",
+            "properties": {
+              "disposition": { "enum": ["risk_accepted", "deferred", "compensating_control", "rejected"] },
+              "approver": { "type": "string", "pattern": "\\S" },
+              "approved_on": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+              "expires_on": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "Required for risk_accepted, deferred and compensating_control; must be after approved_on." },
+              "rationale": { "type": "string", "pattern": "\\S" },
+              "reference": { "type": "string", "pattern": "\\S", "description": "Ticket, issue or decision record." },
+              "compensating_control": { "type": "string", "description": "Required when disposition is compensating_control." }
+            }
+          },
+          "reviewer_findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["reviewer", "reviewed_commit", "verdict", "finding", "date"],
+              "properties": {
+                "reviewer": { "type": "string", "pattern": "\\S", "description": "Must differ from document.recorded_by." },
+                "reviewed_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+                "verdict": { "enum": ["concur", "dispute", "concern"] },
+                "finding": { "type": "string", "pattern": "\\S" },
+                "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

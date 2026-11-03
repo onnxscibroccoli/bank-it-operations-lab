@@ -12347,5 +12347,214 @@
       "evidence": []
     },
     "last_reviewed": "2026-10-31"
+  },
+  "acceptance/INTEGRATION-V2.md": {
+    "id": "page-08e399758643c8a2",
+    "description": "Acceptance framework integration v2: path decision, C1-C6 and R1-R7 dispositions, false-acceptance regression proof against eb42b23.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Integration record for acceptance/integration-v2; states EXECUTION_PASS / REVIEW_PENDING only.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "acceptance/INTEGRATION-V2.md",
+      "tools/acceptance/gate",
+      ".github/workflows/acceptance.yml"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "integration record",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "acceptance/modules/README.md": {
+    "id": "page-5a7ab3de4569471c",
+    "description": "Worker C acceptance adapters for aws-cdk, postgres and entra-offline with reason-asserting negative tests.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Adapters integrated unchanged from acceptance-adapters (c6aa238e) plus Worker D fix 93de4b3d.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "acceptance/modules"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "adapters",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "schemas/acceptance/README.md": {
+    "id": "page-23db77f9b068b173",
+    "description": "Worker A shared acceptance contract: machine-readable requirement schema and contract checker reused by the final decision.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Contract integrated unchanged from acceptance-contract (6a28847b).",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "schemas/acceptance",
+      "tests/acceptance-contract"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "contract",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "tools/acceptance/README.md": {
+    "id": "page-292e95bacbaf9f07",
+    "description": "Worker B allowlisted acceptance check runner on top of the shared evidence validator.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Runner integrated unchanged from acceptance-runner (838d537a); Worker D gate lives in tools/acceptance/gate.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "tools/acceptance"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "runner",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "reports/ACCEPTANCE.md": {
+    "id": "page-b8b9172819d9436a",
+    "description": "Historical acceptance packet draft for the vertical slice (PR #26 at 181bcdd and its addendum at eb42b23).",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Archived",
+    "current_state": "Historical record preserved byte-identical to eb42b23; superseded by acceptance/INTEGRATION-V2.md where they differ.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "reports/ACCEPTANCE.md",
+      "acceptance/INTEGRATION-V2.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "historical record",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md": {
+    "id": "page-d58be6e957a5a101",
+    "description": "Historical assurance note for the acceptance-state invariants I1 and I2 at eb42b23 (C1-C4 repairs).",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Archived",
+    "current_state": "Historical record preserved byte-identical to eb42b23; its statement that ACCEPTED is reachable is superseded by acceptance/INTEGRATION-V2.md.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md",
+      "acceptance/INTEGRATION-V2.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "historical record",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
   }
 }
