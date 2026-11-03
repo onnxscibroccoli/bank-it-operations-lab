@@ -1,0 +1,222 @@
+{
+ "schema": "bank-it-operations-lab/coordination/integration-manifest@1",
+ "created": "2026-11-03 EST (America/New_York)",
+ "directive": "owner t27u, 2026-11-03 17:35 EST (continues t26u): consolidate #39/#41 on a fresh candidate; do not bypass R6, do not apply the proposed pin, do not merge to main",
+ "candidate": {
+  "branch": "integration/candidate-20261103c",
+  "base": "8e2df97b558e69032e52a50ed0adfd311ad04578",
+  "gate_commit": "39c71f9eebf8bb72663515a29b52609d02dceea4",
+  "tested_sha": "see report (head of this branch at test time)"
+ },
+ "source_refs": {
+  "main": "8e2df97b558e69032e52a50ed0adfd311ad04578",
+  "reports/completion-pass-20261103 (PR #39 @ b6e23ba per t27u; head moved to 0ee1e97 at 17:39 EST, DRAFT)": "0ee1e97b9b87ad15678f92987e5efbde3cac6687",
+  "acceptance/t16-pin-review (PR #42, not merged; compared only)": "9589d891",
+  "docs-platform (PR #41 @ 70535c5, DRAFT)": "70535c5c81c10696f177de1eb05a9933146f5bf2",
+  "integration/candidate-20261103b (previous candidate, not merged)": "caa9ce7c1b1538d8da920463db77c93c05fe882b",
+  "integration/completion-20261103 (history, not merged)": "3c417d91f97bb806ca48e5eee2e833333b9dff70",
+  "evidence/acceptance (current pin ea0c235, not changed)": "750de1c694c4912f12bb5bb76a20ba74bc208213"
+ },
+ "merge_bases_with_main": {
+  "reports/completion-pass-20261103 (PR #39 @ b6e23ba per t27u; head moved to 0ee1e97 at 17:39 EST, DRAFT)": "8e2df97 = main (6 ahead at 0ee1e97; main merged in by 9462c5b, not rebased)",
+  "acceptance/t16-pin-review (PR #42, not merged; compared only)": "8e2df97 = main",
+  "docs-platform (PR #41 @ 70535c5, DRAFT)": "8e2df97 = main (3 ahead, 0 behind; main merged in by fea62ec, not rebased)",
+  "integration/candidate-20261103b (previous candidate, not merged)": "8e2df97 = main",
+  "integration/completion-20261103 (history, not merged)": "8c662d76834ecb2de99afebc83d31a2bb0fd3dd1",
+  "evidence/acceptance (current pin ea0c235, not changed)": "none (orphan evidence branch)"
+ },
+ "overlap": [
+  {
+   "file": "docs/metadata/pages.json",
+   "completion": "yes (11 keys)",
+   "pr39": "yes (+2 keys)",
+   "pr41": "yes (5 changed, +9)",
+   "main_has": "229 keys incl. #40"
+  },
+  {
+   "file": "coordination/modules.json",
+   "completion": "yes",
+   "pr39": "yes (+3 final-report paths)",
+   "pr41": "no",
+   "main_has": "#40 acceptance INTEGRATED"
+  },
+  {
+   "file": "scripts/docs/tests/browser.mjs",
+   "completion": "yes (navigation fix)",
+   "pr39": "no",
+   "pr41": "yes",
+   "main_has": "older version"
+  },
+  {
+   "file": "README.md, docs/knowledge/**, scripts/docs/** (other), learning/CURRENT.md, docs/adr/STATUS.md, terminology.json",
+   "completion": "no",
+   "pr39": "no",
+   "pr41": "yes",
+   "main_has": "no"
+  },
+  {
+   "file": "reports/COMPLETION_PASS_2026-11-03.*, HUMAN_DECISION_PACKET_2026-11-03.md",
+   "completion": "no",
+   "pr39": "yes",
+   "pr41": "no",
+   "main_has": "no"
+  },
+  {
+   "file": "scripts/ci/**, validate-all.sh, documentation.yml, tasks.json, preserved-records.json, scenarios/incident, reports/review-*, reports/independent/**",
+   "completion": "yes",
+   "pr39": "no",
+   "pr41": "no",
+   "main_has": "no"
+  }
+ ],
+ "taken": [
+  {
+   "source": "main 8e2df97",
+   "taken": "base: everything, including PR #40 acceptance framework",
+   "how": "branch point"
+  },
+  {
+   "source": "PR #41 docs-platform @ 70535c5 (DRAFT, owner review requested)",
+   "taken": "all 25 files (knowledge-base sections, Pages dot-directory fix, builder/search/a11y tests, ADR status, learning page)",
+   "how": "ordinary --no-ff merge FIRST (it owns the docs builder and pages.json schema that #39's entries must satisfy); clean"
+  },
+  {
+   "source": "PR #39 reports/completion-pass-20261103 @ b6e23ba (DRAFT, owner review requested)",
+   "taken": "reports/COMPLETION_PASS_2026-11-03.md, completion-pass-2026-11-03.json, HUMAN_DECISION_PACKET_2026-11-03.md, final-report paths in modules.json, 2 pages.json entries",
+   "how": "ordinary --no-ff merge SECOND (b6e23ba); clean. Then an ordinary merge of the drift b6e23ba..0ee1e97 (Ian, 17:39 EST: decision packet split A/B, completion report refresh; pages.json changed only #39's own 2 keys); clean"
+  },
+  {
+   "source": "review PR heads #14 eb8d259, #27 72aa8b7, #28 fe6f24e, #29 384c610, #30 eb82d7d, #31 eccac83, #32 c795ce6, #33 9612a7b, #34 2a07e33 (heads unchanged since 20261103b)",
+   "taken": "10 review/plan record files, verbatim",
+   "how": "ordinary --no-ff merge of each head; not approvals"
+  },
+  {
+   "source": "integration/candidate-20261103b @ caa9ce7 (carried forward, not merged)",
+   "taken": "scripts/ci/check_registries.py + test_check_registries.py, test_actions_pinned.py (T-11), test_t16_pin_proposal.py (T-16), test_module_coverage.py [] expectation, documentation.yml SHA pins + integration/** push trigger, validate-all.sh registry/acceptance/review steps, tasks.json reconciled{} records, modules.json (review-notes INTEGRATED, UA-2 fix, UA-3/6/7 limitation, acceptance validate_all_steps), preserved-records.json review hashes, 11 pages.json entries (10 archived reviews + this manifest), incident restart retry (scenarios/incident/run_incident_demo.sh, owner Portfolio Cases), docs browser navigation fix (scripts/docs/tests/browser.mjs, owner PR #41 / docs-platform)",
+   "how": "files checked out from caa9ce7 where 20261103b was the only changer; modules.json re-applied with #39's new HUMAN_DECISION_PACKET path; pages.json entries added by key"
+  },
+  {
+   "source": "gate decision (this candidate)",
+   "taken": "scripts/ci/tests/test_module_coverage.py set to the exact bytes of the CURRENT pin ea0c235 (sha256 92cd251e..., asserts incomplete == []) instead of 20261103b's comment-only variant (7dba8ea5...)",
+   "how": "new commit; trust delta vs current pin is then only 4 added files (see coordination/T16_RECONCILIATION.md)"
+  },
+  {
+   "source": "PR #41 @ 70535c5 per-file decisions",
+   "taken": "scripts/docs/tests/browser.mjs: CANDIDATE fix kept (70535c5 still has the non-null-safe predicate that failed Documentation run 41729590108; fix verified 3/3 locally and in run 41731137053). docs/metadata/pages.json: candidate is a strict superset of 70535c5 (all #41 keys byte-equal; +#39 keys, +10 review records, +3 coordination pages). Every other #41 file byte-identical to 70535c5",
+   "how": "recorded decision; owner of browser.mjs: docs-platform / PR #41"
+  },
+  {
+   "source": "this candidate (new)",
+   "taken": "coordination/T16_RECONCILIATION.md (PR #42 vs candidate pin), coordination/PR_DISPOSITIONS.md + tasks.json pr_dispositions (audit vs main; nothing closed)",
+   "how": "new commit"
+  },
+  {
+   "source": "this candidate (new)",
+   "taken": "UNREVIEWED gate-pin proposal re-pointed to this branch's gate commit (hashes identical to the a518b03 proposal), this manifest, tasks.json t27u rule + candidate_checkpoint",
+   "how": "new commits"
+  }
+ ],
+ "not_taken": [
+  {
+   "item": "PR #41 d8d7711 / PR #39 42d8e96 as merged on 20261103b",
+   "why": "superseded by the new heads 70535c5 / b6e23ba (each merged main in)"
+  },
+  {
+   "item": "20261103b proposed pin (gate_sha a518b03)",
+   "why": "superseded by the proposal on this branch's gate commit; identical file hashes"
+  },
+  {
+   "item": "20261103b INTEGRATION_MANIFEST content",
+   "why": "superseded by this manifest; kept on that branch as history"
+  },
+  {
+   "item": "evidence/acceptance re-pin",
+   "why": "not applied (t27u: do not apply the proposed pin; pin re-review unmet)"
+  }
+ ],
+ "conflict_resolutions": [
+  {
+   "file": "docs/metadata/pages.json",
+   "between": "PR #41 @ 70535c5 vs PR #39 @ b6e23ba (both based on main 8e2df97)",
+   "resolution": "git merge clean; verified equal to a key-by-key union. Keys changed by BOTH: none. #41: 5 changed (docs/knowledge/ai.md, development.md, glossary.md, publishing.md, start.md), 9 added (docs/adr/STATUS.md, docs/knowledge/accessibility.md, gaps.md, lifecycle.md, reference.md, topics.md, troubleshooting.md, tutorials.md, learning/CURRENT.md). #39: 2 added (reports/COMPLETION_PASS_2026-11-03.md, reports/HUMAN_DECISION_PACKET_2026-11-03.md). Then 11 integration keys added (10 Archived review records, coordination/INTEGRATION_MANIFEST.md). 229 main -> 251 keys.",
+   "authority": "each PR for its own keys; integration for review/manifest keys"
+  },
+  {
+   "file": "coordination/modules.json",
+   "between": "PR #39 (final-report +3 paths) vs 20261103b carry-forward",
+   "resolution": "20261103b version + #39's reports/HUMAN_DECISION_PACKET_2026-11-03.md path; knowledge-base limitation re-pointed to #41 70535c5",
+   "authority": "#39 for final-report paths; integration for registry state"
+  },
+  {
+   "file": "other shared files",
+   "between": "#39 vs #41",
+   "resolution": "none: #39 touches only modules.json, pages.json and 3 new reports; #41 does not touch modules.json",
+   "authority": "-"
+  }
+ ],
+ "registry_status": {
+  "modules": "28 (27 INTEGRATED, 1 SUPERSEDED); check_modules.py OK",
+  "reconciliation": "check_registries.py R1-R5 CONSISTENT (4 reconciled{} records: PR #6, #14, #26, #27)",
+  "pages": "one entry per tracked Markdown file; 10 review records Archived and frozen; 251 keys"
+ },
+ "gate": {
+  "current_pin": {
+   "gate_sha": "ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae",
+   "source": "evidence/acceptance@750de1c",
+   "independent_review": null,
+   "matches_main_8e2df97": false,
+   "evidence": "main integration-gate run 41703902441: test_module_coverage.py differs from the trusted manifest"
+  },
+  "proposed_pin": {
+   "file": "coordination/proposed-gate-pin/gate-manifest.json",
+   "gate_sha": "39c71f9eebf8bb72663515a29b52609d02dceea4",
+   "review_status": "UNREVIEWED",
+   "independent_review": null,
+   "applied": false,
+   "changed_vs_current_pin": [
+    "scripts/ci/check_registries.py",
+    "scripts/ci/tests/test_actions_pinned.py",
+    "scripts/ci/tests/test_check_registries.py",
+    "scripts/ci/tests/test_t16_pin_proposal.py"
+   ]
+  },
+  "fail_closed_tests": "scripts/ci/tests/test_t16_pin_proposal.py, test_pr32_independence.py D3, test_pr33_pin_binding.py",
+  "reconciliation_note": "coordination/T16_RECONCILIATION.md",
+  "pr42_proposal": {
+   "gate_sha": "6ea6803c0828a65fb269bb551ad5449f0d8ed948",
+   "binds": "main 8e2df97 (31 files)",
+   "status": "superseded for this candidate; still valid for main alone"
+  },
+  "t16_decision": "merge-eligibility keeps failing (NOT ELIGIBLE) on pushes to main: a direct push is never a tested merge and has no bound independent approval. No report-only mode is introduced."
+ },
+ "checks": {
+  "local": "PG_BIN=/workspace/pg16/bin bash scripts/validate-all.sh",
+  "workflows": [
+   "acceptance.yml",
+   "integration-gate.yml",
+   "offline-validation.yml",
+   "aws-cdk.yml",
+   "postgres-restore-evidence.yml",
+   "portfolio-validation.yml",
+   "documentation.yml (deploy=false)"
+  ],
+  "runs": "pending at commit time; recorded in a later records-only commit"
+ },
+ "reviews_required_before_main": [
+  "PENDING - AC1: independent reviewer approves the exact candidate SHA (UA-7)",
+  "gate-pin re-review of the proposed gate_sha, then apply the pin to evidence/acceptance",
+  "owner review of included draft PRs #39 and #41 content"
+ ],
+ "locked_records": {
+  "reports/FINAL_REPORT.md": "79462a8e4eaa9410... byte-identical to main",
+  "reports/USER_ACTIONS_REQUIRED.md": "70762916c660dc02... byte-identical to main",
+  "reports/user-actions.json": "4d5efd2f4a883b40... byte-identical to main",
+  "docs/metadata/preserved-records.json": "NOT byte-identical to main: all 145 main entries unchanged, 10 review-record hashes appended (required by check_registries R3/R4 for the merged review records); owner/Final Report worker to confirm"
+ },
+ "approvals": {
+  "independent_review_AC1": "PENDING",
+  "pin_review": "PENDING",
+  "owner_approval": "PENDING"
+ },
+ "note": "Not an approval. Nothing here is accepted. Independent review and owner approval are PENDING."
+}

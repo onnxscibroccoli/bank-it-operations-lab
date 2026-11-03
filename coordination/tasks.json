@@ -1123,5 +1123,98 @@
   ],
   "status": "CANDIDATE_NOT_MERGED",
   "note": "Fresh candidate from current main; the old integration/completion-20261103 @ 3c417d9 is not merged wholesale and is kept as history. Not an approval."
+ },
+ "pr_dispositions": {
+  "as_of": "2026-11-03T17:45:00-05:00",
+  "audited_against_main": "8e2df97b558e69032e52a50ed0adfd311ad04578",
+  "doc": "coordination/PR_DISPOSITIONS.md",
+  "closed": [],
+  "entries": [
+   {
+    "pr": 11,
+    "disposition": "NOT INTEGRATED",
+    "action": "LEAVE OPEN"
+   },
+   {
+    "pr": 15,
+    "disposition": "INTEGRATED",
+    "action": "CLOSE PROPOSED (needs Ian's explicit go-ahead; not closed)"
+   },
+   {
+    "pr": 23,
+    "disposition": "INTEGRATED",
+    "action": "HOLD (Acceptance Integrator; do not close yet)"
+   },
+   {
+    "pr": 24,
+    "disposition": "INTEGRATED",
+    "action": "HOLD (Acceptance Integrator; do not close yet)"
+   },
+   {
+    "pr": 25,
+    "disposition": "INTEGRATED + INTENTIONALLY REPLACED (2 lines)",
+    "action": "HOLD (Acceptance Integrator; do not close yet)"
+   },
+   {
+    "pr": 26,
+    "disposition": "MERGED",
+    "action": "none"
+   },
+   {
+    "pr": 6,
+    "disposition": "NOT INTEGRATED (security)",
+    "action": "LEAVE OPEN"
+   },
+   {
+    "pr": 8,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 9,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 10,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 12,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 13,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 16,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 17,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 18,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 19,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   },
+   {
+    "pr": 21,
+    "disposition": "INTEGRATED (identical or equivalent; not reviewed for closure under t29u)",
+    "action": "LEAVE OPEN (outside t29u scope)"
+   }
+  ]
  }
 }
