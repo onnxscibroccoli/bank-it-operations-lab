@@ -1,0 +1,10 @@
+{
+  "schema": "bank-lab/workflow-policy/v1",
+  "note": "Job-level write scopes allowed by tests/integration/workflow_lint/check_workflows.py. Every entry needs a reason. Top-level permissions must stay read-only or {}.",
+  "job_write_allowlist": {
+    "documentation.yml:deploy": ["pages", "id-token"]
+  },
+  "reasons": {
+    "documentation.yml:deploy": "actions/deploy-pages requires pages: write and id-token: write (OIDC to the Pages service); job runs only on push to main / dispatch with deploy=true, after validate, and checks out nothing."
+  }
+}

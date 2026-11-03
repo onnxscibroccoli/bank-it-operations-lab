@@ -1,0 +1,91 @@
+name: workflow-security
+
+# Fails on: unpinned actions (non-SHA refs), pins missing from / inconsistent with ACTIONS_LOCK.tsv, missing or
+# write-granting top-level permissions, unallow-listed job write scopes, checkout without persist-credentials: false,
+# pull_request_target, workflow_run, github.event/head_ref/inputs interpolated into run: scripts, curl|sh.
+# The checker's negative self-test runs first: it must catch every deliberately bad fixture.
+# No secrets; the only token use is a read-only GITHUB_TOKEN for public upstream tag lookups.
+on:
+  push:
+    branches: [main, ci-workflow-hardening]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * 1" # weekly: re-verify lockfile pins against upstream tags
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: workflow-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: workflow lint + negative self-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML (hash-pinned)
+        run: python -m pip install --require-hashes --no-deps -r tests/integration/workflow_lint/requirements.txt
+      - name: Negative self-test (bad fixtures must be caught, good fixture must pass)
+        id: selftest
+        run: |
+          set +e
+          mkdir -p wl-evidence
+          SELFTEST_OUT=wl-evidence/selftest PYTHON=python bash tests/integration/workflow_lint/selftest.sh 2>&1 | tee wl-evidence/selftest-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+      - name: Check repository workflows
+        id: check
+        if: always()
+        run: |
+          set +e
+          python tests/integration/workflow_lint/check_workflows.py --tsv wl-evidence/findings.tsv 2>&1 | tee wl-evidence/check-console.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          { echo '### workflow-security'; tail -n 1 wl-evidence/check-console.log; tail -n 1 wl-evidence/selftest-console.log; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload evidence (always)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: workflow-security-${{ github.run_id }}-${{ github.run_attempt }}
+          path: wl-evidence/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Gate
+        if: always()
+        env:
+          SELFTEST_RC: ${{ steps.selftest.outputs.rc }}
+          CHECK_RC: ${{ steps.check.outputs.rc }}
+        run: |
+          echo "selftest rc=$SELFTEST_RC check rc=$CHECK_RC"
+          test "$SELFTEST_RC" = "0" && test "$CHECK_RC" = "0"
+
+  lock-verify-online:
+    name: lockfile pins still match upstream tags
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Re-resolve every ACTIONS_LOCK.tsv row via the GitHub API (read-only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          python3 tests/integration/workflow_lint/resolve_lock.py verify .github/workflows/ACTIONS_LOCK.tsv 2>&1 | tee lock-verify.log
+          rc=${PIPESTATUS[0]}
+          tail -n 1 lock-verify.log >> "$GITHUB_STEP_SUMMARY"
+          exit "$rc"

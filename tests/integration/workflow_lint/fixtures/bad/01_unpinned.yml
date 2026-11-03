@@ -1,0 +1,11 @@
+name: bad-unpinned
+on: push
+permissions: { contents: read }
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@main
+      - uses: docker://alpine:3.20
