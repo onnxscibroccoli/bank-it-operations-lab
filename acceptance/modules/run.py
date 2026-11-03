@@ -25,6 +25,7 @@ def main(argv=None) -> int:
     ap.add_argument("module", nargs="?", default="all", choices=[*ADAPTERS, "all"])
     ap.add_argument("--mode", default="static-evidence", choices=["static-evidence", "live-offline"])
     ap.add_argument("--json-out")
+    ap.add_argument("--shared-out", metavar="DIR", help="also emit an evidence bundle + PR #23 acceptance document under DIR")
     a = ap.parse_args(argv)
     names = list(ADAPTERS) if a.module == "all" else [a.module]
     results = [ADAPTERS[n].run(mode=a.mode).to_dict() for n in names]
@@ -36,6 +37,14 @@ def main(argv=None) -> int:
             print(f"    {c['status']:12} {c['reason_code']:28} {c['id']}: {c['detail'][:160]}")
     if a.json_out:
         Path(a.json_out).write_text(json.dumps(results if len(results) > 1 else results[0], indent=2) + "\n")
+    if a.shared_out:
+        from acceptance.modules import emit_shared, _util
+        sha = _util.git_sha()
+        doc = emit_shared.emit(results, Path(a.shared_out), "run-" + results[0]["started_utc"].replace(":", "").replace("-", ""), sha)
+        print(f"shared contract document: {doc}")
+        chk = emit_shared.check_with_shared(doc, Path(a.shared_out))
+        print("check_acceptance.py: " + ("not present in this checkout (PR #23 unmerged)" if chk is None
+              else f"exit {chk[0]} {chk[1].get('decision', chk[1])}"))
     order = ["PASS", "NOT_EXECUTED", "FAIL", "ERROR"]
     worst = max((r["status"] for r in results), key=order.index)
     return EXIT[worst]

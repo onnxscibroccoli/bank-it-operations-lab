@@ -19,12 +19,26 @@ through `ModuleResult` and `Check`, so aligning with the shared contract later s
 checks[{id,title,kind,status,reason_code,detail,evidence}], evidence[{path,sha256}], claims{...all false},
 started_utc, finished_utc, git_sha`. A failing check must carry a non-`OK` reason code from `REASON_CODES`.
 
+### Mapping onto the shared contract (PR #23, `schemas/acceptance`)
+`emit_shared.py` (or `run.py --shared-out DIR`) writes, under DIR and never into this tree, an evidence bundle
+`evidence/acceptance-modules/<label>/`. The bundle holds per-module logs (with an `# exit_code:` trailer), the
+full result JSON, an `aws-3col` `COMMANDS.tsv`, `SHA256SUMS`, and a `MANIFEST.json` that satisfies
+`evidence/shared/evidence-manifest.schema.json` with a `git-commit` anchor. Alongside the bundle it writes an
+`acceptance-requirements` document (schema 1.0.0) with one requirement per module:
+`ACC-MOD-AWS-001`, `ACC-MOD-PG-001`, `ACC-MOD-ENTRA-001`. Each requirement records the command
+`run.py <module> --mode <mode>`, expected exit 0, the observed exit, a PASS/FAIL/UNKNOWN result, and 2
+evidence refs. `reviewer_findings` is left empty on purpose, so PR #23's checker returns a **valid** document
+with decision `BLOCKED`. The only blocker is "required PASS lacks an independent reviewer concurrence", until a
+human other than the recorder concurs.
+
 ## Run
 ```bash
 python3 acceptance/modules/run.py all                       # static-evidence (stdlib only, ~2 s)
 PG_BIN=/path/to/pg/bin python3 acceptance/modules/run.py all --mode live-offline   # needs npm ci in infra/aws-cdk + PG binaries
 python3 acceptance/modules/run.py postgres --json-out result.json
+python3 acceptance/modules/run.py all --shared-out /tmp/acc  # + PR #23 bundle/document (checked if #23 is present)
 python3 -m unittest discover -s acceptance/modules/tests    # adapter tests, including negatives
+ACCEPTANCE_CONTRACT_ROOT=<checkout of PR #23> python3 -m unittest discover -s acceptance/modules/tests  # + contract tests
 ```
 Exit codes: 0 PASS, 1 FAIL, 2 ERROR, 4 NOT_EXECUTED. In live mode, a missing toolchain is reported as
 `NOT_EXECUTED/TOOL_UNAVAILABLE` and never as PASS.
@@ -42,3 +56,6 @@ the fault under test is the only one present. Without the re-seal, every negativ
   (SCHEMA-001); fixture declared for the wrong rule → `NEGATIVE_WRONG_REASON`; valid fixture declared negative →
   `NEGATIVE_UNEXPECTED_SUCCESS`; malformed fixture declared as baseline-negative (exit 2 vs 1) → `NEGATIVE_WRONG_REASON`;
   no declared negatives → `NEGATIVE_COUNT`; tampered evidence → `EVIDENCE_HASH_MISMATCH`.
+- shared-contract mapping (PR #23 checker): a failing adapter maps to `FAIL` and is blocked with `{"id": "ACC-MOD-AWS-001", "reason": "FAIL"}`;
+  a tampered emitted artifact is `INVALID` with only `[E_EVIDENCE_BUNDLE_HASHES]`; a different tested commit is `INVALID`
+  with only `[E_EVIDENCE_COMMIT_MISMATCH]`; a non-40-hex commit is refused by the emitter.
