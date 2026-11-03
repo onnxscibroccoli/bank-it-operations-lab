@@ -75,7 +75,7 @@ describe('NetworkDatabaseStack', () => {
   });
 
   test('CMKs: rotation on, no wildcard principals, no kms:* (least-privilege key policies)', () => {
-    template.resourceCountIs('AWS::KMS::Key', 2);
+    template.resourceCountIs('AWS::KMS::Key', 3); // LogsKey, DatabaseKey, BackupVaultKey (aws-remediation-backup-kms)
     for (const k of Object.values(template.findResources('AWS::KMS::Key'))) {
       expect(k.Properties.EnableKeyRotation).toBe(true);
       expect(k.DeletionPolicy).toBe('Retain');
