@@ -14,12 +14,14 @@
   "sha": "7f50348",
   "verified": "main contains only README.md; nothing to break"
  },
- "updated": "2026-10-28T21:02:00-04:00",
+ "updated": "2026-11-03T17:35:00-05:00",
  "rules": [
   "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
   "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
   "Technical blockers are not relaxed by this policy: failing or missing checks, unapproved security exceptions, the PR #6 self-logging defect, docs mismatches, and the open review findings (PR #14 B5-1/B5-2, PR #27 C1-C5) all still block.",
   "This integration agent does not merge anything into main itself, and makes no production changes.",
+  "2026-11-03 17:00 EST (owner directive t26u): do NOT merge into main while AC1 independent review and the gate-pin re-review are unmet. This supersedes, for this pass, the 13:21 EST authorization to merge completed work before the final review. Ordinary merges only; no force pushes.",
+  "2026-11-03 17:35 EST (owner directive t27u): consolidate PR #39 @ b6e23ba and PR #41 @ 70535c5 on a fresh candidate from main (integration/candidate-20261103c); do not bypass R6, do not apply the proposed pin, keep the gate fail-closed, do not merge to main.",
   "no deploys",
   "no AWS/Entra/Graph calls",
   "no credentials",
@@ -130,7 +132,13 @@
     "Regenerate evidence/orgs and SHA256SUMS",
     "Optionally add an infra/orgs CI workflow modelled on aws-cdk.yml"
    ],
-   "merge_conflicts": "none (disjoint paths: infra/orgs/**, evidence/orgs/**)"
+   "merge_conflicts": "none (disjoint paths: infra/orgs/**, evidence/orgs/**)",
+   "reconciled": {
+    "as_of": "2026-11-03",
+    "current_module": "orgs-security",
+    "current_status": "INTEGRATED",
+    "note": "B6-1/B6-2 fixed and B6-3 Terraform delivered on main (delivery commit a5b60ed, PR #35); the awaiting_changes record above is the 2026-10-28 state of PR #6 e5e7f46, kept as history. PR #6 itself is still an open draft."
+   }
   }
  ],
  "validation": {
@@ -320,7 +328,13 @@
     "cdk-synth green when there is no CDK app",
     "optional control bypassing S04"
    ],
-   "why_not_integrated": "Review notes only, with no review of PR #14 itself. Recorded per instruction ('if unsure, just record')."
+   "why_not_integrated": "Review notes only, with no review of PR #14 itself. Recorded per instruction ('if unsure, just record').",
+   "reconciled": {
+    "as_of": "2026-11-03",
+    "current_module": "review-notes",
+    "current_status": "INTEGRATED",
+    "note": "Review file preserved verbatim on integration/candidate-20261103b by an ordinary merge of eb8d259; recording it is not an approval."
+   }
   },
   {
    "pr": 26,
@@ -344,7 +358,13 @@
     "PR #26 integrated acceptance-adapters @ c6aa238, but PR #25's head is now ce39504 (4 files, +287 lines not included).",
     "The run passing does not mean acceptance: PR #27 found verifier gaps C1-C3 that would let an incomplete or inconsistent bundle pass."
    ],
-   "why_not_integrated": "Not reviewed favourably: PR #27 says CHANGES REQUIRED, and it is stale against PR #25."
+   "why_not_integrated": "Not reviewed favourably: PR #27 says CHANGES REQUIRED, and it is stale against PR #25.",
+   "reconciled": {
+    "as_of": "2026-11-03",
+    "current_module": "acceptance",
+    "current_status": "INTEGRATED",
+    "note": "Acceptance framework reached main through PR #40 (acceptance/integration-v2, merge 8e2df97), which contains eb42b23; C1-C5 dispositions are in acceptance/INTEGRATION-V2.md. Not an approval; review pending."
+   }
   },
   {
    "pr": 27,
@@ -353,7 +373,13 @@
    "head": "703f6a71840559e98f49b4c897ca5216d4018133",
    "title": "review: independent acceptance gate findings at 181bcdd",
    "status": "recorded_not_integrated",
-   "note": "External review of PR #26 @ 181bcdd: CHANGES REQUIRED (C1-C5). C6 is the source of the policy wording update. It has no GitHub review or CI of its own."
+   "note": "External review of PR #26 @ 181bcdd: CHANGES REQUIRED (C1-C5). C6 is the source of the policy wording update. It has no GitHub review or CI of its own.",
+   "reconciled": {
+    "as_of": "2026-11-03",
+    "current_module": "review-notes",
+    "current_status": "INTEGRATED",
+    "note": "Review and plan files preserved verbatim on integration/candidate-20261103b by an ordinary merge of 72aa8b7; not an approval."
+   }
   }
  ],
  "review_requests": [
@@ -1083,5 +1109,19 @@
   "status": "DRAFT_NOT_ACCEPTED",
   "owner_instructions": "reports/USER_ACTIONS_REQUIRED.md",
   "note": "Earlier round records retained as history. PR #1 closed. Old midnight target elapsed without eligible merge."
+ },
+ "candidate_checkpoint": {
+  "branch": "integration/candidate-20261103c",
+   "supersedes_candidate": "integration/candidate-20261103b @ caa9ce7c1b1538d8da920463db77c93c05fe882b (kept as history)",
+  "base": {
+   "branch": "main",
+   "sha": "8e2df97b558e69032e52a50ed0adfd311ad04578"
+  },
+  "manifest": [
+   "coordination/INTEGRATION_MANIFEST.json",
+   "coordination/INTEGRATION_MANIFEST.md"
+  ],
+  "status": "CANDIDATE_NOT_MERGED",
+  "note": "Fresh candidate from current main; the old integration/completion-20261103 @ 3c417d9 is not merged wholesale and is kept as history. Not an approval."
  }
 }

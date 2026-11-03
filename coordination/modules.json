@@ -62,7 +62,8 @@
           "integration-gate.yml:merge-eligibility"
         ],
         "proposed": []
-      }
+      },
+      "limitations": "Gate trust is not established: the trusted-gate pin has no independent review, branch protection is absent (UA-3), owner decisions from the shared account are insufficient (UA-6) and no independent reviewer is enrolled (UA-7). merge-eligibility stays NOT ELIGIBLE (fail-closed) until then."
     },
     {
       "id": "shared-evidence-validator",
@@ -130,7 +131,7 @@
       "ci_jobs": [
         "offline-validation.yml:validate"
       ],
-      "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-3).",
+      "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-2; was mis-cited as UA-3 before candidate-20261103b).",
       "category": "functional",
       "delivery_location": [
         "identity/entra",
@@ -369,25 +370,42 @@
         "EXECUTED_CI",
         "EXECUTED_LOCAL"
       ],
-      "limitations": "Offline lab gate; ends at EXECUTION_PASS + REVIEW_PENDING and never reports ACCEPTED. Independent review of the exact SHA and AC6 remain separate."
+      "limitations": "Offline lab gate; ends at EXECUTION_PASS + REVIEW_PENDING and never reports ACCEPTED. Independent review of the exact SHA and AC6 remain separate.",
+      "validate_all_steps": [
+        "acceptance gate self-test",
+        "acceptance gate invariant tests",
+        "acceptance adapter tests",
+        "acceptance runner tests",
+        "acceptance contract tests"
+      ]
     },
     {
       "id": "review-notes",
-      "status": "NOT_INTEGRATED",
+      "status": "INTEGRATED",
       "prs": [
         14,
         27,
         28,
-        29
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
       ],
       "paths": [
         "reports/review-pr3-pr6.md",
         "reports/independent",
         "reports/review-candidate-08cdf11.md",
-        "reports/review-acceptance-vertical-slice.md"
+        "reports/review-acceptance-vertical-slice.md",
+        "reports/review-candidate-b908a66.md",
+        "reports/review-candidate-1fdf25a.md",
+        "reports/review-candidate-5a75d9c.md",
+        "reports/review-candidate-2e3041a.md",
+        "reports/review-candidate-a9d0f64.md"
       ],
-      "reason": "Review records; kept on their own branches as audit records (plan: do not commit reviews onto the candidate).",
-      "category": "review_record",
+      "reason": "Historical review records preserved verbatim by merging each review PR head (PR #14 eb8d259, #27 72aa8b7, #28 fe6f24e, #29 384c610, #30 eb82d7d, #31 eccac83, #32 c795ce6, #33 9612a7b, #34 2a07e33) on integration/candidate-20261103c (ordinary merges of each review PR head onto main 8e2df97; earlier on integration/candidate-20261103b @ caa9ce7 and integration/completion-20261103 @ 3c417d9, neither merged wholesale). They review earlier candidates, not this branch, and are NOT approvals; no GitHub review state is implied.",
+      "category": "documentation",
       "owner": {
         "agent": "Bank IT Lab PR Reviewer",
         "pr_author": "onnxscibroccoli",
@@ -399,7 +417,11 @@
       "required_checks": {
         "present": [],
         "proposed": []
-      }
+      },
+      "validate_all_steps": [
+        "review records preserved"
+      ],
+      "limitations": "Records only. Some are agent-authored on the shared account; they do not satisfy AC1."
     },
     {
       "id": "portfolio-cases",
@@ -1203,7 +1225,7 @@
       "ci_jobs": [
         "documentation.yml:validate"
       ],
-      "limitations": "Documentation platform only. Legacy migration, manual accessibility assessment, and public deployment remain incomplete.",
+      "limitations": "Documentation platform. GitHub Pages is enabled (build_type workflow) and deployed from main by documentation.yml. Includes draft PR #41 (docs-platform 70535c5, owner review requested): dot-directory pages are renamed so they no longer 404 on Pages, and the axe-core scan covers every generated page. Automated WCAG 2.2 AA subset only; no human screen-reader or manual accessibility assessment; no WCAG conformance claim.",
       "prs": []
     }
   ],

@@ -184,7 +184,19 @@ ev diagnosed '{"root_cause":"core-ledger PostgreSQL postmaster not running (imme
 
 # ---- 6. restore -----------------------------------------------------------------------------------
 ev restore_started '"runbook: start PostgreSQL, let crash recovery complete, verify data, confirm via monitor"'
-step restore_pg_start zero - "$PG_BIN/pg_ctl" -D "$PGDATA" -l "$PGLOG" -w -t 60 start
+# candidate-20261103b fix: after "pg_ctl -m immediate stop" the fixed port can still be held for a moment, and a
+# start can fail with "could not bind ... Address already in use" (integration-gate run 41728133126). The runbook
+# action is unchanged; up to 10 start attempts, 1 s apart, all recorded in this step's log.
+pg_start_retry() {
+  local i
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+    echo "# attempt $i: pg_ctl start"
+    "$PG_BIN/pg_ctl" -D "$PGDATA" -l "$PGLOG" -w -t 60 start && return 0
+    sleep 1
+  done
+  return 1
+}
+step restore_pg_start zero - pg_start_retry
 ev db_restarted '"pg_ctl start returned 0"'
 step verify_crash_recovery_logged zero 'not properly shut down|automatic recovery' bash -c "tail -n 20 '$PGLOG' | sed 's#$WORK#\$WORK#g'"
 step verify_db_ping zero 'PQPING_OK' "$PY" "$HERE/lib/pgclient.py" ping "$CONN"
