@@ -104,6 +104,11 @@
    "how": "new commit; incident-demo owner (Portfolio Cases) to review"
   },
   {
+   "source": "this candidate (defect fix)",
+   "taken": "scripts/docs/tests/browser.mjs (from PR #41): header-search check waited with a non-null-safe predicate that could run on the old page mid-navigation (Documentation run 41729590108: 'Cannot read properties of null'). Now waits for the URL change and uses a null-safe predicate. Local: 3/3 browser runs pass.",
+   "how": "new commit; PR #41 owner to review"
+  },
+  {
    "source": "this candidate (new)",
    "taken": "check_registries.py + tests (R1-R5), tasks.json reconciled{} records, UA-2 citation fix, T-11 docs-workflow SHA pins + test_actions_pinned.py, T-16 test_t16_pin_proposal.py, UNREVIEWED pin proposal, this manifest",
    "how": "new commits"

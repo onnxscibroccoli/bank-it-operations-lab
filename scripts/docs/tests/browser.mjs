@@ -32,7 +32,9 @@ try{
  report.navigation='Eight primary sections present; current section marked with aria-current on each hub page';
  await page.goto(`${root}/pages/docs/knowledge/tutorials.html`);
  await page.locator('#site-q').fill('How do I recover a database?');await page.locator('#site-q').press('Enter');
- await page.waitForFunction(()=>document.querySelector('#search-status').textContent.includes('results.'));
+ // candidate-20261103b: the predicate can run on the old page during navigation (Documentation run 41729590108); wait for the home page, null-safe.
+ await page.waitForURL(u=>!String(u).includes('/tutorials.html'));
+ await page.waitForFunction(()=>(document.querySelector('#search-status')?.textContent||'').includes('results.'));
  assert.ok((await page.locator('#results a').evaluateAll(a=>a.slice(0,5).map(x=>x.getAttribute('href')))).includes('pages/docs/knowledge/recovery.html'));
  report.siteSearch='Header search on a content page submits to the home page and returns results';
  const curated=JSON.parse(fs.readFileSync('dist/docs/search-index.json')).filter(p=>p.metadata).map(p=>p.url);
