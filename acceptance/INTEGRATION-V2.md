@@ -22,13 +22,17 @@ This record is **not an approval**. The gate ends at `EXECUTION_PASS` + `REVIEW_
 | `060a5df3` | pure rename `scripts/acceptance/*` → `tools/acceptance/gate/*` (`required-checks.v1.json` → `required-checks.json`) |
 | `2f32bf3f` | gate v2 (fail-closed binding, derived groups, scope registration, provenance, recomputed state/summary, `postgres-run/**` hashing, scoped reviews, no ACCEPTED) + real-git-repo regression tests + proof script + compatibility shim |
 | `094b8a02` | HASH group handles repo-root-relative bundles; workflow moved to the new path, `--sha` everywhere, CI regression proof, push-to-main verification; C5 pins + 7-day retention |
+| `98fc405a` | this record |
+| `ff306d68` | normal merge of `acceptance-adapters` (C) head `ce395047`, which adds `emit_shared.py`, C's mapping onto A's contract. The slice had integrated C only up to `c6aa238e` (the PR #25 divergence noted in `coordination/modules.json`) |
+| `bd67b156` | ACC-C-02 also runs C's emitter (`--shared-out`); decision staging excludes it |
+| `6ea6803c` | registry and docs bookkeeping needed for main's required checks (see below) |
 
 ## D-1: path reconciliation
 
 The slice put the gate in `scripts/acceptance/**`. The owned paths are `acceptance/**`, `schemas/acceptance/**`,
 `tools/acceptance/**` and `tests/acceptance-contract/**`, so the gate moved to **`tools/acceptance/gate/`**, next to worker B's
-runner. A (`schemas/acceptance`, `tests/acceptance-contract`), B (`tools/acceptance/{runner.py,checks.json,tests}`) and
-C (`acceptance/modules`) are unchanged from their integrated SHAs.
+runner. A (`schemas/acceptance`, `tests/acceptance-contract`) and B (`tools/acceptance/{runner.py,checks.json,tests}`) are
+unchanged from `6a28847b` / `838d537a`. C (`acceptance/modules`) is C's head `ce395047` plus Worker D's fix `93de4b3d`.
 
 Files outside the owned paths, which are all the minimum needed:
 
@@ -36,9 +40,12 @@ Files outside the owned paths, which are all the minimum needed:
 |---|---|
 | `.github/workflows/acceptance.yml` | the existing acceptance workflow from the slice: new gate path, `--sha` binding, regression proof, C5 pins/retention, `push: main` verification |
 | `scripts/acceptance/run.sh` | 3-line compatibility shim (`exec tools/acceptance/gate/run.sh "$@"`) so the historically documented first command still works |
+| `coordination/modules.json` | the `acceptance` entry only: NOT_INTEGRATED → INTEGRATED, with `ci_jobs` = the three `acceptance.yml` jobs and the second report path. Main's required `module-registry` job fails closed while NOT_INTEGRATED paths exist |
+| `scripts/ci/tests/test_module_coverage.py` | one assertion that hard-coded `acceptance(NOT_INTEGRATED)` as incomplete. **Note:** `scripts/ci/**` is hashed by main's trusted gate manifest. `merge-eligibility` already fails on main @ `30e0a832` for 8 other `scripts/ci` drifts, and the manifest needs an owner re-pin (UA-3) in any case |
+| `docs/metadata/pages.json` | 6 additive entries (documentation `test_every_document_has_metadata` requires one per tracked `.md`) |
 | `reports/ACCEPTANCE.md`, `reports/ACCEPTANCE_INVARIANT_ASSURANCE.md` | historical evidence carried in by the merge, **byte-identical to eb42b23** (not edited). Where they say `scripts/acceptance/…` or that ACCEPTED is reachable, this record supersedes them. |
 
-Not touched: `reports/independent/chatgpt/**` (it isn't on this branch; PR #27 is unchanged), `coordination/**`, `scripts/ci/**`, `.github/acceptance/**`, every other workflow, and all module and evidence content.
+Not touched: `reports/independent/chatgpt/**` (it isn't on this branch; PR #27 is unchanged), `coordination/tasks.json`, `scripts/ci/*.py`, `.github/acceptance/**`, every other workflow, and all module and evidence content.
 
 First command (unchanged contract): `bash tools/acceptance/gate/run.sh <40-hex SHA> --out acceptance-out`
 (or `bash scripts/acceptance/run.sh …`). Exit 0 = EXECUTION_PASS, 1 = FAIL, 2 = required UNKNOWN. Then
@@ -100,7 +107,7 @@ A-contract export rejects the new `requirement_ids` field (old exit 1 = INVALID)
 
 ## Local full run (box, offline, PG 16 binaries)
 
-`bash scripts/acceptance/run.sh 094b8a02b8e01494f9addb35b03d1196743d8c44`: **exit 0, EXECUTION_PASS**. 55 required checks
+`bash scripts/acceptance/run.sh 6ea6803c0828a65fb269bb551ad5449f0d8ed948`: **exit 0, EXECUTION_PASS**. 55 required checks
 PASS, 0 FAIL, 0 UNKNOWN (27 HASH bundles, ACC-C-03 live-offline and ACC-D-01 included). `decide.py`: **REVIEW_PENDING
 (exit 5)**, with 29 blockers that are all "required PASS lacks an independent reviewer concurrence". Verifying the same
 output against the parent SHA is rejected (I2).
