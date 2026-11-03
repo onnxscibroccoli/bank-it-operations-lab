@@ -10,6 +10,7 @@
 set -uo pipefail
 export LC_ALL=C
 OLD="${1:-eb42b23747d5b686d9540c93e445a713b4e56c5d}"; OUTF="${2:-/dev/stdout}"
+case "$OUTF" in /*) ;; *) OUTF="$(pwd)/$OUTF" ;; esac  # absolute: the script cds below
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; ROOT="$(git -C "$HERE" rev-parse --show-toplevel)"
 WT="$(mktemp -d)/old"; trap 'git -C "$ROOT" worktree remove --force "$WT" >/dev/null 2>&1' EXIT
 git -C "$ROOT" worktree add --detach --quiet "$WT" "$OLD" || { echo "cannot check out $OLD" >&2; exit 2; }
