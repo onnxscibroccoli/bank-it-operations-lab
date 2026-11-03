@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "document": {
+    "id": "acceptance-fixture",
+    "title": "SYNTHETIC acceptance fixture",
+    "repository": "onnxscibroccoli/bank-it-operations-lab",
+    "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+    "recorded_by": "worker-a (recorder)",
+    "synthetic": true
+  },
+  "requirements": [
+    {
+      "id": "ACC-DEMO-001",
+      "scope": "SYNTHETIC fixture scope",
+      "rationale": "SYNTHETIC fixture rationale",
+      "required": true,
+      "source": {
+        "type": "project_decision",
+        "reference": "coordination/tasks.json#acceptance_conditions_for_main"
+      },
+      "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+      "check": {
+        "command": "python3 -m unittest discover -s evidence/shared/tests",
+        "expected": {
+          "exit_code": 0
+        },
+        "execution": "executed",
+        "observed": {
+          "exit_code": 0
+        }
+      },
+      "evidence_refs": [
+        {
+          "manifest": "evidence/acceptance-demo/MANIFEST.json",
+          "artifact": "evidence/acceptance-demo/logs/ACC-DEMO-001.log",
+          "sha256": "ba2eef281663eeb6cbeb713e1414a7c0d39fae82d9408eec2531adee6ec3a2e5"
+        }
+      ],
+      "assumptions": [
+        "SYNTHETIC: stdlib Python 3.12+ on a clean checkout"
+      ],
+      "exclusions": [
+        "No production systems, tenants or cloud accounts are touched"
+      ],
+      "verification_method": "automated_test",
+      "result": "PASS",
+      "reviewer_findings": [
+        {
+          "reviewer": "reviewer-b (independent)",
+          "reviewed_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+          "verdict": "concur",
+          "finding": "SYNTHETIC: re-ran the command at the tested commit and compared with the evidence log.",
+          "date": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": "ACC-DEMO-002",
+      "scope": "SYNTHETIC fixture scope",
+      "rationale": "SYNTHETIC fixture rationale",
+      "required": true,
+      "source": {
+        "type": "project_decision",
+        "reference": "coordination/tasks.json#acceptance_conditions_for_main"
+      },
+      "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+      "check": {
+        "command": "python3 -m unittest discover -s evidence/shared/tests",
+        "expected": {
+          "exit_code": 0
+        },
+        "execution": "executed",
+        "observed": {
+          "exit_code": 0
+        }
+      },
+      "evidence_refs": [
+        {
+          "manifest": "evidence/acceptance-demo/MANIFEST.json",
+          "artifact": "evidence/acceptance-demo/logs/ACC-DEMO-002.log",
+          "sha256": "453604165f7086ace27527230be20cba1db6d6d2b0d42c136936faf5bf0716eb"
+        }
+      ],
+      "assumptions": [
+        "SYNTHETIC: stdlib Python 3.12+ on a clean checkout"
+      ],
+      "exclusions": [
+        "No production systems, tenants or cloud accounts are touched"
+      ],
+      "verification_method": "demonstration",
+      "result": "PASS",
+      "reviewer_findings": [
+        {
+          "reviewer": "reviewer-b (independent)",
+          "reviewed_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+          "verdict": "concur",
+          "finding": "SYNTHETIC: re-ran the command at the tested commit and compared with the evidence log.",
+          "date": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": "ACC-DEMO-003",
+      "scope": "SYNTHETIC fixture scope",
+      "rationale": "SYNTHETIC fixture rationale",
+      "required": true,
+      "source": {
+        "type": "standard",
+        "reference": "SYNTHETIC: FFIEC IT Handbook, Architecture, Infrastructure, and Operations (June 2021)"
+      },
+      "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+      "check": {
+        "command": "python3 -m unittest discover -s evidence/shared/tests",
+        "expected": {
+          "exit_code": 0
+        },
+        "execution": "not_run"
+      },
+      "evidence_refs": [],
+      "assumptions": [
+        "SYNTHETIC: stdlib Python 3.12+ on a clean checkout"
+      ],
+      "exclusions": [
+        "No production systems, tenants or cloud accounts are touched"
+      ],
+      "verification_method": "automated_test",
+      "result": "NOT_APPLICABLE",
+      "reviewer_findings": [],
+      "result_rationale": "SYNTHETIC: control applies to Windows hosts; none are in scope for this lab."
+    },
+    {
+      "id": "ACC-DEMO-004",
+      "scope": "SYNTHETIC fixture scope",
+      "rationale": "SYNTHETIC fixture rationale",
+      "required": false,
+      "source": {
+        "type": "vendor_guidance",
+        "reference": "SYNTHETIC: vendor doc URL"
+      },
+      "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+      "check": {
+        "command": "python3 -m unittest discover -s evidence/shared/tests",
+        "expected": {
+          "exit_code": 0
+        },
+        "execution": "skipped",
+        "observed": {
+          "exit_code": 0
+        }
+      },
+      "evidence_refs": [],
+      "assumptions": [
+        "SYNTHETIC: stdlib Python 3.12+ on a clean checkout"
+      ],
+      "exclusions": [
+        "No production systems, tenants or cloud accounts are touched"
+      ],
+      "verification_method": "automated_test",
+      "result": "UNKNOWN",
+      "reviewer_findings": [],
+      "result_rationale": "SYNTHETIC: optional Node toolchain not installed; check skipped."
+    }
+  ]
+}

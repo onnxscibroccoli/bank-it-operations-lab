@@ -1,0 +1,4 @@
+ACC-DEMO-001.log	0	python3 -m unittest discover -s evidence/shared/tests
+ACC-DEMO-002.log	0	bash scripts/validate-all.sh --python-only
+ACC-DEMO-FAIL.log	1	python3 synthetic_failing_check.py
+UNCOVERED.log	0	true
