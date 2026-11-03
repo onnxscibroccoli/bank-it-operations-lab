@@ -1,0 +1,4 @@
+# --check-pin: CURRENT manifest, candidate = main 8e2df97b
+UNVERIFIED no independently reviewed gate pin: the manifest records no qualifying review of gate_sha ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae
+TRUSTED GATE UNVERIFIED (informational; merge_eligibility.py recomputes this itself and never reads this file)
+exit=0

@@ -12556,5 +12556,108 @@
       "evidence": []
     },
     "last_reviewed": "2026-11-03"
+  },
+  "acceptance/ASSURANCE-SPLIT.md": {
+    "id": "page-fe2f66dd44d03273",
+    "description": "Separation of executed CI checks, independent review and owner approval for the acceptance and merge-eligibility gates.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Records that no review or owner approval exists or is claimed; CI execution only.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent human review and owner decision; neither is performed or claimed by the agent.",
+    "source_files": [
+      "acceptance/ASSURANCE-SPLIT.md",
+      "tools/acceptance/gate"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/40"
+    ],
+    "aliases": [
+      "acceptance",
+      "assurance split",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "acceptance/pin-review/T-16/README.md": {
+    "id": "page-1406fd3a55f5516d",
+    "description": "T-16 stale trusted-gate pin investigation: the one stale manifest entry, its history, diffs, tests and a proposed (not trusted) corrected manifest.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Proposal only; the corrected manifest is not installed and merge-eligibility stays NOT ELIGIBLE.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent human review and owner decision; neither is performed or claimed by the agent.",
+    "source_files": [
+      "acceptance/pin-review/T-16",
+      "tools/acceptance/gate/tests/test_pin_review.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/40"
+    ],
+    "aliases": [
+      "acceptance",
+      "trusted gate",
+      "pin review",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "acceptance/rulesets/README.md": {
+    "id": "page-415c9da5c3748654",
+    "description": "Prepared GitHub rulesets for main and evidence/acceptance with exact required check names and owner-ready gh api commands.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Prepared only; evaluate mode refused by the plan, nothing created or activated.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent human review and owner decision; neither is performed or claimed by the agent.",
+    "source_files": [
+      "acceptance/rulesets",
+      "tools/acceptance/gate/tests/test_rulesets.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/40"
+    ],
+    "aliases": [
+      "acceptance",
+      "rulesets",
+      "branch protection",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
   }
 }

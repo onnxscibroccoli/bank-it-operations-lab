@@ -1,8 +1,8 @@
 {
   "inventory": "bank-it-operations-lab/acceptance-required-checks",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "reviewed_by": "worker-d (integrator, acceptance/integration-v2); independent review of this inventory itself is PENDING",
-  "rules": "Every 'checks' id must appear exactly once with required=yes and a verdict in PASS/FAIL/UNKNOWN; a required check is satisfied only by PASS. 'groups' members must be contiguous 1..n with n >= min, each required=yes. 'advisory' ids may appear at most once with required=no; only advisory ids with allow_info may be INFO. Any other id is rejected. Changing this file changes its sha256, which is recorded in results.json and must match the copy at the tested commit. v1.1.0/2.0.0: group members are DERIVED from the tested commit's tree (HASH-i must name the i-th sorted tracked evidence/**/SHA256SUMS path; ENTRA-04.i the i-th sorted evidence/entra/runs/<run> directory), so adding or dropping a member cannot hide behind 'min'. Every tracked file at the tested commit must fall under a scope.modules path (with registered checks) or a scope.non_module_paths entry; every module path must exist. Source data that cannot be read from git at the tested commit makes the result INVALID (fail closed). v2.0.0: the verifier requires --sha (no unbound mode); execution_state and SUMMARY.md are recomputed; postgres-run/** is covered by the top-level SHA256SUMS; review records must name the contract requirement_ids they cover; the gate never reports ACCEPTED.",
+  "rules": "Every 'checks' id must appear exactly once with required=yes and a verdict in PASS/FAIL/UNKNOWN; a required check is satisfied only by PASS. 'groups' members must be contiguous 1..n with n >= min, each required=yes. 'advisory' ids may appear at most once with required=no; only advisory ids with allow_info may be INFO. Any other id is rejected. Changing this file changes its sha256, which is recorded in results.json and must match the copy at the tested commit. v1.1.0/2.0.0: group members are DERIVED from the tested commit's tree (HASH-i must name the i-th sorted tracked evidence/**/SHA256SUMS path; ENTRA-04.i the i-th sorted evidence/entra/runs/<run> directory), so adding or dropping a member cannot hide behind 'min'. Every tracked file at the tested commit must fall under a scope.modules path (with registered checks) or a scope.non_module_paths entry; every module path must exist. Source data that cannot be read from git at the tested commit makes the result INVALID (fail closed). v2.0.0: the verifier requires --sha (no unbound mode); execution_state and SUMMARY.md are recomputed; postgres-run/** is covered by the top-level SHA256SUMS; review records must name the contract requirement_ids they cover; the gate never reports ACCEPTED. v2.1.0: acceptance/pin-review/** (T-16 proposal, not trusted) and acceptance/rulesets/** (prepared, not active) belong to the acceptance-gate module and are tested by ACC-D-01; acceptance/ASSURANCE-SPLIT.md is documentation.",
   "checks": [
     {
       "id": "CHECKOUT",
@@ -338,7 +338,9 @@
         "name": "acceptance-gate",
         "paths": [
           "tools/acceptance/gate/",
-          "scripts/acceptance/"
+          "scripts/acceptance/",
+          "acceptance/pin-review/",
+          "acceptance/rulesets/"
         ],
         "checks": [
           "CHECKOUT",
@@ -372,6 +374,10 @@
       {
         "path": "acceptance/INTEGRATION-V2.md",
         "class": "acceptance integration record (documentation)"
+      },
+      {
+        "path": "acceptance/ASSURANCE-SPLIT.md",
+        "class": "acceptance assurance record (documentation)"
       },
       {
         "path": "coordination/",

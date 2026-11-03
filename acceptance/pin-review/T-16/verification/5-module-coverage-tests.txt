@@ -1,0 +1,15 @@
+# scripts/ci/tests/test_module_coverage.py run against main 8e2df97b's coordination/modules.json (python3 -m unittest scripts.ci.tests.test_module_coverage)
+
+## main's version (e481f054..., the proposed pin)
+Ran 11 tests in 0.010s
+OK
+
+## the currently pinned version (92cd251e..., from ea0c2359), temporarily copied over main's file and then restored
+FAIL: test_denominator_counts_every_status (scripts.ci.tests.test_module_coverage.Coverage.test_denominator_counts_every_status)
+AssertionError: Lists differ: ['review-notes(NOT_INTEGRATED)'] != []
+Ran 11 tests in 0.010s
+FAILED (failures=1)
+
+## full scripts/ci suite on main's files (python3 -m unittest discover -s scripts/ci/tests, as integration-gate.yml runs it)
+Ran 159 tests in 1.770s
+OK

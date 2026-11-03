@@ -1,0 +1,3 @@
+# 2026-11-03 17:05 EST: gh api -X POST repos/onnxscibroccoli/bank-it-operations-lab/rulesets --input acceptance/rulesets/main.ruleset.json
+# Response (nothing was created; GET .../rulesets returned [] afterwards). evidence-acceptance.ruleset.json was not attempted: same plan, same refusal.
+{"message":"Validation Failed","errors":["Enforcement evaluate option is not supported on this plan. Please upgrade to Enterprise to enable it."],"documentation_url":"https://docs.github.com/rest/repos/rules#create-a-repository-ruleset","status":"422"}gh: Validation Failed (HTTP 422)

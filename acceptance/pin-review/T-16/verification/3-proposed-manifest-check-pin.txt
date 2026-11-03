@@ -1,0 +1,4 @@
+# --check-pin: PROPOSED manifest, candidate = main 8e2df97b, GITHUB_WORKFLOW_SHA=8e2df97b (no network: independent_review is null so nothing is fetched)
+UNVERIFIED no independently reviewed gate pin: the manifest records no qualifying review of gate_sha 6ea6803c0828a65fb269bb551ad5449f0d8ed948
+TRUSTED GATE UNVERIFIED (informational; merge_eligibility.py recomputes this itself and never reads this file)
+exit=0 (check-pin is informational; merge_eligibility.py recomputes trust and fails on UNVERIFIED)

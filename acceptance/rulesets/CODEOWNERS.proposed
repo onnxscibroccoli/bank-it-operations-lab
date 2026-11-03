@@ -1,0 +1,9 @@
+# PROPOSED, not installed. Owner action: replace @REPLACE-WITH-HUMAN-CODE-OWNER with a human GitHub account that has
+# write access and is NOT the shared agent account and NOT a bot; then commit this file as .github/CODEOWNERS on main
+# (via a reviewed PR) and on evidence/acceptance. require_code_owner_review has no effect until a CODEOWNERS file
+# exists on the target branch.
+*                                   @REPLACE-WITH-HUMAN-CODE-OWNER
+/.github/                           @REPLACE-WITH-HUMAN-CODE-OWNER
+/scripts/ci/                        @REPLACE-WITH-HUMAN-CODE-OWNER
+/tools/acceptance/                  @REPLACE-WITH-HUMAN-CODE-OWNER
+/trusted-gate/                      @REPLACE-WITH-HUMAN-CODE-OWNER
