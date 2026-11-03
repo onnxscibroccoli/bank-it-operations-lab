@@ -2,7 +2,7 @@
   "schema_note": "Sidecar for reports/COMPLETION_PASS_2026-11-03.md. Point-in-time read; not an approval or attestation.",
   "record": "reports/COMPLETION_PASS_2026-11-03.md",
   "decision_packet": "reports/HUMAN_DECISION_PACKET_2026-11-03.md",
-  "checked_at": "2026-11-03T17:05:00-05:00",
+  "checked_at": "2026-11-03T17:45:00-05:00",
   "main_sha": "8e2df97b558e69032e52a50ed0adfd311ad04578",
   "main_source": "GET /repos/onnxscibroccoli/bank-it-operations-lab/commits/main",
   "pr40": {
@@ -88,7 +88,7 @@
     }
   ],
   "prs": {
-    "total": 41,
+    "total": 42,
     "merged": [
       2,
       3,
@@ -134,13 +134,29 @@
       33,
       34,
       39,
-      41
+      41,
+      42
     ],
     "reviews_total": 0,
     "inline_review_comments": 0,
     "issue_comments": 11,
     "acceptance_decision_comments": 0,
-    "source": "GET /pulls?state=all; GET /pulls/<n>/reviews; GET /pulls/comments; GET /issues/comments"
+    "source": "GET /pulls?state=all; GET /pulls/<n>/reviews; GET /pulls/comments; GET /issues/comments",
+    "new_since_previous": [
+      {
+        "number": 42,
+        "head": "9589d891ab173807dbe2fe2d2636eb415c1b4754",
+        "branch": "acceptance/t16-pin-review",
+        "checks": "37 pass, 1 skipped, merge-eligibility fail",
+        "reviews": 0
+      },
+      {
+        "number": 41,
+        "head": "70535c5c81c10696f177de1eb05a9933146f5bf2",
+        "checks": "37 pass, 1 skipped, merge-eligibility fail",
+        "reviews": 0
+      }
+    ]
   },
   "protection": {
     "main": "404 Branch not protected",
@@ -164,42 +180,208 @@
   "ci_reference_run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41703902441",
   "open": [
     {
-      "id": "UA-2",
-      "evidence": "evidence/entra/BASELINE-CHOICES-PENDING.md@8e2df97: not confirmed by the owner; PR #4 0 comments",
-      "recommended": "confirm all three choices for the synthetic lab"
+      "id": "UA-7",
+      "packet": "A1",
+      "actionable": "now",
+      "recommended": "invite one independent reviewer with Write access",
+      "action": "gh api -X PUT repos/onnxscibroccoli/bank-it-operations-lab/collaborators/<USERNAME> -f permission=push",
+      "evidence": "collaborators [onnxscibroccoli]; invitations 0; 0 reviews on 42 PRs"
     },
     {
       "id": "UA-3",
-      "evidence": "branches main and evidence/acceptance 404 not protected; rulesets []",
-      "recommended": "phase 1 deletion + force-push block now; phase 2 PR/approval/status checks after UA-7 and green merge-eligibility"
+      "packet": "A2",
+      "actionable": "now (baseline only)",
+      "recommended": "Active ruleset, empty bypass, main + evidence/acceptance: deletion + non_fast_forward",
+      "action": "gh api -X POST repos/onnxscibroccoli/bank-it-operations-lab/rulesets --input <baseline JSON in packet A2>",
+      "evidence": "rulesets []; both branches 404 not protected"
     },
     {
-      "id": "UA-7",
-      "evidence": "collaborators onnxscibroccoli only; invitations 0; 0 reviews on 41 PRs",
-      "recommended": "invite one independent reviewer with Write access"
+      "id": "UA-2",
+      "packet": "A3",
+      "actionable": "now",
+      "recommended": "confirm all three baseline choices for the synthetic lab",
+      "action": "gh pr comment 4 --repo onnxscibroccoli/bank-it-operations-lab --body 'UA-2 decision: ...'",
+      "evidence": "evidence/entra/BASELINE-CHOICES-PENDING.md@8e2df97 not confirmed; PR #4 0 comments"
     }
   ],
   "not_yet_actionable": [
     {
-      "id": "UA-1",
-      "evidence": "EX-01..EX-04 PROPOSED; EX-04 re-scoped so the relayed 2026-10-28 EX-04 condition does not carry over"
+      "id": "UA-3 full rules",
+      "packet": "A4",
+      "blocked_by": [
+        "UA-7",
+        "CODEOWNERS",
+        "merge-eligibility green (B1)"
+      ]
     },
     {
-      "id": "UA-5",
-      "evidence": "tasks.json: AC1, AC2, AC4, AC5 not met; acceptance gate REVIEW_PENDING"
+      "id": "UA-1",
+      "packet": "A5",
+      "blocked_by": [
+        "integrator frozen packet",
+        "UA-6 reviewed owner-auth path"
+      ]
     },
     {
       "id": "UA-6",
-      "evidence": "tasks.json: no keys enrolled; adapter not activated"
+      "packet": "A6",
+      "blocked_by": [
+        "independent review of ADR-0008 design/adapter",
+        "UA-7"
+      ]
+    },
+    {
+      "id": "UA-5",
+      "packet": "A7",
+      "blocked_by": [
+        "AC1-AC5 MET for one exact SHA"
+      ]
     }
   ],
   "integrator_work": [
-    "update trusted manifest for merge-eligibility (same failure cause on main)",
-    "close superseded PRs #23-#25",
-    "integrator handoff for PR #39 (integrator not named)"
+    {
+      "id": "B1",
+      "task": "trusted-manifest fix for merge-eligibility",
+      "owner": "Worker D (independent integrator); proposal PR #42",
+      "state": "prepared; application blocked by reviewer pin re-review"
+    },
+    {
+      "id": "B2",
+      "task": "close superseded PRs #23-#25",
+      "owner": "integrator (unassigned)",
+      "state": "not done"
+    },
+    {
+      "id": "B3",
+      "task": "review-notes module",
+      "owner": "Bank IT Lab PR Reviewer / Bank IT Lab Integrator",
+      "state": "INTEGRATED in candidate only"
+    },
+    {
+      "id": "B4",
+      "task": "refresh candidate with PR #39 current head",
+      "owner": "integrator (unassigned)",
+      "state": "not done"
+    },
+    {
+      "id": "B5",
+      "task": "PR #39 description",
+      "owner": "Bank IT Lab Final Report",
+      "state": "done this pass"
+    },
+    {
+      "id": "B6",
+      "task": "integrator handoff for PR #39",
+      "owner": "integrator (unassigned)",
+      "state": "waiting on a named integrator"
+    },
+    {
+      "id": "B7",
+      "task": "review candidate CI-flake fixes",
+      "owner": "Bank IT Lab Portfolio Cases; documentation maintainers",
+      "state": "open"
+    },
+    {
+      "id": "B8",
+      "task": "fill CODEOWNERS from acceptance/rulesets/CODEOWNERS.proposed",
+      "owner": "integrator (unassigned)",
+      "state": "blocked by UA-7 name"
+    }
   ],
   "independent_reviews": 0,
   "merge_eligibility_on_main": "failure (trusted manifest mismatch: scripts/ci/tests/test_module_coverage.py)",
+  "main_moved_since_previous_read": false,
+  "candidate": {
+    "status": "CANDIDATE (not integrated)",
+    "branch": "integration/candidate-20261103b",
+    "head": "caa9ce7c1b1538d8da920463db77c93c05fe882b",
+    "pr": null,
+    "ahead_behind_main": "32 ahead / 0 behind",
+    "tested_sha": "308512714690ba20a6d9003fcd0731b88fffd596",
+    "includes_pr39_at": "42d8e962c7e71bc48295d4472c538337264bd84e",
+    "proposed_gate_pin": "a518b03e204d4b77a67e16ed83652acdbdd7b8d5 (UNREVIEWED, not applied)",
+    "directive": "owner t26u: do not merge into main until AC1 review and gate-pin re-review",
+    "locked_files_on_candidate": "FINAL_REPORT.md, USER_ACTIONS_REQUIRED.md, user-actions.json identical to main; preserved-records.json append-only (+10 entries, no existing hash changed)",
+    "runs_tested_sha": {
+      "integration-gate": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731062507",
+        "conclusion": "failure (merge-eligibility: trusted manifest)"
+      },
+      "acceptance": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731058945",
+        "conclusion": "success"
+      },
+      "offline-validation": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731065623",
+        "conclusion": "success"
+      },
+      "aws-cdk": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731069473",
+        "conclusion": "success"
+      },
+      "postgres-restore-evidence": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731073799",
+        "conclusion": "success"
+      },
+      "portfolio-validation": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731076403",
+        "conclusion": "success"
+      },
+      "Documentation knowledge base": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731137053",
+        "conclusion": "success"
+      }
+    },
+    "runs_head": {
+      "Documentation knowledge base": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731695130",
+        "conclusion": "success"
+      },
+      "offline-validation": {
+        "run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731694035",
+        "conclusion": "success"
+      }
+    },
+    "source": [
+      "GET /pulls?state=all&head=onnxscibroccoli:integration/candidate-20261103b -> []",
+      "coordination/INTEGRATION_MANIFEST.md@caa9ce7",
+      "GET /actions/runs?head_sha=<sha>"
+    ]
+  },
+  "owner_blocked": [
+    {
+      "id": "UA-3 full rules",
+      "packet": "A4",
+      "blocked_by": [
+        "UA-7",
+        "CODEOWNERS",
+        "merge-eligibility green (B1)"
+      ]
+    },
+    {
+      "id": "UA-1",
+      "packet": "A5",
+      "blocked_by": [
+        "integrator frozen packet",
+        "UA-6 reviewed owner-auth path"
+      ]
+    },
+    {
+      "id": "UA-6",
+      "packet": "A6",
+      "blocked_by": [
+        "independent review of ADR-0008 design/adapter",
+        "UA-7"
+      ]
+    },
+    {
+      "id": "UA-5",
+      "packet": "A7",
+      "blocked_by": [
+        "AC1-AC5 MET for one exact SHA"
+      ]
+    }
+  ],
   "history": [
     {
       "checked_at": "2026-11-03T13:25:00-05:00",
@@ -207,6 +389,15 @@
       "top_line": "USER ACTION REQUIRED: 3 \u2014 UA-2; UA-3; UA-7",
       "ci_reference_run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41242239019",
       "module_coverage": "25/27"
+    },
+    {
+      "checked_at": "2026-11-03T17:05:00-05:00",
+      "main_sha": "8e2df97b558e69032e52a50ed0adfd311ad04578",
+      "top_line": "USER ACTION REQUIRED: 3 \u2014 UA-2; UA-3; UA-7",
+      "ci_reference_run": "https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41703902441",
+      "module_coverage": "26/27",
+      "decision_packet_blob": "47c191fe3b49f4934a2181e06fcb1f4faacd9a02",
+      "pr39_head": "b6e23ba3881d22a5677e3a1197d6bd8d4a81f74b"
     }
   ]
 }

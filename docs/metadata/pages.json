@@ -12061,7 +12061,7 @@
   },
   "reports/COMPLETION_PASS_2026-11-03.md": {
     "id": "page-2f28b6e20d141cc0",
-    "description": "Completion pass, 2026-11-03. Dated read of main 8e2df97 (post-PR #40): preserved-record hashes, module coverage, Actions runs on main, PR reviews, protection, exceptions and remaining user actions; earlier 30e0a83 read kept.",
+    "description": "Completion pass, 2026-11-03. Dated reads of main 8e2df97 (post-PR #40) and the consolidated candidate integration/candidate-20261103b (CANDIDATE, not integrated): preserved-record hashes, coverage, runs, reviews, protection, exceptions and remaining user actions; earlier reads kept.",
     "category": "governance-compliance",
     "audience": [
       "beginner",
@@ -12070,7 +12070,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Point-in-time status record of main 8e2df97b558e69032e52a50ed0adfd311ad04578, read through the GitHub API on 2026-11-03 16:55-17:05 EST, with the 13:22-13:26 EST read of 30e0a83 preserved. Adds to, and does not edit, the preserved FINAL_REPORT.md, USER_ACTIONS_REQUIRED.md and user-actions.json.",
+    "current_state": "Point-in-time status record of main 8e2df97b558e69032e52a50ed0adfd311ad04578 and candidate caa9ce7c1b1538d8da920463db77c93c05fe882b, read through the GitHub API on 2026-11-03 17:36-17:45 EST, with the 16:55-17:05 and 13:22-13:26 EST reads preserved. Adds to, and does not edit, the preserved FINAL_REPORT.md, USER_ACTIONS_REQUIRED.md and user-actions.json.",
     "limitations": "Not a review, approval, attestation or production verification. Independent review remains deferred under the owner's October 31 directive; EX-01..EX-04 remain PROPOSED. Controls are mapped to frameworks only; no certification or compliance is claimed.",
     "planned": "Superseded by a later dated record when the remaining user actions (UA-2, UA-3, UA-7) change state.",
     "source_files": [
@@ -12116,14 +12116,15 @@
       "learning_page": "docs/knowledge/governance.md",
       "kind": "status record",
       "original_headings": [
-        "Current read at `main` `8e2df97` (16:55\u201317:05 EST)",
+        "Latest update at `main` `8e2df97` (17:36\u201317:45 EST)",
+        "Read at `main` `8e2df97` (16:55\u201317:05 EST, kept for history)",
         "Earlier read at `main` `30e0a83` (13:22\u201313:26 EST, superseded; kept for history)"
       ]
     }
   },
   "reports/HUMAN_DECISION_PACKET_2026-11-03.md": {
     "id": "page-3bfec2a6cd92a86d",
-    "description": "Human decision packet, 2026-11-03. For each remaining owner decision (UA-7 reviewer, UA-3 branch rulesets, UA-2 Entra baseline; UA-1/UA-5/UA-6 not yet actionable): decision, recommended option, reason, risk, alternatives and exact action.",
+    "description": "Human decision packet, 2026-11-03. (A) owner-only authenticated decisions: actionable now UA-7 reviewer, UA-3 baseline ruleset, UA-2 Entra confirm; blocked UA-3 full rules, UA-1, UA-6, UA-5. (B) autonomous engineering tasks with owners. Each with recommended option, reason, risk, alternatives and exact UI/gh action.",
     "category": "governance-compliance",
     "audience": [
       "beginner",
@@ -12132,7 +12133,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Recommendations checked against main 8e2df97b558e69032e52a50ed0adfd311ad04578 on 2026-11-03 16:55-17:05 EST. Adds to, and does not edit, the preserved USER_ACTIONS_REQUIRED.md.",
+    "current_state": "Recommendations checked against main 8e2df97b558e69032e52a50ed0adfd311ad04578 and candidate caa9ce7 on 2026-11-03 17:36-17:45 EST. Adds to, and does not edit, the preserved USER_ACTIONS_REQUIRED.md.",
     "limitations": "Recommendations only; records no decision or approval. EX-01..EX-04 remain PROPOSED and the Entra baseline remains unconfirmed until the owner decides through the recorded route.",
     "planned": "Superseded by a later dated packet when UA-2, UA-3 or UA-7 changes state.",
     "source_files": [
@@ -12142,7 +12143,8 @@
       "coordination/tasks.json"
     ],
     "related_development": [
-      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39"
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/42"
     ],
     "aliases": [
       "governance",
@@ -12174,11 +12176,10 @@
       "learning_page": "docs/knowledge/governance.md",
       "kind": "decision packet",
       "original_headings": [
-        "UA-7: Invite an independent reviewer",
-        "UA-3: Protect `main` and `evidence/acceptance`",
-        "UA-2: Confirm the Entra Conditional Access baseline",
-        "Not yet actionable (not counted)",
-        "Not user actions (integrator or housekeeping)"
+        "Smallest actionable set",
+        "A. Owner-only authenticated decisions",
+        "B. Autonomous engineering tasks (nothing required of the owner)",
+        "Revision history"
       ]
     }
   },

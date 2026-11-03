@@ -7,9 +7,69 @@ This is a dated status record for the repository. It does not replace any earlie
 - **Evidence labels:** EXECUTED = ran in GitHub Actions at the cited SHA; STATIC = read from a file or API response; SIMULATION and NOT_EXECUTED as defined in `coordination/modules.json` `evidence_classes`.
 - **Limitations:** this is a point-in-time read of repository state. It is not a review, an approval, an attestation, or a production verification. Controls are "mapped to" frameworks only; no certification or compliance is claimed.
 
-The read at `main` `30e0a83` earlier the same day is kept unchanged at the end of this file, under "Earlier read".
+Sections are newest first. The 16:55–17:05 EST read and the 13:22–13:26 EST read at `main` `30e0a83` are kept below without changes to their facts.
 
-## Current read at `main` `8e2df97` (16:55–17:05 EST)
+## Latest update at `main` `8e2df97` (17:36–17:45 EST)
+
+### Main (STATIC)
+
+`main` has not moved: `8e2df97b558e69032e52a50ed0adfd311ad04578` (`GET /repos/onnxscibroccoli/bank-it-operations-lab/commits/main`, 17:36 EST). Nothing new to merge into PR #39.
+
+### Consolidated candidate: CANDIDATE, not integrated (STATIC + EXECUTED)
+
+Sources: `git ls-remote` branch list; `GET /pulls?state=all&head=onnxscibroccoli:integration/candidate-20261103b` → `[]`; `GET /actions/runs?head_sha=<sha>`; `coordination/INTEGRATION_MANIFEST.md@caa9ce7`.
+
+- **Branch:** `integration/candidate-20261103b` @ `caa9ce7c1b1538d8da920463db77c93c05fe882b` (17:32 EST). It is 32 commits ahead of `main` and 0 behind, and changes 51 files. **No PR is open for it.**
+- **Owner directive t26u (17:00 EST):** "Do not merge into `main`" until AC1 independent review and the gate-pin re-review are done.
+- **What it consolidates:**
+  - review records from PRs #14 and #27–#34
+  - PR #41 @ `d8d7711`
+  - **PR #39 @ `42d8e96`**, the 30e0a83-era sidecar, not the current head
+  - review-notes registry work re-applied from `integration/completion-20261103` (@ `3c417d9`, not merged wholesale)
+  - two CI-flake fixes
+  - an **UNREVIEWED, not applied** gate-pin proposal, gate_sha `a518b03`
+- **Registry on the candidate:** 27 INTEGRATED, 1 SUPERSEDED (as claimed in its manifest).
+- **Locked files on the candidate:** `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md` and `reports/user-actions.json` are identical to `main` (`git diff origin/main caa9ce7`). `docs/metadata/preserved-records.json` is changed **append-only**: 10 new review-record entries, with no existing hash altered.
+- **Tested SHA `308512714690ba20a6d9003fcd0731b88fffd596`:**
+  - success: acceptance [41731058945](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731058945), offline-validation [41731065623](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731065623), aws-cdk [41731069473](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731069473), postgres-restore-evidence [41731073799](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731073799), portfolio-validation [41731076403](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731076403), Documentation [41731137053](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731137053)
+  - **failure:** integration-gate [41731062507](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731062507). In `merge-eligibility`, the stale `test_module_coverage.py` pin and the new `scripts/ci` files are not in the trusted manifest.
+- **Head `caa9ce7`** (a records-only commit): Documentation [41731695130](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731695130) and offline-validation [41731694035](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731694035) both succeed.
+
+**Other open PRs since the last read** (`GET /pulls?state=open&sort=created`):
+
+- [PR #42](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/42) (`acceptance/t16-pin-review` @ `9589d89`, opened 17:08 EST, not draft):
+  - It is a T-16 stale-pin review package, a proposal only, with ruleset JSON prepared but not activated.
+  - Checks: 37 pass, 1 skipped, `merge-eligibility` fails ([job](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41728197004/job/126240348994)). Reviews: 0.
+- [PR #41](https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/41) now has head `70535c5` (draft).
+  - Checks: 37 pass, 1 skipped, `merge-eligibility` fails ([job](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41728066988/job/126239935831)). Reviews: 0.
+- **Totals:** 42 PRs. Reviews: 0 (`GET /pulls/<n>/reviews`, every PR). Issue comments: 11, with 0 `ACCEPTANCE-*` decisions.
+
+### Locked files, rechecked (STATIC)
+
+At 17:37 EST, sha256 on `main@8e2df97` equals sha256 on the PR #39 branch for each file. All four are unchanged since the earlier read:
+
+- `reports/FINAL_REPORT.md`: `79462a8e…d8e6`. Matches `preserved-records.json`.
+- `reports/USER_ACTIONS_REQUIRED.md`: `70762916…453a`. Matches.
+- `reports/user-actions.json`: `4d5efd2f…2391`. Not in the manifest; identical to `main`.
+- `docs/metadata/preserved-records.json`: `7ce2f2e6…22bc`. Identical to `main`.
+
+### Live recheck of owner items (STATIC)
+
+- **Protection:** `GET /rulesets` → `[]`. `main` and `evidence/acceptance` protection both return 404. `evidence/acceptance` head is `750de1c`.
+- **Access:** collaborators `["onnxscibroccoli"]`. Invitations: 0.
+- **Entra baseline:** `evidence/entra/BASELINE-CHOICES-PENDING.md@8e2df97` is still not confirmed. PR #4 has 0 comments.
+- **Exceptions:** EX-01..EX-04 are still PROPOSED (`evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md@8e2df97`).
+- **User actions:** `tasks.json` on both `main@8e2df97` and the candidate `caa9ce7` shows UA-2/3/7 OPEN, UA-1/5/6 NOT_YET_ACTIONABLE, and UA-4 RESOLVED.
+
+### Outstanding decisions
+
+**USER ACTION REQUIRED: 3 — UA-7 invite an independent reviewer; UA-3 baseline ruleset (no deletion, no force-push) on `main` and `evidence/acceptance`; UA-2 confirm the Entra baseline.**
+
+- **Blocked owner decisions:** the full UA-3 rules, UA-1, UA-6 and UA-5.
+- **Autonomous engineering tasks:** B1–B8.
+- Both lists, with recommendations, risks and exact actions, are in [HUMAN_DECISION_PACKET_2026-11-03.md](HUMAN_DECISION_PACKET_2026-11-03.md), sections A and B.
+
+## Read at `main` `8e2df97` (16:55–17:05 EST, kept for history)
 
 ### What PR #40 changed (STATIC)
 
