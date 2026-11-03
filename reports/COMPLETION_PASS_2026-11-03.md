@@ -28,6 +28,12 @@ Sources: `git ls-remote` branch list; `GET /pulls?state=all&head=onnxscibroccoli
   - review-notes registry work re-applied from `integration/completion-20261103` (@ `3c417d9`, not merged wholesale)
   - two CI-flake fixes
   - an **UNREVIEWED, not applied** gate-pin proposal, gate_sha `a518b03`
+- **Sidecar coverage on the candidate** (`git rev-parse caa9ce7:<path>`; `coordination/modules.json@caa9ce7`; `docs/metadata/pages.json@caa9ce7`):
+  - `reports/HUMAN_DECISION_PACKET_2026-11-03.md` is **missing**.
+  - `reports/COMPLETION_PASS_2026-11-03.md` (`f1be850`) and `reports/completion-pass-2026-11-03.json` (`55f51c2`) are the `42d8e96` versions describing `main` `30e0a83`.
+  - In `final-report.paths`, the packet is missing.
+  - In `pages.json`, the packet entry is missing, and the COMPLETION_PASS entry is the 30e0a83 one.
+  - Carrying them over is integrator task B4 in the decision packet.
 - **Registry on the candidate:** 27 INTEGRATED, 1 SUPERSEDED (as claimed in its manifest).
 - **Locked files on the candidate:** `reports/FINAL_REPORT.md`, `reports/USER_ACTIONS_REQUIRED.md` and `reports/user-actions.json` are identical to `main` (`git diff origin/main caa9ce7`). `docs/metadata/preserved-records.json` is changed **append-only**: 10 new review-record entries, with no existing hash altered.
 - **Tested SHA `308512714690ba20a6d9003fcd0731b88fffd596`:**

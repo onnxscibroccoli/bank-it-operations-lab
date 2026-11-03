@@ -346,7 +346,15 @@
       "GET /pulls?state=all&head=onnxscibroccoli:integration/candidate-20261103b -> []",
       "coordination/INTEGRATION_MANIFEST.md@caa9ce7",
       "GET /actions/runs?head_sha=<sha>"
-    ]
+    ],
+    "sidecar_coverage": {
+      "reports/HUMAN_DECISION_PACKET_2026-11-03.md": "MISSING",
+      "reports/COMPLETION_PASS_2026-11-03.md": "stale (blob f1be850 = PR #39 @ 42d8e96)",
+      "reports/completion-pass-2026-11-03.json": "stale (blob 55f51c2 = PR #39 @ 42d8e96)",
+      "modules.json final-report paths": "packet path missing",
+      "pages.json": "packet entry missing; COMPLETION_PASS entry is the 30e0a83 version"
+    },
+    "integrator_evidence": "candidate commits authored by shared account onnxscibroccoli (two commit emails); branch naming integration/candidate-*; integration-infra module owner 'Bank IT Lab Integrator' (coordination/modules.json@8e2df97); named teammate unassigned"
   },
   "owner_blocked": [
     {
@@ -399,5 +407,6 @@
       "decision_packet_blob": "47c191fe3b49f4934a2181e06fcb1f4faacd9a02",
       "pr39_head": "b6e23ba3881d22a5677e3a1197d6bd8d4a81f74b"
     }
-  ]
+  ],
+  "decision_packet_candidate_sha": "caa9ce7c1b1538d8da920463db77c93c05fe882b"
 }
