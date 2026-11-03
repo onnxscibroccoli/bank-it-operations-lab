@@ -85,7 +85,7 @@ None of the 5 files is imported by `merge_eligibility.py`, `verify_trusted_gate.
 
 PENDING: independent review (AC1, UA-7) of the candidate SHA and pin review of the gate_sha above, then owner approval of the re-pin. Until then the gate reports TRUSTED GATE UNVERIFIED and merge-eligibility is NOT ELIGIBLE.
 
-## Update: PR #42 moved to `8065a44` (17:5x EST)
+## Update: PR #42 moved to `8065a44` (committed 17:43 EST)
 
 PR #42's `acceptance/pin-review/T-16/FINAL/` now recommends gate_sha `a518b03e` (the 20261103b gate commit, bound to candidate `caa9ce7`) and marks `6ea6803c` as superseded. That recommendation and this one differ in **one file only**:
 
