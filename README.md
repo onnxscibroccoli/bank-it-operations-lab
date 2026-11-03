@@ -3,9 +3,9 @@
 Learn how organizations manage access, recover information, investigate outages, and verify infrastructure changes. This evolving resource is for curious beginners, operators, engineers, auditors, and AI assistants. Its educational content is useful beyond banking.
 
 - **Start learning:** [short learning paths](docs/knowledge/start.md).
-- **Find a topic:** [build and open the searchable documentation portal](docs/knowledge/development.md#reproduce-the-portal). A public website is not yet deployed; CI produces a downloadable site artifact. Search understands aliases such as employee permissions and database recovery.
+- **Find a topic:** [the searchable documentation site](https://onnxscibroccoli.github.io/bank-it-operations-lab/) (GitHub Pages, deployed from main), [browse topics](docs/knowledge/topics.md), or [build it locally](docs/knowledge/development.md#reproduce-the-portal). Search understands aliases such as employee permissions and database recovery.
 - **Technical reference:** [repository navigator](docs/REPO_NAVIGATOR.md) and [module registry](coordination/modules.json).
-- **Practice safely:** [offline identity tutorial](docs/knowledge/identity.md), [health evaluation](docs/knowledge/incident.md), and [restore evidence inspection](docs/knowledge/recovery.md). Read prerequisites before commands.
+- **Practice safely:** [tutorials](docs/knowledge/tutorials.md) with offline identity, health, restore-evidence and incident-timeline exercises, and [troubleshooting](docs/knowledge/troubleshooting.md). Read prerequisites before commands.
 - **Understand status:** [current development](docs/knowledge/development.md). Lifecycle, historical evidence, and fresh verification are separate.
 - **Learn with AI:** [portable teaching and retrieval guide](docs/knowledge/ai.md), [AGENTS.md](AGENTS.md), and [llms.txt](llms.txt).
 - **Contribute:** [documentation conventions and metadata](docs/knowledge/standards.md).
