@@ -18,7 +18,7 @@ STATIC_REFERENCE — NOT_DEPLOYED. Arrows show template references/dependencies,
 | BankItLabNetworkDatabase | AWS::EC2::VPCEndpoint | 1 |
 | BankItLabNetworkDatabase | AWS::IAM::ManagedPolicy | 3 |
 | BankItLabNetworkDatabase | AWS::IAM::Role | 4 |
-| BankItLabNetworkDatabase | AWS::KMS::Key | 2 |
+| BankItLabNetworkDatabase | AWS::KMS::Key | 3 |
 | BankItLabNetworkDatabase | AWS::Lambda::Function | 1 |
 | BankItLabNetworkDatabase | AWS::Logs::LogGroup | 3 |
 | BankItLabNetworkDatabase | AWS::RDS::DBInstance | 1 |
@@ -68,7 +68,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   source["BackupVault3A9C5852"]
-  n0["DatabaseKey7576F140"]
+  n0["BackupVaultKey6DBC0EC5"]
   source --> n0
 ```
 
@@ -141,10 +141,12 @@ flowchart TD
   source["DbBackupPolicy43A4FBCE"]
   n0["BackupVault3A9C5852"]
   source --> n0
-  n1["DatabaseKey7576F140"]
+  n1["BackupVaultKey6DBC0EC5"]
   source --> n1
-  n2["Postgres9DC8BB04"]
+  n2["DatabaseKey7576F140"]
   source --> n2
+  n3["Postgres9DC8BB04"]
+  source --> n3
 ```
 
 ### DbBackupRoleB234430F (BankItLabNetworkDatabase)
