@@ -12,8 +12,9 @@
   "trusted_gate_pin(gate_sha)": "ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae",
   "integration_branch": "integration/completion-20261103 (head = records-only child of the gate commit)"
  },
+ "parallel_prs_opened_2026_11_03": "#39 reports/completion-pass-20261103 @ 42d8e96 (13:27 EST, draft), #40 acceptance/integration-v2 @ 8c662d7 (13:42 EST, ready; merged into this branch), #41 docs-platform @ d8d7711 (13:42 EST, draft)",
  "ancestry": "delivery/portfolio and overnight/integration are ancestors of main (main is 1 ahead of delivery/portfolio, 17 ahead of overnight/integration). acceptance/vertical-slice had 14 commits not in main (merge-base 49122f2); merged cleanly.",
- "drift": "modules.json has 28 modules (not 26): aws-network-edge, endpoint-windows-automation, inventory-diagrams, owner-authentication, knowledge-base added by delivery; acceptance and review-notes move to INTEGRATED on the integration branch.",
+ "drift": "modules.json has 28 modules (not 26): aws-network-edge, endpoint-windows-automation, inventory-diagrams, owner-authentication, knowledge-base added by delivery; acceptance and review-notes move to INTEGRATED on the integration branch. Parallel PRs opened 2026-11-03 during this pass: #39 (13:27 EST, draft), #40 (13:42 EST, merged into this branch), #41 (13:42 EST, draft).",
  "gap_type_legend": {
   "BLOCKING": "blocks trustworthy acceptance/merge",
   "FOLLOW_UP": "technical follow-up with no user action",
@@ -297,7 +298,7 @@
     "reports/ACCEPTANCE.md@integration/completion-20261103",
     "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md@integration/completion-20261103"
    ],
-   "source_commit": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+   "source_commit": null,
    "documentation": [
     "reports/ACCEPTANCE.md",
     "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md"
@@ -309,17 +310,17 @@
    ],
    "validate_all_steps": [
     "acceptance gate self-test",
-    "acceptance invariant tests",
+    "acceptance gate invariant tests",
     "acceptance adapter tests",
     "acceptance runner tests",
     "acceptance contract tests"
    ],
    "evidence": null,
-   "limitations": "Offline/static acceptance of AWS CDK synth, PostgreSQL restore (local binaries), Entra offline policies and evidence hashes. No live AWS/Entra/Graph. Hash matches prove consistency, not independent execution. I2 PARTIALLY ENFORCED (no branch protection, UA-3).",
+   "limitations": "Offline lab gate; ends at EXECUTION_PASS + REVIEW_PENDING and never reports ACCEPTED. Independent review of the exact SHA and AC6 remain separate.",
    "owner": "Integrator",
-   "registry_owner": "Bank IT Lab Integrator (integrated exact SHAs); authors: acceptance workers A-D",
+   "registry_owner": "Worker D (independent integrator)",
    "gap_type": "FOLLOW_UP",
-   "gap": "Integrated on integration/completion-20261103 (not yet main). C1-C4 fixed (17cfaea); C5 fixed on branch; open: fail-closed inventory binding when git show fails, dynamic-group minimum counts, review-record scope. I2 PARTIALLY ENFORCED (no protection).",
+   "gap": "Integrated on integration/completion-20261103 via PR #40 (not yet main). C1-C5 addressed; open: authenticated independent review binding (PR #29 R1/R3), base-branch gate (R6). I2 PARTIALLY ENFORCED (no protection).",
    "tasks": [
     "T-02",
     "T-03",
@@ -1176,7 +1177,7 @@
    "goal": "Trustworthy SHA-bound acceptance: AC1-AC5 computed at runtime, trusted gate, acceptance framework",
    "implementation": [
     "scripts/ci@30e0a83",
-    "scripts/acceptance@integration/completion-20261103",
+    "tools/acceptance/gate@integration/completion-20261103 (from PR #40)",
     "evidence/acceptance:trusted-gate/gate-manifest.json@7f047e8"
    ],
    "documentation": [
@@ -1226,7 +1227,7 @@
    ],
    "owner": "Integrator",
    "gap_type": "PARTIAL",
-   "gap": "Pages enabled and live: NO user action needed. documentation.yml uses tag-pinned actions (not SHA) and does not run on integration/** pushes (needs dispatch or PR). Deploy is a public publish; only on main push.",
+   "gap": "Pages enabled and live: NO user action needed to enable. Live 404 for dot-directory pages (pages/.github/...) fixed only in draft PR #41 (T-31). documentation.yml uses tag-pinned actions (not SHA) and does not run on integration/** pushes (needs dispatch or PR). Deploy is a public publish; only on main push.",
    "tasks": [
     "T-11"
    ]
@@ -1242,38 +1243,38 @@
   },
   {
    "id": "T-02",
-   "task": "Integrate acceptance framework: PR #26 eb42b23 (contains #23, #24, #25@c6aa238) + diverged PR #25 head ce39504.",
+   "task": "Integrate acceptance framework: PR #26 eb42b23 (contains #23, #24, #25@c6aa238) + diverged PR #25 head ce39504; then PR #40 acceptance/integration-v2 @ 8c662d7 (Worker D, opened 2026-11-03 13:42 EST in parallel) merged on top; it moves the gate to tools/acceptance/gate.",
    "owner": "Integrator",
    "gap_type": "BLOCKING",
-   "state": "done on integration/completion-20261103"
+   "state": "done on integration branch (PR #40 content kept for every acceptance file)"
   },
   {
    "id": "T-03",
-   "task": "verify_results.py: fail closed when git show of the inventory at the expected SHA fails; convert tests from fake SHAs to real commits.",
-   "owner": "Integrator (code) + PR Reviewer (review)",
+   "task": "Fail-closed source/inventory binding when git show fails (PR #27 follow-up).",
+   "owner": "Worker D (PR #40) + PR Reviewer",
    "gap_type": "FOLLOW_UP",
-   "state": "open"
+   "state": "addressed by PR #40 2f32bf3 (fail-closed binding, real-git-repo tests); needs independent review"
   },
   {
    "id": "T-04",
-   "task": "Dynamic groups HASH-*/ENTRA-*: replace minimum counts with exact expected counts derived from the tree at the tested SHA.",
-   "owner": "Integrator + PR Reviewer",
+   "task": "Dynamic groups HASH-*/ENTRA-*: derive expected counts from the tree at the tested SHA.",
+   "owner": "Worker D (PR #40) + PR Reviewer",
    "gap_type": "FOLLOW_UP",
-   "state": "open"
+   "state": "addressed by PR #40 2f32bf3 (derived groups); needs independent review"
   },
   {
    "id": "T-05",
-   "task": "Review records: scope each review to explicit requirement IDs instead of copying to every requirement.",
-   "owner": "Integrator + PR Reviewer",
+   "task": "Review records scoped to explicit requirement IDs; authenticated review binding.",
+   "owner": "Worker D (PR #40) + PR Reviewer",
    "gap_type": "FOLLOW_UP",
-   "state": "open"
+   "state": "scoping addressed by PR #40 2f32bf3 (no ACCEPTED state); still open per PR #40: authenticated independent review binding (PR #29 R1/R3), base-branch gate (R6)"
   },
   {
    "id": "T-06",
-   "task": "C5: pin acceptance.yml actions to SHAs, 7-day retention, run on main and integration/**.",
+   "task": "C5: pin acceptance.yml actions to SHAs, 7-day retention, test the combined candidate.",
    "owner": "Integrator",
    "gap_type": "FOLLOW_UP",
-   "state": "done on integration branch"
+   "state": "done (PR #40 094b8a0 version kept; runs on push to main and by dispatch on this branch)"
   },
   {
    "id": "T-07",
@@ -1424,10 +1425,10 @@
   },
   {
    "id": "T-29",
-   "task": "acceptance run.sh HASH sweep: verify repo-root-relative bundles (evidence/backup/aws-backup-dr, PR #21) with --base . (CI run 41695254014 reported HASH-2 FAIL: 72 entries resolved against the bundle dir). Every entry still hash-checked; tamper probe rejected.",
+   "task": "acceptance HASH sweep: verify repo-root-relative bundles (evidence/backup/aws-backup-dr, PR #21) (CI run 41695254014 reported HASH-2 FAIL). Every entry still hash-checked.",
    "owner": "Integrator",
    "gap_type": "BLOCKING",
-   "state": "done on integration branch"
+   "state": "fixed independently here and in PR #40 094b8a0; PR #40 version kept"
   },
   {
    "id": "T-30",
@@ -1435,6 +1436,20 @@
    "owner": "Integrator",
    "gap_type": "BLOCKING",
    "state": "done on integration branch"
+  },
+  {
+   "id": "T-31",
+   "task": "Parallel PR #41 docs-platform @ d8d7711 (draft, owner review requested): Pages 404 for dot-directory pages (pages/.github/...), 233-page axe scan, topic catalog, stale 'Pages not deployed' statements fixed. Covers most of T-11..T-13. One conflict with this branch (docs/metadata/pages.json; union resolution).",
+   "owner": "Final Report (docs) + Ian (owner review)",
+   "gap_type": "PARTIAL",
+   "state": "pending owner review; not merged here"
+  },
+  {
+   "id": "T-32",
+   "task": "Parallel PR #39 reports/completion-pass-20261103 @ 42d8e96 (draft, 'do not merge without owner review'): dated completion-pass sidecar record. Merges cleanly with this branch.",
+   "owner": "Final Report + Ian (owner review)",
+   "gap_type": "DOC_STALE",
+   "state": "pending owner review; not merged here"
   },
   {
    "id": "T-28",
