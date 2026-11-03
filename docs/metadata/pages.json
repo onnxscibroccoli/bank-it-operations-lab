@@ -12055,6 +12055,198 @@
       ]
     }
   },
+  "reports/COMPLETION_PASS_2026-11-03.md": {
+    "id": "page-2f28b6e20d141cc0",
+    "description": "Completion pass, 2026-11-03. Dated reads of main 8e2df97 and consolidated candidates (latest integration/candidate-20261103c, CANDIDATE, not integrated) under the three-phase model: hashes, coverage, runs, reviews, protection, exceptions and remaining user actions; earlier reads kept.",
+    "category": "governance-compliance",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Point-in-time status of main 8e2df97b558e69032e52a50ed0adfd311ad04578 and candidate 0ad046825855f2c3e90861981624e2fb8373c24d, read 2026-11-03 18:15-18:30 EST; 17:36, 16:55 and 13:22 EST reads preserved. Adds to, and does not edit, the preserved FINAL_REPORT.md, USER_ACTIONS_REQUIRED.md and user-actions.json.",
+    "limitations": "Not a review, approval, attestation or production verification. Independent review remains deferred under the owner's October 31 directive; EX-01..EX-04 remain PROPOSED. Controls are mapped to frameworks only; no certification or compliance is claimed.",
+    "planned": "Superseded by a later dated record when the remaining user actions (UA-2, UA-3, UA-7) change state.",
+    "source_files": [
+      "reports/COMPLETION_PASS_2026-11-03.md",
+      "reports/completion-pass-2026-11-03.json",
+      "reports/HUMAN_DECISION_PACKET_2026-11-03.md",
+      "reports/PHASE_C_REVIEW_PACKAGE_PREP_2026-11-03.md",
+      "reports/FINAL_REPORT.md",
+      "reports/USER_ACTIONS_REQUIRED.md",
+      "reports/user-actions.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/40"
+    ],
+    "aliases": [
+      "governance",
+      "historical record",
+      "Evidence",
+      "CI",
+      "ADR",
+      "Attestation"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Read-only repository and Actions state at the stated revision and time. Cited runs apply to their own SHA and environment.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03",
+    "reading_guide": {
+      "overview": "Connect operational claims to evidence, responsibilities, and applicable review criteria.",
+      "why": "A passing test and an authorized release are different facts; recording both avoids accidental overstatement.",
+      "example": "A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.",
+      "mechanism": "Control mappings, evidence validators, and acceptance records organize claims and checks. They do not grant regulatory certification.",
+      "safety": "Independent review is deferred until after development integration by the owner\u2019s October 31 directive. Historical gates and security exceptions are not retroactively approved.",
+      "terms": {
+        "Evidence": "Recorded information supporting a specific claim within a stated scope.",
+        "CI": "Continuous Integration: automated checks of proposed changes.",
+        "ADR": "Architecture Decision Record: the context, choice, and consequences of a design decision.",
+        "Attestation": "A statement made by an identified party about a specific claim."
+      },
+      "learning_page": "docs/knowledge/governance.md",
+      "kind": "status record",
+      "original_headings": [
+        "Latest update: three-phase model, `main` `8e2df97`, candidate `-c` `0ad0468` (18:15\u201318:30 EST)",
+        "Update at `main` `8e2df97` (17:36\u201317:45 EST, kept for history)",
+        "Read at `main` `8e2df97` (16:55\u201317:05 EST, kept for history)",
+        "Earlier read at `main` `30e0a83` (13:22\u201313:26 EST, superseded; kept for history)"
+      ]
+    }
+  },
+  "reports/HUMAN_DECISION_PACKET_2026-11-03.md": {
+    "id": "page-3bfec2a6cd92a86d",
+    "description": "Human decision packet, 2026-11-03, by phase (A engineering, B completion, C independent acceptance). Owner-only now: UA-7 reviewer, UA-3 baseline ruleset, UA-2 Entra confirm; blocked in Phase C: UA-3 full rules, UA-1, UA-6, UA-5. Autonomous tasks B1-B10 with owners. Sequencing authorization source recorded.",
+    "category": "governance-compliance",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Checked against main 8e2df97b558e69032e52a50ed0adfd311ad04578 and candidate 0ad046825855f2c3e90861981624e2fb8373c24d on 2026-11-03 18:15-18:30 EST. Adds to, and does not edit, the preserved USER_ACTIONS_REQUIRED.md.",
+    "limitations": "Recommendations only; records no decision or approval. The 18:13 ET sequencing directive is relayed via chat and not yet recorded in the repo. EX-01..EX-04 remain PROPOSED and the Entra baseline unconfirmed.",
+    "planned": "Superseded by a later dated packet when UA-2, UA-3 or UA-7 changes state.",
+    "source_files": [
+      "reports/HUMAN_DECISION_PACKET_2026-11-03.md",
+      "reports/COMPLETION_PASS_2026-11-03.md",
+      "reports/USER_ACTIONS_REQUIRED.md",
+      "coordination/tasks.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/42"
+    ],
+    "aliases": [
+      "governance",
+      "historical record",
+      "Evidence",
+      "CI",
+      "ADR",
+      "Attestation"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Read-only repository and Actions state at the stated revision and time. Cited runs apply to their own SHA and environment.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03",
+    "reading_guide": {
+      "overview": "Connect operational claims to evidence, responsibilities, and applicable review criteria.",
+      "why": "A passing test and an authorized release are different facts; recording both avoids accidental overstatement.",
+      "example": "A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.",
+      "mechanism": "Control mappings, evidence validators, and acceptance records organize claims and checks. They do not grant regulatory certification.",
+      "safety": "Independent review is deferred until after development integration by the owner\u2019s October 31 directive. Historical gates and security exceptions are not retroactively approved.",
+      "terms": {
+        "Evidence": "Recorded information supporting a specific claim within a stated scope.",
+        "CI": "Continuous Integration: automated checks of proposed changes.",
+        "ADR": "Architecture Decision Record: the context, choice, and consequences of a design decision.",
+        "Attestation": "A statement made by an identified party about a specific claim."
+      },
+      "learning_page": "docs/knowledge/governance.md",
+      "kind": "decision packet",
+      "original_headings": [
+        "Sequencing correction: authorization source",
+        "USER ACTION REQUIRED: 3 (the smallest actionable set, all Phase B, all actionable now)",
+        "Phase map",
+        "Owner-only decisions (authenticated)",
+        "Autonomous engineering (nothing required of the owner)",
+        "Revision history"
+      ]
+    }
+  },
+  "reports/PHASE_C_REVIEW_PACKAGE_PREP_2026-11-03.md": {
+    "id": "page-7f759d484cca462b",
+    "description": "Phase C review package preparation, 2026-11-03: exact SHAs to review, module evidence labels with run URLs, AC1-AC6 evidence locations, EX-01..EX-04 status, known limitations and a blank NOT SIGNED reviewer sign-off template.",
+    "category": "governance-compliance",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Preparation checklist against main 8e2df97 and candidate integration/candidate-20261103c 0ad0468 (tested SHA 614d006), 2026-11-03 18:15-18:30 EST. Not the frozen packet.",
+    "limitations": "Preparation only; not a review and records no approval. The sign-off template is blank and NOT SIGNED; only a GitHub review on the exact SHA counts toward AC1.",
+    "planned": "Frozen into the Phase C packet (task B10) once the gate pin is reviewed and a single candidate SHA is chosen.",
+    "source_files": [
+      "reports/PHASE_C_REVIEW_PACKAGE_PREP_2026-11-03.md",
+      "reports/HUMAN_DECISION_PACKET_2026-11-03.md",
+      "coordination/modules.json",
+      "coordination/tasks.json",
+      "evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/39",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/42"
+    ],
+    "aliases": [
+      "governance",
+      "historical record",
+      "Evidence",
+      "CI",
+      "ADR",
+      "Attestation"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Read-only repository and Actions state at the stated revision and time. Cited runs apply to their own SHA and environment.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03",
+    "reading_guide": {
+      "overview": "Connect operational claims to evidence, responsibilities, and applicable review criteria.",
+      "why": "A passing test and an authorized release are different facts; recording both avoids accidental overstatement.",
+      "example": "A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.",
+      "mechanism": "Control mappings, evidence validators, and acceptance records organize claims and checks. They do not grant regulatory certification.",
+      "safety": "Independent review is deferred until after development integration by the owner\u2019s October 31 directive. Historical gates and security exceptions are not retroactively approved.",
+      "terms": {
+        "Evidence": "Recorded information supporting a specific claim within a stated scope.",
+        "CI": "Continuous Integration: automated checks of proposed changes.",
+        "ADR": "Architecture Decision Record: the context, choice, and consequences of a design decision.",
+        "Attestation": "A statement made by an identified party about a specific claim."
+      },
+      "learning_page": "docs/knowledge/governance.md",
+      "kind": "review checklist",
+      "original_headings": [
+        "1. Exact SHAs to review",
+        "2. Modules and evidence",
+        "3. AC1\u2013AC6 and where the evidence lives",
+        "4. Open exceptions (`evidence/aws/aws-remediation-vpc-rds/SECURITY_EXCEPTIONS.md@8e2df97`; unchanged on `0ad0468`)",
+        "5. Known limitations",
+        "6. Reviewer sign-off template (status: NOT SIGNED)"
+      ]
+    }
+  },
   "reports/review-pr1-pr2.md": {
     "id": "page-42e58d65c40d4911",
     "description": "Review: PR #1 and PR #2 (evidence and correctness audit). Connect operational claims to evidence, responsibilities, and applicable review criteria.",
