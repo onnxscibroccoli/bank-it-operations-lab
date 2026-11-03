@@ -31,7 +31,7 @@ These are the only AI-facing capabilities in this repository. Each is a static f
 | Prompt collection | [AI prompts](../AI_PROMPTS.md) | 40 copy-and-paste prompts for GitHub Copilot, Gemini and ChatGPT. They are text you paste into those tools, not integrations |
 | Teaching prompt | the portable prompt above | A prompt to start a source-grounded lesson |
 
-The built site, including these indexes, is public at <https://onnxscibroccoli.github.io/bank-it-operations-lab/> (deployed from main `30e0a83` on 2026-10-31; `search-index.json`, `metadata.json` and `llms.txt` returned HTTP 200 on 2026-11-03). An assistant that can fetch web pages can read them there. Otherwise it can read them from a local build.
+The built site, including these indexes, is public at <https://onnxscibroccoli.github.io/bank-it-operations-lab/> (latest deployment from main `8e2df97` on 2026-11-03; `search-index.json`, `metadata.json` and `llms.txt` returned HTTP 200 that day). An assistant that can fetch web pages can read them there. Otherwise it can read them from a local build.
 
 There is **no** hosted chatbot, no "ask AI" box on the site, no embedding or vector index, no MCP server, no API, and no model call anywhere in the build or search. Search ranking is word and alias matching in [search-core.js](../../scripts/docs/search-core.js). Any feature not in the table above does not exist.
 

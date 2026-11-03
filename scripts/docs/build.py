@@ -58,8 +58,8 @@ def reading_guide(m, prefix):
         +'<p><a href="'+prefix+page_url(g['learning_page'])+'">Read the introductory learning path</a> · <a href="'+prefix+'pages/docs/knowledge/integration-policy.html">Current integration policy</a></p></section>')
 
 def page_url(path):
-    # upload-pages-artifact excludes hidden files and directories, so a dot-prefixed segment
-    # (for example .github/) would build locally but 404 on GitHub Pages. Map it to a visible name.
+    # actions/upload-pages-artifact@v3 runs tar with --exclude=.git --exclude=.github, so pages under
+    # .github/ build locally but 404 on GitHub Pages. Map every dot-prefixed segment to a visible name.
     parts=['dot-'+seg[1:] if seg.startswith('.') else seg for seg in path[:-3].split('/')]
     return 'pages/'+'/'.join(parts)+'.html'
 SECTIONS=[('index.html','Search'),('pages/docs/knowledge/start.html','Start learning'),('pages/docs/knowledge/topics.html','Browse topics'),('pages/docs/knowledge/tutorials.html','Tutorials'),('pages/docs/knowledge/reference.html','Technical reference'),('pages/docs/knowledge/troubleshooting.html','Troubleshooting'),('pages/docs/knowledge/development.html','Current development'),('pages/docs/knowledge/ai.html','Learn with AI')]

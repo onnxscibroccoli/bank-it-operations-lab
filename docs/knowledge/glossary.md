@@ -501,3 +501,11 @@ The intended depth of a page: beginner, operator, engineer, architect, or refere
 ### Owning module
 
 The registry module whose path contains a page, derived at build time from coordination/modules.json.
+
+### EXECUTION_PASS
+
+An acceptance gate verdict: every required check for one commit ran and passed. It is not acceptance, review or deployment.
+
+### REVIEW_PENDING
+
+The acceptance decision while independent reviewer concurrence is missing. The gate never reports ACCEPTED by itself.

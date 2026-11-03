@@ -2,7 +2,7 @@
 
 Each tutorial below uses only files already in this repository. None needs a cloud account, a Microsoft tenant, or credentials, and none changes anything outside your checkout. They are ordered from beginner to engineer. Run every command from the repository root.
 
-**Execution record.** Every command on this page was run on 2026-11-03 against main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6` on a Linux workstation with Python 3.13.5 and Node 24.22.1. The observed results are quoted. That is a local run of fictional or recorded data. It is not CI, a deployment, or production verification. CI uses Python 3.12 and Node 22, so versions may differ.
+**Execution record.** Sections 1–5 were run on 2026-11-03 against main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6`, and section 6 against main `8e2df97b558e69032e52a50ed0adfd311ad04578` on a Linux workstation with Python 3.13.5 and Node 24.22.1. The observed results are quoted. That is a local run of fictional or recorded data. It is not CI, a deployment, or production verification. CI uses Python 3.12 and Node 22, so versions may differ.
 
 ## 1. Find access problems in a fictional directory (beginner, about 15 minutes)
 
@@ -68,11 +68,22 @@ The live crash demonstration (`scenarios/incident/run_incident_demo.sh`) was **n
 
 `npm ci` writes `infra/aws-cdk/node_modules`, which Git ignores. Remove it when you are done if you need the disk space. Never run `cdk deploy`; no page in this knowledge base authorizes deployment.
 
-## 6. Follow the twelve-week guide (all levels)
+## 6. Run one acceptance check offline (engineer, about 5 minutes)
+
+Needs Python 3 and a clean checkout, because the runner refuses uncommitted check definitions. See the [runner README](../../tools/acceptance/README.md).
+
+```bash
+python3 -m unittest discover -s tools/acceptance/tests -v
+python3 tools/acceptance/runner.py --only python-version --label my-run
+```
+
+Observed on `8e2df97`: 27 tests OK, then `PASS python-version`, `shared validator: OK` and `acceptance: PASS`, exit 0. The bundle goes to `tools/acceptance/runs/my-run/`, which Git ignores. Delete that directory afterwards. The full gate (`bash tools/acceptance/gate/run.sh <40-hex SHA> --out acceptance-out`) needs PostgreSQL server binaries and was **not run** here. [INTEGRATION-V2.md](../../acceptance/INTEGRATION-V2.md) records a full local run at `6ea6803c` with exit 0 (EXECUTION_PASS) and `decide.py` REVIEW_PENDING. EXECUTION_PASS is not acceptance.
+
+## 7. Follow the twelve-week guide (all levels)
 
 The [twelve-week assimilation guide](../../learning/README.md) has daily exercises, failure injection, answer notes, interview questions and explicit PENDING sections. It was written while modules were still open pull requests. Read [the twelve-week guide on main](../../learning/CURRENT.md) first for which of its paths and branches have moved.
 
-## 7. Build this knowledge base (contributor)
+## 8. Build this knowledge base (contributor)
 
 See [Reproduce the portal](development.md#reproduce-the-portal). Problems are covered in [Troubleshooting](troubleshooting.md).
 

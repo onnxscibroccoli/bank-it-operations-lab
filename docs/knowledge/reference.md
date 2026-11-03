@@ -22,6 +22,7 @@ The authoritative list is [coordination/modules.json](../../coordination/modules
 | Patching and hardening | [operations/patching](../../operations/patching/README.md), [operations/hardening](../../operations/hardening/README.md) | see module README |
 | Hybrid Windows, AD DS, DNS, GPO | [operations/hybrid](../../operations/hybrid/README.md), [runbooks](../runbooks/hybrid/README.md) | runbooks are NOT_EXECUTED |
 | Shared evidence validator | [evidence/shared](../../evidence/shared/README.md) | `bash scripts/validate-all.sh --python-only` |
+| Acceptance gate (offline; never reports ACCEPTED) | [tools/acceptance](../../tools/acceptance/README.md), [gate](../../tools/acceptance/gate), [adapters](../../acceptance/modules/README.md), [schemas](../../schemas/acceptance/README.md), [integration record](../../acceptance/INTEGRATION-V2.md) | `python3 -m unittest discover -s tools/acceptance/tests -v` |
 | Asset inventory and diagrams | [inventory](../../inventory/README.md), [architecture](../../inventory/ARCHITECTURE.md) | see module README |
 
 Exact commands and observed results for the runnable rows are in [Tutorials](tutorials.md).
@@ -53,5 +54,6 @@ Metadata lives in this sidecar file rather than in front matter inside each Mark
 
 ## Reports and records
 
+- [Acceptance packet](../../reports/ACCEPTANCE.md) (its header still says DRAFT and not merged, but it reached main with PR #40), [acceptance invariant assurance](../../reports/ACCEPTANCE_INVARIANT_ASSURANCE.md).
 - [Final report](../../reports/FINAL_REPORT.md), [evidence manifest](../../reports/EVIDENCE_MANIFEST.md), [owner actions](../../reports/USER_ACTIONS_REQUIRED.md), [integration record](../../reports/INTEGRATION.md).
 - [Reviewer guide](../REVIEWER_GUIDE.md), [fifteen-minute walkthrough](../DEMO_WALKTHROUGH_15MIN.md), [job requirements matrix](../JOB_REQUIREMENTS_MATRIX.md).

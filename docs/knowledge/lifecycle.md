@@ -32,8 +32,8 @@ Source: the [root README](../../README.md#evidence-labels). These label what a r
 
 Source: the `description` and each module's `status` in [coordination/modules.json](../../coordination/modules.json). The registry defines seven states:
 
-- **INTEGRATED**: on the branch, with executable checks. 25 of the 28 registered modules use this state at main `30e0a83`; 2 are NOT_INTEGRATED (acceptance, review-notes) and 1 is SUPERSEDED. It does not mean reviewed, accepted, or deployed.
-- **NOT_INTEGRATED**: an open PR, not on the branch (the `acceptance` module, PRs #23–#26, and `review-notes`).
+- **INTEGRATED**: on the branch, with executable checks. 26 of the 28 registered modules use this state at main `8e2df97`. `review-notes` is NOT_INTEGRATED and `bank-aws-001` is SUPERSEDED. It does not mean reviewed, accepted, or deployed.
+- **NOT_INTEGRATED**: an open PR, not on the branch. At `8e2df97` only `review-notes` (PRs #14, #27–#29) is in this state. The `acceptance` module moved to INTEGRATED with PR #40.
 - **BLOCKED**: planned, with a recorded technical blocker.
 - **SUPERSEDED**: replaced by another module (bank-aws-001, PR #1, by PR #5).
 - **NOT_STARTED**: planned, no PR yet.
@@ -44,6 +44,19 @@ Registry state and finding state can disagree. For example, `orgs-security` is I
 ## Architecture decision status
 
 Source: the Status line of each record in [docs/adr](../adr/README.md). All seventeen ADRs say **Proposed**. Accepting an ADR is an owner decision; merging the code it describes does not accept it. See [ADR status on main](../adr/STATUS.md).
+
+## Acceptance gate verdicts
+
+Source: [acceptance/INTEGRATION-V2.md](../../acceptance/INTEGRATION-V2.md) and [tools/acceptance/gate](../../tools/acceptance/gate). The offline gate reports **EXECUTION_PASS**, **FAIL** or required **UNKNOWN** for a commit, and `decide.py` reports **REVIEW_PENDING** until there is independent reviewer concurrence. By design the gate never reports ACCEPTED. EXECUTION_PASS means the required checks ran and passed. It does not mean reviewed, accepted, or deployed.
+
+## Words to avoid for unfinished work
+
+Do not describe something as complete, done, fixed, verified or ready unless a named record supports that exact claim. Use instead:
+
+- **Changed on branch, not deployed** for a code or documentation change that is not yet on main or on the live site.
+- **Recorded as fixed in `<sha>`** when another record makes the claim and it has not been re-checked.
+- **Tool output `VERIFIED` / `PASS`** when quoting a verifier, with the run date and environment.
+- **Not run** or **NOT_EXECUTED** for anything that was not executed.
 
 ## Words the learning guide uses
 

@@ -1,6 +1,6 @@
 # ADR status on main
 
-The seventeen ADRs in this directory are preserved records, written on 2026-10-28 while every source pull request was an open draft. Their bytes are locked by [preserved-records.json](../metadata/preserved-records.json), so this page records their current position instead of editing them. Checked 2026-11-03 against main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6`.
+The seventeen ADRs in this directory are preserved records, written on 2026-10-28 while every source pull request was an open draft. Their bytes are locked by [preserved-records.json](../metadata/preserved-records.json), so this page records their current position instead of editing them. Checked 2026-11-03 against main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6`, and re-checked after main moved to `8e2df97b558e69032e52a50ed0adfd311ad04578`. PR #40 adds the acceptance gate but no ADR source code.
 
 ## Status rule
 
@@ -20,9 +20,9 @@ Every ADR still says **Proposed**, and that is still correct. The [ADR index](RE
 | [0006](0006-scps-as-typed-source-offline-validation.md) typed SCPs | #6 open | `infra/orgs` | B6-2 (exempt-role bypass) and B6-3 are still recorded as blocking |
 | [0007](0007-delegated-admin-coverage-and-gaps.md) delegated admin | #6 open | `infra/orgs` | GuardDuty org enablement gap as recorded |
 | [0008](0008-offline-fail-closed-ca-validator.md) CA validator | #4 merged | `identity/entra`, `tests/entra` | 25 tests OK on 2026-11-03. CA007 baseline gap not re-checked |
-| [0009](0009-restore-proof-by-fingerprint-and-negative-tests.md) restore proof | #2, #3, #7 merged | `tests/integration`, `evidence/postgres` | Committed bundle VERIFIED on 2026-11-03. Live restore not re-run |
+| [0009](0009-restore-proof-by-fingerprint-and-negative-tests.md) restore proof | #2, #3, #7 merged | `tests/integration`, `evidence/postgres` | Verifier output `VERIFIED` for the committed bundle (local, 2026-11-03). Live restore not re-run |
 | [0010](0010-evidence-bundle-integrity.md) evidence integrity | mixed | `evidence/shared` | `validate-all.sh --python-only` PASS (34 steps) on 2026-11-03. Three cited PR #1/#6 paths are not on main |
-| [0011](0011-integration-branch-and-sha-pinned-merge-gates.md) merge gates | #7 merged, #11 open | `.github/workflows`, `scripts/ci` | Main was integrated before independent review by owner direction |
+| [0011](0011-integration-branch-and-sha-pinned-merge-gates.md) merge gates | #7 merged, #11 open | `.github/workflows`, `scripts/ci`, `tools/acceptance/gate` | Main was integrated before independent review by owner direction. The PR #40 gate reports EXECUTION_PASS / REVIEW_PENDING, never ACCEPTED |
 | [0012](0012-fail-closed-health-endpoint.md) fail-closed health | #10 open | `observability` | Offline evaluate HEALTHY on 2026-11-03 |
 | [0013](0013-patch-rings-with-gated-scan-waves.md) patch rings | #17 open | `operations/patching` | EXAMPLE data. Nothing applied |
 | [0014](0014-fixture-only-graph-client.md) fixture-only Graph client | #18 open | `identity/governance` | Baseline exit 0 and findings exit 1 on 2026-11-03 |

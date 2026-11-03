@@ -18,7 +18,7 @@ for(const [query,id] of cases)test(query,()=>assert.ok(search(pages,query).slice
 export const sectionCases=[
  ['technical reference','reference'],['Where are the tutorials?','tutorials'],['How do I browse topics?','topics'],
  ['Why does search not load?','troubleshooting'],['What does Proposed mean?','lifecycle'],['Is the site accessible?','accessibility'],
- ['How do I follow the twelve-week guide?','learning-current'],['What is the status of the ADRs?','adr-status'],['What documentation gaps remain?','gaps']
+ ['How do I follow the twelve-week guide?','learning-current'],['What is the status of the ADRs?','adr-status'],['What documentation gaps remain?','gaps'],['What does REVIEW_PENDING mean?','lifecycle']
 ];
 for(const [query,id] of sectionCases)test('section: '+query,()=>assert.ok(search(pages,query).slice(0,5).some(p=>p.id===id)));
 test('level filter keeps only pages for that audience',()=>{const r=search(pages,'recovery','','','beginner');assert.ok(r.length>0);assert.ok(r.every(p=>p.audience.includes('beginner')));});

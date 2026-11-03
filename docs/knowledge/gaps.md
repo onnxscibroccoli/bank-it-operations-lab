@@ -1,6 +1,6 @@
 # Documentation gap inventory
 
-A file-level list of what is still missing, out of date, or in conflict, as of 2026-11-03 at main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6` plus the docs-platform branch. Each item names the file, the problem, how it was found, and who can act on it.
+A file-level list of what is still missing, out of date, or in conflict, as of 2026-11-03 at main `8e2df97b558e69032e52a50ed0adfd311ad04578` plus the docs-platform branch (PR #41, not merged). Each item names the file, the problem, how it was found, and who can act on it.
 
 ## Preserved records that are out of date
 
@@ -26,21 +26,22 @@ These files are byte-locked by [preserved-records.json](../metadata/preserved-re
 
 | File | Gap |
 |---|---|
-| `docs/metadata/pages.json` | All 232 pages have verification level "Not established". No page records scoped verification evidence, even where a check ran. Tutorials describe their local runs in prose only |
+| `docs/metadata/pages.json` | All 238 pages have verification level "Not established". No page records scoped verification evidence, even where a check ran. Tutorials describe their local runs in prose only |
 | `docs/metadata/pages.json` (reading guides) | 210 pages have reading guides, but they share only 18 distinct overview, why and example texts (one per subject template). They are not page-specific explanations |
 | `docs/knowledge/glossary.md` | 15 full entries. The other terms in `terminology.json` (75 in total) have one-line definitions without per-term authoritative references |
 | `docs/knowledge/tutorials.md` | No executable Terraform walkthrough (`infra/orgs/terraform`). No live PostgreSQL restore or incident crash run, because the workstation had no PostgreSQL server binaries |
 | `docs/knowledge/troubleshooting.md` | Nothing yet for the Terraform track, hybrid Windows runbooks or screen reader problems |
 | `docs/knowledge/accessibility.md` | Manual keyboard, screen reader, zoom, forced-colour visual and cognitive reviews not done |
 | `docs/knowledge/topics.md` | Subject categories come from metadata. Some legacy categories are broad (61 governance-compliance pages) |
+| `reports/ACCEPTANCE.md` | Header says "DRAFT candidate. Not merged to main", but it is on main since PR #40. Not a documentation-owned path |
 | `docs/AI_PROMPTS.md` | Prompts reference PR #7 and #35 as moving targets. Not re-checked against main |
 
 ## Publishing
 
 | Item | State |
 |---|---|
-| GitHub Pages | Enabled (`build_type: workflow`). Deployed from main `30e0a83` on 2026-10-31. The live site returns HTTP 200 |
-| `pages/.github/pull_request_template.html` | 404 on the live site. Fixed in the builder (`pages/dot-github/...`), and live after the next deployment from main |
+| GitHub Pages | Enabled (`build_type: workflow`). Latest deployment: main `8e2df97` on 2026-11-03 at 14:32 EST (run 41703901979). The live site returns HTTP 200 with 229 indexed pages |
+| `pages/.github/pull_request_template.html` | Still 404 on the live site (checked 2026-11-03). The builder change on this branch writes `pages/dot-github/...` and returns 200 locally. It is not deployed: `pages/dot-github/...` also returns 404 live until PR #41 merges and deploys |
 | Root `README.md` | Said "A public website is not yet deployed". Corrected on this branch |
 | PR #15 (`learning-guide`) | Still an open draft, though its content reached main through PR #35 |
 
@@ -48,6 +49,6 @@ These files are byte-locked by [preserved-records.json](../metadata/preserved-re
 
 - Decide whether any ADR moves from Proposed to Accepted, against a specific commit.
 - Decide whether preserved learning and ADR records may be edited (manifest update) or must stay frozen with companion pages.
-- Merge the docs-platform PR, then let the push deploy Pages or run **Documentation knowledge base → Run workflow → deploy** on main.
+- Review PR #41 (owner review required by its description), merge it if acceptable, then confirm the push deploys Pages, or run **Documentation knowledge base → Run workflow → deploy** on main.
 - Close or keep PR #15, now that its content is on main.
 - Arrange a human accessibility review (keyboard and at least one screen reader).

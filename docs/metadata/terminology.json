@@ -75,6 +75,8 @@
     "INTEGRATED": "A module registry state: the module's files and checks are on the branch; not reviewed, accepted, or deployed.",
     "Proposed": "The status of an architecture decision that has been written down but not accepted by the owner.",
     "Audience level": "The intended depth of a page: beginner, operator, engineer, architect, or reference.",
-    "Owning module": "The registry module whose path contains a page, derived at build time."
+    "Owning module": "The registry module whose path contains a page, derived at build time.",
+    "EXECUTION_PASS": "An acceptance gate verdict: every required check for one commit ran and passed; not acceptance, review or deployment.",
+    "REVIEW_PENDING": "The acceptance decision while independent reviewer concurrence is missing; the gate never reports ACCEPTED by itself."
   }
 }

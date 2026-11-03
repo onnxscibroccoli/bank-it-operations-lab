@@ -12363,7 +12363,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "The catalog reflects metadata categories and audience fields; those fields are editorial and are not independently reviewed.",
     "planned": "Add audience-specific reading orders per subject.",
     "source_files": [
@@ -12382,7 +12382,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12398,7 +12398,7 @@
       "engineer"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Local runs of fictional or recorded data only. No deployment, tenant access, live database restore, or crash demonstration was run.",
     "planned": "Add an executable Terraform walkthrough and a live PostgreSQL restore tutorial once server binaries are available.",
     "source_files": [
@@ -12406,7 +12406,8 @@
       "observability/run_healthcheck.py",
       "tests/integration/postgres/verify_evidence.py",
       "scenarios/incident/lib/timeline.py",
-      "scripts/validate-all.sh"
+      "scripts/validate-all.sh",
+      "tools/acceptance/runner.py"
     ],
     "related_development": [
       "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
@@ -12421,7 +12422,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12437,7 +12438,7 @@
       "reference"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Lists entry points; module behavior is described by each module README and its tests, not re-verified here.",
     "planned": "Generate the module table from the registry.",
     "source_files": [
@@ -12458,7 +12459,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12474,7 +12475,7 @@
       "engineer"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Covers failures observed or designed into checks; screen reader and Terraform problems are not covered.",
     "planned": "Add entries as new failures are observed.",
     "source_files": [
@@ -12495,7 +12496,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12512,7 +12513,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Describes vocabularies as defined in source; registry and record disagreements are reported, not resolved.",
     "planned": "Keep in step with schema and registry changes.",
     "source_files": [
@@ -12531,11 +12532,14 @@
       "integrated",
       "archived",
       "evidence labels",
-      "simulation"
+      "simulation",
+      "acceptance gate",
+      "execution pass",
+      "review pending"
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12551,7 +12555,7 @@
       "reference"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Automated axe checks and scripted keyboard paths cover only part of WCAG 2.2 AA; no conformance claim is made.",
     "planned": "Record manual keyboard, screen reader, zoom and cognitive reviews when performed.",
     "source_files": [
@@ -12571,7 +12575,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12587,7 +12591,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "A point-in-time inventory at main 30e0a83; it will go stale as modules change.",
     "planned": "Re-run the inventory after each integration.",
     "source_files": [
@@ -12608,7 +12612,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12625,7 +12629,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Records citation and status checks only; the weekly exercises themselves were not all re-run.",
     "planned": "Update when listed findings are re-checked or remaining PRs change.",
     "source_files": [
@@ -12646,7 +12650,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },
@@ -12662,7 +12666,7 @@
       "reference"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "current_state": "Current navigation and explanation page for the documentation platform on the docs-platform branch (PR #41, not merged), re-checked against main 8e2df97.",
     "limitations": "Status changes require an owner decision; notes are records, not a fresh security review.",
     "planned": "Record owner decisions against a specific commit.",
     "source_files": [
@@ -12681,7 +12685,7 @@
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83 or 8e2df97 as stated in the text; that local run is described in the text and is not recorded as a verification level.",
       "last_verified": null,
       "evidence": []
     },

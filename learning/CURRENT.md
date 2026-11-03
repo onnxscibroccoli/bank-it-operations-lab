@@ -2,12 +2,12 @@
 
 The [twelve-week guide](README.md) and its [weekly pages](weeks/week-01.md) were written on 2026-10-28 (commits `52a63c0` and `39728db`, finished 14:33 EDT), while every module was still an open draft pull request. They are preserved records: their bytes are locked by [preserved-records.json](../docs/metadata/preserved-records.json) and are not edited. This page tells you what has changed since, so you can follow the guide from main.
 
-Checked on 2026-11-03 against main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6`.
+Checked on 2026-11-03 against main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6`, and re-checked after main moved to `8e2df97b558e69032e52a50ed0adfd311ad04578` (PR #40, acceptance gate).
 
 ## What changed
 
 - **Modules are on main now.** The guide says main contains only `README.md` and tells you to check out each PR branch. Since 2026-10-31 (merged at 17:09 EDT through PR #35), every module that [coordination/modules.json](../coordination/modules.json) marks INTEGRATED is on main at the path the guide cites. You can usually skip the `git checkout <branch>` step and work from main.
-- **Pull request states changed.** Merged: #2, #3, #4, #5, #7, #20, #22 and the integration PRs #35–#38. Closed: #1 (superseded by #5). Still open drafts, with their content on main through #35: #6, #8–#19 and #21. The registry marks review notes (#14) and the acceptance runner (#23–#26) NOT_INTEGRATED. Those files are not on main.
+- **Pull request states changed.** Merged: #2, #3, #4, #5, #7, #20, #22 and the integration PRs #35–#38. Closed: #1 (superseded by #5). Still open drafts, with their content on main through #35: #6, #8–#19 and #21. At `8e2df97` the registry marks only review notes (#14, #27–#29) NOT_INTEGRATED, and those files are not on main. The acceptance gate (#23–#26) arrived through PR #40.
 - **Module-relative paths.** Weekly pages often cite paths like `lib/guards.ts` or `test/secure-storage-stack.test.ts`. They are relative to the module directory, for example `infra/aws-cdk/`.
 - **Test counts moved.** The guide records 33 CDK tests for PR #5 at `099479e`. On main, `cd infra/aws-cdk && npm ci && npx jest` reported 3 suites and 37 tests passing on 2026-11-03. Treat the guide's counts as values for its pinned commit.
 
@@ -40,8 +40,8 @@ These ran on a Linux workstation without credentials. The commands are in [Tutor
 
 - `bash scripts/validate-all.sh --python-only`: PASS, 34 steps.
 - Entra validator tests: 25 OK. Vendor mock tests: 45 OK. AWS CDK jest: 37 passed.
-- PostgreSQL evidence verify: VERIFIED (38 cases). A tampered copy was REJECTED.
-- Incident timeline verify: PASS for both recorded runs.
+- PostgreSQL evidence verify: tool output `VERIFIED` (38 cases). A tampered copy produced `REJECTED`.
+- Incident timeline verify: tool output `VERIFY PASS` for both recorded runs.
 
 ## Still pending
 

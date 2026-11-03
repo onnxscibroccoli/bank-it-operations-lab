@@ -10,7 +10,7 @@ Start with the symptom you see. Each entry gives the likely cause, how to confir
 
 **Search needs JavaScript.** It does. Every page, the navigation and the catalog work without it.
 
-**A page works locally but returns 404 on GitHub Pages.** GitHub's Pages artifact upload skips hidden directories, so pages under a dot-prefixed folder such as `.github/` used to be missing from the live site. The builder now writes such pages under `dot-` names, for example `pages/dot-github/pull_request_template.html`. If you see a new 404, check whether its URL contains a segment starting with `.`.
+**A page works locally but returns 404 on GitHub Pages.** `actions/upload-pages-artifact@v3` packs the site with `tar --exclude=.git --exclude=.github` (see its `action.yml`), so pages under `.github/` are missing from the live site. The builder on the docs-platform branch writes such pages under `dot-` names, for example `pages/dot-github/pull_request_template.html`. Until that change is deployed, the live site still returns 404 for this page. If you see a new 404, check whether its URL contains a segment starting with `.`.
 
 **The build fails with "Missing metadata".** A new Markdown file has no entry in `docs/metadata/pages.json`. Add an entry that meets `docs/metadata/schema.json`. Do not delete the file to make the build pass.
 

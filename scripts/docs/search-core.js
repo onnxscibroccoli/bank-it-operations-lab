@@ -9,6 +9,7 @@ const groups = [
  ['automate','automation','routine','maintenance','patching'],
  ['troubleshoot','troubleshooting','error','errors','fails','failed','failing','broken','fix','problem'],
  ['accessible','accessibility','wcag','a11y','keyboard','screen','reader','contrast'],
+ ['acceptance','accepted','gate','execution','review','pending'],
  ['status','lifecycle','proposed','archived','delivered','executed','pending','integrated','simulation']
 ];
 export function tokens(s){return (s.toLowerCase().match(/[a-z0-9]+/g)||[]).filter(t=>!stop.has(t));}
