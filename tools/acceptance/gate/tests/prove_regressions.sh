@@ -8,6 +8,7 @@
 # show FAIL on old only because old A-contract export rejects the new requirement_ids review field (old exit 1 = INVALID).
 # Offline: uses a local git worktree only.
 set -uo pipefail
+export LC_ALL=C
 OLD="${1:-eb42b23747d5b686d9540c93e445a713b4e56c5d}"; OUTF="${2:-/dev/stdout}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; ROOT="$(git -C "$HERE" rev-parse --show-toplevel)"
 WT="$(mktemp -d)/old"; trap 'git -C "$ROOT" worktree remove --force "$WT" >/dev/null 2>&1' EXIT

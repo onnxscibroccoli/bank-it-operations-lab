@@ -1,12 +1,14 @@
 name: acceptance
 
-# First executable acceptance command (Worker D vertical slice). Checks out ONE pinned commit SHA into a
-# detached worktree and runs AWS static checks, PostgreSQL recovery, Entra offline validation, report/hash
-# validation and defect controls via scripts/acceptance/run.sh. Nonzero on any FAIL or required UNKNOWN.
+# First executable acceptance command (Worker D). Checks out ONE pinned commit SHA into a detached worktree and
+# runs AWS static checks, PostgreSQL recovery, Entra offline validation, report/hash validation and defect controls
+# via tools/acceptance/gate/run.sh (scripts/acceptance/run.sh is a compatibility shim). Nonzero on any FAIL or
+# required UNKNOWN. The decision step never reports ACCEPTED: green here means EXECUTION_PASS + REVIEW_PENDING.
 # Credential-free: no AWS/Entra/Graph secrets are referenced, nothing is deployed.
+# C5 (PR #27): actions pinned to full commit SHAs (resolved from the upstream v5 tags), artifacts kept 7 days.
 on:
   push:
-    branches: [acceptance/vertical-slice]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -17,6 +19,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: acceptance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   # Exact commit under test: dispatch input, else the PR head commit (not the synthetic merge), else the pushed commit.
@@ -30,22 +36,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
-        with: { persist-credentials: false }
-      - run: python3 scripts/acceptance/verify_results.py --selftest
-      - name: Invariant tests I1/I2 (reports/ACCEPTANCE_INVARIANT_ASSURANCE.md)
-        run: python3 -m unittest discover -s scripts/acceptance/tests -v
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with: { persist-credentials: false, fetch-depth: 0 }
+      - run: python3 tools/acceptance/gate/verify_results.py --selftest
+      - name: Invariant + false-acceptance regression tests (real temporary git repositories)
+        run: python3 -m unittest discover -s tools/acceptance/gate/tests -v
+      - name: "Regression proof: the FA-* tests FAIL on the old gate eb42b23 and pass on this gate"
+        run: |
+          git cat-file -e eb42b23747d5b686d9540c93e445a713b4e56c5d^{commit}
+          bash tools/acceptance/gate/tests/prove_regressions.sh eb42b23747d5b686d9540c93e445a713b4e56c5d proof.tsv
+          { echo "### Regression proof vs eb42b23"; echo; echo '```'; cat proof.tsv; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
   acceptance:
     name: acceptance @ target SHA
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with: { persist-credentials: false, fetch-depth: 0 }
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with: { node-version: 20 }
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with: { python-version: '3.12' }
       - name: Run acceptance (exit code via PIPESTATUS)
         id: run
@@ -53,15 +64,15 @@ jobs:
           set +e
           SHA="$TARGET_SHA"
           echo "target_sha=$SHA" | tee -a "$GITHUB_OUTPUT"
-          bash scripts/acceptance/run.sh "$SHA" --out acceptance-out 2>&1 | tee acceptance-console.log
+          bash tools/acceptance/gate/run.sh "$SHA" --out acceptance-out 2>&1 | tee acceptance-console.log
           rc=${PIPESTATUS[0]}; echo "rc=$rc" >> "$GITHUB_OUTPUT"; echo "acceptance exit code: $rc"
       - name: Independent re-verification of the output
         if: always()
-        run: python3 scripts/acceptance/verify_results.py acceptance-out
+        run: python3 tools/acceptance/gate/verify_results.py acceptance-out --sha "$TARGET_SHA"
       - name: Job summary
         if: always()
         run: cat acceptance-out/SUMMARY.md >> "$GITHUB_STEP_SUMMARY" || echo "no SUMMARY.md" >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: always()
         with:
           name: acceptance-${{ github.run_id }}-${{ github.run_attempt }}
@@ -69,30 +80,30 @@ jobs:
             acceptance-out/
             acceptance-console.log
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 7
       - name: Gate (0 = all required PASS; 1 = FAIL; 2 = required UNKNOWN)
         if: always()
         run: test "${{ steps.run.outputs.rc }}" = "0"
       - name: "I2: EXECUTION_PASS bound to the target SHA only, never to its parent"
         if: always()
         run: |
-          python3 scripts/acceptance/verify_results.py acceptance-out --execution-pass-for "$TARGET_SHA"
+          python3 tools/acceptance/gate/verify_results.py acceptance-out --execution-pass-for "$TARGET_SHA"
           PARENT="$(git rev-parse "$TARGET_SHA^")"
-          set +e; python3 scripts/acceptance/verify_results.py acceptance-out --execution-pass-for "$PARENT"; rc=$?; set -e
+          set +e; python3 tools/acceptance/gate/verify_results.py acceptance-out --execution-pass-for "$PARENT"; rc=$?; set -e
           echo "execution-pass-for parent $PARENT exit=$rc (must be nonzero)"; test "$rc" != "0"
-      - name: "C4: final decision via worker A's contract = REVIEW_PENDING (never ACCEPTED without independent review)"
+      - name: "C4: final decision via worker A's contract = REVIEW_PENDING (the gate never reports ACCEPTED)"
         id: decide
         if: always()
         run: |
           set +e
-          python3 scripts/acceptance/decide.py acceptance-out --sha "$TARGET_SHA" --decision-out decision.json --contract-out acceptance-contract.json
+          python3 tools/acceptance/gate/decide.py acceptance-out --sha "$TARGET_SHA" --decision-out decision.json --contract-out acceptance-contract.json
           rc=$?; set -e
-          echo "decide exit=$rc (5 = REVIEW_PENDING expected; 0 would claim ACCEPTED)"
+          echo "decide exit=$rc (5 = REVIEW_PENDING expected; the gate has no ACCEPTED state)"
           python3 -c 'import json; d=json.load(open("decision.json")); print(json.dumps({k: d[k] for k in ("state","execution_state","technically_eligible","contract_decision","contract_valid","reviews_supplied")}))' | tee -a "$GITHUB_STEP_SUMMARY"
           test "$rc" = "5"
-          set +e; python3 scripts/acceptance/verify_results.py acceptance-out --accept-for "$TARGET_SHA" >/dev/null; rc2=$?; set -e
+          set +e; python3 tools/acceptance/gate/verify_results.py acceptance-out --accept-for "$TARGET_SHA" >/dev/null; rc2=$?; set -e
           test "$rc2" = "5"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: always()
         with:
           name: acceptance-decision-${{ github.run_id }}-${{ github.run_attempt }}
@@ -100,27 +111,27 @@ jobs:
             decision.json
             acceptance-contract.json
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 7
 
   defect-control:
     name: defect control (injected CA002 report-only MUST make acceptance fail)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with: { persist-credentials: false, fetch-depth: 0 }
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with: { node-version: 20 }
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with: { python-version: '3.12' }
       - name: Run acceptance with injected defect
         id: run
         run: |
           set +e
           SHA="$TARGET_SHA"
-          bash scripts/acceptance/run.sh "$SHA" --out defect-out --inject-defect entra-mfa-report-only 2>&1 | tee defect-console.log
+          bash tools/acceptance/gate/run.sh "$SHA" --out defect-out --inject-defect entra-mfa-report-only 2>&1 | tee defect-console.log
           rc=${PIPESTATUS[0]}; echo "rc=$rc" >> "$GITHUB_OUTPUT"; echo "defect-run exit code: $rc"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: always()
         with:
           name: acceptance-defect-${{ github.run_id }}-${{ github.run_attempt }}
@@ -128,12 +139,12 @@ jobs:
             defect-out/
             defect-console.log
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 7
       - name: Assert defect was detected (exit 1, ENTRA-02 FAIL, overall FAIL, output self-consistent)
         if: always()
         run: |
           test "${{ steps.run.outputs.rc }}" = "1"
-          python3 scripts/acceptance/verify_results.py defect-out
+          python3 tools/acceptance/gate/verify_results.py defect-out --sha "$TARGET_SHA"
           python3 - <<'PY'
           import json; j=json.load(open("defect-out/results.json"))
           v={c["check_id"]:c["verdict"] for c in j["checks"]}
@@ -142,5 +153,5 @@ jobs:
           assert j["injected_defect"]=="entra-mfa-report-only"
           print("defect detected: ENTRA-02 FAIL, overall FAIL")
           PY
-          set +e; python3 scripts/acceptance/verify_results.py defect-out --accept-for "$TARGET_SHA"; rc=$?; set -e
+          set +e; python3 tools/acceptance/gate/verify_results.py defect-out --accept-for "$TARGET_SHA"; rc=$?; set -e
           echo "I1: accept-for on defect run exit=$rc (must be 1 = EXECUTION_FAIL)"; test "$rc" = "1"

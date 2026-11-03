@@ -210,8 +210,20 @@ if [ -d tools/acceptance/gate/tests ]; then
 else unknown ACC-D-01 yes "tools/acceptance/gate/tests not present at target"; fi
 
 # ---------------------------------------------------------------- 2d. reports and hashes
-n=0; while IFS= read -r s; do [ -n "$s" ] || continue; n=$((n+1))
-  check "HASH-$n" yes "committed bundle $s verifies (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s"
+# Hash base: bundle directory (default) or repository root (bundles such as evidence/backup/aws-backup-dr list
+# repo-relative paths and are verified upstream with `sha256sum -c` from the root). Decided from the FIRST listed
+# path only, then every line is verified against that one base, so a missing file is still an error.
+hash_base() { python3 - "$1" <<'PY'
+import os,re,sys
+s=sys.argv[1]; d=os.path.dirname(s)
+for l in open(s):
+    m=re.match(r"^[0-9a-f]{64} [ *](.+)$", l.rstrip("\n"))
+    if m: p=m.group(1); print("." if (not os.path.exists(os.path.join(d,p)) and os.path.exists(p)) else d); break
+else: print(d)
+PY
+}
+n=0; while IFS= read -r s; do [ -n "$s" ] || continue; n=$((n+1)); b="$(hash_base "$s")"
+  check "HASH-$n" yes "committed bundle $s verifies (base ${b}; no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s" --base "$b"
 done < <(python3 "$HERE/verify_results.py" --members HASH "$SHA")  # evidence/<x>/**/SHA256SUMS at $SHA; tests/**/fixtures hold deliberately broken bundles exercised by ACC-A-01
 [ $n -eq 0 ] && unknown HASH-1 yes "no committed SHA256SUMS bundles found"
 f="$(git ls-files 'evidence/aws/*/SHA256SUMS' | head -1)"
