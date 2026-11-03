@@ -13,7 +13,7 @@ Created 2026-11-03 (EST, America/New_York) under owner directive t27u (17:35 EST
 | Ref | SHA | Merge base with main |
 |---|---|---|
 | `main` | `8e2df97b558e69032e52a50ed0adfd311ad04578` | - |
-| `reports/completion-pass-20261103 (PR #39 @ b6e23ba per t27u; head moved to 0ee1e97 at 17:39 EST, DRAFT)` | `0ee1e97b9b87ad15678f92987e5efbde3cac6687` | 8e2df97 = main (6 ahead at 0ee1e97; main merged in by 9462c5b, not rebased) |
+| `reports/completion-pass-20261103 (PR #39; merged b6e23ba, then 0ee1e97, then head 95765e9; DRAFT)` | `95765e99425601e7d9aeec307c73573085c8ebef` | 8e2df97 = main (7 ahead at 95765e9; main merged in by 9462c5b, not rebased) |
 | `acceptance/t16-pin-review (PR #42, not merged; compared only)` | `9589d891` | 8e2df97 = main |
 | `docs-platform (PR #41 @ 70535c5, DRAFT)` | `70535c5c81c10696f177de1eb05a9933146f5bf2` | 8e2df97 = main (3 ahead, 0 behind; main merged in by fea62ec, not rebased) |
 | `integration/candidate-20261103b (previous candidate, not merged)` | `caa9ce7c1b1538d8da920463db77c93c05fe882b` | 8e2df97 = main |
