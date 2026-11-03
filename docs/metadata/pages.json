@@ -13568,5 +13568,68 @@
         "Handoff"
       ]
     }
+  },
+  "coordination/INTEGRATION_MANIFEST.md": {
+    "id": "page-4520cbcd7a56aed5",
+    "description": "Integration manifest: candidate-20261103b. Find reliable explanations and keep them aligned with the repository as development continues.",
+    "category": "development",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Technical reference: Integration manifest: candidate-20261103b. Source refs, what was taken, conflict resolutions, registry status and checks for the candidate.",
+    "limitations": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
+    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
+    "source_files": [
+      "coordination/INTEGRATION_MANIFEST.md",
+      "coordination/INTEGRATION_MANIFEST.json",
+      "coordination/proposed-gate-pin/gate-manifest.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/integration/candidate-20261103b"
+    ],
+    "aliases": [
+      "documentation",
+      "technical reference",
+      "Markdown",
+      "Metadata",
+      "Static site"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03",
+    "reading_guide": {
+      "overview": "Find reliable explanations and keep them aligned with the repository as development continues.",
+      "why": "Good navigation and explicit limitations help beginners and experienced engineers use the same material.",
+      "example": "A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.",
+      "mechanism": "Markdown source, structured metadata, deterministic search, and isolated documentation checks produce this static portal.",
+      "safety": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
+      "terms": {
+        "Markdown": "A text format for readable documents with headings, links, lists, and code.",
+        "Metadata": "Structured information describing a page, such as its topic and verification scope.",
+        "Static site": "Prepared web files served without an application backend."
+      },
+      "learning_page": "docs/knowledge/start.md",
+      "kind": "technical reference",
+      "original_headings": [
+        "Candidate",
+        "Source refs and merge bases",
+        "Overlap (relative to main 8e2df97)",
+        "What was taken",
+        "Not taken",
+        "Conflict resolutions",
+        "Registry status",
+        "Gate pin",
+        "Checks and runs",
+        "Reviews required before main"
+      ]
+    }
   }
 }
