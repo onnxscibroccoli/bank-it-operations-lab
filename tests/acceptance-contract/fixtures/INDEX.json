@@ -1,0 +1,267 @@
+{
+  "tested_source_commit": "49122f2457aff41f14a3f3dec4ae378ac0147cff",
+  "repo_root": "repo",
+  "valid": {
+    "accept": {
+      "decision": "AUTOMATIC_TECHNICAL_ACCEPTANCE"
+    },
+    "blocked-fail-with-exception": {
+      "decision": "BLOCKED"
+    },
+    "blocked-required-unknown": {
+      "decision": "BLOCKED"
+    },
+    "blocked-pass-without-review": {
+      "decision": "BLOCKED"
+    },
+    "blocked-pass-disputed": {
+      "decision": "BLOCKED"
+    },
+    "blocked-empty": {
+      "decision": "BLOCKED"
+    }
+  },
+  "invalid": {
+    "pass-without-evidence": {
+      "errors": [
+        "E_RESULT_NEEDS_EVIDENCE"
+      ]
+    },
+    "fail-without-evidence": {
+      "errors": [
+        "E_RESULT_NEEDS_EVIDENCE"
+      ]
+    },
+    "evidence-missing-artifact": {
+      "errors": [
+        "E_EVIDENCE_UNRESOLVED"
+      ]
+    },
+    "evidence-missing-manifest": {
+      "errors": [
+        "E_EVIDENCE_UNRESOLVED"
+      ]
+    },
+    "evidence-outside-bundle": {
+      "errors": [
+        "E_EVIDENCE_UNRESOLVED"
+      ]
+    },
+    "evidence-hash-mismatch": {
+      "errors": [
+        "E_EVIDENCE_HASH_MISMATCH",
+        "E_EVIDENCE_NOT_COVERED"
+      ]
+    },
+    "evidence-not-covered": {
+      "errors": [
+        "E_EVIDENCE_NOT_COVERED"
+      ]
+    },
+    "evidence-manifest-invalid": {
+      "errors": [
+        "E_EVIDENCE_MANIFEST_INVALID"
+      ]
+    },
+    "evidence-bundle-tampered": {
+      "errors": [
+        "E_EVIDENCE_BUNDLE_HASHES"
+      ]
+    },
+    "evidence-other-commit": {
+      "errors": [
+        "E_EVIDENCE_COMMIT_MISMATCH"
+      ]
+    },
+    "evidence-bad-sha256-format": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "skipped-but-pass": {
+      "errors": [
+        "E_RESULT_NOT_EXECUTED"
+      ]
+    },
+    "unavailable-but-fail": {
+      "errors": [
+        "E_RESULT_NOT_EXECUTED"
+      ]
+    },
+    "not-run-but-pass": {
+      "errors": [
+        "E_RESULT_NOT_EXECUTED"
+      ]
+    },
+    "skipped-but-not-applicable": {
+      "errors": [
+        "E_RESULT_NOT_EXECUTED"
+      ]
+    },
+    "executed-without-observation": {
+      "errors": [
+        "E_RESULT_NO_OBSERVATION"
+      ]
+    },
+    "observation-without-execution": {
+      "errors": [
+        "E_RESULT_INCONSISTENT"
+      ]
+    },
+    "pass-but-exit-mismatch": {
+      "errors": [
+        "E_RESULT_INCONSISTENT"
+      ]
+    },
+    "pass-but-output-unmatched": {
+      "errors": [
+        "E_RESULT_INCONSISTENT"
+      ]
+    },
+    "fail-but-expectation-met": {
+      "errors": [
+        "E_RESULT_INCONSISTENT"
+      ]
+    },
+    "not-applicable-but-executed": {
+      "errors": [
+        "E_RESULT_INCONSISTENT"
+      ]
+    },
+    "not-applicable-without-rationale": {
+      "errors": [
+        "E_RATIONALE_REQUIRED"
+      ]
+    },
+    "not-applicable-blank-rationale": {
+      "errors": [
+        "E_RATIONALE_REQUIRED"
+      ]
+    },
+    "unknown-without-rationale": {
+      "errors": [
+        "E_RATIONALE_REQUIRED"
+      ]
+    },
+    "exception-on-pass": {
+      "errors": [
+        "E_EXCEPTION_MALFORMED"
+      ]
+    },
+    "exception-unknown-disposition": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "exception-missing-approver": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "exception-missing-expiry": {
+      "errors": [
+        "E_EXCEPTION_MALFORMED"
+      ]
+    },
+    "exception-expiry-before-approval": {
+      "errors": [
+        "E_EXCEPTION_MALFORMED"
+      ]
+    },
+    "exception-impossible-date": {
+      "errors": [
+        "E_EXCEPTION_MALFORMED"
+      ]
+    },
+    "exception-self-approved": {
+      "errors": [
+        "E_EXCEPTION_MALFORMED"
+      ]
+    },
+    "exception-compensating-without-control": {
+      "errors": [
+        "E_EXCEPTION_MALFORMED"
+      ]
+    },
+    "exception-extra-key": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "reviewer-is-recorder": {
+      "errors": [
+        "E_REVIEWER_NOT_INDEPENDENT"
+      ]
+    },
+    "review-of-other-commit": {
+      "errors": [
+        "E_REVIEW_COMMIT_MISMATCH"
+      ]
+    },
+    "review-bad-verdict": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "short-commit-sha": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "branch-name-as-commit": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "commit-differs-from-document": {
+      "errors": [
+        "E_COMMIT_MISMATCH"
+      ]
+    },
+    "duplicate-id": {
+      "errors": [
+        "E_DUPLICATE_ID"
+      ]
+    },
+    "bad-id-format": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "bad-source-type": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "missing-source-reference": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "missing-check-command": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "missing-assumptions": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "missing-verification-method": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "bad-result-value": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    },
+    "required-not-boolean": {
+      "errors": [
+        "E_SCHEMA"
+      ]
+    }
+  }
+}
