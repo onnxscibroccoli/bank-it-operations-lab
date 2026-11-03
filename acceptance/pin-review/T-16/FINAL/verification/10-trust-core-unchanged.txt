@@ -1,0 +1,9 @@
+# trust-core gate files: diff between the current pin ea0c2359, main 8e2df97b and candidate gate commit a518b03e (empty = byte-identical)
+## git diff --stat ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae 8e2df97b -- <trust core>
+(end)
+## git diff --stat ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae a518b03e -- <trust core>
+(end)
+## reviewer_allowlist at each: 
+ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae []
+8e2df97b []
+a518b03e []

@@ -1,0 +1,7 @@
+## --check-pin: proposed candidate pin a518b03e, candidate caa9ce7c1b1538d8da920463db77c93c05fe882b, GITHUB_WORKFLOW_SHA=caa9ce7c1b1538d8da920463db77c93c05fe882b (no token; independent_review null so nothing fetched)
+UNVERIFIED no independently reviewed gate pin: the manifest records no qualifying review of gate_sha a518b03e204d4b77a67e16ed83652acdbdd7b8d5
+TRUSTED GATE UNVERIFIED (informational; merge_eligibility.py recomputes this itself and never reads this file)
+
+## --check-pin: proposed main pin 6ea6803c, candidate main 8e2df97b
+UNVERIFIED no independently reviewed gate pin: the manifest records no qualifying review of gate_sha 6ea6803c0828a65fb269bb551ad5449f0d8ed948
+TRUSTED GATE UNVERIFIED (informational; merge_eligibility.py recomputes this itself and never reads this file)

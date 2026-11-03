@@ -1,0 +1,3 @@
+# verify (hash) mode: PROPOSED manifest, trusted gate = 6ea6803c checkout, candidate = main 8e2df97b
+GATE HASHES MATCH: verifier code, trusted config and workflow match the manifest (hash consistency only; trust of the pin is decided by --check-pin, D3)
+exit=0

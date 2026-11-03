@@ -1,0 +1,37 @@
+# Exact check-run names (GitHub Actions, app id 15368) from the real PR #40 runs on head 8c662d76834ecb2de99afebc83d31a2bb0fd3dd1,
+# fetched with: gh api 'repos/onnxscibroccoli/bank-it-operations-lab/commits/8c662d76834ecb2de99afebc83d31a2bb0fd3dd1/check-runs?per_page=100'
+# 39 check runs, 33 distinct names. Excluded: 'deploy' (Documentation knowledge base; skipped on PRs). 'validate' is produced by two
+# workflows (Documentation knowledge base and offline-validation); both run on every PR to main. The incident-fresh-run name is
+# truncated by GitHub itself and is reproduced byte-for-byte. Conclusions on 8c662d76: all success except merge-eligibility = failure.
+acceptance @ target SHA
+aws-cdk / synth-and-test
+backup-static
+base-aws / synth-and-test
+defect control (injected CA002 report-only MUST make acceptance fail)
+endpoint-pester
+final-summary
+gate self-test (FAIL / required UNKNOWN must not pass)
+incident-committed-runs (6 requirements + selftest on every committed run)
+incident-fresh-run (NEW SIMULATION scenario, apt-installed PostgreSQL server binaries; exit 3 = N...
+incident-not-executed-negative
+labeling-markers (SIMULATION / PLAN_ONLY markers)
+m365-evidence-verification
+m365-scenario-evaluation
+m365-unit-tests
+merge-eligibility
+module-registry
+network-edge
+offline
+offline-validation / validate
+orgs-static
+package
+plan-only-assertions
+postgres / CDK synth (only if CDK app present; pinned local CLI, no credentials, no lookups)
+postgres / harness self-test (deliberate unexpected-success / wrong-reason cases must FAIL)
+postgres / negative control - pg_dump 18 vs postgres:16 must be reported as version_mismatch, never PASS
+postgres / restore exercise (offline, unix-socket-only cluster)
+postgres / restore exercise (postgres:18 service container)
+run-summary
+terraform-static
+user-actions (USER ACTION REQUIRED report)
+validate

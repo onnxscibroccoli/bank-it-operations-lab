@@ -1,0 +1,6 @@
+ scripts/ci/check_registries.py            | 119 ++++++++++++++++++++++++++++++
+ scripts/ci/tests/test_actions_pinned.py   |  27 +++++++
+ scripts/ci/tests/test_check_registries.py |  76 +++++++++++++++++++
+ scripts/ci/tests/test_module_coverage.py  |   3 +-
+ scripts/ci/tests/test_t16_pin_proposal.py |  89 ++++++++++++++++++++++
+ 5 files changed, 313 insertions(+), 1 deletion(-)

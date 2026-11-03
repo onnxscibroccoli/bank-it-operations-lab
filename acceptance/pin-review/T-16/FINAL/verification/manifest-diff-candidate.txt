@@ -1,0 +1,9 @@
+gate_sha: ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae -> a518b03e204d4b77a67e16ed83652acdbdd7b8d5
+ADDED scripts/ci/check_registries.py None -> 82ecd70a1188ecd7fde99f577cf30340f5ff571ef243f6fb833570213de7e697
+ADDED scripts/ci/tests/test_actions_pinned.py None -> cfffe17a39a36af1d762f1098ab0270829ffb1ac125f15e079a8f8d4d95f38f6
+ADDED scripts/ci/tests/test_check_registries.py None -> 46799c01143cf968994c800ecce535508f14dba9515536604840af8005339193
+CHANGED scripts/ci/tests/test_module_coverage.py 92cd251e7325b7892ccab83a9af6e81b13c58f9e2f9394b0d83d7890dda6ac9d -> 7dba8ea5483c5404164992ca3a3389d2403e98e342f09cd5e75d973588ca7d31
+ADDED scripts/ci/tests/test_t16_pin_proposal.py None -> 744fdfdc052ddcf800bcdedbce0e4760e935b38fa603e75ed971579ce4f8e5db
+unchanged entries: 30 of 35
+independent_review: None -> None
+files identical to the candidate's own coordination/proposed-gate-pin/gate-manifest.json @ caa9ce7c: True ; same gate_sha: True

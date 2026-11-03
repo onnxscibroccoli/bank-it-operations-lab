@@ -1,0 +1,4 @@
+# verify (hash) mode: CURRENT trusted manifest, trusted gate = ea0c2359 checkout, candidate = main 8e2df97b
+ERROR candidate: scripts/ci/tests/test_module_coverage.py differs from the trusted manifest (candidate modifies the verifier without a matching trusted update)
+GATE HASHES REJECTED: 1 error(s)
+exit=1
