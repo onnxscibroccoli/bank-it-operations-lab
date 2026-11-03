@@ -12348,60 +12348,214 @@
     },
     "last_reviewed": "2026-10-31"
   },
-  "acceptance/modules/README.md": {
-    "id": "page-5a7ab3de4569471c",
-    "description": "acceptance/modules: existing-module adapters (Worker C). Find reliable explanations and keep them aligned with the repository as development continues.",
-    "category": "development",
+  "acceptance/INTEGRATION-V2.md": {
+    "id": "page-08e399758643c8a2",
+    "description": "Acceptance framework integration v2: path decision, C1-C6 and R1-R7 dispositions, false-acceptance regression proof against eb42b23.",
+    "category": "governance-compliance",
     "audience": [
-      "beginner",
       "operator",
       "engineer",
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Technical reference: acceptance/modules: existing-module adapters (Worker C). Source documentation is available with an introductory reading guide; implementation details and commands remain below.",
-    "limitations": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
-    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
+    "current_state": "Integration record for acceptance/integration-v2; states EXECUTION_PASS / REVIEW_PENDING only.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
     "source_files": [
-      "acceptance/modules/README.md",
-      "acceptance/modules"
+      "acceptance/INTEGRATION-V2.md",
+      "tools/acceptance/gate",
+      ".github/workflows/acceptance.yml"
     ],
     "related_development": [
-      "https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/integration/completion-20261103"
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
     ],
     "aliases": [
-      "documentation",
-      "technical reference",
-      "Markdown",
-      "Metadata",
-      "Static site"
+      "acceptance",
+      "integration record",
+      "Evidence",
+      "CI"
     ],
     "verification": {
       "level": "Not established",
-      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
       "last_verified": null,
       "evidence": []
     },
-    "last_reviewed": "2026-11-03",
-    "reading_guide": {
-      "overview": "Find reliable explanations and keep them aligned with the repository as development continues.",
-      "why": "Good navigation and explicit limitations help beginners and experienced engineers use the same material.",
-      "example": "A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.",
-      "mechanism": "Markdown source, structured metadata, deterministic search, and isolated documentation checks produce this static portal.",
-      "safety": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
-      "terms": {
-        "Markdown": "A text format for readable documents with headings, links, lists, and code.",
-        "Metadata": "Structured information describing a page, such as its topic and verification scope.",
-        "Static site": "Prepared web files served without an application backend."
-      },
-      "learning_page": "docs/knowledge/start.md",
-      "kind": "technical reference",
-      "original_headings": [
-        "Contract",
-        "Run",
-        "Negative tests (each asserts the specific reason code, and that it is the *only* non-PASS check)"
-      ]
-    }
+    "last_reviewed": "2026-11-03"
+  },
+  "acceptance/modules/README.md": {
+    "id": "page-5a7ab3de4569471c",
+    "description": "Worker C acceptance adapters for aws-cdk, postgres and entra-offline with reason-asserting negative tests.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Adapters integrated unchanged from acceptance-adapters (c6aa238e) plus Worker D fix 93de4b3d.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "acceptance/modules"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "adapters",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "schemas/acceptance/README.md": {
+    "id": "page-23db77f9b068b173",
+    "description": "Worker A shared acceptance contract: machine-readable requirement schema and contract checker reused by the final decision.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Contract integrated unchanged from acceptance-contract (6a28847b).",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "schemas/acceptance",
+      "tests/acceptance-contract"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "contract",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "tools/acceptance/README.md": {
+    "id": "page-292e95bacbaf9f07",
+    "description": "Worker B allowlisted acceptance check runner on top of the shared evidence validator.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Runner integrated unchanged from acceptance-runner (838d537a); Worker D gate lives in tools/acceptance/gate.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "tools/acceptance"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "runner",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "reports/ACCEPTANCE.md": {
+    "id": "page-b8b9172819d9436a",
+    "description": "Historical acceptance packet draft for the vertical slice (PR #26 at 181bcdd and its addendum at eb42b23).",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Archived",
+    "current_state": "Historical record preserved byte-identical to eb42b23; superseded by acceptance/INTEGRATION-V2.md where they differ.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "reports/ACCEPTANCE.md",
+      "acceptance/INTEGRATION-V2.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "historical record",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md": {
+    "id": "page-d58be6e957a5a101",
+    "description": "Historical assurance note for the acceptance-state invariants I1 and I2 at eb42b23 (C1-C4 repairs).",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "Archived",
+    "current_state": "Historical record preserved byte-identical to eb42b23; its statement that ACCEPTED is reachable is superseded by acceptance/INTEGRATION-V2.md.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent re-review of the exact integrated SHA; authenticated review binding and base-branch gate (R5/R6) as follow-ups.",
+    "source_files": [
+      "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md",
+      "acceptance/INTEGRATION-V2.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/26",
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/27"
+    ],
+    "aliases": [
+      "acceptance",
+      "historical record",
+      "Evidence",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
   },
   "coordination/COMPLETION_INVENTORY.md": {
     "id": "page-6f88fbae68ff4faa",
@@ -12459,124 +12613,6 @@
         "Priorities 2\u20136",
         "Blocking gaps",
         "Tasks"
-      ]
-    }
-  },
-  "reports/ACCEPTANCE.md": {
-    "id": "page-b8b9172819d9436a",
-    "description": "Acceptance packet: vertical slice (DRAFT). Connect operational claims to evidence, responsibilities, and applicable review criteria.",
-    "category": "governance-compliance",
-    "audience": [
-      "beginner",
-      "operator",
-      "engineer",
-      "architect"
-    ],
-    "lifecycle_status": "Archived",
-    "current_state": "Historical record: Acceptance packet: vertical slice (DRAFT). Original snapshot retained without editing; use its stated date, revision and limitations.",
-    "limitations": "Review record of an earlier candidate, preserved on integration/completion-20261103. It is not an approval of the current tree; independent review is pending (AC1).",
-    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
-    "source_files": [
-      "reports/ACCEPTANCE.md"
-    ],
-    "related_development": [
-      "https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/integration/completion-20261103"
-    ],
-    "aliases": [
-      "governance",
-      "historical record",
-      "Evidence",
-      "CI",
-      "ADR",
-      "Attestation"
-    ],
-    "verification": {
-      "level": "Not established",
-      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
-      "last_verified": null,
-      "evidence": []
-    },
-    "last_reviewed": "2026-11-03",
-    "reading_guide": {
-      "overview": "Connect operational claims to evidence, responsibilities, and applicable review criteria.",
-      "why": "A passing test and an authorized release are different facts; recording both avoids accidental overstatement.",
-      "example": "A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.",
-      "mechanism": "Control mappings, evidence validators, and acceptance records organize claims and checks. They do not grant regulatory certification.",
-      "safety": "Review record of an earlier candidate, preserved on integration/completion-20261103. It is not an approval of the current tree; independent review is pending (AC1).",
-      "terms": {
-        "Evidence": "Recorded information supporting a specific claim within a stated scope.",
-        "CI": "Continuous Integration: automated checks of proposed changes.",
-        "ADR": "Architecture Decision Record: the context, choice, and consequences of a design decision.",
-        "Attestation": "A statement made by an identified party about a specific claim."
-      },
-      "learning_page": "docs/knowledge/governance.md",
-      "kind": "historical record",
-      "original_headings": [
-        "1. First executable acceptance command",
-        "2. Branch review verdicts",
-        "3. CI results (real)",
-        "4. Requirement status",
-        "5. Open gaps",
-        "Addendum, 2026-10-28 ~17:56 EDT: independent review (PR #27) and repairs. Earlier sections are kept unchanged as the historical record."
-      ]
-    }
-  },
-  "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md": {
-    "id": "page-d58be6e957a5a101",
-    "description": "Assurance note: acceptance-state transition invariants (I1, I2). Connect operational claims to evidence, responsibilities, and applicable review criteria.",
-    "category": "governance-compliance",
-    "audience": [
-      "beginner",
-      "operator",
-      "engineer",
-      "architect"
-    ],
-    "lifecycle_status": "Archived",
-    "current_state": "Historical record: Assurance note: acceptance-state transition invariants (I1, I2). Original snapshot retained without editing; use its stated date, revision and limitations.",
-    "limitations": "Review record of an earlier candidate, preserved on integration/completion-20261103. It is not an approval of the current tree; independent review is pending (AC1).",
-    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
-    "source_files": [
-      "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md"
-    ],
-    "related_development": [
-      "https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/integration/completion-20261103"
-    ],
-    "aliases": [
-      "governance",
-      "historical record",
-      "Evidence",
-      "CI",
-      "ADR",
-      "Attestation"
-    ],
-    "verification": {
-      "level": "Not established",
-      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
-      "last_verified": null,
-      "evidence": []
-    },
-    "last_reviewed": "2026-11-03",
-    "reading_guide": {
-      "overview": "Connect operational claims to evidence, responsibilities, and applicable review criteria.",
-      "why": "A passing test and an authorized release are different facts; recording both avoids accidental overstatement.",
-      "example": "A reviewer checks the exact tested version and its limitations before deciding what a successful result supports.",
-      "mechanism": "Control mappings, evidence validators, and acceptance records organize claims and checks. They do not grant regulatory certification.",
-      "safety": "Review record of an earlier candidate, preserved on integration/completion-20261103. It is not an approval of the current tree; independent review is pending (AC1).",
-      "terms": {
-        "Evidence": "Recorded information supporting a specific claim within a stated scope.",
-        "CI": "Continuous Integration: automated checks of proposed changes.",
-        "ADR": "Architecture Decision Record: the context, choice, and consequences of a design decision.",
-        "Attestation": "A statement made by an identified party about a specific claim."
-      },
-      "learning_page": "docs/knowledge/governance.md",
-      "kind": "historical record",
-      "original_headings": [
-        "1. State model",
-        "2. Invariants",
-        "3. Enforcement and evidence",
-        "4. Independent-review findings C1\u2013C4: fix and regression test",
-        "5. What \"ACCEPTED\" would require (none of it exists yet)",
-        "6. Limitations"
       ]
     }
   },
@@ -13188,115 +13224,6 @@
         "PR #6: Organizations security reference (CDK)",
         "What was not done or not verified",
         "Checkpoint 2 (2026-10-28 14:30 EDT): files inspected, PostgreSQL false-PASS remediation, unconfirmed items, remaining steps"
-      ]
-    }
-  },
-  "schemas/acceptance/README.md": {
-    "id": "page-23db77f9b068b173",
-    "description": "schemas/acceptance: machine-readable acceptance contract. Find reliable explanations and keep them aligned with the repository as development continues.",
-    "category": "development",
-    "audience": [
-      "beginner",
-      "operator",
-      "engineer",
-      "architect"
-    ],
-    "lifecycle_status": "In Development",
-    "current_state": "Technical reference: schemas/acceptance: machine-readable acceptance contract. Source documentation is available with an introductory reading guide; implementation details and commands remain below.",
-    "limitations": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
-    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
-    "source_files": [
-      "schemas/acceptance/README.md",
-      "schemas/acceptance"
-    ],
-    "related_development": [
-      "https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/integration/completion-20261103"
-    ],
-    "aliases": [
-      "documentation",
-      "technical reference",
-      "Markdown",
-      "Metadata",
-      "Static site"
-    ],
-    "verification": {
-      "level": "Not established",
-      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
-      "last_verified": null,
-      "evidence": []
-    },
-    "last_reviewed": "2026-11-03",
-    "reading_guide": {
-      "overview": "Find reliable explanations and keep them aligned with the repository as development continues.",
-      "why": "Good navigation and explicit limitations help beginners and experienced engineers use the same material.",
-      "example": "A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.",
-      "mechanism": "Markdown source, structured metadata, deterministic search, and isolated documentation checks produce this static portal.",
-      "safety": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
-      "terms": {
-        "Markdown": "A text format for readable documents with headings, links, lists, and code.",
-        "Metadata": "Structured information describing a page, such as its topic and verification scope.",
-        "Static site": "Prepared web files served without an application backend."
-      },
-      "learning_page": "docs/knowledge/start.md",
-      "kind": "technical reference",
-      "original_headings": [
-        "Evidence refs",
-        "Rules (error code \u2192 rule)",
-        "Aggregate decision (valid documents only, fail closed)"
-      ]
-    }
-  },
-  "tools/acceptance/README.md": {
-    "id": "page-292e95bacbaf9f07",
-    "description": "tools/acceptance: allowlisted acceptance check runner. Find reliable explanations and keep them aligned with the repository as development continues.",
-    "category": "development",
-    "audience": [
-      "beginner",
-      "operator",
-      "engineer",
-      "architect"
-    ],
-    "lifecycle_status": "In Development",
-    "current_state": "Technical reference: tools/acceptance: allowlisted acceptance check runner. Source documentation is available with an introductory reading guide; implementation details and commands remain below.",
-    "limitations": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
-    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
-    "source_files": [
-      "tools/acceptance/README.md",
-      "tools/acceptance"
-    ],
-    "related_development": [
-      "https://github.com/onnxscibroccoli/bank-it-operations-lab/tree/integration/completion-20261103"
-    ],
-    "aliases": [
-      "documentation",
-      "technical reference",
-      "Markdown",
-      "Metadata",
-      "Static site"
-    ],
-    "verification": {
-      "level": "Not established",
-      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
-      "last_verified": null,
-      "evidence": []
-    },
-    "last_reviewed": "2026-11-03",
-    "reading_guide": {
-      "overview": "Find reliable explanations and keep them aligned with the repository as development continues.",
-      "why": "Good navigation and explicit limitations help beginners and experienced engineers use the same material.",
-      "example": "A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.",
-      "mechanism": "Markdown source, structured metadata, deterministic search, and isolated documentation checks produce this static portal.",
-      "safety": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
-      "terms": {
-        "Markdown": "A text format for readable documents with headings, links, lists, and code.",
-        "Metadata": "Structured information describing a page, such as its topic and verification scope.",
-        "Static site": "Prepared web files served without an application backend."
-      },
-      "learning_page": "docs/knowledge/start.md",
-      "kind": "technical reference",
-      "original_headings": [
-        "Bundle layout (`tools/acceptance/runs/<label>/`, gitignored)",
-        "Safety rules (enforced in `runner.py`, covered in `tests/test_runner.py`)"
       ]
     }
   }

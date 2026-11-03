@@ -322,14 +322,17 @@
         "reports/ACCEPTANCE.md",
         "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md"
       ],
-      "reason": "Integrated on integration/completion-20261103 (2026-11-03 EST): PR #26 acceptance/vertical-slice @ eb42b23747d5b686d9540c93e445a713b4e56c5d (contains PR #23 @ 6a28847 and PR #24 @ 838d537; PR #25 adapters @ c6aa238) plus the diverged PR #25 head ce39504 (emit_shared.py + test) merged separately. C1-C4 repaired at 17cfaea (reports/ACCEPTANCE_INVARIANT_ASSURANCE.md); C5 repaired on the integration branch (pinned action SHAs, 7-day retention, runs on main and integration/**); C6 reconciled in coordination/tasks.json. Open follow-ups T-03..T-05 (fail-closed inventory binding, dynamic-group minimum counts, review-record scope). Technical execution only: decide.py must report REVIEW_PENDING; nothing is accepted without an independent review (UA-7).",
       "category": "functional",
       "delivery_location": [
-        "scripts/acceptance"
+        "tools/acceptance/gate",
+        "acceptance/modules",
+        "tools/acceptance",
+        "schemas/acceptance"
       ],
       "owner": {
-        "agent": "Bank IT Lab Integrator (integrated exact SHAs); authors: acceptance workers A-D",
-        "branch": "acceptance/vertical-slice"
+        "agent": "Worker D (independent integrator)",
+        "pr_author": "onnxscibroccoli (Worker D)",
+        "branch": "acceptance/integration-v2"
       },
       "plan_sources": [
         "ACP:DoD-3",
@@ -342,33 +345,39 @@
           "acceptance.yml:defect-control"
         ],
         "proposed": [
-          "fail-closed inventory binding when git show fails (T-03)"
+          "authenticated independent review binding (PR #29 R1/R3)",
+          "base-branch gate for candidates (PR #29 R6)"
         ]
       },
       "superseded_prs": [
         23,
-        24
+        24,
+        25,
+        26
       ],
       "head": {
-        "pr": 26,
-        "sha": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
-        "base": "overnight/integration@49122f2 (stale; 14 commits not in integration)"
+        "branch": "acceptance/integration-v2",
+        "base": "main@30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6",
+        "record": "acceptance/INTEGRATION-V2.md"
       },
       "ci_jobs": [
         "acceptance.yml:gate-selftest",
         "acceptance.yml:acceptance",
         "acceptance.yml:defect-control"
       ],
+      "evidence_class": [
+        "EXECUTED_CI",
+        "EXECUTED_LOCAL"
+      ],
+      "limitations": "Offline lab gate; ends at EXECUTION_PASS + REVIEW_PENDING and never reports ACCEPTED. Independent review of the exact SHA and AC6 remain separate.",
       "validate_all_steps": [
         "acceptance gate self-test",
-        "acceptance invariant tests",
+        "acceptance gate invariant tests",
         "acceptance adapter tests",
         "acceptance runner tests",
         "acceptance contract tests"
       ],
-      "source_commit": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
-      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
-      "limitations": "Offline/static acceptance of AWS CDK synth, PostgreSQL restore (local binaries), Entra offline policies and evidence hashes. No live AWS/Entra/Graph. Hash matches prove consistency, not independent execution. I2 PARTIALLY ENFORCED (no branch protection, UA-3)."
+      "reason": "Combined on integration/completion-20261103 (2026-11-03 EST) with review records and coordination updates; PR #40 head 8c662d7 merged normally (supersedes the branch's earlier direct merge of PR #26/#25, whose history is kept)."
     },
     {
       "id": "review-notes",

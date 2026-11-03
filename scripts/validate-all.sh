@@ -38,9 +38,9 @@ step "incident committed runs"        bash scripts/ci/incident_checks.sh committ
 step "incident NOT_EXECUTED negative" bash scripts/ci/incident_checks.sh not-executed-negative
 step "labeling markers"               python3 scripts/ci/check_labels.py
 # --- PR #5 AWS evidence bundle (static)
-# acceptance framework (PRs #23-#26, integrated on integration/completion-20261103) and preserved review records
-step "acceptance gate self-test"      python3 scripts/acceptance/verify_results.py --selftest
-step "acceptance invariant tests"     python3 -m unittest discover -s scripts/acceptance/tests
+# acceptance framework (PRs #23-#26 via PR #40 acceptance/integration-v2, combined on integration/completion-20261103) and preserved review records
+step "acceptance gate self-test"      python3 tools/acceptance/gate/verify_results.py --selftest
+step "acceptance gate invariant tests" python3 -m unittest discover -s tools/acceptance/gate/tests
 step "acceptance adapter tests"       python3 -m unittest discover -s acceptance/modules/tests
 step "acceptance runner tests"        python3 -m unittest discover -s tools/acceptance/tests
 step "acceptance contract tests"      python3 -m unittest discover -s tests/acceptance-contract
