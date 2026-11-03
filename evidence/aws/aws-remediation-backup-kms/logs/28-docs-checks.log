@@ -1,0 +1,17 @@
+..F.....
+======================================================================
+FAIL: test_frozen_records_unchanged (test_modernization.ModernizationTests.test_frozen_records_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/bkms/scripts/docs/tests/test_modernization.py", line 22, in test_frozen_records_unchanged
+    for path,digest in manifest.items():self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(),digest,path)
+                                        ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '379c0e9466e877e4acc1f4d0f32bc9214529217cf1e5ab7c781458a3bea12f54' != '1040b13bb8d1d11977a6017f2d76d80898af41c5e256c5fc17f60ddd5f047151'
+- 379c0e9466e877e4acc1f4d0f32bc9214529217cf1e5ab7c781458a3bea12f54
++ 1040b13bb8d1d11977a6017f2d76d80898af41c5e256c5fc17f60ddd5f047151
+ : inventory/ARCHITECTURE.md
+
+----------------------------------------------------------------------
+Ran 8 tests in 4.048s
+
+FAILED (failures=1)

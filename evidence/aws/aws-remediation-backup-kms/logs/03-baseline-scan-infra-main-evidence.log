@@ -1,0 +1,5 @@
+../../evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json: 2 violation(s)
+  IAM_KMS_GRANT_NOT_FOR_AWS_RESOURCE	DbBackupPolicy43A4FBCE	UseDbKeyViaBackupAndRds: CreateGrant without kms:GrantIsForAWSResource=true
+  IAM_KMS_GRANT_MIXED_WITH_CRYPTO	DbBackupPolicy43A4FBCE	UseDbKeyViaBackupAndRds: kms:CreateGrant,kms:Decrypt,kms:DescribeKey,kms:GenerateDataKey
+../../evidence/aws/aws-remediation-vpc-rds/synth/BankItLabSecureStorage.template.json: 0 violation(s)
+TOTAL 2

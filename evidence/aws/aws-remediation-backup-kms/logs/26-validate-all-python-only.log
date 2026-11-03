@@ -1,0 +1,392 @@
+::: [1] portfolio offline modules
+::group::python3 -m unittest discover -s observability/tests
+...usage: healthcheck [-h] {evaluate,collect,host} ...
+healthcheck: error: argument cmd: invalid choice: 'frobnicate' (choose from evaluate, collect, host)
+.............................................................
+----------------------------------------------------------------------
+Ran 64 tests in 0.098s
+
+OK
+::endgroup::
+::group::bash -c cd integrations/vendor-mock && python3 -m unittest discover -s tests -t .
+.............................................
+----------------------------------------------------------------------
+Ran 45 tests in 0.016s
+
+OK
+::endgroup::
+::group::python3 -m unittest discover -s governance/vendor-risk/tests
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 0.285s
+
+OK
+SIMULATION governance lint: PASS (0 findings)
+::endgroup::
+::group::python3 governance/vendor-risk/check_governance.py
+SIMULATION governance lint: PASS (0 findings)
+::endgroup::
+::group::python3 -m unittest discover -s identity/governance/tests
+.................................................................
+----------------------------------------------------------------------
+Ran 65 tests in 0.132s
+
+OK
+::endgroup::
+::group::python3 identity/governance/make_fixtures.py --check
+fixtures OK (37 files)
+::endgroup::
+::group::python3 -m unittest discover -s governance/controls/tests
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.177s
+
+OK
+::endgroup::
+::group::python3 governance/controls/validate_mapping.py
+rows=17 artifacts=97 NOT_EXECUTED=1 OBSERVED=0 SIMULATION=14 STATIC=2
+MAPPING VALID
+::endgroup::
+::group::python3 -m unittest discover -s operations/patching/tests
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 1.005s
+
+OK
+::endgroup::
+::group::python3 operations/patching/tests/make_fixtures.py --check
+fixture drift: none
+::endgroup::
+::group::python3 -m unittest discover -s operations/hardening/tests
+..................
+----------------------------------------------------------------------
+Ran 18 tests in 0.628s
+
+OK
+::endgroup::
+::group::python3 -m unittest discover -s operations/hybrid/checks
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.010s
+
+OK
+checked 12 files, 0 findings
+::endgroup::
+::group::python3 operations/hybrid/checks/check_hybrid_runbooks.py
+checked 12 files, 0 findings
+::endgroup::
+::group::python3 -m unittest discover -s docs/runbooks/aws-backup/cost-capacity
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.000s
+
+OK
+::endgroup::
+::group::bash -c sha256sum -c evidence/backup/aws-backup-dr/SHA256SUMS --quiet
+::endgroup::
+::group::python3 -m unittest discover -s inventory/tests
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.006s
+
+OK
+::endgroup::
+::group::python3 inventory/generate.py --check
+DRIFT: assets.json
+::endgroup::
+::group::python3 -m unittest discover -s infra/orgs/pytests
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+::endgroup::
+::group::python3 -m unittest discover -s operations/endpoint/tests
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.004s
+
+OK
+::endgroup::
+::group::python3 -m unittest discover -s governance/owner-auth/tests
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 0.066s
+
+OK
+::endgroup::
+::group::python3 operations/endpoint/validate_baseline.py
+Endpoint baseline: PASS (static; NOT_EXECUTED)
+::endgroup::
+    FAILED: portfolio offline modules
+::: [2] module registry
+MODULE COVERAGE: 26/27 integrated (96.3%), functional 19/19; denominator 28 (INTEGRATED=26, NOT_INTEGRATED=1, SUPERSEDED=1)
+MODULE REGISTRY OK: 28 modules (26 INTEGRATED), 1673 tracked files all claimed
+    ok
+::: [3] tasks lint (no naked MET)
+TASKS LINT OK: no naked or mis-bound MET
+    ok
+::: [4] user-actions report
+USER ACTION REQUIRED: 3 — UA-2; UA-3; UA-7
+MODULE COVERAGE: 26/27 integrated (96.3%), functional 19/19; denominator 28 (INTEGRATED=26, NOT_INTEGRATED=1, SUPERSEDED=1)
+    ok
+::: [5] ci self-tests (scripts/ci/tests)
+.......F.F.....................................................................................................................................................
+======================================================================
+FAIL: test_all_approved_unblocks (test_ac_repairs_b908a66.SecurityExceptionsGate.test_all_approved_unblocks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/bkms/scripts/ci/tests/test_ac_repairs_b908a66.py", line 104, in test_all_approved_unblocks
+    self.assertEqual((r["errors"], r["unapproved"], r["blocking_user_action"]), ([], [], False))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ([], [{'template': 'BankItLabNetworkDatabase.te[457 chars]True) != ([], [], False)
+
+First differing element 1:
+[{'template': 'BankItLabNetworkDatabase.te[450 chars]ED'}]
+[]
+
+Diff is 651 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_one_entry_still_proposed_blocks (test_ac_repairs_b908a66.SecurityExceptionsGate.test_one_entry_still_proposed_blocks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/bkms/scripts/ci/tests/test_ac_repairs_b908a66.py", line 110, in test_one_entry_still_proposed_blocks
+    self.assertEqual([u["exception"] for u in r["unapproved"]], ["EX-03"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['EX-03', 'EX-04'] != ['EX-03']
+
+First list contains 1 additional elements.
+First extra element 1:
+'EX-04'
+
+- ['EX-03', 'EX-04']
++ ['EX-03']
+
+----------------------------------------------------------------------
+Ran 159 tests in 1.715s
+
+FAILED (failures=2)
+PLAN_ONLY CHECK ERROR: /tmp/tmph7_8t_xp/r.json: duplicate key
+VIOLATION /tmp/tmpnbbbgfp1/r.json: R3 $.scenarios[0].executed = True (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+PLAN_ONLY CHECK ERROR: /tmp/tmpd_3pdmvx/validation-report.json: [Errno 2] No such file or directory: '/tmp/tmpd_3pdmvx/validation-report.json'
+VIOLATION /tmp/tmpwgjgx70u/r.json: R2 $.mutationsExecuted = False (must be integer 0)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpo6wx_wna/r.json: R1 top-level mutationsExecuted missing
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmp9j93p3ma/r.json: R2 $.mutationsExecuted = 1 (must be integer 0)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpsss_d60j/r.json: R2 $.scenarios[0].mutationsExecuted = 3 (must be integer 0)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpjhid2a3t/r.json: R5 0 plan step(s), need at least 1
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpg0ph6iav/r.json: R4 $.scenarios[0].plan is not a list
+VIOLATION /tmp/tmpg0ph6iav/r.json: R5 0 plan step(s), need at least 1
+PLAN_ONLY CHECK FAILED: 2 violation(s)
+VIOLATION /tmp/tmpiw_tnfdh/r.json: R4 $.scenarios[0].plan[0].executed missing (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpnpulbgvx/r.json: R3 $.scenarios[0].plan[0].executed = 'false' (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpskejaoso/r.json: R3 $.scenarios[0].plan[0].executed = True (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpzn1by7j5/r.json: R4 $.scenarios[0].plan[1].mode = 'EXECUTE' (must be PLAN_ONLY)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+PLAN_ONLY OK: 2 plan step(s), all PLAN_ONLY/executed=false, mutationsExecuted=0
+USER ACTION REQUIRED: 3 — UA-2; UA-3; UA-7
+    FAILED: ci self-tests (scripts/ci/tests)
+::: [6] shared validator unit tests
+................
+----------------------------------------------------------------------
+Ran 16 tests in 0.016s
+
+OK
+    ok
+::: [7] entra unit tests
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 0.102s
+
+OK
+    ok
+::: [8] entra validator on baseline
+overall=PASS exit=0
+    ok
+::: [9] entra fixture drift
+    ok
+::: [10] entra evidence verify evidence/entra/runs/local-offline-20261028T150359Z/
+verify evidence/entra/runs/local-offline-20261028T150359Z: OK
+    ok
+::: [11] m365 scenario evaluation
+overall=PASS scenarios=13 passed=13 failed=0 plannedSteps=43 mutationsExecuted=0
+PLAN_ONLY OK: 43 plan step(s), all PLAN_ONLY/executed=false, mutationsExecuted=0
+scenario coverage OK: 13/13
+M365 CHECK OK (evaluate)
+    ok
+::: [12] m365 unit tests
+.............................
+----------------------------------------------------------------------
+Ran 29 tests in 0.045s
+
+OK
+M365 CHECK OK (unit)
+    ok
+::: [13] m365 evidence verification
+verify evidence/m365/runs/local-offline-20261028T181845Z: OK
+PLAN_ONLY OK: 43 plan step(s), all PLAN_ONLY/executed=false, mutationsExecuted=0
+M365 CHECK OK (evidence)
+    ok
+::: [14] plan-only negative tests
+.......F.F.....................................................................................................................................................
+======================================================================
+FAIL: test_all_approved_unblocks (test_ac_repairs_b908a66.SecurityExceptionsGate.test_all_approved_unblocks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/bkms/scripts/ci/tests/test_ac_repairs_b908a66.py", line 104, in test_all_approved_unblocks
+    self.assertEqual((r["errors"], r["unapproved"], r["blocking_user_action"]), ([], [], False))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ([], [{'template': 'BankItLabNetworkDatabase.te[457 chars]True) != ([], [], False)
+
+First differing element 1:
+[{'template': 'BankItLabNetworkDatabase.te[450 chars]ED'}]
+[]
+
+Diff is 651 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_one_entry_still_proposed_blocks (test_ac_repairs_b908a66.SecurityExceptionsGate.test_one_entry_still_proposed_blocks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/bkms/scripts/ci/tests/test_ac_repairs_b908a66.py", line 110, in test_one_entry_still_proposed_blocks
+    self.assertEqual([u["exception"] for u in r["unapproved"]], ["EX-03"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['EX-03', 'EX-04'] != ['EX-03']
+
+First list contains 1 additional elements.
+First extra element 1:
+'EX-04'
+
+- ['EX-03', 'EX-04']
++ ['EX-03']
+
+----------------------------------------------------------------------
+Ran 159 tests in 1.767s
+
+FAILED (failures=2)
+PLAN_ONLY CHECK ERROR: /tmp/tmp7maf93mw/r.json: duplicate key
+VIOLATION /tmp/tmpucc6u97n/r.json: R3 $.scenarios[0].executed = True (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+PLAN_ONLY CHECK ERROR: /tmp/tmpgkq0q95p/validation-report.json: [Errno 2] No such file or directory: '/tmp/tmpgkq0q95p/validation-report.json'
+VIOLATION /tmp/tmpii0c3581/r.json: R2 $.mutationsExecuted = False (must be integer 0)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpigu4or1d/r.json: R1 top-level mutationsExecuted missing
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpjm3nwdv5/r.json: R2 $.mutationsExecuted = 1 (must be integer 0)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpuzbzmetf/r.json: R2 $.scenarios[0].mutationsExecuted = 3 (must be integer 0)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmp0xfz9rd2/r.json: R5 0 plan step(s), need at least 1
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpi6jwfjzw/r.json: R4 $.scenarios[0].plan is not a list
+VIOLATION /tmp/tmpi6jwfjzw/r.json: R5 0 plan step(s), need at least 1
+PLAN_ONLY CHECK FAILED: 2 violation(s)
+VIOLATION /tmp/tmpt85pvtt2/r.json: R4 $.scenarios[0].plan[0].executed missing (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpwj4wagsw/r.json: R3 $.scenarios[0].plan[0].executed = 'false' (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmpaca8qzgy/r.json: R3 $.scenarios[0].plan[0].executed = True (must be false)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+VIOLATION /tmp/tmp7qqvyjt7/r.json: R4 $.scenarios[0].plan[1].mode = 'EXECUTE' (must be PLAN_ONLY)
+PLAN_ONLY CHECK FAILED: 1 violation(s)
+PLAN_ONLY OK: 2 plan step(s), all PLAN_ONLY/executed=false, mutationsExecuted=0
+USER ACTION REQUIRED: 3 — UA-2; UA-3; UA-7
+::error title=m365 plan-only-negatives::PLAN_ONLY / required-check negative tests failed
+M365 CHECK FAILED (plan-only-negatives): PLAN_ONLY / required-check negative tests failed
+    FAILED: plan-only negative tests
+::: [15] incident committed runs
+injection   PASS         1 inject_* step(s) PASS
+detection   PASS         detected after injection, mttd_s=3.584
+diagnosis   PASS         6 diag_* step(s) PASS
+recovery    PASS         1 restore_* step(s) PASS; 5 verify_* step(s) PASS; events present
+timeline    PASS         timeline.py --verify OK (metrics re-derived, hashes checked)
+simulation  PASS         10 events, summary, timeline and label marked SIMULATION
+INCIDENT REQUIREMENTS PASS: evidence/incident/runs/local-20261028T181818Z
+PASS pristine_run_verifies (exit 0)
+PASS forged_mttd_rejected (exit 1)
+PASS missing_detection_event_rejected (exit 1)
+PASS missing_pg_binaries_not_executed (exit 3)
+SIMULATION selftest: 0 failure(s)
+injection   PASS         1 inject_* step(s) PASS
+detection   PASS         detected after injection, mttd_s=3.59
+diagnosis   PASS         6 diag_* step(s) PASS
+recovery    PASS         1 restore_* step(s) PASS; 5 verify_* step(s) PASS; events present
+timeline    PASS         timeline.py --verify OK (metrics re-derived, hashes checked)
+simulation  PASS         10 events, summary, timeline and label marked SIMULATION
+INCIDENT REQUIREMENTS PASS: evidence/incident/runs/local-20261029T000545Z
+PASS pristine_run_verifies (exit 0)
+PASS forged_mttd_rejected (exit 1)
+PASS missing_detection_event_rejected (exit 1)
+PASS missing_pg_binaries_not_executed (exit 3)
+SIMULATION selftest: 0 failure(s)
+INCIDENT CHECK OK (committed)
+    ok
+::: [16] incident NOT_EXECUTED negative
+negative OK: missing PostgreSQL binaries => NOT_EXECUTED for all 6 requirements, check failed (exit 1)
+INCIDENT CHECK OK (not-executed-negative)
+    ok
+::: [17] labeling markers
+LABELS OK: 4 incident run/console dirs labelled SIMULATION; 1 M365 run(s) marked PLAN_ONLY, mutations 0
+    ok
+::: [18] security exceptions register (B5-1; UA-1 blocking reported)
+BLOCKING USER ACTION (UA-1): suppression AwsSolutions-IAM5 on BankItLabNetworkDatabase.template.json:RdsMonitoringPolicy5DA8ACAC is applied while EX-03 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression AwsSolutions-IAM5 on BankItLabNetworkDatabase.template.json:DbBackupPolicy43A4FBCE is applied while EX-04 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression NIST.800.53.R5-S3DefaultEncryptionKMS on BankItLabSecureStorage.template.json:AccessLogsBucket83982689 is applied while EX-01 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression NIST.800.53.R5-S3BucketReplicationEnabled on BankItLabSecureStorage.template.json:AccessLogsBucket83982689 is applied while EX-02 is PROPOSED
+BLOCKING USER ACTION (UA-1): suppression NIST.800.53.R5-S3BucketReplicationEnabled on BankItLabSecureStorage.template.json:DataBucketE3889A50 is applied while EX-02 is PROPOSED
+SECURITY EXCEPTIONS: 5 applied suppression(s), 5 tied to non-APPROVED exceptions -> AC2/AC5 stay UNMET until the owner decides (UA-1)
+    ok
+::: [19] aws evidence SHA256SUMS
+    ok
+::: [20] s3 self-logging evidence/aws/aws-remediation-vpc-rds/synth/BankItLabNetworkDatabase.template.json
+S3 LOGGING OK: 0 buckets checked, none log to themselves
+    ok
+::: [21] s3 self-logging evidence/aws/aws-remediation-vpc-rds/synth/BankItLabSecureStorage.template.json
+S3 LOGGING OK: 2 buckets checked, none log to themselves
+    ok
+::: [22] postgres v2 verify ci-service-40741329107-1
+artifacts: NOT CHECKED (artifacts/ not present; dumps live in the CI artifact)
+evidence/postgres/runs/ci-service-40741329107-1: cases=36 positive=11 negative=6 rows=36 problems=0 -> VERIFIED
+    ok
+::: [23] postgres v2 verify ci-offline-40741329107-1
+artifacts: NOT CHECKED (artifacts/ not present; dumps live in the CI artifact)
+evidence/postgres/runs/ci-offline-40741329107-1: cases=38 positive=11 negative=6 rows=38 problems=0 -> VERIFIED
+    ok
+::: [24] postgres v2 verify local-offline-v2-20261028T180208Z
+artifacts: NOT CHECKED (artifacts/ not present; dumps live in the CI artifact)
+evidence/postgres/runs/local-offline-v2-20261028T180208Z: cases=38 positive=11 negative=6 rows=38 problems=0 -> VERIFIED
+    ok
+::: [25] postgres mismatch control is REJECTED
+    ok
+::: [26] postgres v1 run ci-service-40630856041-1 reported HISTORICAL (exit 3)
+    ok
+::: [27] postgres v1 run local-offline-20261028T041038Z reported HISTORICAL (exit 3)
+    ok
+::: [28] postgres v1 run integration-offline-20261028T180134Z reported HISTORICAL (exit 3)
+    ok
+::: [29] postgres harness self-test (no DB)
+    ok
+::: [30] shared postgres-negatives ci-service-40741329107-1
+NEGATIVES OK: 6 negative steps failed for the intended reason
+    ok
+::: [31] shared postgres-negatives ci-offline-40741329107-1
+NEGATIVES OK: 6 negative steps failed for the intended reason
+    ok
+::: [32] shared postgres-negatives local-offline-v2-20261028T180208Z
+NEGATIVES OK: 6 negative steps failed for the intended reason
+    ok
+::: [33] shared postgres-negatives flags v1 false PASSes
+    ok
+::: [34] shared postgres-negatives rejects all-NOT_RUN mismatch control
+    ok
+
+validate-all: FAIL (3 of 34): portfolio offline modules ci self-tests (scripts/ci/tests) plan-only negative tests

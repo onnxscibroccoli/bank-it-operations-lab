@@ -1,0 +1,16 @@
+AI agent detected
+/workspace/bkms/infra/aws-cdk/lib/backup-trust.ts:28
+    throw new Error(`${BACKUP_TRUST_MODE_CONTEXT_KEY} must be one of ${BACKUP_TRUST_MODES.join(', ')} (got ${JSON.stringify(raw)})`);
+          ^
+Error: bankItLab:backupTrustMode must be one of vault-arn, account-region-backup-arn, source-account-only (got "none")
+    at resolveBackupTrustMode (/workspace/bkms/infra/aws-cdk/lib/backup-trust.ts:28:11)
+    at backupRole (/workspace/bkms/infra/aws-cdk/lib/network-database-stack.ts:288:38)
+    at new NetworkDatabaseStack (/workspace/bkms/infra/aws-cdk/lib/network-database-stack.ts:235:18)
+    at Object.<anonymous> (/workspace/bkms/infra/aws-cdk/bin/app.ts:13:1)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Module.m._compile (/workspace/bkms/infra/aws-cdk/node_modules/ts-node/src/index.ts:1618:23)
+    at node:internal/modules/cjs/loader:2060:10
+    at Object.require.extensions.<computed> [as .ts] (/workspace/bkms/infra/aws-cdk/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+npx ts-node --prefer-ts-exts bin/app.ts: Subprocess exited with error 1

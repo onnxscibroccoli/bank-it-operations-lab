@@ -1,0 +1,11 @@
+../../evidence/backup/aws-backup-dr/synth/BankItLabBackupPrimary.template.json: 4 violation(s)
+  KMS_UNCONDITIONED_ADMIN	PrimaryVaultKey22F77B03	kms:Create*,kms:Put*
+  KMS_ADMIN_WILDCARD	PrimaryVaultKey22F77B03	kms:Create*,kms:Describe*,kms:Enable*,kms:List*,kms:Put*,kms:Update*,kms:Revoke*,kms:Disable*,kms:Get*,kms:Delete*,kms:TagResource,kms:UntagResource,kms:ScheduleKeyDeletion,kms:CancelKeyDeletion
+  KMS_ADMIN_VERB_WILDCARD	PrimaryVaultKey22F77B03	KeyAdministrationByAccountRoot: kms:Create*,kms:Enable*,kms:List*,kms:Put*,kms:Update*,kms:Revoke*,kms:Disable*,kms:Get*,kms:Delete*
+  KMS_ADMIN_UNSCOPED_PRINCIPAL	PrimaryVaultKey22F77B03	KeyAdministrationByAccountRoot: admin actions for an account principal without aws:PrincipalArn
+../../evidence/backup/aws-backup-dr/synth/BankItLabBackupDrVault.template.json: 4 violation(s)
+  KMS_UNCONDITIONED_ADMIN	DrVaultKeyE3D6C377	kms:Create*,kms:Put*
+  KMS_ADMIN_WILDCARD	DrVaultKeyE3D6C377	kms:Create*,kms:Describe*,kms:Enable*,kms:List*,kms:Put*,kms:Update*,kms:Revoke*,kms:Disable*,kms:Get*,kms:Delete*,kms:TagResource,kms:UntagResource,kms:ScheduleKeyDeletion,kms:CancelKeyDeletion
+  KMS_ADMIN_VERB_WILDCARD	DrVaultKeyE3D6C377	KeyAdministrationByAccountRoot: kms:Create*,kms:Enable*,kms:List*,kms:Put*,kms:Update*,kms:Revoke*,kms:Disable*,kms:Get*,kms:Delete*
+  KMS_ADMIN_UNSCOPED_PRINCIPAL	DrVaultKeyE3D6C377	KeyAdministrationByAccountRoot: admin actions for an account principal without aws:PrincipalArn
+TOTAL 8

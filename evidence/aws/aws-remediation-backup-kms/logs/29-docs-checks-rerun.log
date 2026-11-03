@@ -1,0 +1,10 @@
+........
+----------------------------------------------------------------------
+Ran 8 tests in 4.249s
+
+OK
+markdownlint-cli2 v0.17.2 (markdownlint v0.37.4)
+Finding: docs/knowledge/*.md docs/index.md AGENTS.md .github/pull_request_template.md
+Linting: 16 file(s)
+Summary: 0 error(s)
+Inventoried 1742 files and 28 registered modules

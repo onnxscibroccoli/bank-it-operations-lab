@@ -1,0 +1,557 @@
+FAIL test/negative-controls.test.ts
+  ● Test suite failed to run
+
+    lib/backup-key.ts:12:42 - error TS2304: Cannot find name 'GenerateDataKey'.
+
+    12  *  - crypto: Encrypt/Decrypt/ReEncrypt*/GenerateDataKey*/DescribeKey for account principals only via the named services
+                                                ~~~~~~~~~~~~~~~
+    lib/backup-key.ts:12:58 - error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+
+    12  *  - crypto: Encrypt/Decrypt/ReEncrypt*/GenerateDataKey*/DescribeKey for account principals only via the named services
+                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    lib/backup-key.ts:13:10 - error TS2532: Object is possibly 'undefined'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                ~~~~
+    lib/backup-key.ts:13:15 - error TS2304: Cannot find name 'account'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                     ~~~~~~~
+    lib/backup-key.ts:13:28 - error TS2304: Cannot find name 'ViaService'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                  ~~~~~~~~~~
+    lib/backup-key.ts:13:45 - error TS2304: Cannot find name 'CallerAccount'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                                   ~~~~~~~~~~~~~
+    lib/backup-key.ts:14:7 - error TS2304: Cannot find name 'grants'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+             ~~~~~~
+    lib/backup-key.ts:14:15 - error TS2304: Cannot find name 'CreateGrant'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                     ~~~~~~~~~~~
+    lib/backup-key.ts:14:27 - error TS2304: Cannot find name 'ListGrants'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                 ~~~~~~~~~~
+    lib/backup-key.ts:14:38 - error TS2304: Cannot find name 'RevokeGrant'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                            ~~~~~~~~~~~
+    lib/backup-key.ts:14:50 - error TS2304: Cannot find name 'only'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                        ~~~~
+    lib/backup-key.ts:14:55 - error TS1101: 'with' statements are not allowed in strict mode.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                             ~~~~
+    lib/backup-key.ts:14:96 - error TS2304: Cannot find name 'the'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                      ~~~
+    lib/backup-key.ts:14:100 - error TS2304: Cannot find name 'named'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                          ~~~~~
+    lib/backup-key.ts:14:106 - error TS2304: Cannot find name 'services'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                                ~~~~~~~~
+    lib/backup-key.ts:15:7 - error TS2304: Cannot find name 'AWS'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+             ~~~
+    lib/backup-key.ts:15:11 - error TS2304: Cannot find name 'Backup'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                 ~~~~~~
+    lib/backup-key.ts:15:18 - error TS2304: Cannot find name 'documented'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                        ~~~~~~~~~~
+    lib/backup-key.ts:15:29 - error TS2304: Cannot find name 'backup'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                   ~~~~~~
+    lib/backup-key.ts:15:36 - error TS2304: Cannot find name 'storage'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                          ~~~~~~~
+    lib/backup-key.ts:15:58 - error TS2304: Cannot find name 'confused'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                ~~~~~~~~
+    lib/backup-key.ts:15:67 - error TS2304: Cannot find name 'deputy'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                         ~~~~~~
+    lib/backup-key.ts:15:74 - error TS2304: Cannot find name 'Deny'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                                ~~~~
+    lib/backup-key.ts:16:4 - error TS2304: Cannot find name 'No'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+          ~~
+    lib/backup-key.ts:16:7 - error TS2304: Cannot find name 'wildcard'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+             ~~~~~~~~
+    lib/backup-key.ts:16:16 - error TS2304: Cannot find name 'principal'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                      ~~~~~~~~~
+    lib/backup-key.ts:16:26 - error TS2304: Cannot find name 'and'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                ~~~
+    lib/backup-key.ts:16:30 - error TS2304: Cannot find name 'no'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                    ~~
+    lib/backup-key.ts:16:47 - error TS2304: Cannot find name 'evidence'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                     ~~~~~~~~
+    lib/backup-key.ts:16:56 - error TS2304: Cannot find name 'only'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                              ~~~~
+    lib/backup-key.ts:16:62 - error TS2304: Cannot find name 'runtime'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                    ~~~~~~~
+    lib/backup-key.ts:16:70 - error TS2304: Cannot find name 'behavior'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                            ~~~~~~~~
+    lib/backup-key.ts:16:79 - error TS2304: Cannot find name 'must'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                     ~~~~
+    lib/backup-key.ts:16:84 - error TS2304: Cannot find name 'be'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                          ~~
+    lib/backup-key.ts:16:87 - error TS2304: Cannot find name 'verified'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                             ~~~~~~~~
+    lib/backup-key.ts:16:97 - error TS2304: Cannot find name 'VERIFICATION_PROCEDURE'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~
+    lib/backup-key.ts:17:3 - error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+
+    17  */
+         ~
+    lib/backup-key.ts:12:58 - error TS1161: Unterminated regular expression literal.
+
+    12  *  - crypto: Encrypt/Decrypt/ReEncrypt*/GenerateDataKey*/DescribeKey for account principals only via the named services
+                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    lib/backup-key.ts:13:7 - error TS1109: Expression expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+             ~~
+    lib/backup-key.ts:13:15 - error TS1005: ';' expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                     ~~~~~~~
+    lib/backup-key.ts:13:27 - error TS1005: ',' expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                 ~
+    lib/backup-key.ts:13:44 - error TS1005: ',' expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                                  ~
+    lib/backup-key.ts:14:2 - error TS1109: Expression expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+        ~
+    lib/backup-key.ts:14:13 - error TS1005: ';' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                   ~
+    lib/backup-key.ts:14:50 - error TS1005: ';' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                        ~~~~
+    lib/backup-key.ts:14:60 - error TS1005: '(' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                  ~~~
+    lib/backup-key.ts:14:63 - error TS1005: ')' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                     ~
+    lib/backup-key.ts:14:96 - error TS1005: ';' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                      ~~~
+    lib/backup-key.ts:14:100 - error TS1434: Unexpected keyword or identifier.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                          ~~~~~
+    lib/backup-key.ts:15:2 - error TS1109: Expression expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+        ~
+    lib/backup-key.ts:15:11 - error TS1005: ';' expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                 ~~~~~~
+    lib/backup-key.ts:15:18 - error TS1434: Unexpected keyword or identifier.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                        ~~~~~~~~~~
+    lib/backup-key.ts:15:58 - error TS1005: ';' expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                ~~~~~~~~
+    lib/backup-key.ts:15:74 - error TS1005: ';' expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                                ~~~~
+    lib/backup-key.ts:16:2 - error TS1003: Identifier expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+        ~
+    lib/backup-key.ts:16:7 - error TS1005: ';' expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+             ~~~~~~~~
+    lib/backup-key.ts:16:16 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                      ~~~~~~~~~
+    lib/backup-key.ts:16:26 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                ~~~
+    lib/backup-key.ts:16:30 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                    ~~
+    lib/backup-key.ts:16:37 - error TS1109: Expression expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                           ~
+    lib/backup-key.ts:16:38 - error TS1109: Expression expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                            ~
+    lib/backup-key.ts:16:47 - error TS1005: ';' expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                     ~~~~~~~~
+    lib/backup-key.ts:16:62 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                    ~~~~~~~
+    lib/backup-key.ts:16:70 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                            ~~~~~~~~
+    lib/backup-key.ts:16:79 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                     ~~~~
+    lib/backup-key.ts:16:84 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                          ~~
+    lib/backup-key.ts:17:2 - error TS1003: Identifier expected.
+
+    17  */
+        ~
+    lib/backup-key.ts:17:3 - error TS1161: Unterminated regular expression literal.
+
+    17  */
+         ~
+
+FAIL test/stacks.test.ts
+  ● Test suite failed to run
+
+    lib/backup-key.ts:12:42 - error TS2304: Cannot find name 'GenerateDataKey'.
+
+    12  *  - crypto: Encrypt/Decrypt/ReEncrypt*/GenerateDataKey*/DescribeKey for account principals only via the named services
+                                                ~~~~~~~~~~~~~~~
+    lib/backup-key.ts:12:58 - error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+
+    12  *  - crypto: Encrypt/Decrypt/ReEncrypt*/GenerateDataKey*/DescribeKey for account principals only via the named services
+                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    lib/backup-key.ts:13:10 - error TS2532: Object is possibly 'undefined'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                ~~~~
+    lib/backup-key.ts:13:15 - error TS2304: Cannot find name 'account'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                     ~~~~~~~
+    lib/backup-key.ts:13:28 - error TS2304: Cannot find name 'ViaService'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                  ~~~~~~~~~~
+    lib/backup-key.ts:13:45 - error TS2304: Cannot find name 'CallerAccount'.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                                   ~~~~~~~~~~~~~
+    lib/backup-key.ts:14:7 - error TS2304: Cannot find name 'grants'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+             ~~~~~~
+    lib/backup-key.ts:14:15 - error TS2304: Cannot find name 'CreateGrant'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                     ~~~~~~~~~~~
+    lib/backup-key.ts:14:27 - error TS2304: Cannot find name 'ListGrants'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                 ~~~~~~~~~~
+    lib/backup-key.ts:14:38 - error TS2304: Cannot find name 'RevokeGrant'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                            ~~~~~~~~~~~
+    lib/backup-key.ts:14:50 - error TS2304: Cannot find name 'only'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                        ~~~~
+    lib/backup-key.ts:14:55 - error TS1101: 'with' statements are not allowed in strict mode.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                             ~~~~
+    lib/backup-key.ts:14:96 - error TS2304: Cannot find name 'the'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                      ~~~
+    lib/backup-key.ts:14:100 - error TS2304: Cannot find name 'named'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                          ~~~~~
+    lib/backup-key.ts:14:106 - error TS2304: Cannot find name 'services'.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                                ~~~~~~~~
+    lib/backup-key.ts:15:7 - error TS2304: Cannot find name 'AWS'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+             ~~~
+    lib/backup-key.ts:15:11 - error TS2304: Cannot find name 'Backup'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                 ~~~~~~
+    lib/backup-key.ts:15:18 - error TS2304: Cannot find name 'documented'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                        ~~~~~~~~~~
+    lib/backup-key.ts:15:29 - error TS2304: Cannot find name 'backup'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                   ~~~~~~
+    lib/backup-key.ts:15:36 - error TS2304: Cannot find name 'storage'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                          ~~~~~~~
+    lib/backup-key.ts:15:58 - error TS2304: Cannot find name 'confused'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                ~~~~~~~~
+    lib/backup-key.ts:15:67 - error TS2304: Cannot find name 'deputy'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                         ~~~~~~
+    lib/backup-key.ts:15:74 - error TS2304: Cannot find name 'Deny'.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                                ~~~~
+    lib/backup-key.ts:16:4 - error TS2304: Cannot find name 'No'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+          ~~
+    lib/backup-key.ts:16:7 - error TS2304: Cannot find name 'wildcard'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+             ~~~~~~~~
+    lib/backup-key.ts:16:16 - error TS2304: Cannot find name 'principal'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                      ~~~~~~~~~
+    lib/backup-key.ts:16:26 - error TS2304: Cannot find name 'and'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                ~~~
+    lib/backup-key.ts:16:30 - error TS2304: Cannot find name 'no'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                    ~~
+    lib/backup-key.ts:16:47 - error TS2304: Cannot find name 'evidence'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                     ~~~~~~~~
+    lib/backup-key.ts:16:56 - error TS2304: Cannot find name 'only'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                              ~~~~
+    lib/backup-key.ts:16:62 - error TS2304: Cannot find name 'runtime'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                    ~~~~~~~
+    lib/backup-key.ts:16:70 - error TS2304: Cannot find name 'behavior'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                            ~~~~~~~~
+    lib/backup-key.ts:16:79 - error TS2304: Cannot find name 'must'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                     ~~~~
+    lib/backup-key.ts:16:84 - error TS2304: Cannot find name 'be'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                          ~~
+    lib/backup-key.ts:16:87 - error TS2304: Cannot find name 'verified'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                             ~~~~~~~~
+    lib/backup-key.ts:16:97 - error TS2304: Cannot find name 'VERIFICATION_PROCEDURE'.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~
+    lib/backup-key.ts:17:3 - error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+
+    17  */
+         ~
+    lib/backup-key.ts:12:58 - error TS1161: Unterminated regular expression literal.
+
+    12  *  - crypto: Encrypt/Decrypt/ReEncrypt*/GenerateDataKey*/DescribeKey for account principals only via the named services
+                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    lib/backup-key.ts:13:7 - error TS1109: Expression expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+             ~~
+    lib/backup-key.ts:13:15 - error TS1005: ';' expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                     ~~~~~~~
+    lib/backup-key.ts:13:27 - error TS1005: ',' expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                 ~
+    lib/backup-key.ts:13:44 - error TS1005: ',' expected.
+
+    13  *    in this account (kms:ViaService + kms:CallerAccount);
+                                                  ~
+    lib/backup-key.ts:14:2 - error TS1109: Expression expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+        ~
+    lib/backup-key.ts:14:13 - error TS1005: ';' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                   ~
+    lib/backup-key.ts:14:50 - error TS1005: ';' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                        ~~~~
+    lib/backup-key.ts:14:60 - error TS1005: '(' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                  ~~~
+    lib/backup-key.ts:14:63 - error TS1005: ')' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                     ~
+    lib/backup-key.ts:14:96 - error TS1005: ';' expected.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                      ~~~
+    lib/backup-key.ts:14:100 - error TS1434: Unexpected keyword or identifier.
+
+    14  *  - grants: CreateGrant/ListGrants/RevokeGrant only with kms:GrantIsForAWSResource=true, via the named services;
+                                                                                                          ~~~~~
+    lib/backup-key.ts:15:2 - error TS1109: Expression expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+        ~
+    lib/backup-key.ts:15:11 - error TS1005: ';' expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                 ~~~~~~
+    lib/backup-key.ts:15:18 - error TS1434: Unexpected keyword or identifier.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                        ~~~~~~~~~~
+    lib/backup-key.ts:15:58 - error TS1005: ';' expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                ~~~~~~~~
+    lib/backup-key.ts:15:74 - error TS1005: ';' expected.
+
+    15  *  - AWS Backup documented backup-storage.amazonaws.com confused-deputy Deny.
+                                                                                ~~~~
+    lib/backup-key.ts:16:2 - error TS1003: Identifier expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+        ~
+    lib/backup-key.ts:16:7 - error TS1005: ';' expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+             ~~~~~~~~
+    lib/backup-key.ts:16:16 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                      ~~~~~~~~~
+    lib/backup-key.ts:16:26 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                ~~~
+    lib/backup-key.ts:16:30 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                    ~~
+    lib/backup-key.ts:16:37 - error TS1109: Expression expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                           ~
+    lib/backup-key.ts:16:38 - error TS1109: Expression expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                            ~
+    lib/backup-key.ts:16:47 - error TS1005: ';' expected.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                     ~~~~~~~~
+    lib/backup-key.ts:16:62 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                    ~~~~~~~
+    lib/backup-key.ts:16:70 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                            ~~~~~~~~
+    lib/backup-key.ts:16:79 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                     ~~~~
+    lib/backup-key.ts:16:84 - error TS1434: Unexpected keyword or identifier.
+
+    16  * No wildcard principal and no kms:*. Static evidence only; runtime behavior must be verified (VERIFICATION_PROCEDURE.md).
+                                                                                          ~~
+    lib/backup-key.ts:17:2 - error TS1003: Identifier expected.
+
+    17  */
+        ~
+    lib/backup-key.ts:17:3 - error TS1161: Unterminated regular expression literal.
+
+    17  */
+         ~
+
+Test Suites: 2 failed, 1 passed, 3 total
+Tests:       20 passed, 20 total
+Snapshots:   0 total
+Time:        7.618 s
+Ran all test suites.

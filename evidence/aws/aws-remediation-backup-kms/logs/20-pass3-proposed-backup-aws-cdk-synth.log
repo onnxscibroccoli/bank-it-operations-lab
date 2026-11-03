@@ -1,0 +1,97 @@
+AI agent detected
+/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:859
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+lib/backup-key.ts(12,42): error TS2304: Cannot find name 'GenerateDataKey'.
+lib/backup-key.ts(12,58): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+lib/backup-key.ts(13,10): error TS2532: Object is possibly 'undefined'.
+lib/backup-key.ts(13,15): error TS2304: Cannot find name 'account'.
+lib/backup-key.ts(13,28): error TS2304: Cannot find name 'ViaService'.
+lib/backup-key.ts(13,45): error TS2304: Cannot find name 'CallerAccount'.
+lib/backup-key.ts(14,7): error TS2304: Cannot find name 'grants'.
+lib/backup-key.ts(14,15): error TS2304: Cannot find name 'CreateGrant'.
+lib/backup-key.ts(14,27): error TS2304: Cannot find name 'ListGrants'.
+lib/backup-key.ts(14,38): error TS2304: Cannot find name 'RevokeGrant'.
+lib/backup-key.ts(14,50): error TS2304: Cannot find name 'only'.
+lib/backup-key.ts(14,55): error TS1101: 'with' statements are not allowed in strict mode.
+lib/backup-key.ts(14,96): error TS2304: Cannot find name 'the'.
+lib/backup-key.ts(14,100): error TS2304: Cannot find name 'named'.
+lib/backup-key.ts(14,106): error TS2304: Cannot find name 'services'.
+lib/backup-key.ts(15,7): error TS2304: Cannot find name 'AWS'.
+lib/backup-key.ts(15,11): error TS2304: Cannot find name 'Backup'.
+lib/backup-key.ts(15,18): error TS2304: Cannot find name 'documented'.
+lib/backup-key.ts(15,29): error TS2304: Cannot find name 'backup'.
+lib/backup-key.ts(15,36): error TS2304: Cannot find name 'storage'.
+lib/backup-key.ts(15,58): error TS2304: Cannot find name 'confused'.
+lib/backup-key.ts(15,67): error TS2304: Cannot find name 'deputy'.
+lib/backup-key.ts(15,74): error TS2304: Cannot find name 'Deny'.
+lib/backup-key.ts(16,4): error TS2304: Cannot find name 'No'.
+lib/backup-key.ts(16,7): error TS2304: Cannot find name 'wildcard'.
+lib/backup-key.ts(16,16): error TS2304: Cannot find name 'principal'.
+lib/backup-key.ts(16,26): error TS2304: Cannot find name 'and'.
+lib/backup-key.ts(16,30): error TS2304: Cannot find name 'no'.
+lib/backup-key.ts(16,47): error TS2304: Cannot find name 'evidence'.
+lib/backup-key.ts(16,56): error TS2304: Cannot find name 'only'.
+lib/backup-key.ts(16,62): error TS2304: Cannot find name 'runtime'.
+lib/backup-key.ts(16,70): error TS2304: Cannot find name 'behavior'.
+lib/backup-key.ts(16,79): error TS2304: Cannot find name 'must'.
+lib/backup-key.ts(16,84): error TS2304: Cannot find name 'be'.
+lib/backup-key.ts(16,87): error TS2304: Cannot find name 'verified'.
+lib/backup-key.ts(16,97): error TS2304: Cannot find name 'VERIFICATION_PROCEDURE'.
+lib/backup-key.ts(17,3): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+lib/backup-key.ts(12,58): error TS1161: Unterminated regular expression literal.
+lib/backup-key.ts(13,7): error TS1109: Expression expected.
+lib/backup-key.ts(13,15): error TS1005: ';' expected.
+lib/backup-key.ts(13,27): error TS1005: ',' expected.
+lib/backup-key.ts(13,44): error TS1005: ',' expected.
+lib/backup-key.ts(14,2): error TS1109: Expression expected.
+lib/backup-key.ts(14,13): error TS1005: ';' expected.
+lib/backup-key.ts(14,50): error TS1005: ';' expected.
+lib/backup-key.ts(14,60): error TS1005: '(' expected.
+lib/backup-key.ts(14,63): error TS1005: ')' expected.
+lib/backup-key.ts(14,96): error TS1005: ';' expected.
+lib/backup-key.ts(14,100): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(15,2): error TS1109: Expression expected.
+lib/backup-key.ts(15,11): error TS1005: ';' expected.
+lib/backup-key.ts(15,18): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(15,58): error TS1005: ';' expected.
+lib/backup-key.ts(15,74): error TS1005: ';' expected.
+lib/backup-key.ts(16,2): error TS1003: Identifier expected.
+lib/backup-key.ts(16,7): error TS1005: ';' expected.
+lib/backup-key.ts(16,16): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(16,26): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(16,30): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(16,37): error TS1109: Expression expected.
+lib/backup-key.ts(16,38): error TS1109: Expression expected.
+lib/backup-key.ts(16,47): error TS1005: ';' expected.
+lib/backup-key.ts(16,62): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(16,70): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(16,79): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(16,84): error TS1434: Unexpected keyword or identifier.
+lib/backup-key.ts(17,2): error TS1003: Identifier expected.
+lib/backup-key.ts(17,3): error TS1161: Unterminated regular expression literal.
+
+    at createTSError (/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:859:12)
+    at reportTSError (/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:863:19)
+    at getOutput (/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:1077:36)
+    at Object.compile (/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:1433:41)
+    at Module.m._compile (/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:1617:30)
+    at node:internal/modules/cjs/loader:2060:10
+    at Object.require.extensions.<computed> [as .ts] (/tmp/bscratch/backup/aws/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19) {
+  diagnosticCodes: [
+    2304, 2363, 2532, 2304, 2304, 2304, 2304, 2304,
+    2304, 2304, 2304, 1101, 2304, 2304, 2304, 2304,
+    2304, 2304, 2304, 2304, 2304, 2304, 2304, 2304,
+    2304, 2304, 2304, 2304, 2304, 2304, 2304, 2304,
+    2304, 2304, 2304, 2304, 2363, 1161, 1109, 1005,
+    1005, 1005, 1109, 1005, 1005, 1005, 1005, 1005,
+    1434, 1109, 1005, 1434, 1005, 1005, 1003, 1005,
+    1434, 1434, 1434, 1109, 1109, 1005, 1434, 1434,
+    1434, 1434, 1003, 1161
+  ]
+}
+npx ts-node --prefer-ts-exts bin/app.ts: Subprocess exited with error 1
