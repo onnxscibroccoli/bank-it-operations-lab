@@ -10,7 +10,7 @@ CSS = Path(__file__).resolve().parents[1] / "style.css"
 
 
 def tokens(stylesheet):
-    return dict(re.findall(r"--([\\w-]+)\\s*:\\s*(#[0-9a-fA-F]{6})\\s*[;}]", stylesheet))
+    return dict(re.findall(r"--([\w-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*[;}]", stylesheet))
 
 
 def luminance(value):
@@ -45,7 +45,7 @@ class ThemeTests(unittest.TestCase):
         self.assertGreaterEqual(contrast(self.colors["border"], self.colors["surface"]), 3)
 
     def test_keyboard_and_media_preferences(self):
-        compact = re.sub(r"\\s+", "", self.css)
+        compact = re.sub(r"\s+", "", self.css)
         for feature in (
             ":focus-visible",
             ".skip:focus",
@@ -58,7 +58,7 @@ class ThemeTests(unittest.TestCase):
                 self.assertIn(feature, compact)
 
     def test_no_remote_css_dependencies(self):
-        self.assertNotRegex(self.css, r"(?i)@import\\b|url\\s*\\(")
+        self.assertNotRegex(self.css, r"(?i)@import\b|url\s*\(")
 
 
 if __name__ == "__main__":
