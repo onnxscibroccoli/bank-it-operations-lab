@@ -25,7 +25,8 @@
       "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
       "last_verified": null,
       "evidence": []
-    }
+    },
+    "last_reviewed": "2026-11-03"
   },
   "docs/knowledge/recovery.md": {
     "id": "recovery",
@@ -225,7 +226,8 @@
       "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
       "last_verified": null,
       "evidence": []
-    }
+    },
+    "last_reviewed": "2026-11-03"
   },
   "docs/knowledge/standards.md": {
     "id": "standards",
@@ -284,7 +286,8 @@
       "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
       "last_verified": null,
       "evidence": []
-    }
+    },
+    "last_reviewed": "2026-11-03"
   },
   "docs/knowledge/glossary.md": {
     "id": "glossary",
@@ -310,7 +313,8 @@
       "scope": "No new operational validation is claimed by this page. Existing records retain their original scope and date.",
       "last_verified": null,
       "evidence": []
-    }
+    },
+    "last_reviewed": "2026-11-03"
   },
   "docs/knowledge/audit.md": {
     "id": "audit",
@@ -12346,6 +12350,341 @@
       "last_verified": null,
       "evidence": []
     },
-    "last_reviewed": "2026-10-31"
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/topics.md": {
+    "id": "topics",
+    "description": "Browse every page by subject, lifecycle status and depth level, from beginner to reference.",
+    "category": "getting-started",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "The catalog reflects metadata categories and audience fields; those fields are editorial and are not independently reviewed.",
+    "planned": "Add audience-specific reading orders per subject.",
+    "source_files": [
+      "docs/metadata/pages.json",
+      "scripts/docs/build.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "browse topics",
+      "subjects",
+      "catalog",
+      "topic list",
+      "depth level"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/tutorials.md": {
+    "id": "tutorials",
+    "description": "Offline exercises with prerequisites, exact commands, observed results and failure injection.",
+    "category": "tutorials",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Local runs of fictional or recorded data only. No deployment, tenant access, live database restore, or crash demonstration was run.",
+    "planned": "Add an executable Terraform walkthrough and a live PostgreSQL restore tutorial once server binaries are available.",
+    "source_files": [
+      "identity/governance/inventory.py",
+      "observability/run_healthcheck.py",
+      "tests/integration/postgres/verify_evidence.py",
+      "scenarios/incident/lib/timeline.py",
+      "scripts/validate-all.sh"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "tutorials",
+      "exercises",
+      "hands-on",
+      "practice",
+      "walkthrough",
+      "lab exercise"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/reference.md": {
+    "id": "reference",
+    "description": "Technical reference index: modules, validation entry points, ADRs, metadata files and documentation tooling.",
+    "category": "reference",
+    "audience": [
+      "engineer",
+      "architect",
+      "reference"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Lists entry points; module behavior is described by each module README and its tests, not re-verified here.",
+    "planned": "Generate the module table from the registry.",
+    "source_files": [
+      "coordination/modules.json",
+      "docs/adr/README.md",
+      "docs/metadata/schema.json",
+      "scripts/docs/build.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "technical reference",
+      "modules",
+      "module registry",
+      "schema",
+      "api reference"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/troubleshooting.md": {
+    "id": "troubleshooting",
+    "description": "Symptoms, causes and safe fixes for the documentation site, search, and offline exercises.",
+    "category": "development",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Covers failures observed or designed into checks; screen reader and Terraform problems are not covered.",
+    "planned": "Add entries as new failures are observed.",
+    "source_files": [
+      "scripts/docs/build.py",
+      "scripts/docs/search.js",
+      ".github/workflows/documentation.yml"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "troubleshooting",
+      "search not working",
+      "error",
+      "404",
+      "build fails",
+      "fix"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/lifecycle.md": {
+    "id": "lifecycle",
+    "description": "Status vocabulary: documentation lifecycle, evidence labels, module registry states and ADR status.",
+    "category": "reference",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Describes vocabularies as defined in source; registry and record disagreements are reported, not resolved.",
+    "planned": "Keep in step with schema and registry changes.",
+    "source_files": [
+      "scripts/docs/build.py",
+      "docs/metadata/schema.json",
+      "coordination/modules.json",
+      "README.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "lifecycle",
+      "status",
+      "what does proposed mean",
+      "integrated",
+      "archived",
+      "evidence labels",
+      "simulation"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/accessibility.md": {
+    "id": "accessibility",
+    "description": "What accessibility checks were run against the site, with results, and what remains unverified for WCAG 2.2 AA.",
+    "category": "development",
+    "audience": [
+      "operator",
+      "engineer",
+      "reference"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Automated axe checks and scripted keyboard paths cover only part of WCAG 2.2 AA; no conformance claim is made.",
+    "planned": "Record manual keyboard, screen reader, zoom and cognitive reviews when performed.",
+    "source_files": [
+      "scripts/docs/tests/browser.mjs",
+      "scripts/docs/style.css"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "accessibility",
+      "wcag",
+      "a11y",
+      "screen reader",
+      "keyboard",
+      "contrast"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/knowledge/gaps.md": {
+    "id": "gaps",
+    "description": "File-level inventory of remaining documentation gaps, conflicts between records, and owner-only actions.",
+    "category": "development",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "A point-in-time inventory at main 30e0a83; it will go stale as modules change.",
+    "planned": "Re-run the inventory after each integration.",
+    "source_files": [
+      "docs/metadata/pages.json",
+      "coordination/modules.json",
+      "learning/CURRENT.md",
+      "docs/adr/STATUS.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "gaps",
+      "remaining work",
+      "todo",
+      "known issues",
+      "next actions"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "learning/CURRENT.md": {
+    "id": "learning-current",
+    "description": "How to follow the preserved twelve-week guide from main: moved paths, merged PRs, and findings status.",
+    "category": "tutorials",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Records citation and status checks only; the weekly exercises themselves were not all re-run.",
+    "planned": "Update when listed findings are re-checked or remaining PRs change.",
+    "source_files": [
+      "learning/README.md",
+      "learning/execution/PENDING.md",
+      "coordination/modules.json",
+      "coordination/tasks.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "twelve-week guide",
+      "learning plan",
+      "course",
+      "curriculum",
+      "weeks"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "docs/adr/STATUS.md": {
+    "id": "adr-status",
+    "description": "Current position of each repository-level ADR on main, and why all remain Proposed.",
+    "category": "reference",
+    "audience": [
+      "engineer",
+      "architect",
+      "reference"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Current navigation and explanation page for the documentation platform at main 30e0a83.",
+    "limitations": "Status changes require an owner decision; notes are records, not a fresh security review.",
+    "planned": "Record owner decisions against a specific commit.",
+    "source_files": [
+      "docs/adr/README.md",
+      "coordination/modules.json",
+      "coordination/tasks.json"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/35"
+    ],
+    "aliases": [
+      "adr status",
+      "architecture decisions",
+      "accepted",
+      "proposed"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial page. Commands it quotes were run locally on 2026-11-03 against main 30e0a83; that local run is described in the text and is not recorded as a verification level.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
   }
 }

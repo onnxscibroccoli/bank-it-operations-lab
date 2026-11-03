@@ -14,9 +14,26 @@ Use: explain simply, explain technically, show an example, walk me through it, e
 
 ## Engineering retrieval contract
 
-After building, `dist/docs/search-index.json` is an array of records with `id`, `path`, `title`, `description`, `text`, `category`, `status`, `audience`, `aliases`, `url`, `sha256`, and nullable `metadata`. URLs are relative to the static-site root. `metadata.json` has schema_version 1, repository attribution, build_parent_commit, and the same records without full text. Requests are ordinary static HTTP GETs; no API key, session, model, or paid service is required.
+After building, `dist/docs/search-index.json` is an array of records with `id`, `path`, `title`, `description`, `text`, `category`, `status`, `audience`, `aliases`, `url`, `sha256`, `owner_module`, `last_reviewed`, and `metadata`. `owner_module` is the registry module whose path contains the page. URLs are relative to the static-site root. `metadata.json` has schema_version 1, repository attribution, build_parent_commit, and the same records without full text. Requests are ordinary static HTTP GETs; no API key, session, model, or paid service is required.
 
 A build made from uncommitted changes records its parent commit and each page's content hash; it does not claim that parent contains the new page. Agents using a local checkout should read the local source. Published CI builds use the checked-out commit. The generated llms.txt points to indexes rather than duplicating every page into llms-full.txt.
+
+## What exists for AI use, and what does not
+
+These are the only AI-facing capabilities in this repository. Each is a static file or written guidance:
+
+| Capability | Where | What it is |
+|---|---|---|
+| Agent instructions | [AGENTS.md](../../AGENTS.md) | Reading order, constraints and documentation check commands for coding agents |
+| Plain-text index | root [llms.txt](../../llms.txt) and the generated `llms.txt` in the built site | Pointers to the indexes; no full-text copy |
+| Search index | `search-index.json` in the built site | Every page's plain text, status, audience levels, aliases and owning module |
+| Page metadata | `metadata.json` in the built site, from [pages.json](../metadata/pages.json) | The same records without full text, plus the build commit |
+| Prompt collection | [AI prompts](../AI_PROMPTS.md) | 40 copy-and-paste prompts for GitHub Copilot, Gemini and ChatGPT. They are text you paste into those tools, not integrations |
+| Teaching prompt | the portable prompt above | A prompt to start a source-grounded lesson |
+
+The built site, including these indexes, is public at <https://onnxscibroccoli.github.io/bank-it-operations-lab/> (deployed from main `30e0a83` on 2026-10-31; `search-index.json`, `metadata.json` and `llms.txt` returned HTTP 200 on 2026-11-03). An assistant that can fetch web pages can read them there. Otherwise it can read them from a local build.
+
+There is **no** hosted chatbot, no "ask AI" box on the site, no embedding or vector index, no MCP server, no API, and no model call anywhere in the build or search. Search ranking is word and alias matching in [search-core.js](../../scripts/docs/search-core.js). Any feature not in the table above does not exist.
 
 ## Limitations and safe workflow
 

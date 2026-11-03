@@ -33,20 +33,29 @@ node --test scripts/docs/tests/search.test.mjs
 python3 -m http.server 8000 --bind 127.0.0.1 --directory dist/docs
 ```
 
-Open `http://127.0.0.1:8000`. Stop the server with Ctrl+C. The generated output may be removed after review; do not remove source or evidence directories. Termux needs Python and Node installed; browser automation may require a desktop/CI runner. A localhost server does not publish to the internet.
+Open `http://127.0.0.1:8000`. Stop the server with Ctrl+C.
+
+The browser, keyboard and axe checks need Node packages and a Chromium build. With the server still running in another terminal:
+
+```bash
+npm ci --prefix scripts/docs --ignore-scripts --no-audit --no-fund
+npx --prefix scripts/docs playwright install chromium
+node scripts/docs/tests/browser.mjs
+```
+
+The script reads `DOCS_URL` (default `http://127.0.0.1:8000`) and writes `dist/docs/accessibility-report.json`. The generated output may be removed after review; do not remove source or evidence directories. Termux needs Python and Node installed; browser automation may require a desktop/CI runner. A localhost server does not publish to the internet.
+
+## Documentation platform checkpoint (2026-11-03)
+
+Main `30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6` contains the integrated modules (PR #35) and the documentation platform (PRs #37 and #38). The docs-platform increment adds the remaining navigation sections: [Browse topics](topics.md), [Tutorials](tutorials.md), [Technical reference](reference.md), [Troubleshooting](troubleshooting.md), a [status vocabulary](lifecycle.md), an [accessibility verification record](accessibility.md) and a [file-level gap inventory](gaps.md). Every page now has an eight-item primary navigation, a site search form, a depth-level search filter, and an owning module and review date in its status panel. The twelve-week guide and ADRs are preserved records, so their current position is recorded in [the guide on main](../../learning/CURRENT.md) and [ADR status on main](../adr/STATUS.md).
 
 ## Quality and publishing
 
-The documentation workflow pins Ubuntu 24.04 for compatibility with its pinned Playwright browser version, builds and tests on pull requests and documentation pushes, uploads a static-site artifact, and runs browser checks. Pages deployment is restricted to main, runs after validated main documentation pushes or manual deploy requests, and needs GitHub Pages configured with Actions. See [publishing steps](publishing.md). Pages was not enabled at baseline; this document does not claim a public deployment.
+The documentation workflow pins Ubuntu 24.04 for compatibility with its pinned Playwright browser version, builds and tests on pull requests and documentation pushes, uploads a static-site artifact, and runs browser checks. Pages deployment is restricted to main, runs after validated main documentation pushes or manual deploy requests, and needs GitHub Pages configured with Actions. See [publishing steps](publishing.md). Pages was not enabled at the October baseline. It has since been configured for Actions and deployed from main `30e0a83`; see [publishing](publishing.md#current-state-checked-2026-11-03) for the evidence.
 
 ## Remaining work
 
-- Maintain the completed metadata/reading-guide migration; all indexed pages require metadata. Historical record bytes are protected by a digest manifest.
-- Expand glossary coverage, topic/audience navigation, and additional practical tutorials.
-- Complete human keyboard, TalkBack/NVDA, zoom, and cognitive-accessibility reviews; automated checks are only partial evidence.
-- Review legacy link and diagram findings, and add robust heading-anchor validation.
-- Extend cross-repository retrieval only after separate authorization.
-- Reconcile module registry limitations with newer source and independent reviews; preserve any conflicting claims for review.
+See the [file-level gap inventory](gaps.md). In short: human accessibility testing, glossary depth, legacy link and diagram review, heading-anchor validation, registry and record reconciliation, and an executable IaC tutorial.
 
 ## Agent restrictions
 
