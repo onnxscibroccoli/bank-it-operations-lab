@@ -1,8 +1,8 @@
 {
   "inventory": "bank-it-operations-lab/acceptance-required-checks",
-  "version": "1.0.0",
-  "reviewed_by": "worker-d (integrator); independent review of the inventory itself is PENDING",
-  "rules": "Every 'checks' id must appear exactly once with required=yes and a verdict in PASS/FAIL/UNKNOWN; a required check is satisfied only by PASS. 'groups' members must be contiguous 1..n with n >= min, each required=yes. 'advisory' ids may appear at most once with required=no; only advisory ids with allow_info may be INFO. Any other id is rejected. Changing this file changes its sha256, which is recorded in results.json and must match the copy at the tested commit.",
+  "version": "2.0.0",
+  "reviewed_by": "worker-d (integrator, acceptance/integration-v2); independent review of this inventory itself is PENDING",
+  "rules": "Every 'checks' id must appear exactly once with required=yes and a verdict in PASS/FAIL/UNKNOWN; a required check is satisfied only by PASS. 'groups' members must be contiguous 1..n with n >= min, each required=yes. 'advisory' ids may appear at most once with required=no; only advisory ids with allow_info may be INFO. Any other id is rejected. Changing this file changes its sha256, which is recorded in results.json and must match the copy at the tested commit. v1.1.0/2.0.0: group members are DERIVED from the tested commit's tree (HASH-i must name the i-th sorted tracked evidence/**/SHA256SUMS path; ENTRA-04.i the i-th sorted evidence/entra/runs/<run> directory), so adding or dropping a member cannot hide behind 'min'. Every tracked file at the tested commit must fall under a scope.modules path (with registered checks) or a scope.non_module_paths entry; every module path must exist. Source data that cannot be read from git at the tested commit makes the result INVALID (fail closed). v2.0.0: the verifier requires --sha (no unbound mode); execution_state and SUMMARY.md are recomputed; postgres-run/** is covered by the top-level SHA256SUMS; review records must name the contract requirement_ids they cover; the gate never reports ACCEPTED.",
   "checks": [
     {
       "id": "CHECKOUT",
@@ -183,6 +183,13 @@
       "expect_output": "sha256 mismatch for"
     },
     {
+      "id": "ACC-D-01",
+      "required": true,
+      "contract_id": "ACC-WD-ACC-D-001",
+      "title": "acceptance gate (D) regression tests incl. every reproduced false-acceptance case",
+      "kind": "positive"
+    },
+    {
       "id": "SOURCE-BINDING",
       "required": true,
       "contract_id": "ACC-WD-BINDING-001",
@@ -198,7 +205,13 @@
       "required": true,
       "contract_id": "ACC-WD-HASH-001",
       "title": "every committed evidence/**/SHA256SUMS bundle verifies",
-      "kind": "positive"
+      "kind": "positive",
+      "derive": {
+        "kind": "tracked-files",
+        "glob_suffix": "/SHA256SUMS",
+        "prefix": "evidence/",
+        "detail_contains": "path"
+      }
     },
     {
       "name": "ENTRA-04",
@@ -207,7 +220,12 @@
       "required": true,
       "contract_id": "ACC-WD-ENTRA-004",
       "title": "committed Entra evidence runs re-verify",
-      "kind": "positive"
+      "kind": "positive",
+      "derive": {
+        "kind": "tracked-dirs",
+        "prefix": "evidence/entra/runs/",
+        "detail_contains": "path"
+      }
     }
   ],
   "advisory": [
@@ -223,5 +241,242 @@
       "id": "DEFECT-INJECTED",
       "allow_info": true
     }
-  ]
+  ],
+  "scope": {
+    "acceptance_scope": "vertical slice on main: AWS CDK static checks (infra/aws-cdk), local PostgreSQL recovery, Entra CA offline validation, every committed evidence/**/SHA256SUMS bundle, acceptance tooling (workers A/B/C/D). Other portfolio modules on main are REGISTERED as not checked by this gate (they are exported to the shared contract as non-required UNKNOWN, never PASS).",
+    "portfolio_complete": false,
+    "modules": [
+      {
+        "name": "aws-cdk",
+        "paths": [
+          "infra/aws-cdk/"
+        ],
+        "checks": [
+          "AWS-01",
+          "AWS-02",
+          "AWS-03",
+          "AWS-04",
+          "AWS-05",
+          "AWS-06",
+          "AWS-07",
+          "DEFECT-AWS"
+        ]
+      },
+      {
+        "name": "postgres-recovery",
+        "paths": [
+          "tests/integration/postgres/"
+        ],
+        "checks": [
+          "PG-01",
+          "PG-02",
+          "PG-03"
+        ]
+      },
+      {
+        "name": "entra-offline",
+        "paths": [
+          "identity/entra/",
+          "tests/entra/"
+        ],
+        "checks": [
+          "ENTRA-01",
+          "ENTRA-02",
+          "ENTRA-03",
+          "DEFECT-ENTRA",
+          "group:ENTRA-04"
+        ]
+      },
+      {
+        "name": "evidence",
+        "paths": [
+          "evidence/"
+        ],
+        "checks": [
+          "group:HASH",
+          "DEFECT-HASH",
+          "AWS-06"
+        ]
+      },
+      {
+        "name": "acceptance-contract",
+        "paths": [
+          "schemas/acceptance/",
+          "tests/acceptance-contract/"
+        ],
+        "checks": [
+          "ACC-A-01",
+          "ACC-A-02"
+        ]
+      },
+      {
+        "name": "acceptance-runner",
+        "paths": [
+          "tools/acceptance/.gitignore",
+          "tools/acceptance/README.md",
+          "tools/acceptance/checks.json",
+          "tools/acceptance/runner.py",
+          "tools/acceptance/tests/"
+        ],
+        "checks": [
+          "ACC-B-01",
+          "ACC-B-02"
+        ]
+      },
+      {
+        "name": "acceptance-adapters",
+        "paths": [
+          "acceptance/modules/"
+        ],
+        "checks": [
+          "ACC-C-01",
+          "ACC-C-02",
+          "ACC-C-03"
+        ]
+      },
+      {
+        "name": "acceptance-gate",
+        "paths": [
+          "tools/acceptance/gate/",
+          "scripts/acceptance/"
+        ],
+        "checks": [
+          "CHECKOUT",
+          "AWS-00",
+          "SOURCE-BINDING",
+          "ACC-D-01"
+        ]
+      }
+    ],
+    "non_module_paths": [
+      {
+        "path": ".github/",
+        "class": "ci-workflows and trusted gate config (exercised by running them, not by a check here)"
+      },
+      {
+        "path": ".gitignore",
+        "class": "repository metadata"
+      },
+      {
+        "path": "README.md",
+        "class": "documentation"
+      },
+      {
+        "path": "AGENTS.md",
+        "class": "documentation"
+      },
+      {
+        "path": "llms.txt",
+        "class": "documentation"
+      },
+      {
+        "path": "acceptance/INTEGRATION-V2.md",
+        "class": "acceptance integration record (documentation)"
+      },
+      {
+        "path": "coordination/",
+        "class": "coordination records (coordinator-owned)"
+      },
+      {
+        "path": "reports/",
+        "class": "documentation / review records (historical evidence preserved)"
+      },
+      {
+        "path": "docs/",
+        "class": "documentation"
+      },
+      {
+        "path": "learning/",
+        "class": "documentation"
+      },
+      {
+        "path": "portfolio/",
+        "class": "documentation"
+      },
+      {
+        "path": "tests/integration/README.md",
+        "class": "documentation"
+      },
+      {
+        "path": "scripts/validate-all.sh",
+        "class": "legacy aggregate script; its steps are covered by module checks or other workflows"
+      },
+      {
+        "path": "scripts/ci/",
+        "class": "integration-gate / portfolio workflow tooling (not checked here)"
+      },
+      {
+        "path": "scripts/docs/",
+        "class": "documentation tooling (documentation workflow)"
+      },
+      {
+        "path": "backup/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-BACKUP-001"
+      },
+      {
+        "path": "governance/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-CONTROLS-001"
+      },
+      {
+        "path": "identity/governance/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-IDGOV-001"
+      },
+      {
+        "path": "identity/m365/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-M365-001"
+      },
+      {
+        "path": "infra/aws-network/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-NETWORK-001"
+      },
+      {
+        "path": "infra/orgs/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-ORGS-001"
+      },
+      {
+        "path": "integrations/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-VENDOR-001"
+      },
+      {
+        "path": "inventory/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-INVENTORY-001"
+      },
+      {
+        "path": "observability/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-OBSERVABILITY-001"
+      },
+      {
+        "path": "operations/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-OPERATIONS-001"
+      },
+      {
+        "path": "scenarios/",
+        "class": "present on main, NOT checked by this acceptance gate (other workflows may check it); exported as non-required UNKNOWN",
+        "contract_id": "ACC-WD-SCOPE-INCIDENT-001"
+      }
+    ]
+  },
+  "provenance": {
+    "kinds": [
+      "github-actions",
+      "local"
+    ],
+    "workflow_path": ".github/workflows/acceptance.yml",
+    "authenticated": false,
+    "note": "Provenance fields are recorded and type-checked and exported as a github-actions-run anchor; they are NOT authenticated (no GitHub API call is made by the gate)."
+  },
+  "review_scope": {
+    "requires": "requirement_ids",
+    "note": "Each --reviews record must carry requirement_ids: a non-empty list of contract requirement ids present in the exported document. It is attached ONLY to those requirements. A record without requirement_ids, with a blanket/unknown id, or whose reviewer is the recorder/integrator makes the decision INVALID. Reviews are unauthenticated claims: the gate never reports ACCEPTED (at most REVIEW_CONCURRED_UNAUTHENTICATED)."
+  }
 }

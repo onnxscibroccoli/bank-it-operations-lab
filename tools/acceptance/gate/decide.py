@@ -3,22 +3,27 @@
 
   decide.py OUT --sha SHA [--reviews FILE] [--stage DIR] [--decision-out FILE] [--contract-out FILE]
 
-1. verify_results.verify(OUT, expect_sha=SHA)   (C1 inventory, C2 gate, C3 complete records, binding to SHA)
+1. verify_results.verify(OUT, expect_sha=SHA)   (C1 inventory, C2 gate, C3 complete records, binding to SHA,
+   v2: readable commit, derived group members, scope registration, provenance, recomputed state/summary)
 2. Export the run into worker A's shared contract (schemas/acceptance/acceptance-requirements.schema.json):
    one requirement per inventory entry, evidence = this run's logs staged as an evidence bundle with a
-   MANIFEST.json anchored to SHA; reviewer_findings come ONLY from --reviews (never invented).
+   MANIFEST.json anchored to SHA; reviewer_findings come ONLY from --reviews (never invented), and each review
+   record is attached ONLY to the requirement_ids it names. Registered-but-unchecked portfolio paths are exported
+   as non-required UNKNOWN requirements (visible gaps, never PASS).
 3. Evaluate it with schemas/acceptance/check_acceptance.py (A's code, unmodified) and combine:
 
-   state               exit  meaning
-   ACCEPTED              0   execution PASS and A's contract = AUTOMATIC_TECHNICAL_ACCEPTANCE (needs concur reviews)
+   state                          exit  meaning
    EXECUTION_FAIL        1   a required check FAILed (or a defect-injection run)
    INVALID               1   output inconsistent/unbound, or the exported contract is INVALID
    EXECUTION_UNKNOWN     2   no FAIL, but a required check UNKNOWN
    REVIEW_PENDING        5   EXECUTION_PASS; only blocker is missing independent concurrence (technically eligible)
    REVIEW_BLOCKED        6   EXECUTION_PASS; a reviewer disputes, or another contract blocker remains
+   REVIEW_CONCURRED_UNAUTHENTICATED  7   A's contract = AUTOMATIC_TECHNICAL_ACCEPTANCE on UNAUTHENTICATED review
+                                 claims. Still NOT acceptance.
 
-The gate never reports ACCEPTED while review is pending. Reviewer strings are not authenticated: a --reviews
-file is a claim to be bound to GitHub review provenance by a human (see the assurance note, limitations).
+The gate NEVER reports ACCEPTED (exit 0 is unreachable): it cannot authenticate reviewers or prove the bundle came
+from CI (PR #29 R1/R3). Final acceptance is outside this gate: an APPROVED GitHub review on the exact SHA by an
+account other than the author, plus the owner's portfolio decision. See acceptance/INTEGRATION-V2.md.
 """
 import argparse, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 
@@ -26,10 +31,42 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import verify_results as vr  # noqa: E402
 
-REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
+def _toplevel():
+    try:
+        r = subprocess.run(["git", "-C", HERE, "rev-parse", "--show-toplevel"], capture_output=True, text=True, timeout=20)
+        if r.returncode == 0 and r.stdout.strip(): return r.stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # tools/acceptance/gate -> repo root
+
+
+REPO = _toplevel()
 CHECKER = os.path.join(REPO, "schemas", "acceptance", "check_acceptance.py")
-RECORDER = "worker-d scripts/acceptance/run.sh (recorder)"
-EXIT = {"ACCEPTED": 0, "EXECUTION_FAIL": 1, "INVALID": 1, "EXECUTION_UNKNOWN": 2, "REVIEW_PENDING": 5, "REVIEW_BLOCKED": 6}
+RECORDER = "worker-d tools/acceptance/gate/run.sh (recorder)"
+EXIT = {"EXECUTION_FAIL": 1, "INVALID": 1, "EXECUTION_UNKNOWN": 2, "REVIEW_PENDING": 5, "REVIEW_BLOCKED": 6,
+        "REVIEW_CONCURRED_UNAUTHENTICATED": 7}
+SELF_MARKERS = ("worker-d", "worker d", "workerd", "recorder", "integrator", "run.sh", "decide.py")
+REVIEW_KEYS = {"reviewer", "reviewed_commit", "verdict", "finding", "date"}
+
+
+def review_errors(reviews, req_ids):
+    """Review records must be scoped (requirement_ids) and not self-review. Returns a list of errors."""
+    errs = []
+    if not isinstance(reviews, list): return ["REVIEW: --reviews must be a JSON list"]
+    for i, r in enumerate(reviews):
+        if not isinstance(r, dict): errs.append(f"REVIEW[{i}]: not an object"); continue
+        ids = r.get("requirement_ids")
+        if not isinstance(ids, list) or not ids or not all(isinstance(x, str) for x in ids):
+            errs.append(f"REVIEW[{i}]: requirement_ids missing or empty (blanket reviews are not accepted)"); continue
+        unknown = [x for x in ids if x not in req_ids]
+        if unknown: errs.append(f"REVIEW[{i}]: requirement_ids not in this document: {unknown[:5]}")
+        if len(set(ids)) != len(ids): errs.append(f"REVIEW[{i}]: duplicate requirement_ids")
+        extra = set(r) - REVIEW_KEYS - {"requirement_ids"}
+        if extra: errs.append(f"REVIEW[{i}]: unexpected fields {sorted(extra)}")
+        who = str(r.get("reviewer", "")).lower()
+        if any(m in who for m in SELF_MARKERS):
+            errs.append(f"REVIEW[{i}]: reviewer {r.get('reviewer')!r} looks like the recorder/integrator (self-review)")
+    return errs
 PENDING = "required PASS lacks an independent reviewer concurrence"
 
 
@@ -48,7 +85,7 @@ def stage_bundle(out, sha, stage):
             f.write(f"{vr.sha256_file(os.path.join(root, p))}  {p}\n")
     manifest = {"schema_version": "1.0.0",
                 "bundle": {"id": f"acceptance-{sha[:12]}", "root": rel, "kind": "integration-run"},
-                "producer": {"script": "scripts/acceptance/run.sh", "source_commit": sha},
+                "producer": {"script": "tools/acceptance/gate/run.sh", "source_commit": sha},
                 "hashes": {"file": "SHA256SUMS", "base": "bundle", "algorithm": "sha256"},
                 "commands": {"file": "logs/COMMANDS.tsv", "format": "aws-3col", "rows_written_by": "producer-script"},
                 "exclusions": [{"path": "SHA256SUMS", "reason": "self-reference"}, {"path": "MANIFEST.json", "reason": "added-after-run"}],
@@ -85,7 +122,8 @@ def requirement(entry, members, sha, rel, stage, reviews, kind):
          "assumptions": ["Offline, credential-free GitHub-hosted or local runner; results describe the lab repo only"],
          "exclusions": ["No AWS, Entra/Graph or production system is contacted or changed"],
          "verification_method": "automated_test", "result": result if chk["execution"] == "executed" else "UNKNOWN",
-         "reviewer_findings": list(reviews)}
+         "reviewer_findings": [{k: v for k, v in r.items() if k != "requirement_ids"} for r in reviews
+                               if entry["contract_id"] in r.get("requirement_ids", [])]}
     if q["result"] == "UNKNOWN":
         q["result_rationale"] = "; ".join(f"{m['check_id']}: {m['detail']}" for m in members) or "no rows recorded"
     return q
@@ -97,6 +135,17 @@ def export(out, sha, stage, reviews):
     by = {r["check_id"]: r for r in rows}
     rel = stage_bundle(out, sha, stage)
     reqs = []
+    for n in inv.get("scope", {}).get("non_module_paths", []):
+        if not n.get("contract_id"): continue
+        reqs.append({"id": n["contract_id"], "scope": f"{n['path']} ({n['class']})",
+                     "rationale": "Registered in the acceptance scope but not checked by this gate (portfolio gap made visible).",
+                     "required": False, "source": {"type": "project_decision", "reference": vr.INVENTORY_REL, "locator": n["path"]},
+                     "tested_source_commit": sha,
+                     "check": {"command": f"not checked by tools/acceptance/gate/run.sh {sha}", "expected": {"exit_code": 0}, "execution": "not_run"},
+                     "evidence_refs": [], "assumptions": ["Other workflows may check this path; this gate does not"],
+                     "exclusions": ["Not certified by this acceptance gate"], "verification_method": "automated_test",
+                     "result": "UNKNOWN", "result_rationale": "not in this gate's checked scope; non-required, so it neither passes nor blocks",
+                     "reviewer_findings": []})
     for c in inv["checks"]:
         reqs.append(requirement(c, [by[c["id"]]] if c["id"] in by else [], sha, rel, stage, reviews, c["kind"]))
     for g in inv["groups"]:
@@ -114,6 +163,13 @@ def decide(out, sha, reviews=(), stage=None):
     if rc != 0:
         vr.verify(out, expect_sha=sha)
         return {"state": "INVALID", "reason": "run output inconsistent, incomplete or not bound to SHA", "target_sha": sha}
+    inv = vr.load_inventory()
+    req_ids = {c["contract_id"] for c in inv["checks"]} | {g["contract_id"] for g in inv["groups"]} | \
+              {n["contract_id"] for n in inv.get("scope", {}).get("non_module_paths", []) if n.get("contract_id")}
+    rerr = review_errors(list(reviews) if isinstance(reviews, (list, tuple)) else reviews, req_ids)
+    if rerr:
+        for e in rerr: print("ERROR", e)
+        return {"state": "INVALID", "reason": "review records unscoped, unknown or self-review", "review_errors": rerr, "target_sha": sha}
     own = stage is None
     stage = stage or tempfile.mkdtemp(prefix="acceptance-contract-")
     try:
@@ -127,8 +183,7 @@ def decide(out, sha, reviews=(), stage=None):
             rep = {"valid": False, "decision": "INVALID", "errors": [p.stdout[-500:], p.stderr[-500:]]}
     finally:
         if own: shutil.rmtree(stage, ignore_errors=True)
-    exe = j["execution_state"] if j.get("execution_state") else {"PASS": "EXECUTION_PASS", "FAIL": "EXECUTION_FAIL"}.get(j["overall"], "EXECUTION_UNKNOWN")
-    if j.get("injected_defect"): exe = "EXECUTION_FAIL"
+    exe = vr.execution_state(j["checks"], j.get("injected_defect"))  # R4: recomputed, never read from results.json
     blockers = rep.get("blockers", [])
     if not rep.get("valid"):
         state = "INVALID"
@@ -137,23 +192,26 @@ def decide(out, sha, reviews=(), stage=None):
     elif exe == "EXECUTION_UNKNOWN":
         state = "EXECUTION_UNKNOWN"
     elif rep["decision"] == "AUTOMATIC_TECHNICAL_ACCEPTANCE":
-        state = "ACCEPTED"
+        state = "REVIEW_CONCURRED_UNAUTHENTICATED"  # never ACCEPTED: review claims are not authenticated
     elif blockers and all(b["reason"] == PENDING for b in blockers):
         state = "REVIEW_PENDING"
     else:
         state = "REVIEW_BLOCKED"
-    if state == "ACCEPTED" and (exe != "EXECUTION_PASS" or rep["decision"] != "AUTOMATIC_TECHNICAL_ACCEPTANCE"):
+    if state == "REVIEW_CONCURRED_UNAUTHENTICATED" and (exe != "EXECUTION_PASS" or rep["decision"] != "AUTOMATIC_TECHNICAL_ACCEPTANCE"):
         state = "INVALID"  # defence in depth; unreachable by construction
+    assert state != "ACCEPTED"
     return {"state": state, "execution_state": exe, "technically_eligible": exe == "EXECUTION_PASS" and rep.get("valid", False),
             "contract_decision": rep.get("decision"), "contract_valid": rep.get("valid"), "contract_errors": rep.get("errors", []),
             "blockers": blockers, "target_sha": sha, "inventory_version": j.get("inventory_version"),
+            "inventory_sha256": j.get("inventory_sha256"), "provenance": j.get("provenance"),
+            "final_acceptance": "NOT DECIDED HERE: requires an authenticated independent GitHub review of this SHA and the owner's decision",
             "reviews_supplied": len(reviews), "contract_document": doc, "note": "Lab gate only; not an audit, certification or production sign-off."}
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("out"); ap.add_argument("--sha", required=True)
-    ap.add_argument("--reviews", help="JSON list of reviewer_findings (A's schema) applied to every requirement")
+    ap.add_argument("--reviews", help="JSON list of reviewer_findings (A's schema) + requirement_ids each record covers")
     ap.add_argument("--stage"); ap.add_argument("--decision-out"); ap.add_argument("--contract-out")
     a = ap.parse_args(argv)
     if not re.fullmatch(r"[0-9a-f]{40}", a.sha): print("--sha must be a full 40-hex SHA"); return 64

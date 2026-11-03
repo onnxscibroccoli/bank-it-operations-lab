@@ -1,30 +1,36 @@
 #!/usr/bin/env python3
-"""Independent verifier for an acceptance output directory (scripts/acceptance/run.sh --out DIR).
+"""Independent verifier for an acceptance output directory (tools/acceptance/gate/run.sh --out DIR).
 
 Re-derives every verdict instead of trusting results.tsv / results.json:
-  * SHA256SUMS covers every file (except postgres-run/, which has its own SHA256SUMS) and verifies;
+  * SHA256SUMS covers every file, including postgres-run/** (R7), and verifies;
   * C3: results.tsv and results.json carry IDENTICAL complete records (all six fields, typed), and every
     summary counter in results.json is recomputed;
   * each check row with a log has a matching '# exit_code: N' trailer; a normal check is PASS iff exit 0;
     a defect-control (DEFECT-*) is PASS iff exit != 0 AND output matches its '# reason_regex:';
-  * C1: the rows match the reviewed, versioned inventory scripts/acceptance/required-checks.v1.json exactly:
+  * C1: the rows match the reviewed, versioned inventory tools/acceptance/gate/required-checks.json exactly:
     no missing, duplicate, unknown/arbitrary or downgraded (required=no) check; dynamic groups contiguous and
     >= min; the inventory sha256 recorded in results.json equals this copy (and, with --sha and git, the copy
     at the tested commit);
   * C2: overall is recomputed by gate(): PASS only if every required row is PASS. INFO is advisory-only.
   * the run is bound to one commit: target_sha is 40-hex and CHECKOUT / SOURCE-BINDING name it.
+  * v2 (integration-v2): --sha is mandatory; the commit must exist and be readable (fail closed); group members
+    are derived from the tree at SHA; every tracked path must be registered in scope; provenance is present and
+    well-formed; execution_state and SUMMARY.md are recomputed, never trusted.
 
-  verify_results.py DIR [--sha SHA]           consistency (+ binding to SHA)         exit 0 / 1
+  verify_results.py DIR --sha SHA             consistency + strict binding to SHA (inventory, derived group
+                                               members and scope coverage read from git at SHA; unreadable = INVALID)  exit 0 / 1
+  verify_results.py --members GROUP SHA       print the expected members of a derived group at SHA (run.sh uses this:
+                                               one implementation for producer and verifier)                     exit 0 / 1
   verify_results.py DIR --execution-pass-for SHA   EXECUTION_PASS bound to SHA         exit 0 / 1 / 3
-  verify_results.py DIR --accept-for SHA       final decision via decide.py: 0 ONLY if ACCEPTED (C4); an
-                                               execution pass awaiting independent review exits 5 (REVIEW_PENDING)
+  verify_results.py DIR --accept-for SHA       final decision via decide.py (C4). Never exits 0: the gate cannot
+                                               report ACCEPTED. 5 = REVIEW_PENDING, 7 = concurred but unauthenticated
   verify_results.py --selftest                 gate tests incl. exhaustive invariant I1 enumeration
 """
 import csv, hashlib, itertools, json, os, re, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-INVENTORY = os.path.join(HERE, "required-checks.v1.json")
-INVENTORY_REL = "scripts/acceptance/required-checks.v1.json"
+INVENTORY = os.path.join(HERE, "required-checks.json")
+INVENTORY_REL = "tools/acceptance/gate/required-checks.json"
 FIELDS = ["check_id", "required", "verdict", "exit_code", "detail", "log"]
 VERDICTS = ("PASS", "FAIL", "UNKNOWN", "INFO")
 DEFECTS = (None, "entra-mfa-report-only")
@@ -98,12 +104,116 @@ def counters(rows):
             "unknown": [r["check_id"] for r in req if r["verdict"] == "UNKNOWN"]}
 
 
-def git_show_sha256(sha, rel):
+def _git(*args):
+    """Run git against the repository this verifier lives in. Returns (rc, stdout bytes); rc=-1 if git is unusable."""
     try:
-        r = subprocess.run(["git", "-C", HERE, "show", f"{sha}:{rel}"], capture_output=True, timeout=20)
+        r = subprocess.run(["git", "-C", HERE, *args], capture_output=True, timeout=30)
+        return r.returncode, r.stdout
     except (OSError, subprocess.TimeoutExpired):
+        return -1, b""
+
+
+def git_show_sha256(sha, rel):
+    rc, out = _git("show", f"{sha}:{rel}")
+    return hashlib.sha256(out).hexdigest() if rc == 0 else None
+
+
+def tracked_files(sha):
+    """All tracked paths at sha, or None if the commit cannot be read (caller must fail closed)."""
+    rc, _ = _git("cat-file", "-e", f"{sha}^{{commit}}")
+    if rc != 0:
         return None
-    return hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None
+    rc, out = _git("ls-tree", "-r", "-z", "--full-tree", "--name-only", sha)
+    return sorted(x.decode() for x in out.split(b"\0") if x) if rc == 0 else None
+
+
+def expected_members(g, files):
+    d = g.get("derive") or {}
+    if d.get("kind") == "tracked-files":  # prefix + at least one directory + suffix (evidence/<x>/.../SHA256SUMS)
+        return sorted(f for f in files if f.startswith(d["prefix"]) and f.endswith(d["glob_suffix"])
+                      and len(f) > len(d["prefix"]) + len(d["glob_suffix"]) - 1 and "/" in f[len(d["prefix"]):])
+    if d.get("kind") == "tracked-dirs":
+        return sorted({d["prefix"] + f[len(d["prefix"]):].split("/")[0] for f in files
+                       if f.startswith(d["prefix"]) and "/" in f[len(d["prefix"]):]})
+    return None
+
+
+def _covers(prefix, f):
+    return f == prefix or (prefix.endswith("/") and f.startswith(prefix))
+
+
+def source_errors(rows, inv, sha):
+    """Gaps from the accelerated completion plan: derived group members, scope coverage, fail-closed binding."""
+    files = tracked_files(sha)
+    if files is None:
+        return [f"SOURCE: commit {sha} cannot be read from git; source binding unavailable (fail closed)"]
+    errs = []
+    at = git_show_sha256(sha, INVENTORY_REL)
+    if at is None: errs.append(f"SOURCE: {INVENTORY_REL} missing at {sha} (fail closed)")
+    elif at != sha256_file(INVENTORY): errs.append(f"C1: inventory at {sha} has sha256 {at}, verifier copy {sha256_file(INVENTORY)}")
+    by = {r["check_id"]: r for r in rows}
+    for g in inv["groups"]:
+        exp = expected_members(g, files)
+        if exp is None: continue
+        rx = re.compile(g["pattern"])
+        mem = sorted((int(rx.match(r["check_id"]).group(1)), r) for r in rows if rx.match(r["check_id"]))
+        if len(mem) != len(exp):
+            errs.append(f"GROUP: {g['name']} has {len(mem)} members but the tree at {sha[:12]} has {len(exp)} ({g['derive']['prefix']}...)")
+        for (n, r), path in zip(mem, exp):
+            if f" {path} " not in f" {r['detail']} ":
+                errs.append(f"GROUP: {r['check_id']} does not name expected member {path}")
+    sc = inv.get("scope", {})
+    mods, non = sc.get("modules", []), sc.get("non_module_paths", [])
+    known = {c["id"] for c in inv["checks"]} | {"group:" + g["name"] for g in inv["groups"]}
+    for m in mods:
+        for c in m["checks"]:
+            if c not in known: errs.append(f"SCOPE: module {m['name']} registers unknown check {c}")
+        for pth in m["paths"]:
+            if not any(_covers(pth, f) for f in files): errs.append(f"SCOPE: module {m['name']} path {pth} absent at {sha[:12]}")
+    prefixes = [pth for m in mods for pth in m["paths"]] + [n["path"] for n in non]
+    unc = [f for f in files if not any(_covers(pfx, f) for pfx in prefixes)]
+    if unc:
+        errs.append(f"SCOPE: {len(unc)} tracked file(s) at {sha[:12]} belong to no registered module or declared non-module path, e.g. {unc[:3]}")
+    return errs
+
+
+def execution_state(rows, injected=None):
+    """Derived, never read from results.json (R4)."""
+    g = gate(rows)
+    return "EXECUTION_FAIL" if injected or g == "FAIL" else ("EXECUTION_PASS" if g == "PASS" else "EXECUTION_UNKNOWN")
+
+
+def render_summary(j):
+    """SUMMARY.md is a pure function of results.json; the verifier re-renders and compares (no contradictory summary)."""
+    rows = j["checks"]; req = [r for r in rows if r["required"] == "yes"]
+    s = (f"# Acceptance run for `{j['target_sha']}`\n\nOverall: **{j['overall']}** (required {len(req)}, pass {j['pass']}, "
+         f"fail {len(j['fail'])}, unknown {len(j['unknown'])})\n\nExecution state: **{j['execution_state']}**. "
+         "This is NOT acceptance: tools/acceptance/gate/decide.py never reports ACCEPTED; final acceptance is an "
+         "authenticated independent GitHub review of this exact SHA plus the owner's portfolio decision.\n")
+    if j.get("injected_defect"): s += f"\nInjected defect: `{j['injected_defect']}` (this run is expected to FAIL)\n"
+    s += "\n| check | required | verdict | exit | detail |\n|---|---|---|---|---|\n"
+    for r in rows: s += f"| {r['check_id']} | {r['required']} | {r['verdict']} | {r['exit_code']} | {r['detail'].replace('|', '/')} |\n"
+    return s
+
+
+def provenance_errors(j, inv):
+    pv, spec = j.get("provenance"), inv.get("provenance", {})
+    if not isinstance(pv, dict): return ["PROVENANCE: results.json provenance missing"]
+    errs = []
+    kind = pv.get("kind")
+    if kind not in spec.get("kinds", []): errs.append(f"PROVENANCE: kind {kind!r} not in {spec.get('kinds')}")
+    if kind == "github-actions":
+        repo = pv.get("repository") or ""
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo): errs.append(f"PROVENANCE: repository {repo!r}")
+        for k in ("run_id", "run_attempt"):
+            if not re.fullmatch(r"[0-9]+", str(pv.get(k) or "")): errs.append(f"PROVENANCE: {k} {pv.get(k)!r} not numeric")
+        if not str(pv.get("workflow_ref") or "").startswith(f"{repo}/{spec.get('workflow_path')}@"):
+            errs.append(f"PROVENANCE: workflow_ref {pv.get('workflow_ref')!r} is not {repo}/{spec.get('workflow_path')}@...")
+        if not re.fullmatch(r"[0-9a-f]{40}", str(pv.get("github_sha") or "")): errs.append("PROVENANCE: github_sha not 40-hex")
+    elif kind == "local":
+        if any(pv.get(k) for k in ("run_id", "run_attempt", "workflow_ref")): errs.append("PROVENANCE: local run must not carry CI run fields")
+    if pv.get("authenticated") is not False: errs.append("PROVENANCE: authenticated must be false (the gate cannot authenticate provenance)")
+    return errs
 
 
 def verify(out, expect_sha=None, inventory_path=INVENTORY, quiet=False):
@@ -120,7 +230,7 @@ def verify(out, expect_sha=None, inventory_path=INVENTORY, quiet=False):
     for root, _, files in os.walk(out):
         for f in files:
             rel = os.path.normpath(os.path.relpath(os.path.join(root, f), out))
-            if rel != "SHA256SUMS" and not rel.startswith("postgres-run" + os.sep) and rel not in listed:
+            if rel != "SHA256SUMS" and rel not in listed:  # R7: postgres-run/** is covered too
                 errs.append(f"uncovered file {rel}")
     with open(os.path.join(out, "results.tsv")) as fh:
         rd = csv.DictReader(fh, delimiter="\t")
@@ -177,13 +287,22 @@ def verify(out, expect_sha=None, inventory_path=INVENTORY, quiet=False):
     if "CHECKOUT" in by and sha not in by["CHECKOUT"]["detail"]: errs.append("CHECKOUT row does not name target_sha")
     sb = by.get("SOURCE-BINDING")
     if sb and sb["verdict"] == "PASS" and sha not in sb["detail"]: errs.append("SOURCE-BINDING PASS does not name target_sha")
-    if expect_sha is not None:
-        at = git_show_sha256(expect_sha, INVENTORY_REL)
-        if at is not None and at != inv_sha: errs.append(f"C1: inventory at {expect_sha} has sha256 {at}, verifier copy {inv_sha}")
+    if expect_sha is None:
+        errs.append("SOURCE: no expected SHA given; source binding is mandatory (fail closed)")
+    else:
+        errs += source_errors(rows, inv, expect_sha)  # fail closed: binding data must be readable at the tested commit
+    errs += provenance_errors(j, inv)
     if j.get("injected_defect") not in DEFECTS: errs.append(f"C3: unknown injected_defect {j.get('injected_defect')!r}")
     # C2/C3: overall + counters recomputed
     g = gate(rows)
     if j.get("overall") != g: errs.append(f"results.json overall {j.get('overall')} != recomputed {g}")
+    es = execution_state(rows, j.get("injected_defect"))
+    if j.get("execution_state") != es: errs.append(f"R4: results.json execution_state {j.get('execution_state')!r} != recomputed {es}")
+    sp = os.path.join(out, "SUMMARY.md")
+    try:
+        if open(sp).read() != render_summary(j): errs.append("SUMMARY: SUMMARY.md contradicts results.json (re-rendered summary differs)")
+    except (OSError, KeyError, TypeError) as e:
+        errs.append(f"SUMMARY: cannot re-render/compare SUMMARY.md ({e.__class__.__name__})")
     for k, v in counters(rows).items():
         if j.get(k) != v: errs.append(f"C3: results.json {k}={j.get(k)!r} != recomputed {v!r}")
     if not quiet:
@@ -229,7 +348,12 @@ def selftest():
 if __name__ == "__main__":
     a = sys.argv[1:]
     if a == ["--selftest"]: sys.exit(selftest())
-    if len(a) == 1: sys.exit(verify(a[0])[0])
+    if len(a) == 1: print("verify_results: --sha SHA is mandatory (fail closed)"); sys.exit(64)
+    if len(a) == 3 and a[0] == "--members":
+        inv, files = load_inventory(), tracked_files(a[2])
+        g = [x for x in inv["groups"] if x["name"] == a[1]]
+        if files is None or not g or expected_members(g[0], files) is None: print(f"cannot derive {a[1]} at {a[2]}", file=sys.stderr); sys.exit(1)
+        print("\n".join(expected_members(g[0], files))); sys.exit(0)
     if len(a) == 3 and a[1] == "--sha": sys.exit(verify(a[0], expect_sha=a[2])[0])
     if len(a) == 3 and a[1] == "--execution-pass-for": sys.exit(execution_pass_for(a[0], a[2]))
     if len(a) >= 3 and a[1] == "--accept-for":

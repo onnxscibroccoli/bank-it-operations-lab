@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # First executable acceptance command for bank-it-operations-lab (Worker D, vertical slice).
 #
-#   scripts/acceptance/run.sh <TARGET_SHA> [--out DIR] [--inject-defect NAME]
+#   tools/acceptance/gate/run.sh <TARGET_SHA> [--out DIR] [--inject-defect NAME]
+#   (compatibility: scripts/acceptance/run.sh execs this file with the same arguments)
 #
 # 1. Checks out exactly <TARGET_SHA> (full 40-hex commit) into a detached git worktree and asserts HEAD == SHA.
 # 2. Runs, against that checkout, using the target's own tooling:
@@ -12,8 +13,8 @@
 #      Defect controls (deliberately broken copies MUST be rejected by the target's checkers)
 # 3. Writes results.tsv / results.json / SUMMARY.md / SHA256SUMS to --out (default ./acceptance-out).
 # 4. Exit codes: 0 = EXECUTION_PASS (every required check PASS); 1 = at least one FAIL; 2 = no FAIL but a required
-#    check UNKNOWN. Exit 0 is technical execution only, never acceptance: scripts/acceptance/decide.py exports the
-#    results into worker A's contract and returns REVIEW_PENDING until an independent review concurs.
+#    check UNKNOWN. Exit 0 is technical execution only, never acceptance: tools/acceptance/gate/decide.py exports the
+#    results into worker A's contract and returns REVIEW_PENDING; it never reports ACCEPTED (see acceptance/INTEGRATION-V2.md).
 #
 # --inject-defect entra-mfa-report-only   flips CA002 (Require MFA, all users) to report-only INSIDE the
 #   checked-out worktree before the checks run. The run MUST then exit nonzero with ENTRA-02 = FAIL.
@@ -43,6 +44,7 @@ RESULTS="$OUT/results.tsv"; printf 'check_id\trequired\tverdict\texit_code\tdeta
 
 unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE AWS_ROLE_ARN AWS_WEB_IDENTITY_TOKEN_FILE \
       AWS_CONTAINER_CREDENTIALS_FULL_URI AWS_CONTAINER_CREDENTIALS_RELATIVE_URI CDK_DEFAULT_ACCOUNT CDK_DEFAULT_REGION
+export LC_ALL=C  # byte-order globs/sorts
 export AWS_EC2_METADATA_DISABLED=true AWS_CONFIG_FILE=/dev/null AWS_SHARED_CREDENTIALS_FILE=/dev/null CDK_DISABLE_CLI_TELEMETRY=true
 
 record() { # id required verdict exit detail log
@@ -166,8 +168,10 @@ else
   check ENTRA-01 yes "Entra CA validator unit tests" -- python3 -m unittest discover -s tests/entra
   check ENTRA-02 yes "Entra CA validator on committed baseline policies" -- python3 identity/entra/ca_validator.py --quiet
   check ENTRA-03 yes "Entra fixtures regenerate with no drift" -- python3 tests/entra/make_fixtures.py --check
-  n=0; for r in evidence/entra/runs/*/; do [ -d "$r" ] || continue; n=$((n+1))
-    check "ENTRA-04.$n" yes "re-verify committed Entra evidence ${r%/}" -- python3 evidence/entra/generate_evidence.py --verify "${r%/}"; done
+  # members derived from the tree at $SHA by the verifier itself (one implementation; v1.1.0 derive rule)
+  n=0; while IFS= read -r r; do [ -n "$r" ] || continue; n=$((n+1))
+    check "ENTRA-04.$n" yes "re-verify committed Entra evidence $r" -- python3 evidence/entra/generate_evidence.py --verify "$r"
+  done < <(python3 "$HERE/verify_results.py" --members ENTRA-04 "$SHA")
   [ $n -eq 0 ] && unknown ENTRA-04.1 yes "no committed Entra evidence runs"
   # defect control on a COPY (never the worktree baseline): same policy flipped to report-only must be rejected
   D="$(mktemp -d)"; cp identity/entra/policies/*.json "$D/"
@@ -201,10 +205,14 @@ if [ -f acceptance/modules/run.py ]; then
   else unknown ACC-C-03 yes "adapters live-offline not run: needs PG server binaries and infra/aws-cdk/node_modules"; fi
 else unknown ACC-C-01 yes "acceptance/modules/run.py (worker C) not present at target"; fi
 
+if [ -d tools/acceptance/gate/tests ]; then
+  check ACC-D-01 yes "acceptance gate (D) regression tests incl. every reproduced false-acceptance case" -- env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/acceptance/gate/tests
+else unknown ACC-D-01 yes "tools/acceptance/gate/tests not present at target"; fi
+
 # ---------------------------------------------------------------- 2d. reports and hashes
-n=0; while IFS= read -r s; do n=$((n+1))
+n=0; while IFS= read -r s; do [ -n "$s" ] || continue; n=$((n+1))
   check "HASH-$n" yes "committed bundle $s verifies (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s"
-done < <(git ls-files 'evidence/**/SHA256SUMS' | sort)  # evidence bundles only; tests/**/fixtures hold deliberately broken bundles exercised by ACC-A-01
+done < <(python3 "$HERE/verify_results.py" --members HASH "$SHA")  # evidence/<x>/**/SHA256SUMS at $SHA; tests/**/fixtures hold deliberately broken bundles exercised by ACC-A-01
 [ $n -eq 0 ] && unknown HASH-1 yes "no committed SHA256SUMS bundles found"
 f="$(git ls-files 'evidence/aws/*/SHA256SUMS' | head -1)"
 if [ -n "$f" ]; then
@@ -234,8 +242,8 @@ fi  # checkout ok
 # ---------------------------------------------------------------- 3. inventory coverage (C1)
 # Every check in the reviewed inventory gets a row: one that never ran is recorded UNKNOWN, never left out.
 while IFS= read -r id; do
-  cut -f1 "$RESULTS" | grep -qxF "$id" || unknown "$id" yes "not run on this path (inventory coverage: $(basename "$HERE")/required-checks.v1.json)"
-done < <(python3 -c 'import json,sys; [print(c["id"]) for c in json.load(open(sys.argv[1]))["checks"]]' "$HERE/required-checks.v1.json")
+  cut -f1 "$RESULTS" | grep -qxF "$id" || unknown "$id" yes "not run on this path (inventory coverage: tools/acceptance/gate/required-checks.json)"
+done < <(python3 -c 'import json,sys; [print(c["id"]) for c in json.load(open(sys.argv[1]))["checks"]]' "$HERE/required-checks.json")
 
 # ---------------------------------------------------------------- 4. gate (single implementation: verify_results.gate) + own report integrity
 python3 - "$RESULTS" "$OUT" "$SHA" "$DEFECT" "$HERE" <<'PY'
@@ -247,19 +255,19 @@ overall=vr.gate(rows); c=vr.counters(rows); fail,unk,req=c["fail"],c["unknown"],
 inv=vr.load_inventory()
 s={"target_sha":sha,"injected_defect":defect or None,"overall":overall,**c,
    "inventory_version":inv["version"],"inventory_sha256":vr.sha256_file(vr.INVENTORY),
-   "execution_state":{"PASS":"EXECUTION_PASS","FAIL":"EXECUTION_FAIL"}.get(overall,"EXECUTION_UNKNOWN"),
-   "acceptance_note":"execution result only; final acceptance is decided by scripts/acceptance/decide.py and requires independent review",
+   "execution_state":vr.execution_state(rows, defect or None),
+   "provenance":({"kind":"github-actions","repository":os.environ.get("GITHUB_REPOSITORY"),"run_id":os.environ.get("GITHUB_RUN_ID"),
+                  "run_attempt":os.environ.get("GITHUB_RUN_ATTEMPT"),"workflow_ref":os.environ.get("GITHUB_WORKFLOW_REF"),
+                  "github_sha":os.environ.get("GITHUB_SHA"),"event_name":os.environ.get("GITHUB_EVENT_NAME"),"authenticated":False}
+                 if os.environ.get("GITHUB_ACTIONS")=="true" else {"kind":"local","authenticated":False}),
+   "acceptance_note":"execution result only; tools/acceptance/gate/decide.py never reports ACCEPTED; final acceptance requires an authenticated independent review of this SHA",
    "generated_utc":datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),"checks":rows}
 json.dump(s,open(os.path.join(out,"results.json"),"w"),indent=2)
-with open(os.path.join(out,"SUMMARY.md"),"w") as f:
-    f.write(f"# Acceptance run for `{sha}`\n\nOverall: **{overall}** (required {len(req)}, pass {s['pass']}, fail {len(fail)}, unknown {len(unk)})\n")
-    if defect: f.write(f"\nInjected defect: `{defect}` (this run is expected to FAIL)\n")
-    f.write("\n| check | required | verdict | exit | detail |\n|---|---|---|---|---|\n")
-    for r in rows: f.write(f"| {r['check_id']} | {r['required']} | {r['verdict']} | {r['exit_code']} | {r['detail'].replace('|','/')} |\n")
+open(os.path.join(out,"SUMMARY.md"),"w").write(vr.render_summary(s))
 print(f"OVERALL={overall} required={len(req)} fail={fail} unknown={unk}")
 PY
-( cd "$OUT" && find . -type f ! -name SHA256SUMS ! -path './postgres-run/*' | sort | sed 's|^\./||' | xargs sha256sum > SHA256SUMS )
-if ! python3 "$REPO/scripts/acceptance/verify_results.py" "$OUT"; then echo "acceptance output failed self-verification" >&2; exit 1; fi
+( cd "$OUT" && find . -type f ! -path ./SHA256SUMS -print0 | sort -z | sed -z 's|^\./||' | xargs -0 sha256sum > SHA256SUMS )  # R7: postgres-run/** included
+if ! python3 "$HERE/verify_results.py" "$OUT" --sha "$SHA"; then echo "acceptance output failed self-verification" >&2; exit 1; fi
 overall="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["overall"])' "$OUT/results.json")"
-echo "execution: $overall for $SHA (out: $OUT). This is NOT acceptance; see scripts/acceptance/decide.py (review pending)."
+echo "execution: $overall for $SHA (out: $OUT). This is NOT acceptance; see tools/acceptance/gate/decide.py (never ACCEPTED; review pending)."
 case "$overall" in PASS) exit 0 ;; UNKNOWN) exit 2 ;; *) exit 1 ;; esac
