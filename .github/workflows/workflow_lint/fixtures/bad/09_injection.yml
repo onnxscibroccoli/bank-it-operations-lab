@@ -1,0 +1,11 @@
+name: bad-injection
+on: [pull_request, workflow_dispatch]
+permissions: { contents: read }
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ github.event.pull_request.title }}"
+      - run: |
+          git checkout ${{ github.head_ref }}
+          echo ${{ inputs.target }}

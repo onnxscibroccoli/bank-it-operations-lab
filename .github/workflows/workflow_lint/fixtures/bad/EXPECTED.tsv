@@ -1,0 +1,13 @@
+file	rule	count
+01_unpinned.yml	UNPINNED	3
+02_fake_sha.yml	LOCK_MISSING	1
+03_wrong_comment.yml	LOCK_COMMENT	2
+04_perms_missing.yml	PERMS_TOP	1
+05_perms_write.yml	PERMS_TOP	1
+05_perms_write.yml	PERMS_JOB	2
+06_persist_creds.yml	PERSIST_CREDS	2
+07_pr_target.yml	PR_TARGET	1
+08_workflow_run.yml	WORKFLOW_RUN	1
+09_injection.yml	INJECTION	3
+10_curl_pipe.yml	CURL_PIPE_SH	2
+11_parse_error.yml	PARSE	1
