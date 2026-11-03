@@ -13752,7 +13752,8 @@
         "Trust-boundary changes vs main (heightened review)",
         "All trusted files (sha256, first 8 hex)",
         "Evidence references",
-        "Status"
+        "Status",
+        "Update: PR #42 moved to `8065a44` (17:5x EST)"
       ]
     }
   },

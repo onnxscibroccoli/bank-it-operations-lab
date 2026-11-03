@@ -84,3 +84,13 @@ None of the 5 files is imported by `merge_eligibility.py`, `verify_trusted_gate.
 ## Status
 
 PENDING: independent review (AC1, UA-7) of the candidate SHA and pin review of the gate_sha above, then owner approval of the re-pin. Until then the gate reports TRUSTED GATE UNVERIFIED and merge-eligibility is NOT ELIGIBLE.
+
+## Update: PR #42 moved to `8065a44` (17:5x EST)
+
+PR #42's `acceptance/pin-review/T-16/FINAL/` now recommends gate_sha `a518b03e` (the 20261103b gate commit, bound to candidate `caa9ce7`) and marks `6ea6803c` as superseded. That recommendation and this one differ in **one file only**:
+
+| File | a518b03e (#42 FINAL) | 39c71f9 (this proposal) | Note |
+|---|---|---|---|
+| `scripts/ci/tests/test_module_coverage.py` | `7dba8ea5…` | `92cd251e…` (= current pin `ea0c235`) | Same assertion (`incomplete == []`); differs only in a comment line |
+
+The other 34 files are byte-identical. `a518b03e` is not an ancestor of `integration/candidate-20261103c`, and with `7dba8ea5` it would not match this candidate's tree. For this candidate, the matching pin is `39c71f9eebf8bb72663515a29b52609d02dceea4`. Its delta versus the current pin is the 4 added files only. Suggested follow-up for the Acceptance Integrator: re-point #42's FINAL recommendation to `39c71f9` (relay only; no agent was messaged).
