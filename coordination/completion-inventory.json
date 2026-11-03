@@ -1423,6 +1423,20 @@
    "state": "after merge"
   },
   {
+   "id": "T-29",
+   "task": "acceptance run.sh HASH sweep: verify repo-root-relative bundles (evidence/backup/aws-backup-dr, PR #21) with --base . (CI run 41695254014 reported HASH-2 FAIL: 72 entries resolved against the bundle dir). Every entry still hash-checked; tamper probe rejected.",
+   "owner": "Integrator",
+   "gap_type": "BLOCKING",
+   "state": "done on integration branch"
+  },
+  {
+   "id": "T-30",
+   "task": "Docs knowledge base: metadata for the 16 Markdown files brought in by the acceptance/review merges; the 12 review/acceptance records are frozen in preserved-records.json (Documentation run 41695477787 failed: Missing metadata).",
+   "owner": "Integrator",
+   "gap_type": "BLOCKING",
+   "state": "done on integration branch"
+  },
+  {
    "id": "T-28",
    "task": "Merge integration/completion-20261103 into main (next checkpoint, normal merge, no force).",
    "owner": "Integrator",

@@ -203,7 +203,14 @@ else unknown ACC-C-01 yes "acceptance/modules/run.py (worker C) not present at t
 
 # ---------------------------------------------------------------- 2d. reports and hashes
 n=0; while IFS= read -r s; do n=$((n+1))
-  check "HASH-$n" yes "committed bundle $s verifies (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s"
+  d="$(dirname "$s")"
+  # Root-relative bundles (e.g. evidence/backup/aws-backup-dr, PR #21) list paths from the repo root, including their own
+  # directory; verify them with --base . instead of reporting every entry missing. Every entry is still hash-checked.
+  if grep -qE "^[0-9a-f]{64} [ *]$d/" "$s"; then
+    check "HASH-$n" yes "committed bundle $s verifies, repo-root-relative paths (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s" --base .
+  else
+    check "HASH-$n" yes "committed bundle $s verifies (no missing file, no mismatch, no self-listing)" -- python3 "$V" hashes "$s"
+  fi
 done < <(git ls-files 'evidence/**/SHA256SUMS' | sort)  # evidence bundles only; tests/**/fixtures hold deliberately broken bundles exercised by ACC-A-01
 [ $n -eq 0 ] && unknown HASH-1 yes "no committed SHA256SUMS bundles found"
 f="$(git ls-files 'evidence/aws/*/SHA256SUMS' | head -1)"

@@ -126,4 +126,6 @@ Drift: modules.json has 28 modules (not 26): aws-network-edge, endpoint-windows-
 | T-25 | Refresh FINAL_REPORT / EVIDENCE_MANIFEST / USER_ACTIONS_REQUIRED for this integration. | Final Report | DOC_STALE | proposed |
 | T-26 | Owner-auth: enroll human-only key after independent review of the design (UA-6). | Ian | USER_ACTION | not yet actionable |
 | T-27 | Final independent whole-repo review packet after merge (Ian routes it). | PR Reviewer | REVIEW | after merge |
+| T-29 | acceptance run.sh HASH sweep: verify repo-root-relative bundles (evidence/backup/aws-backup-dr, PR #21) with --base . (CI run 41695254014 reported HASH-2 FAIL: 72 entries resolved against the bundle dir). Every entry still hash-checked; tamper probe rejected. | Integrator | BLOCKING | done on integration branch |
+| T-30 | Docs knowledge base: metadata for the 16 Markdown files brought in by the acceptance/review merges; the 12 review/acceptance records are frozen in preserved-records.json (Documentation run 41695477787 failed: Missing metadata). | Integrator | BLOCKING | done on integration branch |
 | T-28 | Merge integration/completion-20261103 into main (next checkpoint, normal merge, no force). | Integrator | FOLLOW_UP | awaiting STEP 1 report |

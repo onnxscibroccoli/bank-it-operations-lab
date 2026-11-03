@@ -143,5 +143,17 @@
   "docs/runbooks/aws-backup/README.md": "f02955aed740cfd1aa46a817419312d99e9dfc6559c0b9c351ef98d80cf63c97",
   "docs/runbooks/aws-backup/cost-capacity/CAPACITY_TROUBLESHOOTING_EXERCISE.md": "911ce3aa78348081ef95b1359a6f128745efdc76f9fb8661de387d3982c8da9c",
   "docs/runbooks/aws-backup/cost-capacity/COST_DRIVER_WORKSHEET.md": "f2971a4827207c7254155a193a3c1c470c4f78ae18469053fcd57bca1bfdb057",
-  "docs/runbooks/aws-backup/cost-capacity/README.md": "e7de24f8ef227d7d761d0c8df2e524f72d420ab1583c7c9baa6cf519b769dff8"
+  "docs/runbooks/aws-backup/cost-capacity/README.md": "e7de24f8ef227d7d761d0c8df2e524f72d420ab1583c7c9baa6cf519b769dff8",
+  "reports/ACCEPTANCE.md": "7ba578bc020f6f34a26427287405f48e670f436c1641fed32635cd8dafc0de22",
+  "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md": "55cb303d8b5a91adf5b1d3bd1698c8d8139e0a915fa3054cdc6e81c659234cc4",
+  "reports/independent/chatgpt/accelerated-completion-plan-20261028.md": "b17d21b615459e9ac5e49517745f273ec12683cd9c8fe57550ce818034ecf9bd",
+  "reports/independent/chatgpt/acceptance-181bcdd-review.md": "30b5975b18fb30aefc943dd74d92c952e3152a39d6f1661d165221e71a1ddaf4",
+  "reports/review-acceptance-vertical-slice.md": "7126e28e990fc8537b9f107c7ed55c8a1aca1996087e6835e14057a83714652e",
+  "reports/review-candidate-08cdf11.md": "6a7f81bc7bdd8b7596ff7af062f1d0c5c5e28683240d00eec7c29e83da7a6488",
+  "reports/review-candidate-1fdf25a.md": "5b97155ae8df590a06f81e3f3a5b85f00289c34fe0f84648964394e13f8e65a3",
+  "reports/review-candidate-2e3041a.md": "5b57e1030402f17f201d32d06918907c25b88ade83385ae72b5b22ef10d9ef86",
+  "reports/review-candidate-5a75d9c.md": "947ccb8d895ceac2d3bf56dad9f8464dd3f18b0c88beb2668002470f323017c7",
+  "reports/review-candidate-a9d0f64.md": "1fd1959e2e07e0bcf9fc7cbc909adea6dbad109f4599d07d15a071d51689bc03",
+  "reports/review-candidate-b908a66.md": "7076bbd1907a3b2441daa18cfcb9d9f12ceb882d3cd98e92866fb1eab6366051",
+  "reports/review-pr3-pr6.md": "83d84c597c8d37139578eb277a87828eda2c01610bb010363efc964b7980c10f"
 }
