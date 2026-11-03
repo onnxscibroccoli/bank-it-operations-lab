@@ -13,5 +13,10 @@ Policy files (in .github/workflows/):
                         A `uses:` comment must be `# <version>` or one of also_tags (e.g. `# v5.1.0` or `# v5`).
   WORKFLOW_POLICY.json  job-level write scopes that are allowed, each with a reason.
 
-To pin a new action:  python3 tests/integration/workflow_lint/resolve_lock.py generate /tmp/new.tsv owner/repo@vX.Y.Z
+To pin a new action:  python3 .github/workflows/workflow_lint/resolve_lock.py generate /tmp/new.tsv owner/repo@vX.Y.Z
 then merge the verified row into ACTIONS_LOCK.tsv and write `uses: owner/repo@<sha> # vX.Y.Z`. Never type a SHA by hand.
+
+Location: these files live in .github/workflows/workflow_lint/ (a subdirectory; GitHub Actions only loads workflow
+files directly in .github/workflows/, so the deliberately bad fixtures here are never executed). They were first
+placed under tests/integration/workflow_lint/, which the acceptance gate rejected (SCOPE: not a registered module
+path; run 41733025578). .github/ is a declared non-module path.

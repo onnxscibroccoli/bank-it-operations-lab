@@ -1,6 +1,6 @@
 {
   "schema": "bank-lab/workflow-policy/v1",
-  "note": "Job-level write scopes allowed by tests/integration/workflow_lint/check_workflows.py. Every entry needs a reason. Top-level permissions must stay read-only or {}.",
+  "note": "Job-level write scopes allowed by .github/workflows/workflow_lint/check_workflows.py. Every entry needs a reason. Top-level permissions must stay read-only or {}.",
   "job_write_allowlist": {
     "documentation.yml:deploy": ["pages", "id-token"]
   },

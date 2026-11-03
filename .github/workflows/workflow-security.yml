@@ -35,13 +35,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install PyYAML (hash-pinned)
-        run: python -m pip install --require-hashes --no-deps -r tests/integration/workflow_lint/requirements.txt
+        run: python -m pip install --require-hashes --no-deps -r .github/workflows/workflow_lint/requirements.txt
       - name: Negative self-test (bad fixtures must be caught, good fixture must pass)
         id: selftest
         run: |
           set +e
           mkdir -p wl-evidence
-          SELFTEST_OUT=wl-evidence/selftest PYTHON=python bash tests/integration/workflow_lint/selftest.sh 2>&1 | tee wl-evidence/selftest-console.log
+          SELFTEST_OUT=wl-evidence/selftest PYTHON=python bash .github/workflows/workflow_lint/selftest.sh 2>&1 | tee wl-evidence/selftest-console.log
           rc=${PIPESTATUS[0]}
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
       - name: Check repository workflows
@@ -49,7 +49,7 @@ jobs:
         if: always()
         run: |
           set +e
-          python tests/integration/workflow_lint/check_workflows.py --tsv wl-evidence/findings.tsv 2>&1 | tee wl-evidence/check-console.log
+          python .github/workflows/workflow_lint/check_workflows.py --tsv wl-evidence/findings.tsv 2>&1 | tee wl-evidence/check-console.log
           rc=${PIPESTATUS[0]}
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
           { echo '### workflow-security'; tail -n 1 wl-evidence/check-console.log; tail -n 1 wl-evidence/selftest-console.log; } >> "$GITHUB_STEP_SUMMARY"
@@ -85,7 +85,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set +e
-          python3 tests/integration/workflow_lint/resolve_lock.py verify .github/workflows/ACTIONS_LOCK.tsv 2>&1 | tee lock-verify.log
+          python3 .github/workflows/workflow_lint/resolve_lock.py verify .github/workflows/ACTIONS_LOCK.tsv 2>&1 | tee lock-verify.log
           rc=${PIPESTATUS[0]}
           tail -n 1 lock-verify.log >> "$GITHUB_STEP_SUMMARY"
           exit "$rc"
