@@ -1,0 +1,349 @@
+diff --git a/scripts/ci/check_registries.py b/scripts/ci/check_registries.py
+new file mode 100644
+index 00000000..34b0dc0c
+--- /dev/null
++++ b/scripts/ci/check_registries.py
+@@ -0,0 +1,119 @@
++#!/usr/bin/env python3
++"""Cross-registry consistency check (candidate-20261103b, owner directive t26u task 4).
++
++Deterministic, offline, stdlib only. Reconciles three registries that were maintained separately:
++  coordination/modules.json        module status, PRs, paths, limitations
++  coordination/tasks.json          per-PR integration records (tasks[], related_prs[]) and user_actions[]
++  docs/metadata/pages.json         one metadata entry per tracked Markdown file
++  docs/metadata/preserved-records.json  sha256 of frozen historical records
++
++Rules (each violation is one error line; exit 1 if any):
++  R1  every tasks[]/related_prs[] PR maps to exactly one module listing it in prs[];
++      its recorded status agrees with that module's status (integrated->INTEGRATED, superseded->SUPERSEDED),
++      or the record carries reconciled{as_of, current_module, current_status, note} whose current_* match the
++      module. The original status is never rewritten: it stays as history.
++  R2  pages.json keys == tracked Markdown files (no missing entry, no orphan entry).
++  R3  every preserved record exists, matches its sha256 and has a pages.json entry.
++  R4  every Markdown file of the review-notes module is frozen in preserved-records and is lifecycle Archived.
++  R5  every UA-n cited in modules.json exists in tasks.json user_actions, and every unresolved UA whose task_id is
++      PR-<n> is cited by the module that lists PR n (a module may also cite UAs of other PRs, e.g. a superseded one).
++"""
++import hashlib, json, re, subprocess, sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[2]
++STATUS_MAP = {"integrated": "INTEGRATED", "superseded": "SUPERSEDED"}
++
++
++def tracked_markdown(root):
++    out = subprocess.check_output(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=root, text=True)
++    return sorted({p for p in out.splitlines() if p.lower().endswith(".md") and (Path(root) / p).is_file()})
++
++
++def _md_in(paths, files):
++    return sorted(f for f in files for p in paths if f == p or f.startswith(p.rstrip("/") + "/"))
++
++
++def check(modules, tasks, pages, preserved, md_files, root=ROOT):
++    errs = []
++    mods = modules["modules"]
++    by_pr = {}
++    for m in mods:
++        for n in m.get("prs", []):
++            by_pr.setdefault(n, []).append(m)
++    # R1
++    for kind in ("tasks", "related_prs"):
++        for rec in tasks.get(kind, []):
++            n, st = rec.get("pr"), rec.get("status")
++            owners = by_pr.get(n, [])
++            if len(owners) != 1:
++                errs.append(f"R1 {kind} PR #{n}: listed by {len(owners)} modules (need exactly 1)")
++                continue
++            m = owners[0]
++            if STATUS_MAP.get(st) == m["status"]:
++                continue
++            rc = rec.get("reconciled")
++            if not isinstance(rc, dict) or not all(isinstance(rc.get(k), str) and rc[k] for k in ("as_of", "current_module", "current_status", "note")):
++                errs.append(f"R1 {kind} PR #{n}: status {st!r} disagrees with module {m['id']} {m['status']} and no reconciled record")
++            elif rc["current_module"] != m["id"] or rc["current_status"] != m["status"]:
++                errs.append(f"R1 {kind} PR #{n}: reconciled says {rc['current_module']}/{rc['current_status']}, registry says {m['id']}/{m['status']}")
++    # R2
++    keys = set(pages)
++    for f in sorted(set(md_files) - keys):
++        errs.append(f"R2 missing pages.json entry: {f}")
++    for f in sorted(keys - set(md_files)):
++        errs.append(f"R2 orphan pages.json entry (no tracked file): {f}")
++    # R3
++    for f, digest in sorted(preserved.items()):
++        p = Path(root) / f
++        if not p.is_file():
++            errs.append(f"R3 preserved record missing: {f}")
++        elif hashlib.sha256(p.read_bytes()).hexdigest() != digest:
++            errs.append(f"R3 preserved record changed: {f}")
++        if f not in pages:
++            errs.append(f"R3 preserved record has no pages.json entry: {f}")
++    # R4
++    rn = [m for m in mods if m["id"] == "review-notes"]
++    if rn:
++        for f in _md_in(rn[0]["paths"], md_files):
++            if f not in preserved:
++                errs.append(f"R4 review record not frozen in preserved-records: {f}")
++            if pages.get(f, {}).get("lifecycle_status") != "Archived":
++                errs.append(f"R4 review record not lifecycle Archived: {f}")
++    # R5
++    uas = {u["id"]: u for u in tasks.get("user_actions", [])}
++    cited = {}
++    for m in mods:
++        for u in sorted(set(re.findall(r"\bUA-\d+\b", json.dumps(m)))):
++            cited.setdefault(u, []).append(m)
++    for u, ms in sorted(cited.items()):
++        if u not in uas:
++            errs.append(f"R5 {', '.join(x['id'] for x in ms)} cite unknown {u}")
++            continue
++    for u, ua in sorted(uas.items()):
++        t = re.match(r"PR-(\d+)", ua.get("task_id", ""))
++        if not t or ua.get("status") == "RESOLVED":
++            continue
++        n = int(t.group(1))
++        for m in by_pr.get(n, []):
++            if m not in cited.get(u, []):
++                errs.append(f"R5 {u} (task {ua['task_id']}, {ua.get('status')}) is not cited by module {m['id']}")
++    return errs
++
++
++def load(root=ROOT):
++    j = lambda p: json.loads((Path(root) / p).read_text())
++    return (j("coordination/modules.json"), j("coordination/tasks.json"), j("docs/metadata/pages.json"),
++            j("docs/metadata/preserved-records.json"), tracked_markdown(root))
++
++
++def main(argv=None):
++    errs = check(*load(), root=ROOT)
++    for e in errs:
++        print("ERROR", e)
++    print(f"REGISTRIES {'INVALID: %d error(s)' % len(errs) if errs else 'CONSISTENT'}: modules.json / tasks.json / pages.json / preserved-records.json")
++    return 1 if errs else 0
++
++
++if __name__ == "__main__":
++    sys.exit(main(sys.argv[1:]))
+diff --git a/scripts/ci/tests/test_actions_pinned.py b/scripts/ci/tests/test_actions_pinned.py
+new file mode 100644
+index 00000000..79212ebf
+--- /dev/null
++++ b/scripts/ci/tests/test_actions_pinned.py
+@@ -0,0 +1,27 @@
++"""T-11: every `uses:` in .github/workflows is a local reusable workflow or pinned to a full 40-hex commit SHA."""
++import re, unittest
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[3]
++USES = re.compile(r"^\s*-?\s*uses:\s*([^\s#]+)", re.M)
++
++
++def unpinned(text):
++    return [u for u in USES.findall(text) if not u.startswith("./") and not re.fullmatch(r"[\w.-]+/[\w./-]+@[0-9a-f]{40}", u)]
++
++
++class ActionsPinned(unittest.TestCase):
++    def test_all_workflows_pinned(self):
++        bad = {p.name: unpinned(p.read_text()) for p in sorted((ROOT / ".github/workflows").glob("*.yml"))}
++        self.assertEqual({k: v for k, v in bad.items() if v}, {})
++
++    def test_detector_rejects_tags_branches_and_short_shas(self):
++        for line in ("- uses: actions/checkout@v4", "  uses: actions/deploy-pages@main", "- uses: actions/setup-node@49933ea",
++                     "- uses: actions/checkout@V4 # 11d5960a326750d5838078e36cf38b85af677262"):
++            with self.subTest(line=line):
++                self.assertTrue(unpinned(line))
++        self.assertFalse(unpinned("- uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4\n    uses: ./.github/workflows/aws-cdk.yml"))
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/ci/tests/test_check_registries.py b/scripts/ci/tests/test_check_registries.py
+new file mode 100644
+index 00000000..56cde138
+--- /dev/null
++++ b/scripts/ci/tests/test_check_registries.py
+@@ -0,0 +1,76 @@
++"""Negative tests for scripts/ci/check_registries.py (each mutation must produce its rule's error)."""
++import copy, json, sys, unittest
++from pathlib import Path
++ROOT = Path(__file__).resolve().parents[3]
++sys.path.insert(0, str(ROOT / "scripts/ci"))
++import check_registries as cr
++
++
++class Registries(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        cls.live = cr.load(ROOT)
++
++    def run_with(self, mutate):
++        mods, tasks, pages, pres, md = copy.deepcopy(self.live)
++        mutate(mods, tasks, pages, pres, md)
++        return cr.check(mods, tasks, pages, pres, md, root=ROOT)
++
++    def assertRule(self, errs, rule):
++        self.assertTrue(any(e.startswith(rule) for e in errs), errs)
++
++    def test_live_registries_consistent(self):
++        self.assertEqual(cr.check(*self.live, root=ROOT), [])
++
++    def test_r1_status_disagreement_without_reconciliation(self):
++        def m(mods, tasks, *_):
++            next(r for r in tasks["tasks"] if r["pr"] == 6).pop("reconciled")
++        self.assertRule(self.run_with(m), "R1")
++
++    def test_r1_reconciled_with_wrong_status(self):
++        def m(mods, tasks, *_):
++            next(r for r in tasks["related_prs"] if r["pr"] == 14)["reconciled"]["current_status"] = "NOT_INTEGRATED"
++        self.assertRule(self.run_with(m), "R1")
++
++    def test_r1_integrated_record_but_module_not_integrated(self):
++        def m(mods, *_):
++            next(x for x in mods["modules"] if 5 in x.get("prs", []))["status"] = "BLOCKED"
++        self.assertRule(self.run_with(m), "R1")
++
++    def test_r1_pr_claimed_by_two_modules(self):
++        def m(mods, *_):
++            next(x for x in mods["modules"] if x["id"] == "observability")["prs"].append(3)
++        self.assertRule(self.run_with(m), "R1")
++
++    def test_r2_missing_and_orphan_page_entries(self):
++        def m(mods, tasks, pages, pres, md):
++            pages.pop("reports/review-pr3-pr6.md"); pages["no/such/file.md"] = {}
++        errs = self.run_with(m)
++        self.assertTrue(any("missing pages.json entry: reports/review-pr3-pr6.md" in e for e in errs), errs)
++        self.assertTrue(any("orphan pages.json entry" in e for e in errs), errs)
++
++    def test_r3_preserved_record_hash_changed(self):
++        def m(mods, tasks, pages, pres, md):
++            pres["reports/review-pr3-pr6.md"] = "0" * 64
++        self.assertRule(self.run_with(m), "R3")
++
++    def test_r4_review_record_not_frozen_or_not_archived(self):
++        def m(mods, tasks, pages, pres, md):
++            pres.pop("reports/review-candidate-a9d0f64.md"); pages["reports/review-candidate-08cdf11.md"]["lifecycle_status"] = "Stable"
++        errs = self.run_with(m)
++        self.assertTrue(any("not frozen" in e for e in errs) and any("not lifecycle Archived" in e for e in errs), errs)
++
++    def test_r5_unknown_user_action(self):
++        def m(mods, *_):
++            next(x for x in mods["modules"] if x["id"] == "aws-cdk")["limitations"] += " See UA-99."
++        self.assertRule(self.run_with(m), "R5")
++
++    def test_r5_open_pr_user_action_not_cited_by_its_module(self):
++        # The pre-candidate registry cited UA-3 for the Entra baseline, which is UA-2 (task PR-4).
++        def m(mods, *_):
++            x = next(x for x in mods["modules"] if x["id"] == "entra-offline"); x["limitations"] = "Baseline choices await owner confirmation (UA-3)."
++        self.assertRule(self.run_with(m), "R5")
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/ci/tests/test_module_coverage.py b/scripts/ci/tests/test_module_coverage.py
+index c6c28f87..33dbf808 100644
+--- a/scripts/ci/tests/test_module_coverage.py
++++ b/scripts/ci/tests/test_module_coverage.py
+@@ -31,7 +31,8 @@ class Coverage(unittest.TestCase):
+             if m["status"] not in ("INTEGRATED", "SUPERSEDED")
+         )
+         self.assertEqual(c["incomplete"], expected)
+-        self.assertEqual(c["incomplete"], ["review-notes(NOT_INTEGRATED)"])  # acceptance INTEGRATED by acceptance/integration-v2
++        # candidate-20261103b: review-notes INTEGRATED (acceptance by PR #40); nothing is incomplete.
++        self.assertEqual(c["incomplete"], [])
+         # BLOCKED stays in the denominator and is incomplete. The fixture is a copy; orgs-security is INTEGRATED.
+         r = copy.deepcopy(REG)
+         blocked = mod(r, "orgs-security")
+diff --git a/scripts/ci/tests/test_t16_pin_proposal.py b/scripts/ci/tests/test_t16_pin_proposal.py
+new file mode 100644
+index 00000000..2e1868c2
+--- /dev/null
++++ b/scripts/ci/tests/test_t16_pin_proposal.py
+@@ -0,0 +1,89 @@
++"""T-16 (candidate-20261103b): a new gate pin is prepared UNREVIEWED and can never make the gate trusted by itself;
++merge-eligibility stays fail-closed on pushes to main and whenever independent approval is missing."""
++import copy, json, subprocess, sys, unittest
++from pathlib import Path
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++import verify_trusted_gate as vtg  # noqa: E402
++from test_merge_eligibility_binding import APPROVED_REVIEWS, AUTHOR, CAND, IDENT, REVIEWER, run  # noqa: E402
++
++ROOT = Path(__file__).resolve().parents[3]
++PROPOSAL = ROOT / "coordination/proposed-gate-pin/gate-manifest.json"
++REAL_CONFIG = json.loads((ROOT / ".github/acceptance/trusted-config.json").read_text())
++HEAD = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
++OTHER = "1" * 40
++
++
++def approving(login, commit):
++    return {"id": 9, "user": {"login": login}, "state": "APPROVED", "commit_id": commit}
++
++
++class ProposedPinStaysUnreviewed(unittest.TestCase):
++    def manifests(self):
++        built = vtg.build(ROOT, HEAD) if HEAD else {"gate_sha": OTHER, "files": {}}
++        built["independent_review"] = None
++        out = [built]
++        if PROPOSAL.exists():
++            out.append(json.loads(PROPOSAL.read_text()))
++        return out
++
++    def test_committed_proposal_records_no_review_and_no_trust_marker(self):
++        if not PROPOSAL.exists():
++            self.skipTest("no committed pin proposal at this commit")
++        man = json.loads(PROPOSAL.read_text())
++        self.assertIsNone(man.get("independent_review"))
++        self.assertEqual(man.get("review_status"), "UNREVIEWED")
++        self.assertFalse({k for k in man if k.lower() in ("trusted", "verified", "status")} - {"review_status"})
++
++    def test_unreviewed_pin_is_unverified(self):
++        for man in self.manifests():
++            with self.subTest(gate=man.get("gate_sha")):
++                st, why = vtg.pin_trust(man, OTHER, REAL_CONFIG, None, None, None)
++                self.assertEqual(st, "UNVERIFIED")
++                self.assertIn("no independently reviewed gate pin", " ".join(why))
++
++    def test_forged_review_record_does_not_make_it_trusted(self):
++        # Writing {pr, review_id} into the manifest is not enough: the live allow-list is empty and the shared
++        # account is the PR author, so neither its approval nor an unlisted account's approval counts.
++        for man in self.manifests():
++            forged = dict(man, independent_review={"pr": 42, "review_id": 1})
++            g = forged["gate_sha"]
++            for login, perm in ((AUTHOR, "admin"), ("someone-else", "write")):
++                with self.subTest(gate=g, login=login):
++                    st, _ = vtg.pin_trust(forged, OTHER, REAL_CONFIG, approving(login, g), AUTHOR, perm)
++                    self.assertEqual(st, "UNVERIFIED")
++
++    def test_self_pin_of_the_candidate_is_unverified(self):
++        for man in self.manifests():
++            st, why = vtg.pin_trust(man, man["gate_sha"], REAL_CONFIG, None, None, None)
++            self.assertEqual(st, "UNVERIFIED")
++            self.assertIn("self-pin", " ".join(why))
++
++
++class MergeEligibilityFailClosed(unittest.TestCase):
++    def test_push_to_main_is_a_direct_run_and_not_eligible(self):
++        direct = dict(IDENT, kind="direct", event="push", base_sha=None)
++        rc, out = run(ident=direct)
++        self.assertEqual(rc, 1)
++        self.assertIn("NOT ELIGIBLE", out)
++        self.assertIn("direct run", out)
++
++    def test_missing_independent_approval_is_not_eligible(self):
++        for reviews in ({**APPROVED_REVIEWS, "reviews": []},
++                        {**APPROVED_REVIEWS, "reviews": [approving(AUTHOR, CAND)]},
++                        {**APPROVED_REVIEWS, "reviews": [dict(approving(REVIEWER, CAND), state="COMMENTED")]},
++                        None):
++            with self.subTest(reviews=None if reviews is None else reviews["reviews"]):
++                rc, out = run(reviews=reviews)
++                self.assertEqual(rc, 1)
++                self.assertIn("NOT ELIGIBLE", out)
++
++    def test_unverified_gate_trust_is_not_eligible(self):
++        rc, out = run(gate_trust={"status": "UNVERIFIED", "reasons": ["no independently reviewed gate pin"]})
++        self.assertEqual(rc, 1)
++        self.assertIn("TRUSTED GATE UNVERIFIED", out)
++
++
++if __name__ == "__main__":
++    unittest.main()

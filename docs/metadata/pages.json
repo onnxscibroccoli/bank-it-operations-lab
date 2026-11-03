@@ -12593,7 +12593,7 @@
   },
   "acceptance/pin-review/T-16/README.md": {
     "id": "page-1406fd3a55f5516d",
-    "description": "T-16 stale trusted-gate pin investigation: the one stale manifest entry, its history, diffs, tests and a proposed (not trusted) corrected manifest.",
+    "description": "T-16 stale trusted-gate pin root cause: per-file table against main and the consolidated candidate, diffs, tests, classification and review requirements; proposals are not trusted.",
     "category": "governance-compliance",
     "audience": [
       "operator",
@@ -12628,7 +12628,7 @@
   },
   "acceptance/rulesets/README.md": {
     "id": "page-415c9da5c3748654",
-    "description": "Prepared GitHub rulesets for main and evidence/acceptance with exact required check names and owner-ready gh api commands.",
+    "description": "Staged GitHub rulesets (stage 0 safe now, stage 1 after a human reviewer, stage 2 after T-16) for main and evidence/acceptance, exact required check names and owner-ready gh api commands.",
     "category": "governance-compliance",
     "audience": [
       "operator",
@@ -12636,7 +12636,7 @@
       "architect"
     ],
     "lifecycle_status": "In Development",
-    "current_state": "Prepared only; evaluate mode refused by the plan, nothing created or activated.",
+    "current_state": "Prepared only, enforcement disabled; evaluate mode unavailable on this plan; nothing created or activated.",
     "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
     "planned": "Independent human review and owner decision; neither is performed or claimed by the agent.",
     "source_files": [
@@ -12650,6 +12650,41 @@
       "acceptance",
       "rulesets",
       "branch protection",
+      "CI"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Documentation entry only; execution results apply to their named run and commit.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-03"
+  },
+  "acceptance/pin-review/T-16/FINAL/README.md": {
+    "id": "page-cf23d8c46a8ae688",
+    "description": "T-16 comparison of gate pins a518b03e vs 6ea6803c vs main, with a recommendation as input to the Integrator's reconciliation.",
+    "category": "governance-compliance",
+    "audience": [
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Recommendation only; no pin installed or trusted; merge-eligibility stays NOT ELIGIBLE.",
+    "limitations": "Offline lab gate only: no AWS deploy, no Entra/Graph calls, no production. The gate never reports ACCEPTED; independent review and the owner's portfolio decision are separate.",
+    "planned": "Independent human review and owner decision; neither is performed or claimed by the agent.",
+    "source_files": [
+      "acceptance/pin-review/T-16/FINAL",
+      "tools/acceptance/gate/tests/test_pin_review.py"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/40"
+    ],
+    "aliases": [
+      "acceptance",
+      "trusted gate",
+      "pin review",
+      "Evidence",
       "CI"
     ],
     "verification": {

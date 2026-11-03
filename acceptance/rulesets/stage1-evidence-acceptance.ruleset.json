@@ -1,7 +1,7 @@
 {
-  "name": "evidence/acceptance: PR + human code-owner review, append-only",
+  "name": "stage 1 evidence/acceptance: + PR with human code-owner review",
   "target": "branch",
-  "enforcement": "evaluate",
+  "enforcement": "disabled",
   "bypass_actors": [],
   "conditions": {
     "ref_name": {

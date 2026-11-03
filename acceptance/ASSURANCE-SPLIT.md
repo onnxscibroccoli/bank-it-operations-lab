@@ -9,7 +9,7 @@ of the last two.
 | who | GitHub Actions | a human other than the shared agent account (`onnxscibroccoli`) | the owner |
 | done by us? | yes, we trigger and report them | **no**; we write no review records | **no**; we claim none |
 | best possible output | `EXECUTION_PASS` + `REVIEW_PENDING` (`decide.py` has no ACCEPTED state); `merge-eligibility` `TRUSTED GATE VERIFIED` only with a qualifying review | `independent_review {pr, review_id}` in the trusted manifest, fetched and checked at runtime | an installed manifest and an active ruleset |
-| current state | acceptance jobs green on main `8e2df97b`; `merge-eligibility` **red** (T-16) | **none**: `independent_review` null, `reviewer_allowlist` empty, no second collaborator | **none**: proposed manifest not installed; rulesets prepared, not created (evaluate mode refused by plan) |
+| current state | acceptance jobs green on main `8e2df97b`; `merge-eligibility` **red** (T-16) | **none**: `independent_review` null, `reviewer_allowlist` empty, no second collaborator | **none**: proposed manifest not installed; staged rulesets (stage 0/1/2) prepared, none created; evaluate mode unavailable on this plan; T-16 recommendation in `pin-review/T-16/FINAL/` is input to the Integrator's `coordination/T16_RECONCILIATION.md` |
 
 ## Why the gate cannot approve itself
 

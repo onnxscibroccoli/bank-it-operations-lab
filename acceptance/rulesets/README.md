@@ -1,45 +1,49 @@
-# Branch rulesets for `main` and `evidence/acceptance`: prepared, NOT active
+# Branch rulesets for `main` and `evidence/acceptance`: staged rollout, prepared, NOT active
 
-Status on 2026-11-03 17:05 EST: **prepared only.** No ruleset exists on the repository (`GET /rulesets` returns `[]`)
-and no branch protection exists on `main`.
+Status on 2026-11-03, about 17:50 EST: **prepared only, nothing activated.**
 
-- Creating `main.ruleset.json` with `"enforcement": "evaluate"` was attempted once through the API. GitHub refused it
-  with `422 Enforcement evaluate option is not supported on this plan. Please upgrade to Enterprise to enable it.`
-  (see `api-attempt-20261103.txt`). The repository is owned by a personal account, so evaluate mode is not available.
-- Nothing was activated. `"enforcement": "active"` was not attempted: that would block merges and is the owner's decision.
+- The repository has no rulesets (`GET /rulesets` returns `[]`) and `main` has no branch protection.
+- Evaluate mode is not available. One earlier attempt was refused with
+  `422 Enforcement evaluate option is not supported on this plan. Please upgrade to Enterprise` (`api-attempt-20261103.txt`;
+  that attempt used an earlier, unstaged file that is now replaced). It will not be retried.
+- Every file here has `"enforcement": "disabled"` and `"bypass_actors": []`. None of them names the shared agent account
+  `onnxscibroccoli`, or any bot, as a reviewer, code owner or bypass actor (`tools/acceptance/gate/tests/test_rulesets.py`).
 
-## Files
+## Why staged
 
-| file | what |
-|---|---|
-| `main.ruleset.json` | `main`: PR required, 1 approval, code-owner review, approval after the last push, stale reviews dismissed, threads resolved, merge-commit only (the integration history depends on normal merges, so linear history is **not** required here), no deletion, no force-push, 32 required status checks (strict / up to date) |
-| `evidence-acceptance.ruleset.json` | `evidence/acceptance`: the same PR and review rules, plus **linear history** (append-only records), no deletion, no force-push. No status checks are required because no workflow runs for PRs to this branch (only `Documentation knowledge base`, which tests `main` content) |
-| `required-status-checks.main.txt` | the exact check-run names, taken from the real PR #40 runs on `8c662d76`, and where they came from |
-| `CODEOWNERS.proposed` | a CODEOWNERS file with a placeholder for a human owner |
-| `api-attempt-20261103.txt` | the API response |
+The repository's only collaborator is `onnxscibroccoli`, the shared agent account. It authors every PR, and GitHub never
+counts an author's own approval. Turning on a required review or code-owner review now would leave **no valid way to
+update** `main` or `evidence/acceptance`. `merge-eligibility` is red until T-16 is closed (`../pin-review/T-16/`), so
+requiring it now would also block every merge. Each stage below always leaves a working update path.
 
-Both files set `"bypass_actors": []`. Neither file names the shared agent account `onnxscibroccoli`, or any bot, as a
-reviewer, code owner or bypass actor (`tools/acceptance/gate/tests/test_rulesets.py` checks this).
+| stage | when | `main` | `evidence/acceptance` | update path that still works |
+|---|---|---|---|---|
+| **0** (safe now) | any time | `stage0-main.ruleset.json`: no deletion, no force-push, **31** required checks (all real check names except `merge-eligibility`), strict (up to date) | `stage0-evidence-acceptance.ruleset.json`: no deletion, no force-push, linear history | main: open a PR, wait for the 31 checks to pass, merge it (no approval required). evidence: fast-forward pushes as today |
+| **1** | after a human reviewer (not the shared account, not a bot) is invited with write access **and** `.github/CODEOWNERS` naming them is committed to both branches (`CODEOWNERS.proposed`) | `stage1-main.ruleset.json`: stage 0 plus a PR with 1 approval, code-owner review, approval after the last push, stale reviews dismissed, threads resolved, merge commits only | `stage1-evidence-acceptance.ruleset.json`: stage 0 plus the same PR rule, rebase or squash only | a PR approved by the human reviewer |
+| **2** | after T-16 is closed: the reviewer is on `reviewer_allowlist`, a reviewed pin is installed, and `merge-eligibility` is green on `main` | `stage2-main.ruleset.json`: stage 1 plus `merge-eligibility` (all 32 checks) | unchanged from stage 1 (no workflow runs for PRs to this branch) | a PR that is approved and merge-eligible |
 
-## What the owner needs to do first
-
-1. **Add a human reviewer.** The repository's only collaborator is `onnxscibroccoli` (admin), which is the shared agent
-   account that authors every PR. GitHub never counts a PR author's own approval, so with these rules nothing can merge
-   until a second human account with write access is invited.
-2. Replace the placeholder in `CODEOWNERS.proposed` and commit it as `.github/CODEOWNERS` on both branches, through a reviewed PR.
-3. Decide whether `merge-eligibility` should be required right away. It is on the list because it is the gate. It is red
-   until T-16 is resolved (`acceptance/pin-review/T-16/README.md`), so requiring it blocks every merge to `main` until then.
+Notes:
+- Linear history is not required on `main`, because the integration history relies on merge commits. It is required on
+  `evidence/acceptance`, which already has a linear history (0 merges in 12 commits).
+- In stage 0 the strict policy means a PR has to be up to date with `main` before merging. When `main` moves, the
+  checks re-run (the acceptance job takes about 20 minutes).
+- Moving between stages means replacing the previous stage's ruleset, not stacking them, so `PUT` the new rules into the same ruleset id.
+- `required-status-checks.main.txt` lists the exact names (from the real PR #40 runs on `8c662d76`) and where they came from.
 
 ## Owner-ready commands (run by the owner, not by an agent)
 
 ```bash
 R=onnxscibroccoli/bank-it-operations-lab
-# Evaluate mode needs GitHub Enterprise. On this plan, use "active" (enforcing) or "disabled" (stored only):
-jq '.enforcement="disabled"' acceptance/rulesets/main.ruleset.json > /tmp/main.json   # or "active" once steps 1-3 are done
-gh api -X POST repos/$R/rulesets --input /tmp/main.json
-jq '.enforcement="disabled"' acceptance/rulesets/evidence-acceptance.ruleset.json > /tmp/ev.json
-gh api -X POST repos/$R/rulesets --input /tmp/ev.json
-gh api repos/$R/rulesets                                       # list; note the ids
-# later, to switch one on:  gh api -X PUT repos/$R/rulesets/<id> -f enforcement=active
-# Enterprise only, as written: gh api -X POST repos/$R/rulesets --input acceptance/rulesets/main.ruleset.json
+# Stage 0: store, inspect, then switch on
+gh api -X POST repos/$R/rulesets --input acceptance/rulesets/stage0-main.ruleset.json                 # created disabled
+gh api -X POST repos/$R/rulesets --input acceptance/rulesets/stage0-evidence-acceptance.ruleset.json  # created disabled
+gh api repos/$R/rulesets --jq '.[] | "\(.id) \(.name) \(.enforcement)"'
+gh api -X PUT repos/$R/rulesets/<main-id> -f enforcement=active
+gh api -X PUT repos/$R/rulesets/<evidence-id> -f enforcement=active
+# Stage 1 (after a human reviewer and CODEOWNERS exist): replace the rules, keeping each id
+jq '.enforcement="active"' acceptance/rulesets/stage1-main.ruleset.json | gh api -X PUT repos/$R/rulesets/<main-id> --input -
+jq '.enforcement="active"' acceptance/rulesets/stage1-evidence-acceptance.ruleset.json | gh api -X PUT repos/$R/rulesets/<evidence-id> --input -
+# Stage 2 (after T-16 is closed and merge-eligibility is green on main)
+jq '.enforcement="active"' acceptance/rulesets/stage2-main.ruleset.json | gh api -X PUT repos/$R/rulesets/<main-id> --input -
+# Roll back any stage: gh api -X PUT repos/$R/rulesets/<id> -f enforcement=disabled
 ```

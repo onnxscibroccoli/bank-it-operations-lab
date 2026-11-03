@@ -1,0 +1,7 @@
+# integration-gate run 41731062507 (workflow_dispatch on candidate 30851271, the tested SHA of integration/candidate-20261103b; timestamps UTC, 22:29Z = 17:29 EST)
+# https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41731062507
+2026-11-03T22:29:44.2912222Z   GATE_SOURCE: manifest evidence/acceptance@750de1c694c4912f12bb5bb76a20ba74bc208213
+2026-11-03T22:29:44.2912680Z   GATE_SHA: ea0c23597e1eec9bd15ecccc16b40a6ecbe057ae
+2026-11-03T22:29:44.3469887Z ERROR candidate: scripts/ci/tests/test_module_coverage.py differs from the trusted manifest (candidate modifies the verifier without a matching trusted update)
+2026-11-03T22:29:44.3472871Z ERROR candidate: files in scripts/ci not in the trusted manifest: scripts/ci/check_registries.py, scripts/ci/tests/test_actions_pinned.py, scripts/ci/tests/test_check_registries.py, scripts/ci/tests/test_t16_pin_proposal.py
+2026-11-03T22:29:44.3474620Z GATE HASHES REJECTED: 2 error(s)

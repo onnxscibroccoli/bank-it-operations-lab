@@ -1,7 +1,7 @@
 {
-  "name": "main: PR + human code-owner review + acceptance/integration checks",
+  "name": "stage 2 main: + merge-eligibility required (after T-16 closed)",
   "target": "branch",
-  "enforcement": "evaluate",
+  "enforcement": "disabled",
   "bypass_actors": [],
   "conditions": {
     "ref_name": {

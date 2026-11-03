@@ -1,0 +1,168 @@
+{
+  "name": "stage 1 main: + PR with human code-owner review",
+  "target": "branch",
+  "enforcement": "disabled",
+  "bypass_actors": [],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/main"
+      ],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    },
+    {
+      "type": "pull_request",
+      "parameters": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": true,
+        "require_last_push_approval": true,
+        "required_review_thread_resolution": true,
+        "allowed_merge_methods": [
+          "merge"
+        ]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [
+          {
+            "context": "acceptance @ target SHA",
+            "integration_id": 15368
+          },
+          {
+            "context": "aws-cdk / synth-and-test",
+            "integration_id": 15368
+          },
+          {
+            "context": "backup-static",
+            "integration_id": 15368
+          },
+          {
+            "context": "base-aws / synth-and-test",
+            "integration_id": 15368
+          },
+          {
+            "context": "defect control (injected CA002 report-only MUST make acceptance fail)",
+            "integration_id": 15368
+          },
+          {
+            "context": "endpoint-pester",
+            "integration_id": 15368
+          },
+          {
+            "context": "final-summary",
+            "integration_id": 15368
+          },
+          {
+            "context": "gate self-test (FAIL / required UNKNOWN must not pass)",
+            "integration_id": 15368
+          },
+          {
+            "context": "incident-committed-runs (6 requirements + selftest on every committed run)",
+            "integration_id": 15368
+          },
+          {
+            "context": "incident-fresh-run (NEW SIMULATION scenario, apt-installed PostgreSQL server binaries; exit 3 = N...",
+            "integration_id": 15368
+          },
+          {
+            "context": "incident-not-executed-negative",
+            "integration_id": 15368
+          },
+          {
+            "context": "labeling-markers (SIMULATION / PLAN_ONLY markers)",
+            "integration_id": 15368
+          },
+          {
+            "context": "m365-evidence-verification",
+            "integration_id": 15368
+          },
+          {
+            "context": "m365-scenario-evaluation",
+            "integration_id": 15368
+          },
+          {
+            "context": "m365-unit-tests",
+            "integration_id": 15368
+          },
+          {
+            "context": "module-registry",
+            "integration_id": 15368
+          },
+          {
+            "context": "network-edge",
+            "integration_id": 15368
+          },
+          {
+            "context": "offline",
+            "integration_id": 15368
+          },
+          {
+            "context": "offline-validation / validate",
+            "integration_id": 15368
+          },
+          {
+            "context": "orgs-static",
+            "integration_id": 15368
+          },
+          {
+            "context": "package",
+            "integration_id": 15368
+          },
+          {
+            "context": "plan-only-assertions",
+            "integration_id": 15368
+          },
+          {
+            "context": "postgres / CDK synth (only if CDK app present; pinned local CLI, no credentials, no lookups)",
+            "integration_id": 15368
+          },
+          {
+            "context": "postgres / harness self-test (deliberate unexpected-success / wrong-reason cases must FAIL)",
+            "integration_id": 15368
+          },
+          {
+            "context": "postgres / negative control - pg_dump 18 vs postgres:16 must be reported as version_mismatch, never PASS",
+            "integration_id": 15368
+          },
+          {
+            "context": "postgres / restore exercise (offline, unix-socket-only cluster)",
+            "integration_id": 15368
+          },
+          {
+            "context": "postgres / restore exercise (postgres:18 service container)",
+            "integration_id": 15368
+          },
+          {
+            "context": "run-summary",
+            "integration_id": 15368
+          },
+          {
+            "context": "terraform-static",
+            "integration_id": 15368
+          },
+          {
+            "context": "user-actions (USER ACTION REQUIRED report)",
+            "integration_id": 15368
+          },
+          {
+            "context": "validate",
+            "integration_id": 15368
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+## scripts/ci suite at candidate caa9ce7c1b1538d8da920463db77c93c05fe882b (python3 -m unittest discover -s scripts/ci/tests)
+Ran 178 tests in 2.014s
+OK
+
+## scripts/ci suite at main 8e2df97b
+Ran 159 tests in 1.700s
+OK
+
+## cross-check: each test_module_coverage.py version against each registry (coordination/modules.json)
+test version pinned-ea0c2359 on main registry: AssertionError: Lists differ: ['review-notes(NOT_INTEGRATED)'] != [] FAILED (failures=1) 
+test version pinned-ea0c2359 on candidate registry: OK 
+test version main-8e2df97b on main registry: OK 
+test version main-8e2df97b on candidate registry: AssertionError: Lists differ: [] != ['review-notes(NOT_INTEGRATED)'] FAILED (failures=1) 
+test version candidate-caa9ce7c on main registry: AssertionError: Lists differ: ['review-notes(NOT_INTEGRATED)'] != [] FAILED (failures=1) 
+test version candidate-caa9ce7c on candidate registry: OK 
