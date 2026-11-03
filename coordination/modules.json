@@ -306,7 +306,7 @@
     },
     {
       "id": "acceptance",
-      "status": "NOT_INTEGRATED",
+      "status": "INTEGRATED",
       "prs": [
         23,
         24,
@@ -319,19 +319,16 @@
         "tools/acceptance",
         "acceptance",
         "tests/acceptance-contract",
-        "reports/ACCEPTANCE.md"
+        "reports/ACCEPTANCE.md",
+        "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md"
       ],
-      "reason": "PR #27 CHANGES REQUIRED (C1-C5) at 181bcdd; PR #26 head moved to eb42b23 (C1-C4 repairs reported at 17cfaea), pending exact-SHA re-review. PR #23 (6a28847) and #24 (838d537) are ancestors of #26 (superseded into it). PR #25 (ce39504) diverged: #26 drops acceptance/modules/emit_shared.py and its test; needs a disposition.",
+      "reason": "Integrated on integration/completion-20261103 (2026-11-03 EST): PR #26 acceptance/vertical-slice @ eb42b23747d5b686d9540c93e445a713b4e56c5d (contains PR #23 @ 6a28847 and PR #24 @ 838d537; PR #25 adapters @ c6aa238) plus the diverged PR #25 head ce39504 (emit_shared.py + test) merged separately. C1-C4 repaired at 17cfaea (reports/ACCEPTANCE_INVARIANT_ASSURANCE.md); C5 repaired on the integration branch (pinned action SHAs, 7-day retention, runs on main and integration/**); C6 reconciled in coordination/tasks.json. Open follow-ups T-03..T-05 (fail-closed inventory binding, dynamic-group minimum counts, review-record scope). Technical execution only: decide.py must report REVIEW_PENDING; nothing is accepted without an independent review (UA-7).",
       "category": "functional",
       "delivery_location": [
-        "scripts/acceptance",
-        "acceptance",
-        "tools/acceptance",
-        "schemas/acceptance"
+        "scripts/acceptance"
       ],
       "owner": {
-        "agent": "unassigned",
-        "pr_author": "onnxscibroccoli (Worker D)",
+        "agent": "Bank IT Lab Integrator (integrated exact SHAs); authors: acceptance workers A-D",
         "branch": "acceptance/vertical-slice"
       },
       "plan_sources": [
@@ -339,12 +336,13 @@
         "ACP:Lane-A"
       ],
       "required_checks": {
-        "present": [],
+        "present": [
+          "acceptance.yml:gate-selftest",
+          "acceptance.yml:acceptance",
+          "acceptance.yml:defect-control"
+        ],
         "proposed": [
-          "python3 -m unittest discover -s scripts/acceptance/tests",
-          "acceptance/modules tests",
-          "tests/acceptance-contract",
-          "acceptance run: OVERALL=PASS, decision != naked APPROVED without bound review"
+          "fail-closed inventory binding when git show fails (T-03)"
         ]
       },
       "superseded_prs": [
@@ -355,25 +353,50 @@
         "pr": 26,
         "sha": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
         "base": "overnight/integration@49122f2 (stale; 14 commits not in integration)"
-      }
+      },
+      "ci_jobs": [
+        "acceptance.yml:gate-selftest",
+        "acceptance.yml:acceptance",
+        "acceptance.yml:defect-control"
+      ],
+      "validate_all_steps": [
+        "acceptance gate self-test",
+        "acceptance invariant tests",
+        "acceptance adapter tests",
+        "acceptance runner tests",
+        "acceptance contract tests"
+      ],
+      "source_commit": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+      "review_status": "UNREVIEWED_DELIVERY_CANDIDATE",
+      "limitations": "Offline/static acceptance of AWS CDK synth, PostgreSQL restore (local binaries), Entra offline policies and evidence hashes. No live AWS/Entra/Graph. Hash matches prove consistency, not independent execution. I2 PARTIALLY ENFORCED (no branch protection, UA-3)."
     },
     {
       "id": "review-notes",
-      "status": "NOT_INTEGRATED",
+      "status": "INTEGRATED",
       "prs": [
         14,
         27,
         28,
-        29
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
       ],
       "paths": [
         "reports/review-pr3-pr6.md",
         "reports/independent",
         "reports/review-candidate-08cdf11.md",
-        "reports/review-acceptance-vertical-slice.md"
+        "reports/review-acceptance-vertical-slice.md",
+        "reports/review-candidate-b908a66.md",
+        "reports/review-candidate-1fdf25a.md",
+        "reports/review-candidate-5a75d9c.md",
+        "reports/review-candidate-2e3041a.md",
+        "reports/review-candidate-a9d0f64.md"
       ],
-      "reason": "Review records; kept on their own branches as audit records (plan: do not commit reviews onto the candidate).",
-      "category": "review_record",
+      "reason": "Historical review records preserved verbatim by merging each review PR head (PR #14 eb8d259, #27 72aa8b7, #28 fe6f24e, #29 384c610, #30 eb82d7d, #31 eccac83, #32 c795ce6, #33 9612a7b, #34 2a07e33) on integration/completion-20261103. They review earlier candidates, not this branch, and are NOT approvals; no GitHub review state is implied.",
+      "category": "documentation",
       "owner": {
         "agent": "Bank IT Lab PR Reviewer",
         "pr_author": "onnxscibroccoli",
@@ -385,7 +408,11 @@
       "required_checks": {
         "present": [],
         "proposed": []
-      }
+      },
+      "validate_all_steps": [
+        "review records preserved"
+      ],
+      "limitations": "Records only. Some are agent-authored on the shared account; they do not satisfy AC1."
     },
     {
       "id": "portfolio-cases",
@@ -1186,7 +1213,7 @@
       "ci_jobs": [
         "documentation.yml:validate"
       ],
-      "limitations": "Documentation platform only. Legacy migration, manual accessibility assessment, and public deployment remain incomplete.",
+      "limitations": "Documentation platform. GitHub Pages is enabled (build_type workflow) and was deployed from main 30e0a83 by documentation.yml on 2026-10-31 (API checked 2026-11-03). Automated WCAG 2.2 AA subset only (axe-core, Playwright Chromium, 12 pages); no human screen-reader or manual accessibility assessment; 210 of 221 indexed pages are legacy (unstructured) Markdown.",
       "prs": []
     }
   ],

@@ -38,6 +38,13 @@ step "incident committed runs"        bash scripts/ci/incident_checks.sh committ
 step "incident NOT_EXECUTED negative" bash scripts/ci/incident_checks.sh not-executed-negative
 step "labeling markers"               python3 scripts/ci/check_labels.py
 # --- PR #5 AWS evidence bundle (static)
+# acceptance framework (PRs #23-#26, integrated on integration/completion-20261103) and preserved review records
+step "acceptance gate self-test"      python3 scripts/acceptance/verify_results.py --selftest
+step "acceptance invariant tests"     python3 -m unittest discover -s scripts/acceptance/tests
+step "acceptance adapter tests"       python3 -m unittest discover -s acceptance/modules/tests
+step "acceptance runner tests"        python3 -m unittest discover -s tools/acceptance/tests
+step "acceptance contract tests"      python3 -m unittest discover -s tests/acceptance-contract
+step "review records preserved"       bash -c 'for f in reports/review-pr3-pr6.md reports/review-candidate-08cdf11.md reports/review-acceptance-vertical-slice.md reports/review-candidate-b908a66.md reports/review-candidate-1fdf25a.md reports/review-candidate-5a75d9c.md reports/review-candidate-2e3041a.md reports/review-candidate-a9d0f64.md reports/independent/chatgpt/acceptance-181bcdd-review.md reports/independent/chatgpt/accelerated-completion-plan-20261028.md; do test -s "$f" || { echo "missing $f"; exit 1; }; done'
 step "security exceptions register (B5-1; UA-1 blocking reported)" python3 scripts/ci/check_exceptions.py
 step "aws evidence SHA256SUMS" bash -c 'cd evidence/aws/aws-remediation-vpc-rds && sha256sum -c SHA256SUMS --quiet'
 for t in evidence/aws/aws-remediation-vpc-rds/synth/*.template.json; do step "s3 self-logging $t" python3 "$V" cfn-s3-selflog "$t"; done

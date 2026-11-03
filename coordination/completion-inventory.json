@@ -1,0 +1,1432 @@
+{
+ "schema": "bank-it-operations-lab/coordination/completion-inventory@1",
+ "created": "2026-11-03 EST (America/New_York)",
+ "base_main": "30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6",
+ "refs": {
+  "main": "30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6",
+  "delivery/portfolio": "aa6a38b9d2221d579bff91bb1cdf55227343db76",
+  "overnight/integration": "a9d0f64f11bf5b43d2bd7fcd9a53f15483c75f45",
+  "acceptance/vertical-slice": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+  "evidence/acceptance(before T-01)": "7f047e8638ee8cfc3dae9c7c359103835be91f4f",
+  "integration_branch": "integration/completion-20261103"
+ },
+ "ancestry": "delivery/portfolio and overnight/integration are ancestors of main (main is 1 ahead of delivery/portfolio, 17 ahead of overnight/integration). acceptance/vertical-slice had 14 commits not in main (merge-base 49122f2); merged cleanly.",
+ "drift": "modules.json has 28 modules (not 26): aws-network-edge, endpoint-windows-automation, inventory-diagrams, owner-authentication, knowledge-base added by delivery; acceptance and review-notes move to INTEGRATED on the integration branch.",
+ "gap_type_legend": {
+  "BLOCKING": "blocks trustworthy acceptance/merge",
+  "FOLLOW_UP": "technical follow-up with no user action",
+  "USER_ACTION": "needs Ian",
+  "REVIEW": "no open code gap; independent review pending (AC1)",
+  "PARTIAL": "delivered with a stated scope gap",
+  "EVIDENCE": "historical evidence preservation/verification",
+  "DOC_STALE": "docs lag current state",
+  "NOT_EXECUTED": "needs an environment we do not have; labelled",
+  "NONE": "no gap"
+ },
+ "gap_type_counts": {
+  "BLOCKING": 2,
+  "DOC_STALE": 2,
+  "EVIDENCE": 1,
+  "FOLLOW_UP": 1,
+  "NONE": 2,
+  "NOT_EXECUTED": 1,
+  "PARTIAL": 7,
+  "REVIEW": 14,
+  "USER_ACTION": 3
+ },
+ "rows": [
+  {
+   "id": "integration-infra",
+   "kind": "module",
+   "goal": "CI gate: module registry, user-actions, offline validation, merge eligibility from a trusted manifest",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    7
+   ],
+   "implementation": [
+    ".github/workflows@30e0a83",
+    ".github/acceptance@30e0a83",
+    "scripts/validate-all.sh@30e0a83",
+    "scripts/ci@30e0a83",
+    "coordination@30e0a83",
+    "reports/INTEGRATION.md@30e0a83",
+    "README.md@30e0a83",
+    ".gitignore@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "reports/INTEGRATION.md",
+    "README.md"
+   ],
+   "checks": [
+    "integration-gate.yml:user-actions",
+    "integration-gate.yml:module-registry",
+    "integration-gate.yml:final-summary",
+    "integration-gate.yml:merge-eligibility"
+   ],
+   "validate_all_steps": [
+    "module registry"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Integrator",
+   "registry_owner": "Bank IT Lab Integrator",
+   "gap_type": "BLOCKING",
+   "gap": "main integration-gate run 41242239019 FAILED: merge-eligibility manifest mismatch (main scripts/ci changed by delivery commits; manifest pinned af49a27). Pin has no independent review -> TRUSTED GATE UNVERIFIED.",
+   "tasks": [
+    "T-01",
+    "T-16"
+   ]
+  },
+  {
+   "id": "shared-evidence-validator",
+   "kind": "module",
+   "goal": "Shared evidence validator (hashes, S3 self-logging, postgres negatives)",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    3
+   ],
+   "implementation": [
+    "evidence/shared@30e0a83",
+    "reports/review-pr1-pr2.md@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "reports/review-pr1-pr2.md"
+   ],
+   "checks": [
+    "offline-validation.yml:validate"
+   ],
+   "validate_all_steps": [
+    "shared validator unit tests",
+    "shared postgres-negatives"
+   ],
+   "evidence": [
+    "evidence/shared"
+   ],
+   "limitations": null,
+   "owner": "PR Reviewer",
+   "registry_owner": "Bank IT Lab PR Reviewer",
+   "gap_type": "REVIEW",
+   "gap": "No open code gap; unreviewed by an independent account.",
+   "tasks": [
+    "T-27"
+   ]
+  },
+  {
+   "id": "entra-offline",
+   "kind": "module",
+   "goal": "Entra Conditional Access baseline validated offline",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    4
+   ],
+   "implementation": [
+    "identity/entra@30e0a83",
+    "tests/entra@30e0a83",
+    "evidence/entra@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "offline-validation.yml:validate"
+   ],
+   "validate_all_steps": [
+    "entra unit tests",
+    "entra validator on baseline",
+    "entra fixture drift",
+    "entra evidence verify"
+   ],
+   "evidence": [
+    "evidence/entra"
+   ],
+   "limitations": "Synthetic policies only; no Entra tenant or Graph calls. Baseline choices await owner confirmation (UA-3).",
+   "owner": "Integrator",
+   "registry_owner": "unassigned",
+   "gap_type": "USER_ACTION",
+   "gap": "Synthetic policies only (labelled). Baseline choices await owner confirmation (UA-2).",
+   "tasks": [
+    "T-19"
+   ]
+  },
+  {
+   "id": "aws-cdk",
+   "kind": "module",
+   "goal": "Remediated VPC/RDS CDK app with cdk-nag gate",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    5
+   ],
+   "implementation": [
+    "infra/aws-cdk@30e0a83",
+    "evidence/aws@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "aws-cdk.yml:synth-and-test"
+   ],
+   "validate_all_steps": [
+    "aws-cdk tsc",
+    "aws-cdk jest",
+    "aws-cdk synth",
+    "aws-cdk nag gate",
+    "s3 self-logging",
+    "synth drift",
+    "aws evidence SHA256SUMS"
+   ],
+   "evidence": [
+    "evidence/aws"
+   ],
+   "limitations": "Static synth only; nothing deployed. Exceptions EX-01..EX-04 unapproved (UA-1). PR #14 B5-1/B5-2 open.",
+   "owner": "AWS Remediation",
+   "registry_owner": "Bank IT Lab AWS Remediation",
+   "gap_type": "USER_ACTION",
+   "gap": "Static synth only, nothing deployed (labelled). EX-01..EX-04 unapproved; EX-04 unresolved (UA-1).",
+   "tasks": [
+    "T-17"
+   ]
+  },
+  {
+   "id": "postgres-recovery",
+   "kind": "module",
+   "goal": "PostgreSQL backup/restore exercise with verified evidence",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    2
+   ],
+   "implementation": [
+    "tests/integration@30e0a83",
+    "evidence/postgres@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "postgres-restore-evidence.yml:harness-selftest",
+    "postgres-restore-evidence.yml:restore-exercise-service",
+    "postgres-restore-evidence.yml:restore-exercise-offline",
+    "postgres-restore-evidence.yml:version-mismatch-control"
+   ],
+   "validate_all_steps": [
+    "postgres v2 verify",
+    "postgres harness self-test",
+    "postgres restore exercise v2 (offline)",
+    "postgres fresh-run v2 verifier"
+   ],
+   "evidence": [
+    "evidence/postgres"
+   ],
+   "limitations": null,
+   "owner": "Backup DR",
+   "registry_owner": "Bank IT Lab Backup DR",
+   "gap_type": "EVIDENCE",
+   "gap": "Committed evidence verified (38 cases); dump artifacts of committed runs not checked (--require-artifacts only on fresh runs).",
+   "tasks": [
+    "T-18"
+   ]
+  },
+  {
+   "id": "orgs-security",
+   "kind": "module",
+   "goal": "AWS Organizations SCPs, org CloudTrail, security services (CDK + Terraform)",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    6
+   ],
+   "implementation": [
+    "infra/orgs@30e0a83",
+    "evidence/orgs@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline",
+    "portfolio-validation.yml:orgs-static",
+    "portfolio-validation.yml:terraform-static"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/orgs"
+   ],
+   "limitations": "CDK synthesis and Terraform provider-schema validation only; Terraform is partial and lacks CDK parity. No Organizations API calls, plan or apply.",
+   "owner": "AWS Remediation",
+   "registry_owner": "Bank IT Lab AWS Remediation",
+   "gap_type": "PARTIAL",
+   "gap": "Terraform track partial, no CDK parity; no plan/apply (labelled). PR #6 original evidence (31 files: cdk-nag reports, logs, synth) not on main.",
+   "tasks": [
+    "T-23",
+    "T-10"
+   ]
+  },
+  {
+   "id": "acceptance",
+   "kind": "module",
+   "goal": "Executable, SHA-bound acceptance framework (contract, runner, adapters, vertical slice)",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    23,
+    24,
+    25,
+    26
+   ],
+   "implementation": [
+    "scripts/acceptance@integration/completion-20261103",
+    "schemas/acceptance@integration/completion-20261103",
+    "tools/acceptance@integration/completion-20261103",
+    "acceptance@integration/completion-20261103",
+    "tests/acceptance-contract@integration/completion-20261103",
+    "reports/ACCEPTANCE.md@integration/completion-20261103",
+    "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md@integration/completion-20261103"
+   ],
+   "source_commit": "eb42b23747d5b686d9540c93e445a713b4e56c5d",
+   "documentation": [
+    "reports/ACCEPTANCE.md",
+    "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md"
+   ],
+   "checks": [
+    "acceptance.yml:gate-selftest",
+    "acceptance.yml:acceptance",
+    "acceptance.yml:defect-control"
+   ],
+   "validate_all_steps": [
+    "acceptance gate self-test",
+    "acceptance invariant tests",
+    "acceptance adapter tests",
+    "acceptance runner tests",
+    "acceptance contract tests"
+   ],
+   "evidence": null,
+   "limitations": "Offline/static acceptance of AWS CDK synth, PostgreSQL restore (local binaries), Entra offline policies and evidence hashes. No live AWS/Entra/Graph. Hash matches prove consistency, not independent execution. I2 PARTIALLY ENFORCED (no branch protection, UA-3).",
+   "owner": "Integrator",
+   "registry_owner": "Bank IT Lab Integrator (integrated exact SHAs); authors: acceptance workers A-D",
+   "gap_type": "FOLLOW_UP",
+   "gap": "Integrated on integration/completion-20261103 (not yet main). C1-C4 fixed (17cfaea); C5 fixed on branch; open: fail-closed inventory binding when git show fails, dynamic-group minimum counts, review-record scope. I2 PARTIALLY ENFORCED (no protection).",
+   "tasks": [
+    "T-02",
+    "T-03",
+    "T-04",
+    "T-05",
+    "T-06"
+   ]
+  },
+  {
+   "id": "review-notes",
+   "kind": "module",
+   "goal": "Preserved review history",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    14,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "implementation": [
+    "reports/review-pr3-pr6.md@integration/completion-20261103",
+    "reports/independent@integration/completion-20261103",
+    "reports/review-candidate-08cdf11.md@integration/completion-20261103",
+    "reports/review-acceptance-vertical-slice.md@integration/completion-20261103",
+    "reports/review-candidate-b908a66.md@integration/completion-20261103",
+    "reports/review-candidate-1fdf25a.md@integration/completion-20261103",
+    "reports/review-candidate-5a75d9c.md@integration/completion-20261103",
+    "reports/review-candidate-2e3041a.md@integration/completion-20261103",
+    "reports/review-candidate-a9d0f64.md@integration/completion-20261103"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "reports/review-pr3-pr6.md",
+    "reports/review-candidate-08cdf11.md",
+    "reports/review-acceptance-vertical-slice.md",
+    "reports/review-candidate-b908a66.md",
+    "reports/review-candidate-1fdf25a.md",
+    "reports/review-candidate-5a75d9c.md",
+    "reports/review-candidate-2e3041a.md",
+    "reports/review-candidate-a9d0f64.md"
+   ],
+   "checks": [],
+   "validate_all_steps": [
+    "review records preserved"
+   ],
+   "evidence": null,
+   "limitations": "Records only. Some are agent-authored on the shared account; they do not satisfy AC1.",
+   "owner": "PR Reviewer",
+   "registry_owner": "Bank IT Lab PR Reviewer",
+   "gap_type": "NONE",
+   "gap": "Preserved on integration branch (records only, not approvals).",
+   "tasks": [
+    "T-08"
+   ]
+  },
+  {
+   "id": "portfolio-cases",
+   "kind": "module",
+   "goal": "Source-grounded case studies",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    8
+   ],
+   "implementation": [
+    "portfolio@30e0a83"
+   ],
+   "source_commit": "7010d05a366758132799a76b20088ddf9b6169e8",
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Portfolio Cases",
+   "registry_owner": "Bank IT Lab Portfolio Cases",
+   "gap_type": "REVIEW",
+   "gap": "Integrated at PR #8 head 7010d05; PR still open draft; unreviewed.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "vendor-mock",
+   "kind": "module",
+   "goal": "Banking-vendor API mock and vendor-risk governance",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    9
+   ],
+   "implementation": [
+    "integrations@30e0a83",
+    "evidence/vendor@30e0a83",
+    "governance/vendor-risk@30e0a83"
+   ],
+   "source_commit": "d6efb825b00a559be01cb2f329d6a7d0fd9f19a4",
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/vendor"
+   ],
+   "limitations": null,
+   "owner": "Integrator",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "SIMULATION (labelled). Integrated at PR #9 head d6efb82 with later repairs; PR still open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "observability",
+   "kind": "module",
+   "goal": "Host health collector and synthetic monitoring",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    10
+   ],
+   "implementation": [
+    "observability@30e0a83",
+    "evidence/observability@30e0a83"
+   ],
+   "source_commit": "3e40e39d73da3f0d20bced68651a54ee6c63846c",
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/observability"
+   ],
+   "limitations": null,
+   "owner": "Integrator",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Synthetic data (labelled). Integrated at PR #10 head 3e40e39; PR still open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "final-report",
+   "kind": "module",
+   "goal": "Final report, evidence manifest, user actions",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    11
+   ],
+   "implementation": [
+    "reports/FINAL_REPORT.md@30e0a83",
+    "reports/EVIDENCE_MANIFEST.md@30e0a83",
+    "reports/USER_ACTIONS_REQUIRED.md@30e0a83",
+    "reports/user-actions.json@30e0a83",
+    "docs/DEMO_WALKTHROUGH_15MIN.md@30e0a83"
+   ],
+   "source_commit": "d500ccf41b4338a17a4f2f02e98de89f34ca89a7",
+   "documentation": [
+    "reports/FINAL_REPORT.md",
+    "reports/EVIDENCE_MANIFEST.md",
+    "reports/USER_ACTIONS_REQUIRED.md",
+    "docs/DEMO_WALKTHROUGH_15MIN.md"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Final Report",
+   "registry_owner": "Bank IT Lab Final Report",
+   "gap_type": "DOC_STALE",
+   "gap": "Integrated at PR #11 head d500ccf with later edits; must be refreshed for acceptance integration, Pages live, 28-module coverage.",
+   "tasks": [
+    "T-25",
+    "T-09"
+   ]
+  },
+  {
+   "id": "job-requirements-matrix",
+   "kind": "module",
+   "goal": "Job requirements matrix mapped to evidence",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    12
+   ],
+   "implementation": [
+    "docs/JOB_REQUIREMENTS_MATRIX.md@30e0a83"
+   ],
+   "source_commit": "31b69db90838f59bfe28f8214dfc51a1c4ffd429",
+   "documentation": [
+    "docs/JOB_REQUIREMENTS_MATRIX.md"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Job Matrix",
+   "registry_owner": "Bank IT Lab Job Matrix",
+   "gap_type": "DOC_STALE",
+   "gap": "Matrix predates acceptance integration and the five delivery modules.",
+   "tasks": [
+    "T-24",
+    "T-09"
+   ]
+  },
+  {
+   "id": "team-management",
+   "kind": "module",
+   "goal": "Team model and service management examples",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    13
+   ],
+   "implementation": [
+    "docs/management@30e0a83",
+    "operations/team@30e0a83"
+   ],
+   "source_commit": "9dc8f1f587a69d85b05af0fc28d76f4ed5925d44",
+   "documentation": [
+    "docs/management"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Portfolio Cases",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Synthetic team model (labelled). Integrated at PR #13 head 9dc8f1f with later edits; PR open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "learning-guide",
+   "kind": "module",
+   "goal": "Twelve-week learning guide and ADRs",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    15
+   ],
+   "implementation": [
+    "learning@30e0a83",
+    "docs/adr@30e0a83",
+    "docs/REPO_NAVIGATOR.md@30e0a83",
+    "docs/REVIEWER_GUIDE.md@30e0a83",
+    "docs/AI_PROMPTS.md@30e0a83"
+   ],
+   "source_commit": "39728dbe5223140e676ff5ac0e5cbd1b6893b719",
+   "documentation": [
+    "docs/adr",
+    "docs/REPO_NAVIGATOR.md",
+    "docs/REVIEWER_GUIDE.md",
+    "docs/AI_PROMPTS.md"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Portfolio Cases",
+   "registry_owner": "unassigned",
+   "gap_type": "PARTIAL",
+   "gap": "Learning guide is legacy Markdown; not linked into knowledge-base structured topics/search query set.",
+   "tasks": [
+    "T-14",
+    "T-09"
+   ]
+  },
+  {
+   "id": "control-mapping",
+   "kind": "module",
+   "goal": "FFIEC AIO control mapping",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    16
+   ],
+   "implementation": [
+    "governance/controls@30e0a83",
+    "evidence/control-review@30e0a83"
+   ],
+   "source_commit": "3f8269758fe768a499e3bef01e4909ebf35747a0",
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/control-review"
+   ],
+   "limitations": null,
+   "owner": "Job Matrix",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "FFIEC mapping is a lab mapping, not an audit opinion (labelled). PR #16 open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "patch-hardening",
+   "kind": "module",
+   "goal": "SSM patch rings and host hardening",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    17
+   ],
+   "implementation": [
+    "operations/hardening@30e0a83",
+    "operations/patching@30e0a83",
+    "evidence/host-operations@30e0a83"
+   ],
+   "source_commit": "5605b78893465e04caf1ab275c3608ef2a634584",
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/host-operations"
+   ],
+   "limitations": null,
+   "owner": "AWS Remediation",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Not executed on real hosts (labelled). PR #17 open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "identity-governance",
+   "kind": "module",
+   "goal": "Identity governance with offline Graph fixtures",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    18
+   ],
+   "implementation": [
+    "identity/governance@30e0a83",
+    "docs/federation@30e0a83",
+    "evidence/identity-governance@30e0a83"
+   ],
+   "source_commit": "f48e7e3fbd01423b15646fee64a66073f813e484",
+   "documentation": [
+    "docs/federation"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/identity-governance"
+   ],
+   "limitations": null,
+   "owner": "Integrator",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Offline Graph fixtures only (labelled). PR #18 open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "hybrid-operations",
+   "kind": "module",
+   "goal": "Windows Server/AD DS/hybrid runbooks",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [
+    19
+   ],
+   "implementation": [
+    "operations/hybrid@30e0a83",
+    "docs/runbooks/hybrid@30e0a83"
+   ],
+   "source_commit": "3397dac99bde6ca9504fb2c2d9a2f322c20c19b6",
+   "documentation": [
+    "docs/runbooks/hybrid"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Portfolio Cases",
+   "registry_owner": "unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Documentation only, no Windows/AD execution (labelled). Main differs from PR #19 head in 12 files (later delivery edits); PR open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "m365-endpoint",
+   "kind": "module",
+   "goal": "M365/Intune endpoint scenarios (plan-only)",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    20
+   ],
+   "implementation": [
+    "identity/m365@30e0a83",
+    "evidence/m365@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "integration-gate.yml:m365-scenario-evaluation",
+    "integration-gate.yml:m365-unit-tests",
+    "integration-gate.yml:m365-evidence-verification",
+    "integration-gate.yml:plan-only-assertions"
+   ],
+   "validate_all_steps": [
+    "m365 scenario evaluation",
+    "m365 unit tests",
+    "m365 evidence verification",
+    "plan-only negative tests"
+   ],
+   "evidence": [
+    "evidence/m365"
+   ],
+   "limitations": null,
+   "owner": "Integrator",
+   "registry_owner": "Bank IT Lab Integrator (integrated exact SHA); author unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Plan-only (labelled). PR #20 draft, 0 reviews (AC1).",
+   "tasks": [
+    "T-20"
+   ]
+  },
+  {
+   "id": "backup-dr-aws",
+   "kind": "module",
+   "goal": "AWS Backup DR reference and cost model",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    21
+   ],
+   "implementation": [
+    "backup@30e0a83",
+    "evidence/backup@30e0a83",
+    "docs/runbooks/aws-backup@30e0a83"
+   ],
+   "source_commit": "10da54f8965ea7695cffe0f3ce0dad207c66285b",
+   "documentation": [
+    "docs/runbooks/aws-backup"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline",
+    "portfolio-validation.yml:backup-static"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": [
+    "evidence/backup"
+   ],
+   "limitations": null,
+   "owner": "Backup DR",
+   "registry_owner": "Bank IT Lab Backup DR",
+   "gap_type": "REVIEW",
+   "gap": "Reference + cost model, nothing deployed (labelled). PR #21 open.",
+   "tasks": [
+    "T-09",
+    "T-27"
+   ]
+  },
+  {
+   "id": "incident-demo",
+   "kind": "module",
+   "goal": "Incident demo scenario with evidence",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    22
+   ],
+   "implementation": [
+    "scenarios@30e0a83",
+    "evidence/incident@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "integration-gate.yml:incident-committed-runs",
+    "integration-gate.yml:incident-fresh-run",
+    "integration-gate.yml:incident-not-executed-negative",
+    "integration-gate.yml:labeling-markers"
+   ],
+   "validate_all_steps": [
+    "incident committed runs",
+    "incident NOT_EXECUTED negative",
+    "labeling markers",
+    "incident fresh run"
+   ],
+   "evidence": [
+    "evidence/incident"
+   ],
+   "limitations": null,
+   "owner": "Portfolio Cases",
+   "registry_owner": "Bank IT Lab Integrator (integrated exact SHA); author unassigned",
+   "gap_type": "REVIEW",
+   "gap": "Synthetic scenario (labelled). PR #22 has no reviews (AC1).",
+   "tasks": [
+    "T-27"
+   ]
+  },
+  {
+   "id": "bank-aws-001",
+   "kind": "module",
+   "goal": "First planned AWS module (superseded)",
+   "status": "SUPERSEDED",
+   "category": "superseded",
+   "prs": [
+    1
+   ],
+   "implementation": [
+    "reports/MORNING_REPORT.md@30e0a83",
+    "infra/aws-cdk/lib/evidence-validator.ts@30e0a83",
+    "infra/aws-cdk/scripts/validate-evidence.ts@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "reports/MORNING_REPORT.md"
+   ],
+   "checks": [],
+   "validate_all_steps": [],
+   "evidence": null,
+   "limitations": null,
+   "owner": "AWS Remediation",
+   "registry_owner": "Bank IT Lab AWS Remediation",
+   "gap_type": "NONE",
+   "gap": "SUPERSEDED by PR #5 (aws-cdk). PR #1 closed (UA-4 RESOLVED).",
+   "tasks": []
+  },
+  {
+   "id": "aws-network-edge",
+   "kind": "module",
+   "goal": "Private network edge CDK app",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [],
+   "implementation": [
+    "infra/aws-network@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:network-edge"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "AWS Remediation",
+   "registry_owner": "delivery integrator",
+   "gap_type": "REVIEW",
+   "gap": "Credential-free CDK app, not deployed (labelled). No PR; delivered directly in delivery/portfolio.",
+   "tasks": [
+    "T-27"
+   ]
+  },
+  {
+   "id": "endpoint-windows-automation",
+   "kind": "module",
+   "goal": "Windows endpoint baseline automation (Pester)",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [],
+   "implementation": [
+    "operations/endpoint@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline",
+    "portfolio-validation.yml:endpoint-pester"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Integrator",
+   "registry_owner": "delivery integrator",
+   "gap_type": "NOT_EXECUTED",
+   "gap": "Pester on a domain-joined Windows host NOT_EXECUTED (needs a real host; out of scope without user environment).",
+   "tasks": [
+    "T-22"
+   ]
+  },
+  {
+   "id": "inventory-diagrams",
+   "kind": "module",
+   "goal": "Asset inventory and diagrams",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [
+    35
+   ],
+   "implementation": [
+    "inventory@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": null,
+   "owner": "Portfolio Cases",
+   "registry_owner": "ChatGPT delivery integrator",
+   "gap_type": "REVIEW",
+   "gap": "Integrated via PR #35; unreviewed.",
+   "tasks": [
+    "T-27"
+   ]
+  },
+  {
+   "id": "owner-authentication",
+   "kind": "module",
+   "goal": "Owner signature authentication design",
+   "status": "INTEGRATED",
+   "category": "functional",
+   "prs": [],
+   "implementation": [
+    "governance/owner-auth@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "README in module paths"
+   ],
+   "checks": [
+    "portfolio-validation.yml:offline"
+   ],
+   "validate_all_steps": [
+    "portfolio offline modules"
+   ],
+   "evidence": null,
+   "limitations": "Prototype only: real Ed25519 verification tested; no enrolled key, active adapter, revocation/conflict policy or acceptance approval. AC1 remains independent.",
+   "owner": "Integrator",
+   "registry_owner": "delivery integrator",
+   "gap_type": "USER_ACTION",
+   "gap": "Prototype; no enrolled human key, adapter or revocation policy (UA-6).",
+   "tasks": [
+    "T-26"
+   ]
+  },
+  {
+   "id": "knowledge-base",
+   "kind": "module",
+   "goal": "Accessible searchable knowledge base published on GitHub Pages",
+   "status": "INTEGRATED",
+   "category": "documentation",
+   "prs": [],
+   "implementation": [
+    "scripts/docs@30e0a83",
+    "docs/knowledge@30e0a83",
+    "docs/metadata@30e0a83",
+    "docs/index.md@30e0a83",
+    "AGENTS.md@30e0a83",
+    "llms.txt@30e0a83",
+    ".github/pull_request_template.md@30e0a83"
+   ],
+   "source_commit": null,
+   "documentation": [
+    "scripts/docs",
+    "docs/knowledge",
+    "docs/metadata",
+    "docs/index.md",
+    "AGENTS.md",
+    ".github/pull_request_template.md"
+   ],
+   "checks": [
+    "documentation.yml:validate"
+   ],
+   "validate_all_steps": [],
+   "evidence": null,
+   "limitations": "Documentation platform. GitHub Pages is enabled (build_type workflow) and was deployed from main 30e0a83 by documentation.yml on 2026-10-31 (API checked 2026-11-03). Automated WCAG 2.2 AA subset only (axe-core, Playwright Chromium, 12 pages); no human screen-reader or manual accessibility assessment; 210 of 221 indexed pages are legacy (unstructured) Markdown.",
+   "owner": "Final Report",
+   "registry_owner": "documentation maintainers",
+   "gap_type": "PARTIAL",
+   "gap": "Pages live; 210/221 pages legacy; automated WCAG subset on 12 pages only; no manual/screen-reader test; documentation.yml actions not SHA-pinned and does not run on integration/** pushes.",
+   "tasks": [
+    "T-11",
+    "T-12",
+    "T-13"
+   ]
+  },
+  {
+   "id": "P2-elite-docs",
+   "kind": "priority",
+   "goal": "Elite documentation: structured, linted, navigable",
+   "implementation": [
+    "docs/knowledge/*.md@30e0a83",
+    "docs/index.md@30e0a83",
+    "AGENTS.md@30e0a83",
+    "llms.txt@30e0a83",
+    "docs/AI_PROMPTS.md@30e0a83"
+   ],
+   "documentation": [
+    "docs/knowledge/standards.md",
+    "docs/knowledge/publishing.md"
+   ],
+   "checks": [
+    "documentation.yml:validate (markdownlint, audit.py, impact.py)"
+   ],
+   "evidence": [
+    "docs/metadata/validation-20261031.json"
+   ],
+   "owner": "Final Report",
+   "gap_type": "PARTIAL",
+   "gap": "13 curated knowledge pages; 210 of 221 indexed pages still legacy Markdown; final report/job matrix stale vs current state.",
+   "tasks": [
+    "T-12",
+    "T-24",
+    "T-25"
+   ]
+  },
+  {
+   "id": "P3-search-learning",
+   "kind": "priority",
+   "goal": "Natural-language search and learning paths",
+   "implementation": [
+    "scripts/docs/search-core.js@30e0a83",
+    "scripts/docs/search.js@30e0a83",
+    "learning/@30e0a83"
+   ],
+   "documentation": [
+    "docs/knowledge/start.md",
+    "learning/"
+   ],
+   "checks": [
+    "documentation.yml:validate (node --test search.test.mjs; browser.mjs)"
+   ],
+   "evidence": [
+    "docs/metadata/validation-20261031.json (14 search regressions; 10 NL queries top-5)"
+   ],
+   "owner": "Portfolio Cases",
+   "gap_type": "PARTIAL",
+   "gap": "Search query set covers curated topics only; learning guide weeks not mapped to search/topic pages.",
+   "tasks": [
+    "T-14"
+   ]
+  },
+  {
+   "id": "P4-accessibility",
+   "kind": "priority",
+   "goal": "WCAG 2.2 AA accessible site",
+   "implementation": [
+    "scripts/docs/tests/browser.mjs@30e0a83",
+    "scripts/docs/style.css@30e0a83"
+   ],
+   "documentation": [
+    "docs/knowledge/standards.md"
+   ],
+   "checks": [
+    "documentation.yml:validate (axe-core 4.11.0 via Playwright Chromium; keyboard checks)"
+   ],
+   "evidence": [
+    "docs/metadata/validation-20261031.json: 12 pages, 0 violations, 0 incomplete"
+   ],
+   "owner": "Final Report",
+   "gap_type": "PARTIAL",
+   "gap": "Automated subset only (labelled: no WCAG conformance claim); 12 of 221 pages scanned; no human screen-reader/manual test (needs a human tester).",
+   "tasks": [
+    "T-13"
+   ]
+  },
+  {
+   "id": "P5-trustworthy-acceptance",
+   "kind": "priority",
+   "goal": "Trustworthy SHA-bound acceptance: AC1-AC5 computed at runtime, trusted gate, acceptance framework",
+   "implementation": [
+    "scripts/ci@30e0a83",
+    "scripts/acceptance@integration/completion-20261103",
+    "evidence/acceptance:trusted-gate/gate-manifest.json@7f047e8"
+   ],
+   "documentation": [
+    "reports/ACCEPTANCE.md",
+    "reports/ACCEPTANCE_INVARIANT_ASSURANCE.md",
+    "evidence/acceptance:trusted-gate/README.md"
+   ],
+   "checks": [
+    "integration-gate.yml:merge-eligibility",
+    "acceptance.yml:gate-selftest",
+    "acceptance.yml:acceptance",
+    "acceptance.yml:defect-control"
+   ],
+   "evidence": [
+    "main integration-gate run 41242239019 (FAILED: manifest mismatch)"
+   ],
+   "owner": "Integrator",
+   "gap_type": "BLOCKING",
+   "gap": "(1) main gate manifest mismatch; (2) pin has no independent review; (3) no independent reviewer account (AC1, UA-7); (4) no protection/rulesets on main and evidence/acceptance (UA-3); (5) owner identity = shared agent account (UA-6); (6) acceptance follow-ups T-03..T-05.",
+   "tasks": [
+    "T-01",
+    "T-02",
+    "T-03",
+    "T-04",
+    "T-05",
+    "T-15",
+    "T-16"
+   ]
+  },
+  {
+   "id": "P6-actions-pages",
+   "kind": "priority",
+   "goal": "GitHub Actions CI and GitHub Pages publication",
+   "implementation": [
+    ".github/workflows/documentation.yml@30e0a83",
+    ".github/workflows/acceptance.yml@integration/completion-20261103"
+   ],
+   "documentation": [
+    "docs/knowledge/publishing.md"
+   ],
+   "checks": [
+    "documentation.yml:validate",
+    "documentation.yml:deploy"
+   ],
+   "evidence": [
+    "Pages API: has_pages true, build_type workflow, source main, https enforced; site HTTP 200; github-pages deployments at 30e0a83 (2026-10-31 17:11/17:14/17:25 EDT)"
+   ],
+   "owner": "Integrator",
+   "gap_type": "PARTIAL",
+   "gap": "Pages enabled and live: NO user action needed. documentation.yml uses tag-pinned actions (not SHA) and does not run on integration/** pushes (needs dispatch or PR). Deploy is a public publish; only on main push.",
+   "tasks": [
+    "T-11"
+   ]
+  }
+ ],
+ "tasks": [
+  {
+   "id": "T-01",
+   "task": "Re-pin trusted gate manifest on evidence/acceptance to the integration gate commit (main 30e0a83 scripts/ci plus the one-line test_module_coverage.py update for the newly INTEGRATED modules); the candidate head is a later records-only commit, so gate_sha != candidate. Gate stays TRUSTED GATE UNVERIFIED until independently reviewed.",
+   "owner": "Integrator",
+   "gap_type": "BLOCKING",
+   "state": "done in STEP 1 (normal commit on evidence/acceptance)"
+  },
+  {
+   "id": "T-02",
+   "task": "Integrate acceptance framework: PR #26 eb42b23 (contains #23, #24, #25@c6aa238) + diverged PR #25 head ce39504.",
+   "owner": "Integrator",
+   "gap_type": "BLOCKING",
+   "state": "done on integration/completion-20261103"
+  },
+  {
+   "id": "T-03",
+   "task": "verify_results.py: fail closed when git show of the inventory at the expected SHA fails; convert tests from fake SHAs to real commits.",
+   "owner": "Integrator (code) + PR Reviewer (review)",
+   "gap_type": "FOLLOW_UP",
+   "state": "open"
+  },
+  {
+   "id": "T-04",
+   "task": "Dynamic groups HASH-*/ENTRA-*: replace minimum counts with exact expected counts derived from the tree at the tested SHA.",
+   "owner": "Integrator + PR Reviewer",
+   "gap_type": "FOLLOW_UP",
+   "state": "open"
+  },
+  {
+   "id": "T-05",
+   "task": "Review records: scope each review to explicit requirement IDs instead of copying to every requirement.",
+   "owner": "Integrator + PR Reviewer",
+   "gap_type": "FOLLOW_UP",
+   "state": "open"
+  },
+  {
+   "id": "T-06",
+   "task": "C5: pin acceptance.yml actions to SHAs, 7-day retention, run on main and integration/**.",
+   "owner": "Integrator",
+   "gap_type": "FOLLOW_UP",
+   "state": "done on integration branch"
+  },
+  {
+   "id": "T-07",
+   "task": "C6: reconcile obsolete merge/approval constraints in coordination/tasks.json.",
+   "owner": "Integrator",
+   "gap_type": "FOLLOW_UP",
+   "state": "done on integration branch (historical text kept)"
+  },
+  {
+   "id": "T-08",
+   "task": "Preserve review records PRs #14, #27-#34 on the branch (records, not approvals).",
+   "owner": "Integrator",
+   "gap_type": "EVIDENCE",
+   "state": "done on integration branch"
+  },
+  {
+   "id": "T-09",
+   "task": "Disposition of open draft module PRs #6, #8-#13, #15-#19, #21 (content integrated at their exact heads in aec7e5f, later repaired on main): close as integrated with a comment. Externally visible: needs Ian's OK.",
+   "owner": "Integrator",
+   "gap_type": "USER_ACTION",
+   "state": "proposed"
+  },
+  {
+   "id": "T-10",
+   "task": "Preserve PR #6 original evidence (31 files at e5e7f46 absent from main) with an annotated checkpoint tag or evidence/orgs/history/pr6-e5e7f46/.",
+   "owner": "AWS Remediation",
+   "gap_type": "EVIDENCE",
+   "state": "proposed"
+  },
+  {
+   "id": "T-11",
+   "task": "documentation.yml: pin actions to full SHAs; validate on integration/** pushes; keep deploy main-only.",
+   "owner": "Integrator",
+   "gap_type": "PARTIAL",
+   "state": "proposed (needs SHA lookup for configure-pages/deploy-pages/upload-pages-artifact)"
+  },
+  {
+   "id": "T-12",
+   "task": "Migrate highest-traffic legacy Markdown to structured knowledge topics.",
+   "owner": "Final Report",
+   "gap_type": "PARTIAL",
+   "state": "proposed"
+  },
+  {
+   "id": "T-13",
+   "task": "Extend axe scan to all generated pages; human screen-reader test is a human task (label as NOT_EXECUTED until done).",
+   "owner": "Final Report",
+   "gap_type": "PARTIAL",
+   "state": "proposed"
+  },
+  {
+   "id": "T-14",
+   "task": "Map learning-guide weeks to knowledge topics and add search regressions for them.",
+   "owner": "Portfolio Cases",
+   "gap_type": "PARTIAL",
+   "state": "proposed"
+  },
+  {
+   "id": "T-15",
+   "task": "Independent reviewer account (UA-7), rulesets on main + evidence/acceptance (UA-3), separate owner identity (UA-6).",
+   "owner": "Ian",
+   "gap_type": "USER_ACTION",
+   "state": "open"
+  },
+  {
+   "id": "T-16",
+   "task": "Decide main-push behaviour of merge-eligibility (direct pushes always NOT ELIGIBLE -> permanently red). Option: report-only on push to main; requires gate change + re-pin + review.",
+   "owner": "Integrator",
+   "gap_type": "FOLLOW_UP",
+   "state": "proposed"
+  },
+  {
+   "id": "T-17",
+   "task": "AWS exceptions EX-01..EX-04 decisions (EX-04 unresolved); PR #14 B5-1/B5-2 status re-check against main.",
+   "owner": "AWS Remediation + Ian (UA-1)",
+   "gap_type": "USER_ACTION",
+   "state": "open"
+  },
+  {
+   "id": "T-18",
+   "task": "Postgres: verify dump artifacts for committed runs or label them HASH_ONLY.",
+   "owner": "Backup DR",
+   "gap_type": "EVIDENCE",
+   "state": "proposed"
+  },
+  {
+   "id": "T-19",
+   "task": "Entra Conditional Access baseline confirmation (UA-2).",
+   "owner": "Ian",
+   "gap_type": "USER_ACTION",
+   "state": "open"
+  },
+  {
+   "id": "T-20",
+   "task": "M365 PR #20 review at exact SHA.",
+   "owner": "PR Reviewer",
+   "gap_type": "REVIEW",
+   "state": "proposed"
+  },
+  {
+   "id": "T-21",
+   "task": "Run the full acceptance.yml + all workflows on the integration branch head and record run IDs.",
+   "owner": "Integrator",
+   "gap_type": "FOLLOW_UP",
+   "state": "in progress (STEP 1)"
+  },
+  {
+   "id": "T-22",
+   "task": "Pester on a domain-joined Windows host: NOT_EXECUTED (no host); keep labelled.",
+   "owner": "Integrator",
+   "gap_type": "NOT_EXECUTED",
+   "state": "accepted limitation unless Ian provides a host"
+  },
+  {
+   "id": "T-23",
+   "task": "Orgs Terraform parity with CDK (CloudTrail, security services) — static validation only.",
+   "owner": "AWS Remediation",
+   "gap_type": "PARTIAL",
+   "state": "proposed"
+  },
+  {
+   "id": "T-24",
+   "task": "Refresh job requirements matrix for acceptance + five delivery modules.",
+   "owner": "Job Matrix",
+   "gap_type": "DOC_STALE",
+   "state": "proposed"
+  },
+  {
+   "id": "T-25",
+   "task": "Refresh FINAL_REPORT / EVIDENCE_MANIFEST / USER_ACTIONS_REQUIRED for this integration.",
+   "owner": "Final Report",
+   "gap_type": "DOC_STALE",
+   "state": "proposed"
+  },
+  {
+   "id": "T-26",
+   "task": "Owner-auth: enroll human-only key after independent review of the design (UA-6).",
+   "owner": "Ian",
+   "gap_type": "USER_ACTION",
+   "state": "not yet actionable"
+  },
+  {
+   "id": "T-27",
+   "task": "Final independent whole-repo review packet after merge (Ian routes it).",
+   "owner": "PR Reviewer",
+   "gap_type": "REVIEW",
+   "state": "after merge"
+  },
+  {
+   "id": "T-28",
+   "task": "Merge integration/completion-20261103 into main (next checkpoint, normal merge, no force).",
+   "owner": "Integrator",
+   "gap_type": "FOLLOW_UP",
+   "state": "awaiting STEP 1 report"
+  }
+ ],
+ "note": "Not an approval. Every integrated module remains UNREVIEWED by an independent account; AC1 is UNMET. Simulations and substitutes are labelled in each module's limitations."
+}

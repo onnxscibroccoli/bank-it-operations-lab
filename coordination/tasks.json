@@ -14,12 +14,12 @@
   "sha": "7f50348",
   "verified": "main contains only README.md; nothing to break"
  },
- "updated": "2026-10-28T21:02:00-04:00",
+ "updated": "2026-11-03T13:21:00-05:00",
  "rules": [
   "Automated merges into main are ALLOWED only once independently proven: an independent review approves the exact candidate SHA AND every other acceptance condition (AC2-AC5) is met for that same SHA (source: PR #27 finding C6, reflecting Ian's later authorization).",
   "Final human portfolio acceptance is a separate gate (AC6). Technical eligibility for merge does not mean portfolio acceptance.",
   "Technical blockers are not relaxed by this policy: failing or missing checks, unapproved security exceptions, the PR #6 self-logging defect, docs mismatches, and the open review findings (PR #14 B5-1/B5-2, PR #27 C1-C5) all still block.",
-  "This integration agent does not merge anything into main itself, and makes no production changes.",
+  "2026-11-03 13:21 EST (Ian, FINAL AUTONOMOUS COMPLETION PASS): the integration owner may complete and merge remaining work into main before a final independent whole-repo review; this supersedes the earlier review-before-merge rule for incremental work. STEP 1 (integration/completion-20261103) does NOT merge into main. Historical rule, kept for the record: 'This integration agent does not merge anything into main itself, and makes no production changes.'",
   "no deploys",
   "no AWS/Entra/Graph calls",
   "no credentials",
@@ -1083,5 +1083,18 @@
   "status": "DRAFT_NOT_ACCEPTED",
   "owner_instructions": "reports/USER_ACTIONS_REQUIRED.md",
   "note": "Earlier round records retained as history. PR #1 closed. Old midnight target elapsed without eligible merge."
+ },
+ "completion_checkpoint": {
+  "branch": "integration/completion-20261103",
+  "base": {
+   "branch": "main",
+   "sha": "30e0a832e16ca1fe44cf7bbb0b8fc7c0abf469b6"
+  },
+  "inventory": [
+   "coordination/COMPLETION_INVENTORY.md",
+   "coordination/completion-inventory.json"
+  ],
+  "status": "STEP_1_READY_FOR_REVIEW_NOT_MERGED",
+  "note": "Integrates PR #26 (eb42b23; contains #23 6a28847, #24 838d537), PR #25 head ce39504, and review records #14 #27-#34. delivery/portfolio (aa6a38b) and overnight/integration (a9d0f64) were already ancestors of main. C6 reconciled here. Not an approval; AC1 remains UNMET (no independent reviewer, UA-7)."
  }
 }
