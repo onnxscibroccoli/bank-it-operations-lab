@@ -52,25 +52,3 @@ Read `evidence/entra/BASELINE-CHOICES-PENDING.md` and PR #4. Decide whether the 
 4. The package is a draft lab deliverable. Final human acceptance waits until the required review, protection and applicable acceptance gates are complete. No live deployment is requested.
 
 Official UI references: [invite a collaborator](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository), [create a ruleset](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository).
-
-## Completion pass, 2026-11-03 (13:25 EST)
-
-**USER ACTION REQUIRED: 3 — UA-2 Entra baseline; UA-3 protect main and evidence/acceptance; UA-7 invite an independent reviewer.** This matches the integration-gate run on `main` ([41242239019](https://github.com/onnxscibroccoli/bank-it-operations-lab/actions/runs/41242239019)). Each item was checked live on 2026-11-03 at about 13:25 EST.
-
-| ID | Action | Live evidence it is still open | How |
-|---|---|---|---|
-| **UA-2** | Confirm or change the lab's Entra CA baseline: risk policies report-only, device compliance on All users / All apps, 12 privileged roles | `BASELINE-CHOICES-PENDING.md` on `main` says not confirmed. PR #4 has 0 comments | Section 4 above |
-| **UA-3** | Protect `main` and `evidence/acceptance` | Both return 404 "Branch not protected"; rulesets `[]` | Section 2 above. `main` now carries merged code, so protection affects every future change |
-| **UA-7** | Invite a qualified independent human reviewer and give their exact GitHub username | Collaborators: only `onnxscibroccoli`; 0 invitations; 0 reviews on PRs #1–#38 | Section 1 above |
-
-**Waiting, not yet actionable** (`tasks.json` on `main`; not counted):
-- **UA-1:** EX-01..EX-04 are all PROPOSED on `main`. EX-04 was re-scoped after the 2026-10-28 relay, so Ian's earlier conditional decision on EX-04 needs a fresh look against the new scope. The gate says effective approval needs the bound packet and a reviewed owner-authentication path.
-- **UA-5:** final human portfolio acceptance (AC6).
-- **UA-6:** enroll an owner signing key after the activation design is reviewed.
-
-**Facts to know, not actions:**
-- The code is already on `main` without independent review, by Ian's 2026-10-31 development-integration directive.
-- The gate on `main` reports `merge-eligibility` failing, because candidate gate files differ from the trusted manifest. That is engineering work for the integrator, not a user step.
-- portfolio-validation has not run at the `main` SHA itself; it ran on the identical tree at `aa6a38b`.
-
-Supporting evidence (merge history, runs on `main`, reviews, protection, register, decisions) is in `reports/FINAL_REPORT.md`, section "Completion pass, 2026-11-03".
