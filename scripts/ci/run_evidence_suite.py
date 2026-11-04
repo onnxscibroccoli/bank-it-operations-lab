@@ -39,8 +39,7 @@ def main():
     evidence = Path("evidence-out")
     evidence.mkdir(exist_ok=True)
     command = [
-        sys.executable, "-m", "unittest", "-v",
-        "scripts/ci/tests/test_portfolio_evidence.py",
+        sys.executable, "scripts/ci/tests/test_portfolio_evidence.py", "-v",
     ]
     started = datetime.now(timezone.utc)
     try:
