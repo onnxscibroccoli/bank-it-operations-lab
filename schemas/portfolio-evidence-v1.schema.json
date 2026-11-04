@@ -102,12 +102,13 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "runner",
-        "os",
-        "toolVersions",
-        "sourceTreeDigest",
         "configurationDigest",
-        "lockfiles"
+        "configurationFiles",
+        "lockfiles",
+        "os",
+        "runner",
+        "sourceTreeDigest",
+        "toolVersions"
       ],
       "properties": {
         "runner": {
@@ -133,6 +134,13 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "lockfiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "configurationFiles": {
           "type": "object",
           "additionalProperties": {
             "type": "string",
