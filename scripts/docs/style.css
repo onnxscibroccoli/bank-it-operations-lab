@@ -189,7 +189,8 @@ hr {border:0;border-top:1px solid var(--border);margin-block:2rem}
   main > h2 + ul > li {break-inside:avoid;padding-block:.25rem}
 }
 @media (max-width:48rem) {
-  main {margin:.5rem;border-radius:var(--radius)}
+  /* A full-width main plus side margins exceeds the 320px viewport. */
+  main {width:auto;margin:.5rem;border-radius:var(--radius)}
   header,footer {padding-inline:1rem}
   aside dl {grid-template-columns:minmax(0,1fr);gap:.2rem}
   aside dd {margin-bottom:.8rem}
