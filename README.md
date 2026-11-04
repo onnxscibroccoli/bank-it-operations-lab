@@ -52,6 +52,10 @@ AWS/CDK describes infrastructure without deploying it. Entra validates synthetic
 
 AC1 requires independent exact-candidate review; AC2 requires authorized exception decisions; AC3 requires successful checks for the same candidate/base/tested merge; AC4 requires truthful documentation; AC5 requires closure of blocking findings. AC6 is separate final human acceptance. See the [plain-English acceptance table](docs/REPO_NAVIGATOR.md#4-ac1ac6-in-plain-english).
 
+## Strict engineering evidence contract (in development)
+
+The new [portfolio evidence v1 contract](docs/architecture/evidence-contract.md) introduces an independently rerunnable validator for new evidence bundles. It records the exact tested revision, source/configuration digests, execution results, negative controls, artifact hashes and retention limits. The [engineering evidence workflow](.github/workflows/engineering-evidence.yml) separately reports a technical verdict without changing existing governance decisions. Hash verification is **not** cryptographic execution authenticity, independent review, or production acceptance. The legacy evidence validator and locked historical records remain unchanged.
+
 ## Evidence labels
 
 | Label | Meaning |

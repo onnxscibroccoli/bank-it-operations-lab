@@ -1,0 +1,361 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/onnxscibroccoli/bank-it-operations-lab/schemas/portfolio-evidence-v1.schema.json",
+  "title": "Portfolio engineering evidence contract v1 (new evidence only)",
+  "description": "Strict structured execution record. This is NOT a human acceptance credential, a live production certification or an authenticity proof by itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "repository",
+    "module",
+    "candidateSha",
+    "testedSha",
+    "baseSha",
+    "producer",
+    "workflow",
+    "runId",
+    "runAttempt",
+    "event",
+    "environment",
+    "verification",
+    "artifacts",
+    "limitations",
+    "approvalEffective",
+    "timing",
+    "retention",
+    "attestations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "module": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidateSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "testedSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "baseSha": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sourceSha",
+        "sha256"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceSha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "workflow": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "runAttempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "event": {
+      "enum": [
+        "push",
+        "pull_request"
+      ]
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configurationDigest",
+        "configurationFiles",
+        "lockfiles",
+        "os",
+        "runner",
+        "sourceTreeDigest",
+        "toolVersions"
+      ],
+      "properties": {
+        "runner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "os": {
+          "type": "string",
+          "minLength": 1
+        },
+        "toolVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "sourceTreeDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "configurationDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "lockfiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "configurationFiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "result",
+        "checks"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "EXECUTED_CI",
+            "EXECUTED_LOCAL",
+            "STATIC_VALIDATED",
+            "SIMULATION",
+            "NOT_EXECUTED"
+          ]
+        },
+        "result": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_EXECUTED"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "commandId",
+              "exitCode",
+              "testCount",
+              "expectedAssertions",
+              "skippedTests",
+              "report",
+              "negativeControls"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "commandId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "exitCode": {
+                "type": "integer"
+              },
+              "testCount": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "expectedAssertions": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "skippedTests": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "report": {
+                "type": "string",
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\\\\\)[A-Za-z0-9._/-]+$"
+              },
+              "negativeControls": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "status",
+                    "observedReason"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "const": "REJECTED_AS_EXPECTED"
+                    },
+                    "observedReason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\\\\\)[A-Za-z0-9._/-]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approvalEffective": {
+      "const": false
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startedAt",
+        "finishedAt",
+        "verifiedAt"
+      ],
+      "properties": {
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verifiedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "days",
+        "provider",
+        "expiresAt"
+      ],
+      "properties": {
+        "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 90
+        },
+        "provider": {
+          "enum": [
+            "github-actions",
+            "external-object-store"
+          ]
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "attestations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "reference"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "github-artifact-attestation",
+              "external"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
