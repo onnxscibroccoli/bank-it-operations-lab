@@ -638,7 +638,8 @@
         "docs/adr",
         "docs/REPO_NAVIGATOR.md",
         "docs/REVIEWER_GUIDE.md",
-        "docs/AI_PROMPTS.md"
+        "docs/AI_PROMPTS.md",
+        "docs/PORTFOLIO_READINESS.md"
       ],
       "category": "documentation",
       "owner": {

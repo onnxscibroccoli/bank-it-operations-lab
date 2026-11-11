@@ -12899,5 +12899,65 @@
       "evidence": []
     },
     "last_reviewed": "2026-11-03"
+  },
+  "docs/PORTFOLIO_READINESS.md": {
+    "id": "page-e5eaa94cf82a7f7c",
+    "description": "Portfolio reviewer readiness: source-linked starting points, scoped CI evidence and a restart checklist. Find reliable explanations and keep them aligned with the repository as development continues.",
+    "category": "development",
+    "audience": [
+      "beginner",
+      "operator",
+      "engineer",
+      "architect"
+    ],
+    "lifecycle_status": "In Development",
+    "current_state": "Technical reference: Portfolio reviewer readiness plan. Documentation-only; links source and historically scoped CI runs without upgrading verification status.",
+    "limitations": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
+    "planned": "Independent review after development integration; continue source-driven updates without promoting verification automatically.",
+    "source_files": [
+      "docs/PORTFOLIO_READINESS.md"
+    ],
+    "related_development": [
+      "https://github.com/onnxscibroccoli/bank-it-operations-lab/pull/51",
+      "https://github.com/onnxscibroccoli/broccoli-core/issues/102"
+    ],
+    "aliases": [
+      "documentation",
+      "technical reference",
+      "Markdown",
+      "Metadata",
+      "Static site"
+    ],
+    "verification": {
+      "level": "Not established",
+      "scope": "Editorial modernization only. Any execution results in the original text apply to their named run and environment, not to a new run.",
+      "last_verified": null,
+      "evidence": []
+    },
+    "last_reviewed": "2026-11-11",
+    "reading_guide": {
+      "overview": "Find reliable explanations and keep them aligned with the repository as development continues.",
+      "why": "Good navigation and explicit limitations help beginners and experienced engineers use the same material.",
+      "example": "A contributor changes a module, locates the pages that reference it, and checks whether the explanation or evidence needs updating.",
+      "mechanism": "Markdown source, structured metadata, deterministic search, and isolated documentation checks produce this static portal.",
+      "safety": "Documentation checks do not establish production behavior. Read the current integration policy before interpreting older acceptance instructions.",
+      "terms": {
+        "Markdown": "A text format for readable documents with headings, links, lists, and code.",
+        "Metadata": "Structured information describing a page, such as its topic and verification scope.",
+        "Static site": "Prepared web files served without an application backend."
+      },
+      "learning_page": "docs/knowledge/start.md",
+      "kind": "technical reference",
+      "original_headings": [
+        "One-minute technical orientation",
+        "Source and reviewer starting points",
+        "Executed CI references (historical, scoped)",
+        "Reproduce the relevant local checks",
+        "Ordered actionable changes",
+        "Maturity and verification boundary",
+        "Release and artifact strategy",
+        "Safe continuation after interruption"
+      ]
+    }
   }
 }

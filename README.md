@@ -1,5 +1,8 @@
 # IT Operations Knowledge Base and Reference Lab
 
+
+> **For technical reviewers:** [Source-linked capability evidence, executable checks and current limitations](docs/PORTFOLIO_READINESS.md) · [prioritized remediation issue](https://github.com/onnxscibroccoli/bank-it-operations-lab/issues/50). This is an experimental/software evidence portfolio, not an attestation of production operation or employment history.
+
 Learn how organizations manage access, recover information, investigate outages, and verify infrastructure changes. This evolving resource is for curious beginners, operators, engineers, auditors, and AI assistants. Its educational content is useful beyond banking.
 
 - **Start learning:** [short learning paths](docs/knowledge/start.md).
