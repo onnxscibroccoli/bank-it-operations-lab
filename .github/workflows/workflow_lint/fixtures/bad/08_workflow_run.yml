@@ -1,0 +1,11 @@
+name: bad-workflow-run
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+permissions: { contents: read }
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo consume

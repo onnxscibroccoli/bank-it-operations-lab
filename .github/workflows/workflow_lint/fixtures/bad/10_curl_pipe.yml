@@ -1,0 +1,9 @@
+name: bad-curl-pipe
+on: push
+permissions: { contents: read }
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsSL https://example.invalid/install.sh | bash
+      - run: wget -qO- https://example.invalid/x | sudo sh

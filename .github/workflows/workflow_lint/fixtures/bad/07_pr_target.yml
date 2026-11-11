@@ -1,0 +1,13 @@
+name: bad-prt
+on:
+  pull_request_target:
+    types: [opened]
+permissions: { contents: read }
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
